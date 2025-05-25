@@ -7,13 +7,14 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAc-g3kLguUfx8X2zOgNHF5onE_QcOoaf0",
-    authDomain: "heso-hrm.firebaseapp.com",
-    projectId: "heso-hrm",
-    storageBucket: "heso-hrm.firebasestorage.app",
-    messagingSenderId: "243212199762",
-    appId: "1:243212199762:web:a5ddddcd9236e525547c8b",
-    measurementId: "G-HGJZP0NJ77",
+     apiKey: "AIzaSyC0A1wVHCA0Rcb_IKacSh8LlvWHFsUnR2w",
+     authDomain: "randommysterybox-a924a.firebaseapp.com",
+     databaseURL: "https://randommysterybox-a924a-default-rtdb.firebaseio.com",
+     projectId: "randommysterybox-a924a",
+     storageBucket: "randommysterybox-a924a.firebasestorage.app",
+     messagingSenderId: "955922034305",
+     appId: "1:955922034305:web:01fdf9664e6e206573e780",
+     measurementId: "G-D3EDMKQK9H"
   };
 
 // Initialize Firebase
