@@ -57,8 +57,8 @@ api.interceptors.response.use(
     // 403: Không đủ quyền
     if (error.response?.status === 403) {
       console.warn("Không có quyền truy cập vào tài nguyên này.");
-      // Bạn có thể redirect hoặc logout ở đây nếu muốn
-      // Ví dụ: window.location.href = '/unauthorized';
+      localStorage.clear();
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);
