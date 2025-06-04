@@ -31,10 +31,10 @@ export const privateRoutes = [
 
 ];
 
-export const adminRoutes = [
-    {path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard /> , isAdmin: true },
-    {path: PATH_NAME.ADMIN_USERMANGEMENT, element: <AdminUserManagement /> , isAdmin: true },
-    {path: PATH_NAME.ADMIN_SUBSCRIPTION, element: <AdminSubscription /> , isAdmin: true },
-];
+// export const adminRoutes = [
+//     {path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard /> , isAdmin: true },
+//     {path: PATH_NAME.ADMIN_USERMANGEMENT, element: <AdminUserManagement /> , isAdmin: true },
+//     {path: PATH_NAME.ADMIN_SUBSCRIPTION, element: <AdminSubscription /> , isAdmin: true },
+// ];
 
   

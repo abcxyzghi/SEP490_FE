@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Shoppage() {
   return (
-    <div>Shoppage</div>
+    <div style={{marginTop: '200px'}}>Shoppage</div>
   )
 }
