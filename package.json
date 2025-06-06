@@ -10,12 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.1",
+    "@mui/material": "^7.1.1",
     "@reduxjs/toolkit": "^2.8.2",
-    "@tailwindcss/vite": "^4.1.7",
+    "@tailwindcss/postcss": "^4.1.8",
+    "@tailwindcss/vite": "^4.1.8",
     "antd": "^5.25.2",
     "axios": "^1.9.0",
+    "daisyui": "^5.0.43",
     "date-fns": "^4.1.0",
     "firebase": "^11.8.1",
+    "framer-motion": "^12.16.0",
+    "postcss": "^8.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
@@ -23,7 +31,8 @@
     "react-router-dom": "^7.6.1",
     "react-toastify": "^11.0.5",
     "redux-persist": "^6.0.0",
-    "tailwindcss": "^4.1.7"
+    "styled-components": "^6.1.18",
+    "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

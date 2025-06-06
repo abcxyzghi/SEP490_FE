@@ -1,34 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react'
+import './App.css';
+import {BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+
+import { publicRoutes, privateRoutes } from './router/routerConfig';
+import { PATH_NAME } from './router/Pathname';
+import Registerpage from './components/pages/Registerpage/Registerpage';
+import Loginpage from './components/pages/Loginpage/Loginpage';
+import MainPage from './components/pages/MainPage/MainPage';
+
+const pageVariants = {
+  initial: { opacity: 0,  y: "-100vh"},
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0,  y: "100vh"},
+  transition: { duration: 0.4 },
+};
+
+const AnimatedRoute = ({ children }) => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition="transition"
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    const storedUser = localStorage.getItem("user");
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    // <>
+    //   <Registerpage/>
+    // </>
+    <Router>
+      <AnimatedRoute>
+        <Routes>
+          <Route path="/" element={<MainPage user={user} />}>
+            {/* Public Routes */}
+            {publicRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+
+            {/* Private Routes */}
+            {privateRoutes.map((route) => {
+              const hasAccess = route.roles
+                ? route.roles.includes(user?.role)
+                : Boolean(user);
+              return (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    hasAccess ? (
+                      route.element
+                    ) : (
+                      <Navigate to={PATH_NAME.LOGIN} replace />
+                    )
+                  }
+                />
+              );
+            })}
+          </Route>
+
+          {/* Top-Level Routes */}
+          <Route path={PATH_NAME.REGISTER} element={<Registerpage />} />
+          <Route path={PATH_NAME.LOGIN} element={<Loginpage />} />
+        </Routes>
+      </AnimatedRoute>
+    </Router>
   )
 }
 

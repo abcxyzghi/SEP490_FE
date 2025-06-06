@@ -1,0 +1,197 @@
+/*  Navigation container */
+.nav-container {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    background: var(--gradient-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    border-radius: 0 0 40px 40px;
+    transition: height 0.3s ease;
+    padding: 0 3rem;
+}
+
+.nav-container.collapsed {
+    height: 50px;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px; /* Gap for commponents when wrap*/
+}
+
+.nav-item {
+    margin-right: 2rem;
+    text-decoration: none;
+}
+
+.nav-link-content {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Icon hidden by default, revealed on hover/active with animation */
+.nav-icon-wrapper {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-link-content:hover .nav-icon-wrapper,
+.nav-link-content.active .nav-icon-wrapper {
+    transform: translateY(-3px);
+    opacity: 1;
+}
+
+.nav-icon {
+    width: 100%;
+    height: 100%;
+    filter: var(--lightSVG-1);
+}   
+
+.nav-label {
+    font-size: 1.25rem;
+    color: var(--light-1);
+}
+
+.nav-link-content .nav-underline {
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background-color: var(--light-1);
+    transition: width 0.3s ease;
+}
+
+.nav-link-content:hover .nav-underline,
+.nav-link-content.active .nav-underline {
+    width: 100%;
+}
+
+/* Center toggle Logo */
+.nav-toggle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 10%);
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.nav-logo {
+  background: var(--primary-1-o90);
+  border-radius: 50px;
+  border: solid 1px var(--light-1);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* optional, center logo inside */
+  transition: content 10s ease;
+}
+
+.nav-logo-inner {
+  padding: 6px 15px; /* control spacing between logo and edge */
+  height: 100%; 
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo:hover .nav-logo-inner {
+    content: url('../../../assets/logoSVG/Full_logo-BW.svg');   /* Replace expand logo on hover */
+}
+
+.nav-container.collapsed .nav-logo:hover .nav-logo-inner {
+    content: url('../../../assets/logoSVG/Logo-BW.svg');   /* Replace collapse logo on hover */
+}
+
+/* Login / Register buttons */
+.nav-auth-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid var(--light-1);
+    color: var(--light-1);
+    font-size: 1.2rem;
+    padding: 6px 18px;
+    margin-left: 1rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-login-icon,
+.nav-register-icon{
+    filter: var(--lightSVG-1);
+    width: 22px;
+}
+
+.nav-auth-btn.register {
+    background: var(--secondary-2);
+}
+
+.nav-auth-btn:hover .nav-login-icon {
+  filter: var(--darkSVG-1);
+}
+
+.nav-auth-btn:hover .nav-register-icon {
+  filter: var(--secondarySVG-6);
+}
+
+.nav-auth-btn:hover {
+    background: var(--light-1-o60);
+    color: var(--dark-1);
+}
+
+.nav-auth-btn.register:hover {
+    background: var(--light-1-o90);
+    color: var(--secondary-6);
+    border: 1px solid var(--secondary-6);
+}
+
+/* Disable text selection */ 
+.nav-auth-btn,
+.nav-label{
+    -webkit-user-drag: none; /* Vô hiệu kéo-thả */
+    user-select: none; /* Vô hiệu bôi đen chọn văn bản */
+}
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .nav-container {
+    height: 120px;
+  }
+
+  .nav-auth-btn {
+    font-size: 0.9rem;
+  }
+
+  .nav-label{
+    font-size: 1.1rem;
+  }
+
+  .nav-toggle {
+    transform: translate(-50%, 50%);
+  }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  .nav-container {
+    height: 150px;
+  }
+}

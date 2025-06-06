@@ -1,0 +1,145 @@
+.loginpage-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Header toggle */
+.loginpage-header {
+    position: relative;
+    z-index: 10;
+    height: 60px;
+    background: var(--gradient-light);
+    border-radius: 0 0 40px 40px;
+}
+
+.loginpage-toggle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10%);
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loginpage-headleft-bar,
+.loginpage-headright-bar {
+    width: 150px;
+    height: 45px;
+    background: var(--dark-1-o90);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--light-1);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.loginpage-headleft-bar {
+    border-radius: 25px 0 0 25px;
+    cursor: pointer;
+    /* overlap into logo */
+    margin-right: -10px;
+}
+
+.loginpage-headright-bar {
+    z-index: -1;
+    border-radius: 0 25px 25px 0;
+    /* overlap into logo */
+    margin-left: -10px;
+}
+
+.loginpage-logo {
+    background: var(--primary-1-o90);
+    border-radius: 50px;
+    border: solid 1px var(--light-1);
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+}
+
+.loginpage-logo-inner {
+    height: 85%;
+    transition: transform 0.3s ease;
+}
+
+.loginpage-logo:hover .loginpage-logo-inner {
+    transform: scale(0.95);
+}
+
+.loginpage-logo:active .loginpage-logo-inner {
+    transform: scale(0.9);
+}
+
+/* Text Flip */
+.loginpage-flip-container {
+    perspective: 1000px;
+    display: inline-block;
+    position: relative;
+    width: 70px;
+    height: 20px;
+}
+
+.loginpage-flip-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    backface-visibility: hidden;
+}
+
+.loginpage-headleft-bar:active .loginpage-flip-front {
+    transform: rotateX(360deg);
+}
+
+/* Disable text selection */
+.loginpage-flip-front,
+.loginpage-static-text,
+.loginpage-tooltip-text {
+    -webkit-user-drag: none;
+    /* Vô hiệu kéo-thả */
+    user-select: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+}
+
+/* Custom scrollbar styling for WebKit browsers (e.g., Chrome, Edge, Safari) */
+.loginpage-container::-webkit-scrollbar {
+    /* Set scrollbar width */
+    width: 5px;
+}
+
+.loginpage-container::-webkit-scrollbar-thumb {
+    /* Color of the scrollbar thumb */
+    background-color: #e5fcf8;
+    border-radius: 10px;
+}
+
+.loginpage-container::-webkit-scrollbar-thumb:hover {
+    /* Darker color on hover */
+    background: var(--secondary-2);
+}
+
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .loginpage-logo {
+        height: 60px;
+        width: 60px;
+    }
+
+    .loginpage-headleft-bar,
+    .loginpage-headright-bar {
+        width: 100px;
+        height: 35px;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+}
