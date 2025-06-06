@@ -1,0 +1,97 @@
+.login-container {
+    max-width: 570px;
+    width: 45%;
+    margin: 20px auto;
+    background: var(--light-1-o70);
+    padding: 20px 60px;
+    border-radius: 20px;
+    border: solid 4px var(--secondary-6);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.login-form-control {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.login-input {
+    background: var(--light-3);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.login-password-wrapper {
+    position: relative;
+}
+
+.login-toggle-icon {
+    position: absolute !important;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 4px;
+}
+
+.login-btn {
+    margin-top: 12px;
+    background: var(--dark-5);
+    color: var(--light-1);
+    font-size: 1.25rem;
+    padding: 12px 90px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    width: fit-content;
+    align-self: center;
+    /* center it in the form */
+}
+
+.login-btn:hover {
+    background: var(--dark-4);
+}
+
+/* For screen width ≤ 1200px */
+@media (max-width: 1200px) {
+    .login-container {
+        width: 60%;
+        padding: 20px 30px;
+    }
+
+}
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .login-container {
+        width: 85%;
+    }
+
+    .login-btn {
+        font-size: 1rem;
+        padding: 10px 40px;
+    }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  .login-form-control {
+    width: 100%;
+}
+}

@@ -213,6 +213,10 @@
   /* padding: 0.5rem 0.2rem; */
 }
 
+body {
+  background-color: var(--page-mainBG);
+}
+
 /* System main fonts (2)*/
 .oleo-script-regular {
   font-family: "Oleo Script", system-ui;

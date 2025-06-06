@@ -12,9 +12,12 @@ import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDeta
 import Settingpage from "../components/pages/Settingpage/Settingpage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 
-export const publicRoutes = [
+export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
     { path: PATH_NAME.LOGIN, element: <Loginpage /> },
+];
+
+export const publicRoutes = [
     { path: PATH_NAME.NOTFOUND, element: <NotFoundpage /> },
     { path: PATH_NAME.HOMEPAGE, element: <Homepage /> },
     { path: PATH_NAME.SHOP_PAGE, element: <Shoppage /> },

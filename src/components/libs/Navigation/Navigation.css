@@ -1,4 +1,5 @@
-.top-nav {
+/*  Navigation container */
+.nav-container {
     position: sticky;
     top: 0;
     z-index: 999;
@@ -13,7 +14,7 @@
     padding: 0 3rem;
 }
 
-.top-nav.collapsed {
+.nav-container.collapsed {
     height: 50px;
 }
 
@@ -80,7 +81,7 @@
     width: 100%;
 }
 
-/* Center toggle logo */
+/* Center toggle Logo */
 .nav-toggle {
     position: absolute;
     top: 50%;
@@ -98,6 +99,7 @@
   display: flex;
   align-items: center;
   justify-content: center; /* optional, center logo inside */
+  transition: content 10s ease;
 }
 
 .nav-logo-inner {
@@ -107,6 +109,13 @@
   align-items: center;
 }
 
+.nav-logo:hover .nav-logo-inner {
+    content: url('../../../assets/logoSVG/Full_logo-BW.svg');   /* Replace expand logo on hover */
+}
+
+.nav-container.collapsed .nav-logo:hover .nav-logo-inner {
+    content: url('../../../assets/logoSVG/Logo-BW.svg');   /* Replace collapse logo on hover */
+}
 
 /* Login / Register buttons */
 .nav-auth-btn {
@@ -163,7 +172,7 @@
 
 /* For screen width ≤ 765px */
 @media (max-width: 765px) {
-  .top-nav {
+  .nav-container {
     height: 120px;
   }
 
@@ -182,7 +191,7 @@
 
 /* For screen width ≤ 480px */
 @media (max-width: 480px) {
-  .top-nav {
+  .nav-container {
     height: 150px;
   }
 }

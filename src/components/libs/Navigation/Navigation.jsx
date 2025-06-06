@@ -4,9 +4,7 @@ import './Navigation.css';
 import { PATH_NAME, Pathname } from '../../../router/Pathname';
 // Importing logos
 import FullLogoGrD from '../../../assets/logoSVG/Full_logo-Grdient.svg';
-import FullLogoBW from '../../../assets/logoSVG/Full_logo-BW.svg';
 import GrDLogo from '../../../assets/logoSVG/Logo-Grdient.svg';
-import BWLogo from '../../../assets/logoSVG/Logo-BW.svg';
 // Importing icons
 import HomeIcon from '../../../assets/Icon_fill/Home_fill.svg';
 import ShopIcon from '../../../assets/Icon_fill/Shop.svg';
@@ -31,7 +29,7 @@ export default function Navigation() {
   ];
 
   return (
-    <div className={`top-nav ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`nav-container ${isCollapsed ? 'collapsed' : ''}`}>
       {!isCollapsed && (
         <div className="nav-left">
           {navLinks.map(link => (
