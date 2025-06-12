@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './RegisterForm.css';
+import OtpDialog from '../OtpDialog/OtpDialog';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
@@ -13,8 +14,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export default function RegisterForm() {
     // Form validation func
     const [form, setForm] = useState({
-        firstName: '',
-        lastName: '',
+        userName: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -24,34 +24,47 @@ export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
+    const [showOtp, setShowOtp] = useState(false);
+    const [emailForOtp, setEmailForOtp] = useState('');
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
     };
 
+    const validateUsername = (userName) =>
+        /^[a-zA-Z0-9_]{3,16}$/.test(userName);
+
     const validateEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const validatePassword = (password) =>
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(password);
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/.test(password);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const { firstName, lastName, email, password, confirmPassword, accepted } = form;
+        const { userName, email, password, confirmPassword, accepted } = form;
 
-        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+        if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
             return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
         }
 
+        if (!validateUsername(userName)) {
+            return setSnackbar({
+                open: true,
+                message: 'Username must be between 3 - 15 characters long. Only letters, numbers, and underscores are allowed.',
+                severity: 'warning'
+            });
+        }
+
         if (!validateEmail(email)) {
-            return setSnackbar({ open: true, message: 'Invalid email format.', severity: 'warning' });
+            return setSnackbar({ open: true, message: 'Invalid Email format.', severity: 'warning' });
         }
 
         if (!validatePassword(password)) {
             return setSnackbar({
                 open: true,
-                message: 'Password must be at least 8 characters, include uppercase, lowercase, number, and special character.',
+                message: 'Password must be between 8 - 15 characters long, include at least an uppercase, lowercase, number, and special character.',
                 severity: 'warning',
             });
         }
@@ -67,6 +80,22 @@ export default function RegisterForm() {
         // Proceed with actual Register logic here
         console.log("Register successful:", form);
         setSnackbar({ open: true, message: 'All done!', severity: 'success' });
+        setEmailForOtp(form.email);
+        setShowOtp(true);
+    };
+
+    // Handle OTP verification snackbar
+    const handleVerifyOtp = (code) => {
+        console.log('Verify OTP:', code);
+        setShowOtp(false);
+        setSnackbar({ open: true, message: 'Registration complete!', severity: 'success' });
+        // Navigate to Login page logic
+
+    };
+
+    const handleResendOtp = () => {
+        console.log('Resending OTP to:', emailForOtp);
+        setSnackbar({ open: true, message: 'Code resent.', severity: 'info' });
     };
 
     return (
@@ -74,37 +103,26 @@ export default function RegisterForm() {
             <h2 className="register-title oleo-script-bold">Register to Manga Mystery Box</h2>
 
             <form className="register-form" onSubmit={handleSubmit}>
-                {/* First Name and Last Name inputs */}
-                <div className="register-form-row">
-                    <div className="register-form-control">
-                        <input 
-                        name="firstName"
-                        type="text" placeholder="First Name" 
-                        className="register-input input-bordered h-12 oxanium-regular" 
+                {/* User Name input */}
+                <div className="register-form-control register-full-width">
+                    <input
+                        name="userName"
+                        type="text" placeholder="User Name"
+                        className="register-input input-bordered h-12 oxanium-regular"
                         // required
-                        value={form.firstName} 
+                        value={form.userName}
                         onChange={handleChange} />
-                    </div>
-                    <div className="register-form-control">
-                        <input 
-                        name="lastName"
-                        type="text" placeholder="Last Name" 
-                        className="register-input input-bordered h-12 oxanium-regular" 
-                        // required
-                        value={form.lastName} 
-                        onChange={handleChange}/>
-                    </div>
                 </div>
 
                 {/* Email input */}
                 <div className="register-form-control register-full-width">
-                    <input 
-                    name="email"
-                    type="email" placeholder="Email" 
-                    className="register-input input-bordered w-full h-12 oxanium-regular" 
-                    // required
-                    value={form.email} 
-                    onChange={handleChange} />
+                    <input
+                        name="email"
+                        type="email" placeholder="Email"
+                        className="register-input input-bordered w-full h-12 oxanium-regular"
+                        // required
+                        value={form.email}
+                        onChange={handleChange} />
                 </div>
 
                 {/* Password and Confirm Password inputs */}
@@ -114,7 +132,7 @@ export default function RegisterForm() {
                             name="password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Password"
-                            className="register-input input-bordered h-12 oxanium-regular"
+                            className="register-input input-pw h-12 oxanium-regular"
                             // required
                             value={form.password}
                             onChange={handleChange}
@@ -125,11 +143,11 @@ export default function RegisterForm() {
                     </div>
                     <div className="register-form-control register-password-wrapper">
                         <input
-                            
+
                             name="confirmPassword"
                             type={showConfirm ? 'text' : 'password'}
                             placeholder="Confirm Password"
-                            className="register-input input-bordered h-12 oxanium-regular"
+                            className="register-input input-pw h-12 oxanium-regular"
                             // required
                             value={form.confirmPassword}
                             onChange={handleChange}
@@ -143,14 +161,14 @@ export default function RegisterForm() {
                 {/* Policy tick box  */}
                 <div className="register-form-control register-checkbox-control">
                     <label>
-                        <Checkbox type="checkbox" 
-                        size="small"
-                        sx={{ padding: 0, mt: "-5px" }}
-                        color="secondary"
-                        // required 
-                        name="accepted" 
-                        checked={form.accepted} 
-                        onChange={handleChange}  />
+                        <Checkbox type="checkbox"
+                            size="small"
+                            sx={{ padding: 0, mt: "-5px" }}
+                            color="secondary"
+                            // required 
+                            name="accepted"
+                            checked={form.accepted}
+                            onChange={handleChange} />
                         <span>
                             &nbsp;I agree with MMB's <a href="https://example.com/terms" target="_blank" rel="noopener noreferrer" className="register-link">Terms of Service</a>,
                             <a href="https://example.com/privacy" target="_blank" rel="noopener noreferrer" className="register-link"> Privacy Policy</a>, and default
@@ -168,6 +186,15 @@ export default function RegisterForm() {
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
+            {/* OTP Modal */}
+            <OtpDialog
+                open={showOtp}
+                email={emailForOtp}
+                onClose={() => setShowOtp(false)}
+                onVerify={handleVerifyOtp}
+                onResend={handleResendOtp}
+            />
         </div>
     );
 }

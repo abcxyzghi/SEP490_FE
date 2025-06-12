@@ -48,6 +48,28 @@
     padding: 4px;
 }
 
+.login-form-link{
+    width: 70%;
+    display: flex;
+    justify-content: flex-end;
+    /* margin: -0.8rem 5px 0 5px; */
+    margin-top: -0.8rem ;
+}
+
+.login-modal-link{
+    width: 70%;
+    display: flex;
+    justify-content: flex-end;
+    margin: -0.8rem 5px 0 0;
+    color: var(--rare-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.login-modal-link:hover{
+    color: var(--teal_blue-color);
+}
+
 .login-btn {
     margin-top: 12px;
     background: var(--dark-5);

@@ -15,10 +15,10 @@ import Profilepage from "../components/pages/Profilepage/Profilepage";
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
     { path: PATH_NAME.LOGIN, element: <Loginpage /> },
+    { path: PATH_NAME.NOTFOUND, element: <NotFoundpage /> },
 ];
 
 export const publicRoutes = [
-    { path: PATH_NAME.NOTFOUND, element: <NotFoundpage /> },
     { path: PATH_NAME.HOMEPAGE, element: <Homepage /> },
     { path: PATH_NAME.SHOP_PAGE, element: <Shoppage /> },
     { path: PATH_NAME.AUNCTION_PAGE, element: <Auctionpage /> },
