@@ -134,7 +134,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const validatePassword = (newPassword) =>
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/.test(newPassword);
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?\\:{}|<>]).{8,15}$/.test(newPassword);
 
     const handleNext = async () => {
         setLoadingResetPwd(true);

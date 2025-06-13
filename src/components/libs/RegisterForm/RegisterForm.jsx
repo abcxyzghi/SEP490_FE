@@ -38,13 +38,13 @@ export default function RegisterForm() {
     };
 
     const validateUsername = (userName) =>
-        /^[a-zA-Z0-9_]{3,16}$/.test(userName);
+        /^[a-zA-Z0-9_]{3,15}$/.test(userName);
 
     const validateEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const validatePassword = (password) =>
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/.test(password);
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?\\:{}|<>]).{8,15}$/.test(password);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -143,13 +143,21 @@ export default function RegisterForm() {
             toast.error('OTP has expired. Please request a new one.');
             return;
         }
+        if (!/^[0-9]{6}$/.test(code)) {
+            toast.error('OTP must be a 6-digit number.');
+            return;
+        }
         try {
             await api.post(`/api/user/email/confirm?code=${encodeURIComponent(code)}&current_email=${encodeURIComponent(form.email)}`, {});
             toast.success('Email verified successfully! Please go to the login page to access the website.');
             setShowOtpModal(false);
             navigate('/login');
         } catch (err) {
-            toast.error(err.response?.data || 'OTP verification failed');
+            if (err.response?.data && typeof err.response.data === 'string' && err.response.data.toLowerCase().includes('invalid')) {
+                toast.error('Invalid OTP. Please check and try again.');
+            } else {
+                toast.error(err.response?.data || 'OTP verification failed');
+            }
         }
     };
 
