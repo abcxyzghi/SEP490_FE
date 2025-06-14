@@ -243,7 +243,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                                     StepIconComponent={QontoStepIcon}
                                     sx={{
                                         '& .MuiStepLabel-label': {
-                                            color: index === activeStep ? '#784af4' : 'var(--light-2)',
+                                            color: index === activeStep ? '#784af4 !important' : 'var(--light-2)',
                                             fontWeight: index === activeStep ? 'oxanium-semibold' : 'oxanium-regular',
                                         },
                                     }}

@@ -90,7 +90,7 @@
     border: 2px solid var(--light-3);
     border-radius: 20px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
 
     width: fit-content;
     align-self: center;

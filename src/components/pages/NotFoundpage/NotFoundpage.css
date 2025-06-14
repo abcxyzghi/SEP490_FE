@@ -167,9 +167,10 @@
     background: linear-gradient(135deg,
             rgba(255, 230, 0, 0.8),
             rgba(139, 0, 255, 0.6)) border-box;
-    -webkit-mask:
+    /* -webkit-mask:
         linear-gradient(#fff 0 0) padding-box,
-        linear-gradient(#fff 0 0);
+        linear-gradient(#fff 0 0); */
+    border-image: linear-gradient(135deg, rgba(255, 230, 0, 0.8), rgba(139, 0, 255, 0.6)) 1;
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;
     pointer-events: none;
@@ -379,6 +380,16 @@
     animation: fade-in 2s ease-out;
     max-width: 80%;
     line-height: 1.4;
+}
+
+.notfound-description,
+.notfound-message {
+  transition: color 0.3s ease;
+}
+
+.notfound-card:hover .notfound-description,
+.notfound-card:hover .notfound-message {
+    color: var(--light-1);
 }
 
 @keyframes fade-in {
