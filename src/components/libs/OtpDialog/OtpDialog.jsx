@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './OtpDialog.css';
 import {
     Dialog,
     DialogTitle,
@@ -10,6 +11,7 @@ import {
     Box,
     Link
 } from '@mui/material';
+import EmailCheck from '../../../assets/Icon_fill/Send_fill.svg';
 
 export default function OtpDialog({ open, email, onClose, onVerify, onResend }) {
     // OTP to store 6 digits
@@ -101,18 +103,39 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-            <div className='otpDialog-wrapper'>
-                <DialogTitle className='otpDialog-title oxanium-bold'>
-                    Almost there!
-                </DialogTitle>
+        <Dialog
+            className="otpDialog-container"
+            open={open}
+            onClose={handleClose}
+            fullWidth
+            maxWidth="xs"
+            PaperProps={{ className: 'otpDialog-animated-shadow' }}
+        >
+            <div class="card__border"></div>
 
-                <DialogContent sx={{ textAlign: 'center' }}>
-                    <Typography variant="body2" sx={{ mb: 2 }}>
-                        We’ve sent a code to <strong>{email}</strong>
-                    </Typography>
+            {/* Modal content wrapper */}
+            <div className='otpDialog-box'>
+                <div className='otpDialog-header'>
+                    <div className='otpDialog-header-text'>
+                        <div className='otpDialog-title oxanium-bold'>
+                            Almost there!
+                        </div>
 
-                    <Box display="flex" justifyContent="center" gap={1} mb={2}>
+                        <span className='otpDialog-subtitle oxanium-regular'>
+                            We’ve sent a code to <strong style={{ color: 'var(--secondary-1)' }}>{email}</strong>
+                        </span>
+                    </div>
+
+                    <img
+                        src={EmailCheck}
+                        alt="Email check icon"
+                        className='otpDialog-header-icon'
+                    />
+                </div>
+
+                <DialogContent sx={{ textAlign: 'center', padding: 0 }}>
+                    {/* OTP text inputs */}
+                    <Box display="flex" justifyContent="center" gap={1}>
                         {otp.map((digit, index) => (
                             <TextField
                                 key={index}
@@ -124,7 +147,7 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
                                         fontSize: '20px',
                                         font: 'inherit',
                                         letterSpacing: 'inherit',
-                                        color: 'currentColor',
+                                        color: 'var(--light-4)',
                                         padding: '15.5px 10px',
                                         border: '2px solid var(--primary-4-o90)',
                                         borderRadius: '5px',
@@ -149,17 +172,21 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
                     </Box>
 
                     {/* The 5 mins code expire only reset when reload or transion to other page then go back */}
-                    <Typography variant="body2" align="center" sx={{ mt: 2, color: 'text.secondary' }}>
+                    <div className='otpDialog-countDownEvent oxanium-regular'>
                         Your code will expire in {String(Math.floor(expirySeconds / 60)).padStart(2, '0')}:{String(expirySeconds % 60).padStart(2, '0')}
-                    </Typography>
+                    </div>
 
+                    {/* Cancel and Verify Btn */}
                     <DialogActions sx={{ justifyContent: 'space-evenly', px: 3 }}>
-                        <Button onClick={handleClose} variant="outlined" color="inherit">
+                        <div className='otpDialog-cancelBtn oxanium-regular' onClick={handleClose} >
                             Cancel
-                        </Button>
-                        <Button onClick={handleVerify} variant="contained" color="primary" disabled={otp.join('').length < 6}>
+                        </div>
+                        <div
+                            className={`otpDialog-submitBtn oxanium-bold ${otp.join('').length < 6 ? 'disabled' : ''}`}
+                            onClick={otp.join('').length >= 6 ? handleVerify : undefined}
+                        >
                             Verify
-                        </Button>
+                        </div>
                     </DialogActions>
 
                     {/* <Typography variant="caption">
@@ -168,21 +195,23 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
                             Click to resend
                         </Link>
                     </Typography> */}
-                    <Typography variant="caption" align="center" sx={{ mt: 2 }}>
+                    <div className='otpDialog-botLink oxanium-semibold' variant="caption" align="center" >
                         Didn't get the code?{' '}
                         {/* Link trigger resend code api */}
                         <Link
                             component="button"
                             onClick={handleResend}
                             disabled={resendSeconds > 0}
-                            sx={{ pointerEvents: resendSeconds > 0 ? 'none' : 'auto' }}
-                        >
+                            sx={{
+                                color: 'var(--secondary-1)',
+                                textDecoration: 'none',
+                                pointerEvents: resendSeconds > 0 ? 'none' : 'auto'
+                            }}>
                             Click to resend {resendSeconds > 0 ? `(${resendSeconds}s)` : ''}
                         </Link>
-                    </Typography>
+                    </div>
 
                 </DialogContent>
-
             </div>
         </Dialog>
     );

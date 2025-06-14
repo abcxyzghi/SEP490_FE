@@ -7,6 +7,7 @@ import { publicRoutes, privateRoutes } from './router/routerConfig';
 import { PATH_NAME } from './router/Pathname';
 import Registerpage from './components/pages/Registerpage/Registerpage';
 import Loginpage from './components/pages/Loginpage/Loginpage';
+import NotFoundpage from './components/pages/NotFoundpage/NotFoundpage';
 import MainPage from './components/pages/MainPage/MainPage';
 
 const pageVariants = {
@@ -82,6 +83,7 @@ function App() {
           {/* Top-Level Routes */}
           <Route path={PATH_NAME.REGISTER} element={<Registerpage />} />
           <Route path={PATH_NAME.LOGIN} element={<Loginpage />} />
+          <Route path={PATH_NAME.NOTFOUND} element={<NotFoundpage />} />
         </Routes>
       </AnimatedRoute>
     </Router>
