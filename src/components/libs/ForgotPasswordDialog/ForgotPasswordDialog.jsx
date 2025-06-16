@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './forgotPasswordDialog.css';
 import {
     Dialog,
     DialogTitle,
@@ -10,10 +11,15 @@ import {
     Step,
     StepLabel,
     Box,
+    Link,
     IconButton,
     InputAdornment,
+    StepConnector,
+    stepConnectorClasses,
     Snackbar,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Check from '@mui/icons-material/Check';
 import MuiAlert from '@mui/material/Alert';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { unstable_OneTimePasswordField as OTPField } from "radix-ui";
