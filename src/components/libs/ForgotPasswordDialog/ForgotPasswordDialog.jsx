@@ -17,6 +17,7 @@ import {
 import MuiAlert from '@mui/material/Alert';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { unstable_OneTimePasswordField as OTPField } from "radix-ui";
+import EmailSetting from '../../../assets/Icon_line/Setting_line.svg';
 import api from '../../../config/axios';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

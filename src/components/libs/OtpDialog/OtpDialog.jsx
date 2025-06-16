@@ -10,6 +10,7 @@ import {
     Box,
     Link
 } from '@mui/material';
+import EmailCheck from '../../../assets/Icon_fill/Send_fill.svg';
 import api from '../../../config/axios';
 import { toast } from 'react-toastify';
 
