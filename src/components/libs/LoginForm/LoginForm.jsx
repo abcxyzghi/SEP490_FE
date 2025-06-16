@@ -62,9 +62,17 @@ export default function LoginForm() {
         }
     };
 
+    // // Logout function
+    // const handleLogout = () => {
+    //     localStorage.removeItem('access_token');
+    //     localStorage.removeItem('user');
+    //     window.location.reload();
+    // };
+
     return (
         <div className="login-container">
             <h2 className="login-title oleo-script-bold">Welcome back to Manga Mystery Box</h2>
+            {/* <button onClick={handleLogout} style={{ position: 'top left', top: 20, right: 20 }}>Logout</button> */}
 
             <form className="login-form" onSubmit={handleLogin}>
                 {/* Username and Password inputs */}
