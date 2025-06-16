@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../../../config/axios';
+import { toast } from 'react-toastify';
 import './RegisterForm.css';
 import OtpDialog from '../OtpDialog/OtpDialog';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -24,8 +27,10 @@ export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
-    const [showOtp, setShowOtp] = useState(false);
-    const [emailForOtp, setEmailForOtp] = useState('');
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [otpTimer, setOtpTimer] = useState(0);
+    const timerRef = useRef(null);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -33,15 +38,15 @@ export default function RegisterForm() {
     };
 
     const validateUsername = (userName) =>
-        /^[a-zA-Z0-9_]{3,16}$/.test(userName);
+        /^[a-zA-Z0-9_]{3,15}$/.test(userName);
 
     const validateEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const validatePassword = (password) =>
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/.test(password);
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?\\:{}|<>]).{8,15}$/.test(password);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const { userName, email, password, confirmPassword, accepted } = form;
 
@@ -77,25 +82,83 @@ export default function RegisterForm() {
             return setSnackbar({ open: true, message: 'You must agree to all policies.', severity: 'warning' });
         }
 
-        // Proceed with actual Register logic here
-        console.log("Register successful:", form);
-        setSnackbar({ open: true, message: 'All done!', severity: 'success' });
-        setEmailForOtp(form.email);
-        setShowOtp(true);
+        // Fix: map userName to username for API
+        const apiPayload = {
+            username: userName,
+            email,
+            password
+        };
+        try {
+            await api.post('/api/user/auth/register', apiPayload);
+            await api.post(`/api/user/email/verify?email=${encodeURIComponent(email)}`, {});
+            toast.success('Successfully created new account. OTP sent to your email.');
+            setShowOtpModal(true);
+        } catch (err) {
+            toast.error(err.response?.data || 'Registration failed');
+        }
     };
 
-    // Handle OTP verification snackbar
-    const handleVerifyOtp = (code) => {
-        console.log('Verify OTP:', code);
-        setShowOtp(false);
-        setSnackbar({ open: true, message: 'Registration complete!', severity: 'success' });
-        // Navigate to Login page logic
+    useEffect(() => {
+        if (showOtpModal) {
+            setOtpTimer(60);
+            timerRef.current = setInterval(() => {
+                setOtpTimer(prev => {
+                    if (prev <= 1) {
+                        clearInterval(timerRef.current);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        } else {
+            clearInterval(timerRef.current);
+        }
+        return () => clearInterval(timerRef.current);
+    }, [showOtpModal]);
 
+    const handleResendOtp = async () => {
+        try {
+            await api.post(`/api/user/email/verify?email=${encodeURIComponent(form.email)}`, {});
+            toast.success('A new OTP has been sent to your email.');
+            // Reset and restart the OTP timer after successful resend
+            setOtpTimer(60);
+            clearInterval(timerRef.current);
+            timerRef.current = setInterval(() => {
+                setOtpTimer(prev => {
+                    if (prev <= 1) {
+                        clearInterval(timerRef.current);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        } catch {
+            toast.error('Failed to resend OTP.');
+        }
     };
 
-    const handleResendOtp = () => {
-        console.log('Resending OTP to:', emailForOtp);
-        setSnackbar({ open: true, message: 'Code resent.', severity: 'info' });
+    // Fix: Accept code, not event
+    const handleOtpSubmit = async (code) => {
+        if (otpTimer === 0) {
+            toast.error('OTP has expired. Please request a new one.');
+            return;
+        }
+        if (!/^[0-9]{6}$/.test(code)) {
+            toast.error('OTP must be a 6-digit number.');
+            return;
+        }
+        try {
+            await api.post(`/api/user/email/confirm?code=${encodeURIComponent(code)}&current_email=${encodeURIComponent(form.email)}`, {});
+            toast.success('Email verified successfully! Please go to the login page to access the website.');
+            setShowOtpModal(false);
+            navigate('/login');
+        } catch (err) {
+            if (err.response?.data && typeof err.response.data === 'string' && err.response.data.toLowerCase().includes('invalid')) {
+                toast.error('Invalid OTP. Please check and try again.');
+            } else {
+                toast.error(err.response?.data || 'OTP verification failed');
+            }
+        }
     };
 
     return (
@@ -194,10 +257,10 @@ export default function RegisterForm() {
 
             {/* OTP Modal */}
             <OtpDialog
-                open={showOtp}
-                email={emailForOtp}
-                onClose={() => setShowOtp(false)}
-                onVerify={handleVerifyOtp}
+                open={showOtpModal}
+                email={form.email}
+                onClose={() => setShowOtpModal(false)}
+                onVerify={handleOtpSubmit}
                 onResend={handleResendOtp}
             />
         </div>

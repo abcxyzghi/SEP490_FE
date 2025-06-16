@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Tạo instance Axios
 const api = axios.create({
-  baseURL: 'http://14.225.198.143:8080/api/',
+  baseURL: import.meta.env.VITE_API_KEY || 'default_base_url',
 });
 
 // Gắn accessToken vào header của mỗi request
@@ -38,7 +38,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refreshToken");
 
-        const res = await axios.post('http://14.225.198.143:8080/api/auth/refresh', {
+        const res = await axios.post('/api/user/auth/refresh', {
           refreshToken: refreshToken,
         });
 
