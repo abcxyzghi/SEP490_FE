@@ -1,7 +1,7 @@
 export const PATH_NAME = {
     REGISTER: "/register",
     LOGIN: "/login",
-    NOTFOUND: "/404page",
+    NOTFOUND: "*",
     HOMEPAGE: "/",
     SHOP_PAGE: "/shoppage",
     AUNCTION_PAGE: "/auctionpage",

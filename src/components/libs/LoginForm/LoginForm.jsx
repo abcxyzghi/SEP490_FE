@@ -112,7 +112,13 @@ export default function LoginForm() {
                 {/* </div> */}
 
                 {/* Login submit button */}
-                <button type="submit" className="login-btn oleo-script-regular">Login</button>
+                <button type="submit" className="login-btn oleo-script-regular
+                backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
+                    ></div>
+                    Login
+                </button>
             </form>
             {error && (
                 <div style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</div>
