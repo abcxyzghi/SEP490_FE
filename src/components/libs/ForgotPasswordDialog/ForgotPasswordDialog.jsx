@@ -17,7 +17,7 @@ import {
 import MuiAlert from '@mui/material/Alert';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { unstable_OneTimePasswordField as OTPField } from "radix-ui";
-
+import api from '../../../config/axios';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -70,18 +70,63 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     // }, [open]);
 
     // Otp handling
-    const handleOtpChange = (index, value) => {
-        if (!/^[0-9]?$/.test(value)) return;
-        const newOtp = [...otp];
-        newOtp[index] = value;
-        setOtp(newOtp);
-        if (value && index < 5) otpRefs.current[index + 1]?.focus();
-    };
+    // const handleOtpChange = (index, value) => {
+    //     if (!/^[0-9]?$/.test(value)) return;
+    //     const newOtp = [...otp];
+    //     newOtp[index] = value;
+    //     setOtp(newOtp);
+    //     if (value && index < 5) otpRefs.current[index + 1]?.focus();
+    // };
 
-    const handleResend = () => {
+    const handleResend = async () => {
         setResendTimer(30);
         setTimer(300);
-        console.log('Resending OTP to:', email);
+        try {
+            await api.post(`/api/user/password-recovery/verify?email=${encodeURIComponent(email)}`, {});
+            setSnackbar({ open: true, message: 'OTP resent to your email.', severity: 'success' });
+        } catch (err) {
+            setSnackbar({ open: true, message: err.response?.data || 'Failed to resend OTP.', severity: 'error' });
+        }
+    };
+
+    // Send OTP to email for password recovery (query param version)
+    const handleSendOtp = async () => {
+        try {
+            await api.post(`/api/user/password-recovery/verify?email=${encodeURIComponent(email)}`, {});
+            setSnackbar({ open: true, message: 'OTP sent to your email.', severity: 'success' });
+            setActiveStep(1);
+            setTimer(300); // reset timer for OTP
+            setResendTimer(30); // reset resend cooldown
+        } catch (err) {
+            setSnackbar({ open: true, message: err.response?.data || 'Failed to send OTP.', severity: 'error' });
+        }
+    };
+
+    // Confirm OTP and reset password (JSON body version)
+    const handleConfirmReset = async () => {
+        if (!otp || !newPassword) {
+            setSnackbar({ open: true, message: 'Please enter OTP and new password.', severity: 'warning' });
+            return;
+        }
+        setLoadingResetPwd(true);
+        try {
+            await api.post('/api/user/password-recovery/confirm', {
+                email,
+                code: otp,
+                password: newPassword
+            }, {
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            setSnackbar({ open: true, message: 'Password reset successful!', severity: 'success' });
+            setActiveStep(2);
+        } catch (err) {
+            setSnackbar({ open: true, message: err.response?.data || 'Failed to reset password.', severity: 'error' });
+        } finally {
+            setLoadingResetPwd(false);
+        }
     };
 
     // Inputs validation before proceed next step
@@ -89,13 +134,12 @@ export default function ForgotPasswordDialog({ open, onClose }) {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const validatePassword = (newPassword) =>
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/.test(newPassword);
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?\\:{}|<>]).{8,15}$/.test(newPassword);
 
     const handleNext = async () => {
         setLoadingResetPwd(true);
         try {
             if (activeStep === 0) {
-                // If the email is not empty but invalid, the second condition is evaluated and the message will be about invalid format
                 if (!email.trim() || (email.trim() && !validateEmail(email))) {
                     return setSnackbar({
                         open: true,
@@ -103,12 +147,16 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                         severity: 'warning'
                     });
                 }
-                console.log('Send OTP to:', email);
+                await handleSendOtp();
+                setActiveStep(1);
+                return;
             } else if (activeStep === 1) {
                 if (otp.length < 6) {
                     return setSnackbar({ open: true, message: 'Please complete the OTP.', severity: 'warning' });
                 }
-                console.log('Verify OTP:', otp);
+                // Only move to password step if OTP is 6 digits
+                setActiveStep(2);
+                return;
             } else if (activeStep === 2) {
                 if (!newPassword.trim() || !confirmPassword.trim()) {
                     return setSnackbar({ open: true, message: 'Please fill in both password fields.', severity: 'warning' });
@@ -123,12 +171,11 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                 if (newPassword !== confirmPassword) {
                     return setSnackbar({ open: true, message: 'Passwords do not match.', severity: 'error' });
                 }
-                console.log('Resetting password to:', newPassword);
-                setSnackbar({ open: true, message: 'Password successfully reset!', severity: 'success' });
+                // Confirm OTP and reset password
+                await handleConfirmReset();
                 onClose();
                 return;
             }
-            setActiveStep((prev) => prev + 1);
         } catch (e) {
             setSnackbar({ open: true, message: 'An error occurred', severity: 'error' });
         } finally {

@@ -10,6 +10,8 @@ import {
     Box,
     Link
 } from '@mui/material';
+import api from '../../../config/axios';
+import { toast } from 'react-toastify';
 
 export default function OtpDialog({ open, email, onClose, onVerify, onResend }) {
     // OTP to store 6 digits
@@ -89,15 +91,17 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
         return () => clearInterval(resendTimer);
     }, [resendSeconds]);
 
-    const handleResend = () => {
+    const handleResend = async () => {
         if (resendSeconds > 0) return; // ignore clicks during cooldown
-
-        // Your resend logic here (e.g., API call to resend OTP)
-        console.log("OTP resent!");
-
-        // 🔄 Reset both countdowns
-        setResendSeconds(30);     // cooldown for resend
-        setExpirySeconds(300);    // reset 5 min OTP validity
+        try {
+            await api.post(`/api/user/email/verify?email=${encodeURIComponent(email)}`, {});
+            toast.success('A new OTP has been sent to your email.');
+            // 🔄 Reset both countdowns
+            setResendSeconds(30);     // cooldown for resend
+            setExpirySeconds(300);    // reset 5 min OTP validity
+        } catch {
+            toast.error('Failed to resend OTP.');
+        }
     };
 
     return (
