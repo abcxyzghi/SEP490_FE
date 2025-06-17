@@ -22,9 +22,7 @@ const CommentSection = ({ sellProductId }) => {
   };
 
   useEffect(() => {
-    if (sellProductId) {
-      fetchComments();
-    }
+    fetchComments();
   }, [sellProductId]);
 
   const handleCommentSubmit = async (e) => {
@@ -42,7 +40,7 @@ const CommentSection = ({ sellProductId }) => {
       if (result && result.status) {
         setNewComment('');
         setError(null);
-        fetchComments();
+        await fetchComments();
       } else {
         setError('Failed to post comment.');
       }
