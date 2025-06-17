@@ -11,38 +11,37 @@ export default function ProductDetailpage() {
   const [ratings, setRatings] = useState([]);
   const [ratingsLoading, setRatingsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchDetail = async () => {
-      const result = await getProductOnSaleDetail(id);
+  // Move fetchDetail outside useEffect
+  const fetchDetail = async () => {
+    const result = await getProductOnSaleDetail(id);
+    if (result && result.status) {
+      setProduct(result.data);
+    }
+    setLoading(false);
+  };
+
+  // Move fetchRatings outside useEffect
+  const fetchRatings = async () => {
+    setRatingsLoading(true);
+    try {
+      const result = await getAllRatingsBySellProduct(id);
       if (result && result.status) {
-        setProduct(result.data);
+        setRatings(result.data);
+      } else {
+        setRatings([]);
       }
-      setLoading(false);
-    };
+    } catch (error) {
+      setRatings([]);
+    }
+    setRatingsLoading(false);
+  };
+
+  useEffect(() => {
     fetchDetail();
   }, [id]);
 
   useEffect(() => {
-    console.log('ProductDetailpage id:', id); // Log the id for debugging
-    const fetchRatings = async () => {
-      setRatingsLoading(true);
-      try {
-        const result = await getAllRatingsBySellProduct(id);
-        console.log('API response for ratings:', result);
-        if (result && result.status) {
-          setRatings(result.data);
-          console.log('Ratings loaded:', result.data);
-        } else {
-          setRatings([]);
-          console.error('No ratings found or error loading ratings', result);
-        }
-      } catch (error) {
-        setRatings([]);
-        console.error('Error fetching ratings:', error);
-      }
-      setRatingsLoading(false);
-    };
-    if (id) fetchRatings();
+    fetchRatings();
   }, [id]);
 
   if (loading) {

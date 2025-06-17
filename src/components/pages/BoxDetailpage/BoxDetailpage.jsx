@@ -7,14 +7,16 @@ export default function BoxDetailpage() {
   const [box, setBox] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Move fetchDetail outside useEffect
+  const fetchDetail = async () => {
+    const result = await getMysteryBoxDetail(id);
+    if (result && result.status) {
+      setBox(result.data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchDetail = async () => {
-      const result = await getMysteryBoxDetail(id);
-      if (result && result.status) {
-        setBox(result.data);
-      }
-      setLoading(false);
-    };
     fetchDetail();
   }, [id]);
 

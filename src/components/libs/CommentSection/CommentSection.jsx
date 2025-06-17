@@ -9,23 +9,22 @@ const CommentSection = ({ sellProductId }) => {
   const [submitting, setSubmitting] = useState(false);
   const isLoggedIn = Boolean(localStorage.getItem('token'));
 
+  const fetchComments = async () => {
+    setLoading(true);
+    setError(null);
+    const result = await getAllCommentsBySellProduct(sellProductId);
+    if (result && result.status) {
+      setComments(result.data);
+    } else {
+      setError('Failed to load comments');
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchComments = async () => {
-      setLoading(true);
-      setError(null);
-      const result = await getAllCommentsBySellProduct(sellProductId);
-      if (result && result.status) {
-        setComments(result.data);
-      } else {
-        setError('Failed to load comments');
-      }
-      setLoading(false);
-    };
     if (sellProductId) {
       fetchComments();
     }
-    // Expose fetchComments for use in handleCommentSubmit
-    CommentSection.fetchComments = fetchComments;
   }, [sellProductId]);
 
   const handleCommentSubmit = async (e) => {
@@ -39,12 +38,10 @@ const CommentSection = ({ sellProductId }) => {
         setSubmitting(false);
         return;
       }
-      // Call API without userId
       const result = await createComment({ sellProductId, content: newComment });
       if (result && result.status) {
         setNewComment('');
         setError(null);
-        // Fetch comments again after successful comment creation
         fetchComments();
       } else {
         setError('Failed to post comment.');

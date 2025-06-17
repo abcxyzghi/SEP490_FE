@@ -8,33 +8,51 @@ export default function Shoppage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [error, setError] = useState(null);
+  const [errorProducts, setErrorProducts] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchBoxes = async () => {
-      try {
-        const result = await getAllMysteryBoxes();
-        if (result && result.status) {
-          setBoxes(result.data);
-        }
-      } finally {
-        setLoading(false);
+  
+  const fetchBoxes = async () => {
+    try {
+      const result = await getAllMysteryBoxes();
+      if (result && result.status) {
+        setBoxes(result.data);
+        setError(null);
+      } else {
+        setBoxes([]);
+        setError('Failed to load mystery boxes.');
       }
-    };
+    } catch {
+      setBoxes([]);
+      setError('Failed to load mystery boxes.');
+    }
+    setLoading(false);
+  };
+
+  
+  const fetchProducts = async () => {
+    try {
+      const result = await getAllProductsOnSale();
+      if (result && result.status) {
+        setProducts(result.data);
+        setErrorProducts(null);
+      } else {
+        setProducts([]);
+        setErrorProducts('Failed to load products.');
+      }
+    } catch {
+      setProducts([]);
+      setErrorProducts('Failed to load products.');
+    }
+    setLoadingProducts(false);
+  };
+
+  useEffect(() => {
     fetchBoxes();
   }, []);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const result = await getAllProductsOnSale();
-        if (result && result.status) {
-          setProducts(result.data);
-        }
-      } finally {
-        setLoadingProducts(false);
-      }
-    };
     fetchProducts();
   }, []);
 
@@ -49,6 +67,7 @@ export default function Shoppage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Mystery Boxes</h1>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
         {boxes.map((box) => (
           <div key={box.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -81,6 +100,7 @@ export default function Shoppage() {
       </div>
 
       <h1 className="text-3xl font-bold mb-8">Products On Sale</h1>
+      {errorProducts && <div className="text-red-500 mb-4">{errorProducts}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
           <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -103,7 +123,7 @@ export default function Shoppage() {
                 Add to Cart
               </button>
               <button
-                className="mt-2 w-full bg-gray-200 text-blue-700 py-2 px-4 rounded hover:bg-blue-100 transition-colors"
+                className="mt-2 w-full bg-gray-200 text-green-700 py-2 px-4 rounded hover:bg-green-100 transition-colors"
                 onClick={() => navigate(`/productdetailpage/${product.id}`)}
               >
                 View Detail
