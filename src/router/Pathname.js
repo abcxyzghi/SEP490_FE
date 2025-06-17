@@ -9,8 +9,7 @@ export const PATH_NAME = {
     BOXDETAIL_PAGE: "/boxdetailpage/:id",
     PRODUCTDETAIL_PAGE: "/productdetailpage/:id",
     SETTING_PAGE: "/settingpage",
-    PROFILE: "/profilepage/:id",
-    
+    PROFILE: "/profilepage/:id",    
     ADMIN_DASHBOARD: "/adminDashboard",
     ADMIN_USERMANGEMENT: "/adminUserManagement",
     ADMIN_SUBSCRIPTION: "/adminSubcription",

@@ -22,7 +22,10 @@ export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
     const [openForgotDialog, setOpenForgotDialog] = useState(false);
-    const [error, setError] = useState('');
+    const [loginAttempts, setLoginAttempts] = useState(0);
+    const [lockoutTime, setLockoutTime] = useState(null);
+    const MAX_ATTEMPTS = 10;
+    const LOCKOUT_DURATION = 30 * 60 * 1000; // 30 minutes
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -32,8 +35,23 @@ export default function LoginForm() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError('');
         const { userName, password } = form;
+
+        if (lockoutTime && Date.now() < lockoutTime) {
+            const remaining = Math.ceil((lockoutTime - Date.now()) / 60000);
+            setSnackbar({ open: true, message: `You have been temporarily blocked. You will be blocked for 30 minutes. Please try again in ${remaining} minute(s).`, severity: 'error' });
+            return;
+        }
+
+        if (!userName) {
+            setSnackbar({ open: true, message: 'Username or Email is required', severity: 'error' });
+            return;
+        }
+        if (!password) {
+            setSnackbar({ open: true, message: 'Password is required', severity: 'error' });
+            return;
+        }
+
         try {
             const params = new URLSearchParams();
             params.append('grant_type', 'password');
@@ -49,25 +67,35 @@ export default function LoginForm() {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
-            if (response.data.is_email_verification) {
-                localStorage.setItem('token', response.data.access_token);
-                localStorage.setItem('refreshToken', response.data.refresh_token);
-                alert('Login successful!');
-                navigate("/");
+            // Check for success and email verification
+            if (response.data && response.data.access_token) {
+                if (response.data.is_email_verification) {
+                    localStorage.setItem('token', response.data.access_token);
+                    localStorage.setItem('refreshToken', response.data.refresh_token);
+                    alert('Login successful!');
+                    setLoginAttempts(0);
+                    setLockoutTime(null);
+                    navigate("/");
+                } else {
+                    setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'error' });
+                }
             } else {
-                setError('Please verify your email before logging in.');
+                // If backend returns a message, show it, else generic error
+                setSnackbar({ open: true, message: response.data?.message || 'Login failed. Please check your credentials.', severity: 'error' });
             }
-        } catch {
-            setError('Login failed. Please check your credentials.');
+        } catch (err) {
+            setLoginAttempts(prev => {
+                const next = prev + 1;
+                if (next >= MAX_ATTEMPTS) {
+                    setLockoutTime(Date.now() + LOCKOUT_DURATION);
+                    setSnackbar({ open: true, message: `Too many attempts. You are locked out for ${LOCKOUT_DURATION / 60000} minutes.`, severity: 'error' });
+                } else {
+                    setSnackbar({ open: true, message: `Password is wrong. You have ${MAX_ATTEMPTS - next} attempt(s) left before lockout.`, severity: 'error' });
+                }
+                return next;
+            });
         }
     };
-
-    // // Logout function
-    // const handleLogout = () => {
-    //     localStorage.removeItem('access_token');
-    //     localStorage.removeItem('user');
-    //     window.location.reload();
-    // };
 
     return (
         <div className="login-container">
@@ -80,7 +108,7 @@ export default function LoginForm() {
                     <input
                         name="userName"
                         type="text"
-                        placeholder="User Name"
+                        placeholder="Username or Email"
                         className="login-input input-bordered h-12 oxanium-regular"
                         value={form.userName}
                         onChange={handleChange} />
@@ -114,8 +142,10 @@ export default function LoginForm() {
                 {/* Login submit button */}
                 <button type="submit" className="login-btn oleo-script-regular">Login</button>
             </form>
-            {error && (
-                <div style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</div>
+            {lockoutTime && Date.now() < lockoutTime && (
+                <div style={{ color: 'orange', textAlign: 'center', marginTop: 10 }}>
+                    Login temporarily unavailable. Please try again in {Math.ceil((lockoutTime - Date.now()) / 60000)} minute(s).
+                </div>
             )}
             <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
                 <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>

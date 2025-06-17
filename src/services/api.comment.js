@@ -20,3 +20,27 @@ export const getAllRatingsBySellProduct = async (sellProductId) => {
     return null;
   }
 };
+
+export const createComment = async ({ sellProductId, content }) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("You must be logged in to create a comment.");
+    }
+    const response = await api.post(
+      `https://mmb-be-dotnet.onrender.com/api/Comment/create-comment`,
+      { sellProductId, content },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    toast.error(
+      error.response?.data?.error || error.message || "Error creating comment"
+    );
+    return null;
+  }
+};
