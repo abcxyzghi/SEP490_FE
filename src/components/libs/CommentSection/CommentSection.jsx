@@ -7,6 +7,7 @@ const CommentSection = ({ sellProductId }) => {
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const isLoggedIn = Boolean(localStorage.getItem('token'));
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -23,6 +24,8 @@ const CommentSection = ({ sellProductId }) => {
     if (sellProductId) {
       fetchComments();
     }
+    // Expose fetchComments for use in handleCommentSubmit
+    CommentSection.fetchComments = fetchComments;
   }, [sellProductId]);
 
   const handleCommentSubmit = async (e) => {
@@ -36,18 +39,13 @@ const CommentSection = ({ sellProductId }) => {
         setSubmitting(false);
         return;
       }
-      // You may want to get userId from your auth context or decode the token
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        setError('User information not found. Please log in again.');
-        setSubmitting(false);
-        return;
-      }
-      const result = await createComment({ sellProductId, userId, content: newComment, rating: -1 });
+      // Call API without userId
+      const result = await createComment({ sellProductId, content: newComment });
       if (result && result.status) {
-        setComments((prev) => [result.data, ...prev]);
         setNewComment('');
         setError(null);
+        // Fetch comments again after successful comment creation
+        fetchComments();
       } else {
         setError('Failed to post comment.');
       }
@@ -69,12 +67,15 @@ const CommentSection = ({ sellProductId }) => {
           placeholder="Add a comment..."
           value={newComment}
           onChange={e => setNewComment(e.target.value)}
-          disabled={submitting}
+          disabled={submitting || !isLoggedIn}
         />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded" disabled={submitting}>
+        <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded" disabled={submitting || !isLoggedIn}>
           {submitting ? 'Posting...' : 'Post'}
         </button>
       </form>
+      {!isLoggedIn && (
+        <div className="text-sm text-gray-500 mb-2">You must be logged in to comment.</div>
+      )}
       {comments.length === 0 ? (
         <div>No comments yet.</div>
       ) : (
