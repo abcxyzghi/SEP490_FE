@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../../redux/features/userSlice';
 import './LoginForm.css';
 import ForgotPasswordDialog from '../ForgotPasswordDialog/ForgotPasswordDialog';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -27,6 +29,7 @@ export default function LoginForm() {
     const MAX_ATTEMPTS = 10;
     const LOCKOUT_DURATION = 30 * 60 * 1000; // 30 minutes
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -72,6 +75,7 @@ export default function LoginForm() {
                 if (response.data.is_email_verification) {
                     localStorage.setItem('token', response.data.access_token);
                     localStorage.setItem('refreshToken', response.data.refresh_token);
+                    dispatch(login(response.data));
                     alert('Login successful!');
                     setLoginAttempts(0);
                     setLockoutTime(null);
@@ -80,7 +84,6 @@ export default function LoginForm() {
                     setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'error' });
                 }
             } else {
-                // If backend returns a message, show it, else generic error
                 setSnackbar({ open: true, message: response.data?.message || 'Login failed. Please check your credentials.', severity: 'error' });
             }
         } catch (err) {

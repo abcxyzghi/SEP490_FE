@@ -44,6 +44,12 @@ export default function ProductDetailpage() {
     fetchRatings();
   }, [id]);
 
+  // Calculate average rating
+  const averageRating =
+    ratings.length > 0
+      ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+      : 0;
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
@@ -67,6 +73,13 @@ export default function ProductDetailpage() {
         {/* Ratings Section */}
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-2">Ratings</h2>
+          <div className="flex items-center mb-2">
+            {[...Array(5)].map((_, i) => (
+              <span key={i} className="text-yellow-500 text-xl">
+                {i < Math.round(averageRating) ? '★' : '☆'}
+              </span>
+            ))}
+          </div>
           {ratingsLoading ? (
             <div>Loading ratings...</div>
           ) : ratings.length === 0 ? (
@@ -75,8 +88,12 @@ export default function ProductDetailpage() {
             <div className="space-y-2">
               {ratings.map(rating => (
                 <div key={rating.id} className="border rounded p-2 flex items-center justify-between">
-                  <span className="font-semibold">{rating.username}</span>
-                  <span className="text-yellow-500 font-bold">{rating.rating} ★</span>
+                  <span className="font-semibold">{rating.username}</span> 
+                  <span className="text-yellow-500 font-bold">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i}>{i < rating.rating ? '★' : '☆'}</span>
+                    ))}
+                  </span>
                   <span className="text-xs text-gray-400">{new Date(rating.createdAt).toLocaleString()}</span>
                 </div>
               ))}

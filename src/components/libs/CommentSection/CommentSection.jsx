@@ -27,7 +27,10 @@ const CommentSection = ({ sellProductId }) => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (newComment.length > 1000) {
+      setError("Comment cannot exceed 1000 characters.");
+      return;
+    }
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
@@ -64,7 +67,11 @@ const CommentSection = ({ sellProductId }) => {
           onChange={e => setNewComment(e.target.value)}
           disabled={submitting || !isLoggedIn}
         />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded" disabled={submitting || !isLoggedIn}>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-1 rounded"
+          disabled={submitting || !isLoggedIn || !newComment.trim()}
+        >
           {submitting ? 'Posting...' : 'Post'}
         </button>
       </form>
@@ -81,7 +88,8 @@ const CommentSection = ({ sellProductId }) => {
             <div className="text-xs text-gray-400">{new Date(comment.createdAt).toLocaleString()}</div>
           </div>
         ))
-      )}
+      )
+      }
     </div>
   );
 };
