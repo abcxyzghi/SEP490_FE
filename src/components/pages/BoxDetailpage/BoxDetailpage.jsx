@@ -7,7 +7,7 @@ export default function BoxDetailpage() {
   const [box, setBox] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Move fetchDetail outside useEffect
+  // Fetch box details
   const fetchDetail = async () => {
     const result = await getMysteryBoxDetail(id);
     if (result && result.status) {
