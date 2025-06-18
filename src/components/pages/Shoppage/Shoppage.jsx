@@ -1,7 +1,10 @@
+
 import React, { useEffect, useState } from 'react'
+import ImageCarousel from '../../libs/Carousel/Carousel';
 import { getAllMysteryBoxes } from '../../../services/api.mysterybox'
 import { getAllProductsOnSale } from '../../../services/api.product'
 import { useNavigate } from 'react-router-dom'
+
 
 export default function Shoppage() {
   const [boxes, setBoxes] = useState([]);
@@ -65,6 +68,7 @@ export default function Shoppage() {
   }
 
   return (
+
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Mystery Boxes</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
@@ -132,7 +136,7 @@ export default function Shoppage() {
           </div>
         ))}
       </div>
-    </div>
+
   )
 }
 

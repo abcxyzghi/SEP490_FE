@@ -1,0 +1,57 @@
+.fancy-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    /* allow children to overflow */
+    overflow: visible;
+}
+
+.fancy-flow {
+    /* Force visible overflow */
+    overflow: visible !important;
+}
+
+.carousel-hover-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* change this to allow char-img to escape */
+    overflow: visible;
+    z-index: 1;
+    transition: all 0.3 ease;
+    will-change: transform;
+}
+
+.carousel-mainbg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+/* Position the character image outside and shrink it */
+.char-wrapper {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    /* transform: translateX(-50%); */
+    z-index: 3;
+    overflow: visible;
+}
+
+.char-img {
+    width: auto !important;
+    height: 80vh !important;
+    transform: translateY(0%);
+    transition: transform 0.1s ease-in-out;
+    border-radius: 0;
+    transform-style: preserve-3d;
+    will-change: opacity, transform;
+}
+
+@media (max-width: 600px) {
+    .swiper {
+        height: 400px;
+    }
+}

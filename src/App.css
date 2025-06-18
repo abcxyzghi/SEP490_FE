@@ -39,7 +39,7 @@
   --light-5-o70: rgba(195, 195, 195, 0.7);
   --light-5-o60: rgba(195, 195, 195, 0.6);
   --light-5-o50: rgba(195, 195, 195, 0.5);
-  
+
   /* Neutral color_dark */
   --dark-1: #656565;
   --dark-2: #545454;
@@ -107,7 +107,8 @@
   /* Primary color (Purple)*/
   --primary-1: #DC0FFF;
   --primary-2: #C80EE8;
-  --primary-3: #B60DD3;  /* Main color */
+  --primary-3: #B60DD3;
+  /* Main color */
   --primary-4: #A50CC0;
   --primary-5: #960BAF;
   --primary-6: #880A9F;
@@ -151,7 +152,8 @@
   /* Secondary color (Yellow)*/
   --secondary-1: #FFD721;
   --secondary-2: #FDCB2F;
-  --secondary-3: #FBBE3D;  /* Main color */
+  --secondary-3: #FBBE3D;
+  /* Main color */
   --secondary-4: #F9B24B;
   --secondary-5: #F8AC52;
   --secondary-6: #F7A559;
@@ -204,7 +206,7 @@
   --teal_blue-SVGcolor: invert(72%) sepia(100%) saturate(272%) hue-rotate(127deg) brightness(85%) contrast(87%);
   --cocoa_brown-SVGcolor: invert(44%) sepia(32%) saturate(4893%) hue-rotate(11deg) brightness(96%) contrast(90%);
   --fire_engine_red-SVGcolor: invert(32%) sepia(98%) saturate(5175%) hue-rotate(344deg) brightness(78%) contrast(116%);
-  
+
   /* Card rarity color*/
   --common-color: #B0B0B0;
   --uncommon-color: #3FB950;
@@ -212,10 +214,6 @@
   --epic-color: #A371F7;
   --legendary-color: #FFD700;
   /* padding: 0.5rem 0.2rem; */
-}
-
-body {
-  background-color: var(--page-mainBG);
 }
 
 /* System main fonts (2)*/
@@ -259,6 +257,39 @@ body {
   font-style: normal;
 }
 
+/* Apply global style */
+body {
+  margin: 0;
+  background-color: var(--page-mainBG);
+}
+
+html {
+  scrollbar-width: thin;
+  /* scrollbar-color: 'thumb' 'track'  */
+  scrollbar-color: var(--secondary-3-o60) var(--dark-5);
+  scroll-behavior: smooth;
+}
+
+/* Chrome, Edge, Safari */
+html::-webkit-scrollbar {
+  scrollbar-width: 2px !important;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--dark-1);
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: var(--secondary-1);
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+
 /* Block img interaction */
 img,
 .icon-class {
@@ -271,7 +302,23 @@ img,
 }
 
 
+/* Smooth scrool animation */
+@keyframes appear {
+  from{
+    opacity: 0;
+    scale: 0.4;
+  }
+  to{
+    opacity: 1;
+    scale: 1;
+  }
+}
 
+.block {
+  animation: appear 5s linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 40%;
+}
 
 
 
