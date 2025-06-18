@@ -1,7 +1,10 @@
-import React from 'react'
+import React from 'react';
+import ImageCarousel from '../../libs/Carousel/Carousel';
 
 export default function Shoppage() {
   return (
-    <div style={{marginTop: '200px'}}>Shoppage</div>
+    <div>
+      <ImageCarousel/>
+    </div>
   )
 }
