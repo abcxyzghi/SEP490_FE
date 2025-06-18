@@ -7,6 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import api from '../../../config/axios';
+import { useDispatch } from 'react-redux';
+import { login as loginAction } from '../../../redux/features/userSlice';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -24,6 +26,7 @@ export default function LoginForm() {
     const [openForgotDialog, setOpenForgotDialog] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -34,6 +37,10 @@ export default function LoginForm() {
         e.preventDefault();
         setError('');
         const { userName, password } = form;
+        // Use snackbar for validation feedback
+        if (!userName.trim() || !password.trim()) {
+            return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
+        }
         try {
             const params = new URLSearchParams();
             params.append('grant_type', 'password');
@@ -52,13 +59,15 @@ export default function LoginForm() {
             if (response.data.is_email_verification) {
                 localStorage.setItem('token', response.data.access_token);
                 localStorage.setItem('refreshToken', response.data.refresh_token);
+                // Dispatch redux login action
+                dispatch(loginAction(response.data));
                 alert('Login successful!');
                 navigate("/");
             } else {
-                setError('Please verify your email before logging in.');
+                setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'warning' });
             }
         } catch {
-            setError('Login failed. Please check your credentials.');
+            setSnackbar({ open: true, message: 'Login failed. Please check your credentials.', severity: 'error' });
         }
     };
 
