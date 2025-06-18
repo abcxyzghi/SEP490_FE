@@ -405,7 +405,7 @@
     background-image: var(--gradient-light-o90);
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: hue 2s infinite linear;
+    animation: hue 3s infinite linear;
 }
 
 @keyframes hue {
