@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './forgotPasswordDialog.css';
 import {
     Dialog,
     DialogTitle,
@@ -10,13 +11,19 @@ import {
     Step,
     StepLabel,
     Box,
+    Link,
     IconButton,
     InputAdornment,
+    StepConnector,
+    stepConnectorClasses,
     Snackbar,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Check from '@mui/icons-material/Check';
 import MuiAlert from '@mui/material/Alert';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { unstable_OneTimePasswordField as OTPField } from "radix-ui";
+import EmailSetting from '../../../assets/Icon_line/Setting_line.svg';
 import api from '../../../config/axios';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -37,6 +44,67 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     const [resendTimer, setResendTimer] = useState(30);
     const [loadingResetPwd, setLoadingResetPwd] = useState(false);
     const otpRefs = useRef([]);
+
+    // Stepper logic
+    // Connector
+    const QontoConnector = styled(StepConnector)(({ theme }) => ({
+        [`&.${stepConnectorClasses.alternativeLabel}`]: {
+            top: 10,
+            left: 'calc(-50% + 16px)',
+            right: 'calc(50% + 16px)',
+        },
+        [`&.${stepConnectorClasses.active}`]: {
+            [`& .${stepConnectorClasses.line}`]: {
+                borderColor: '#784af4',
+            },
+        },
+        [`&.${stepConnectorClasses.completed}`]: {
+            [`& .${stepConnectorClasses.line}`]: {
+                borderColor: '#784af4',
+            },
+        },
+        [`& .${stepConnectorClasses.line}`]: {
+            borderColor: '#eaeaf0',
+            borderTopWidth: 3,
+            borderRadius: 1,
+        },
+    }));
+
+    // Step Icon
+    const QontoStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+        color: '#eaeaf0',
+        display: 'flex',
+        height: 22,
+        alignItems: 'center',
+        ...(ownerState.active && {
+            color: '#784af4',
+        }),
+        '& .QontoStepIcon-completedIcon': {
+            color: '#784af4',
+            zIndex: 1,
+            fontSize: 18,
+        },
+        '& .QontoStepIcon-circle': {
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            backgroundColor: 'currentColor',
+        },
+    }));
+
+    function QontoStepIcon(props) {
+        const { active, completed, className } = props;
+
+        return (
+            <QontoStepIconRoot ownerState={{ active }} className={className}>
+                {completed ? (
+                    <Check className="QontoStepIcon-completedIcon" />
+                ) : (
+                    <div className="QontoStepIcon-circle" />
+                )}
+            </QontoStepIconRoot>
+        );
+    }
 
     // Countdown func
     useEffect(() => {
@@ -188,78 +256,126 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs" PaperProps={{
-            sx: {
-                borderRadius: 4,
-                background: 'linear-gradient(to bottom right, #ffffff, #f0f0f0)',
-            },
-        }}>
-            <DialogTitle className='oxanium-semibold'>Forgot Password</DialogTitle>
-            <DialogContent>
-                <Stepper alternativeLabel activeStep={activeStep} sx={{ mb: 3 }}>
-                    {steps.map((label) => (
-                        <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
-                        </Step>
-                    ))}
-                </Stepper>
+        // The 'ForgotPasswordDialog' reuse most style from 'OtpDialog'
+        <Dialog
+            className='forgotPasswordDialog-container'
+            open={open}
+            onClose={onClose}
+            fullWidth maxWidth="xs"
+            PaperProps={{ className: 'forgotPasswordDialog-animated-shadow' }}
+        >
+            <div class="card__border"></div>
+            {/* Modal content wrapper */}
+            <div className='forgotPasswordDialog-box'>
+                <div className='otpDialog-header'>
+                    <div className='otpDialog-title oxanium-semibold'>Forgot Password</div>
 
-                {activeStep === 0 && (
-                    <Box mt={3}>
-                        {/* <TextField
+                    <img
+                        src={EmailSetting}
+                        alt="Email setting icon"
+                        className='otpDialog-header-icon'
+                    />
+                </div>
+                <DialogContent>
+                    {/* Modal stepper */}
+                    <Stepper
+                        alternativeLabel
+                        activeStep={activeStep}
+                        connector={<QontoConnector />}
+                        sx={{ mb: 3 }}
+                    >
+                        {steps.map((label, index) => (
+                            <Step key={label}>
+                                <StepLabel
+                                    StepIconComponent={QontoStepIcon}
+                                    sx={{
+                                        '& .MuiStepLabel-label': {
+                                            color: index === activeStep ? '#784af4 !important' : 'var(--light-2)',
+                                            fontWeight: index === activeStep ? 'oxanium-semibold' : 'oxanium-regular',
+                                        },
+                                    }}
+                                >
+                                    {label}
+                                </StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+
+                    {/* Email inputs */}
+                    {activeStep === 0 && (
+                        <Box mt={3}>
+                            {/* <TextField
                             fullWidth
                             label="Email"
                             variant="outlined"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         /> */}
-                        <div className="login-form-control">
-                            <input
-                                name="email"
-                                type="email"
-                                placeholder="Email"
-                                className="login-input h-12 oxanium-regular w-full"
-                                // required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                    </Box>
-                )}
+                            <div className="forgotPasswordDialog-control">
+                                <input
+                                    name="email"
+                                    type="email"
+                                    placeholder="Email"
+                                    className="forgotPasswordDialog-input h-12 oxanium-regular w-full"
+                                    // required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                        </Box>
+                    )}
 
-                {activeStep === 1 && (
-                    <Box>
-                        <OTPField.Root
-                            className="flex justify-between gap-1"
-                            value={otp}
-                            onValueChange={setOtp}
-                            maxLength={6}
-                        >
-                            {Array.from({ length: 6 }).map((_, i) => (
-                                <OTPField.Input
-                                    key={i}
-                                    aria-label={`OTP ${i + 1}`}
-                                    inputMode="numeric"
-                                    type="tel"
-                                    className="OTPInput border border-gray-300 text-center text-lg rounded-md py-2 w-10 oxanium-semibold"
-                                />
-                            ))}
-                            <OTPField.HiddenInput />
-                        </OTPField.Root>
+                    {/* OTP inputs */}
+                    {activeStep === 1 && (
+                        <Box>
+                            <OTPField.Root
+                                className="flex justify-center gap-2 items-center"
+                                value={otp}
+                                onValueChange={setOtp}
+                                maxLength={6}
+                            >
+                                {Array.from({ length: 6 }).map((_, i) => (
+                                    <OTPField.Input
+                                        key={i}
+                                        aria-label={`OTP ${i + 1}`}
+                                        inputMode="numeric"
+                                        type="tel"
+                                        className="OTPInput OTPInput-custom border text-center text-lg rounded-md py-2 w-10 oxanium-semibold"
+                                    />
+                                ))}
+                                <OTPField.HiddenInput />
+                            </OTPField.Root>
 
-                        <Box mt={2} textAlign="center">
-                            <div className="oxanium-regular">Your code will expire in {`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</div>
-                            {resendTimer > 0 ? (
+                            <Box mt={2} textAlign="center">
+                                <div className="otpDialog-countDownEvent oxanium-regular">Your code will expire in {`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</div>
+                                {/* {resendTimer > 0 ? (
                                 <div className="oxanium-light">Resend code in {resendTimer}s</div>
                             ) : (
                                 <Button onClick={handleResend} size="small">Click to resend</Button>
-                            )}
-                        </Box>
-                    </Box>
-                )}
+                            )} */}
 
-                {activeStep === 2 && (
-                    <Box mt={3}>
-                        <TextField
+                                <div className='otpDialog-botLink oxanium-semibold' variant="caption" align="center" >
+                                    Didn't get the code?{' '}
+                                    {/* Link trigger resend code api */}
+                                    <Link
+                                        component="button"
+                                        onClick={handleResend}
+                                        disabled={resendTimer > 0}
+                                        sx={{
+                                            color: 'var(--secondary-1)',
+                                            textDecoration: 'none',
+                                            pointerEvents: resendTimer > 0 ? 'none' : 'auto'
+                                        }}>
+                                        Click to resend {resendTimer > 0 ? `(${resendTimer}s)` : ''}
+                                    </Link>
+                                </div>
+                            </Box>
+                        </Box>
+                    )}
+
+                    {/* Password and Confirm Password inputs | And yes, I reuse RegisterForm style too */}
+                    {activeStep === 2 && (
+                        <Box mt={3}>
+                            {/* <TextField
                             fullWidth
                             label="New Password"
                             type={showPassword ? 'text' : 'password'}
@@ -293,24 +409,57 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                                     </InputAdornment>
                                 ),
                             }}
-                        />
-                    </Box>
-                )}
-            </DialogContent>
+                        /> */}
 
-            <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
-                <Button variant="contained" onClick={handleNext} disabled={loadingResetPwd}>
-                    {loadingResetPwd ? 'Please wait...' : activeStep === 2 ? 'Reset Password' : 'Next'}
-                </Button>
-            </DialogActions>
+                            <div className="forgotPasswordDialog-form-row">
+                                <div className="forgotPasswordDialog-control forgotPasswordDialog-password-wrapper">
+                                    <input
+                                        name="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="New Password"
+                                        className="forgotPasswordDialog-input input-pw h-12 oxanium-regular"
+                                        // required
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                    <IconButton className="register-toggle-icon" sx={{color: 'var(--light-2)'}} onClick={() => setShowPassword(!showPassword)} size="small">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </div>
+                                <div className="forgotPasswordDialog-control forgotPasswordDialog-password-wrapper">
+                                    <input
+                                        name="confirmPassword"
+                                        type={showConfirm ? 'text' : 'password'}
+                                        placeholder="Confirm Password"
+                                        className="forgotPasswordDialog-input input-pw h-12 oxanium-regular"
+                                        // required
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                    <IconButton className="register-toggle-icon" sx={{color: 'var(--light-2)'}} onClick={() => setShowConfirm(!showConfirm)} size="small">
+                                        {showConfirm ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </div>
+                            </div>
+                        </Box>
+                    )}
+                </DialogContent>
 
-            <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
+                {/* Modal stepper buttons */}
+                <DialogActions>
+                    <div className='forgotPasswordDialog-Cancel-btn' onClick={onClose}>Cancel</div>
+                    {activeStep > 0 && <div className='forgotPasswordDialog-Back-btn' onClick={handleBack}>Back</div>}
+                    <div className='forgotPasswordDialog-Submit-btn' onClick={handleNext} disabled={loadingResetPwd}>
+                        {loadingResetPwd ? 'Please wait...' : activeStep === 2 ? 'Reset Password' : 'Next'}
+                    </div>
+                </DialogActions>
+
+                <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                    <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
+            </div>
         </Dialog>
     );
 }
