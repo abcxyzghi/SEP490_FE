@@ -6,16 +6,15 @@ export const PATH_NAME = {
     SHOP_PAGE: "/shoppage",
     AUNCTION_PAGE: "/auctionpage",
     AUNCTION_ROOM: "/auctionroom/:id",
-    BOXDETAIL_PAGE: "/boxdetailpage",
-    PRODUCTDETAIL_PAGE: "/productdetailpage",
+    BOXDETAIL_PAGE: "/boxdetailpage/:id",
+    PRODUCTDETAIL_PAGE: "/productdetailpage/:id",
     SETTING_PAGE: "/settingpage",
-    PROFILE: "/profilepage/:id",
-    
+    PROFILE: "/profilepage/:id",    
     ADMIN_DASHBOARD: "/adminDashboard",
     ADMIN_USERMANGEMENT: "/adminUserManagement",
     ADMIN_SUBSCRIPTION: "/adminSubcription",
 };
-
+// domain sau dấu "/" nếu id là 123 thì nó là /123
 /**
  * Utility function to retrieve a route path by name.
  * @param {string} routeKey - The key representing the route.
