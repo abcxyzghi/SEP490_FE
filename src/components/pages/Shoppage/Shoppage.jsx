@@ -136,6 +136,7 @@ export default function Shoppage() {
           </div>
         ))}
       </div>
+      </div>
 
   )
 }

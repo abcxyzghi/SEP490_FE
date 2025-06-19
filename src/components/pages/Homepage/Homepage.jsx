@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './Homepage.css';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import AnimatedSection from '../../instants/AnimatedSection';
+import ParallaxTitle from '../../instants/ParallaxTitle';
 import FancyCarousel from '../../libs/FancyCarousel/FancyCarousel';
 // import comic
 import ComicOP from '../../../assets/homeGallery/comic/One piece comic bg.png';
@@ -51,15 +53,36 @@ export default function Homepage() {
     CardChar15, CardChar16, CardChar17, CardChar18,
   ];
 
+  const comicLeftRef = useRef();
+  const comicRightRef = useRef();
+  const boxLeftRef = useRef();
+  const boxRightRef = useRef();
+  const cardLeftRef = useRef();
+  const cardRightRef = useRef();
+
+  const comicLeftInView = useInView(comicLeftRef, { once: false });
+  const comicRightInView = useInView(comicRightRef, { once: false });
+  const boxLeftInView = useInView(boxLeftRef, { once: false });
+  const boxRightInView = useInView(boxRightRef, { once: false });
+  const cardLeftInView = useInView(cardLeftRef, { once: false });
+  const cardRightInView = useInView(cardRightRef, { once: false });
+
   return (
-    <div className='homepage-container'>
+    <div className='homepage-container  '>
       {/* Carousel section*/}
       <FancyCarousel />
 
       <div className='homepage-content'>
         {/* Comic section */}
-        <div className='homepage-comic-container'>
-          <div className='homepage-comic-left'>
+        <div className='homepage-comic-container max-w-screen-2xl mx-auto '>
+          <motion.div
+            className='homepage-comic-left'
+            ref={comicLeftRef}
+            initial={{ opacity: 0, y: 80 }}
+            animate={comicLeftInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+            transition={{ duration: 0.8 }}
+          // viewport={{ once: true, amount: 0.4 }}
+          >
             <div className='homepage-comic-title oleo-script-bold'>
               <h2>Characters from your favorite Manga</h2>
             </div>
@@ -67,33 +90,54 @@ export default function Homepage() {
               <p>Explore a gallery of the most beloved characters in manga history, immortalized through premium artwork and timeless design.<br />
                 This collection is crafted for collectors and fans who appreciate the artistry, narrative depth, and cultural impact of manga worldwide.</p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className='homepage-comic-right'>
+          <motion.div
+            className='homepage-comic-right'
+            ref={comicRightRef}
+            initial={{ opacity: 0, y: 80 }}
+            animate={comicRightInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          // viewport={{ once: true, amount: 0.4 }}
+          >
             <div className='homepage-comic-card-wrapper'>
               {comicImages.map((comic, index) => (
-                <div key={index} className={`homepage-comic-card homepage-comic-card-${index + 1}`}>
+                <div key={index} className={`homepage-comic-card homepage-comic-card-${index + 1} `}>
                   <img src={comic} alt={`homepage-comic-${index + 1}`} />
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
 
 
         {/* Box section */}
-        <div className='homepage-box-container'>
-          <div className='homepage-box-left'>
+        <div className='homepage-box-container max-w-screen-2xl mx-auto '>
+          <motion.div
+            className='homepage-box-left'
+            ref={boxLeftRef}
+            initial={{ opacity: 0, x: -60 }}
+            animate={boxLeftInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, amount: 0.4 }}
+          >
             <div className='homepage-box-card-wrapper'>
               {boxImages.map((box, index) => (
-                <div key={index} className={`homepage-box-card homepage-box-card-${index + 1}`}>
+                <div key={index} className={`homepage-box-card homepage-box-card-${index + 1} `}>
                   <img src={box} alt={`box-${index + 1}`} />
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className='homepage-box-right'>
+          <motion.div
+            className='homepage-box-right'
+            ref={boxRightRef}
+            initial={{ opacity: 0, x: 60 }}
+            animate={boxRightInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true, amount: 0.4 }}
+          >
             <div className='homepage-box-title oleo-script-bold'>
               <h2>Boxes waited to be discovered</h2>
             </div>
@@ -101,13 +145,20 @@ export default function Homepage() {
               <p>Every box is a limited-edition release featuring handpicked content: from out-of-print manga to collectible items and hidden gems.<br />
                 Whether you're growing your shelf or searching for the next rare find, our mystery boxes are crafted with care, quality, and passion.</p>
             </div>
-          </div>
+          </motion.div>
         </div>
 
 
         {/* Card section */}
-        <div className='homepage-card-container'>
-          <div className='homepage-card-left'>
+        <div className='homepage-card-container max-w-screen-2xl mx-auto '>
+          <motion.div
+            className='homepage-card-left'
+            ref={cardLeftRef}
+            initial={{ opacity: 0, y: 60 }}
+            animate={cardLeftInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+            transition={{ duration: 0.8 }}
+          // viewport={{ once: true, amount: 0.4 }}
+          >
             <div className='homepage-box-title oleo-script-bold'>
               <h2>Bet your luck on most beloved Legendary</h2>
             </div>
@@ -116,14 +167,21 @@ export default function Homepage() {
                 Each pull is an opportunity to uncover something truly legendary.
                 Meticulously printed and securely sealed, our cards are crafted for serious collectors who seek the thrill of rarity and the joy of discovery.</p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className='homepage-card-right'>
+          <motion.div
+            className='homepage-card-right'
+            ref={cardRightRef}
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={cardRightInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true, amount: 0.4 }}
+          >
             <div className="homepage-card-hover-wrapper">
               <img src={CardEL} alt="Main Card" className="homepage-card-base" />
               <img src={CardToChar} alt="Character Reveal" className="homepage-card-reveal" />
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Cards carousel section */}
@@ -150,12 +208,14 @@ export default function Homepage() {
             </motion.div>
           </div>
 
-          <div className='homepage-cardSlider-title oleo-script-bold'>
-            <h2>
-              Obtain <br />
-              - <br />
-              Build your collections
-            </h2>
+          <div className='homepage-cardSlider-title oleo-script-bold text-5xl sm:text-6xl md:text-7xl lg:text-[103px] xl:text-[118px]'>
+            <ParallaxTitle>
+              <h2>
+                Obtain <br />
+                - <br />
+                Build your collections
+              </h2>
+            </ParallaxTitle>
           </div>
         </div>
       </div>
