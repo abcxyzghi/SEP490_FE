@@ -166,6 +166,8 @@ export default function Shoppage() {
             </div>
           </div>
 
+
+
           <div className="shoppage-card-container">
             <div className="shoppage-card-grid">
               {displayedItems.map((item, index) => {

@@ -29,3 +29,17 @@
     height: 400px;
   }
 }
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .swiper {
+        height: 350px;
+    }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .swiper {
+        height: 300px;
+    }
+}

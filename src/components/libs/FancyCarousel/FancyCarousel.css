@@ -55,3 +55,43 @@
         height: 400px;
     }
 }
+
+/* For screen width ≤ 990px */
+@media (max-width: 990px) {
+    .char-wrapper {
+        right: -50%;
+    }
+
+    .char-img {
+        height: 60vh !important;
+        transform: translateY(0%);
+    }
+  
+}
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .char-wrapper {
+        left: 20%;
+    }
+
+    .char-img {
+        height: 60vh !important;
+        transform: translateY(0%);
+    }
+  
+}
+
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .char-wrapper {
+        left: 10%;
+    }
+
+    .char-img {
+        height: 50vh !important;
+        transform: translateY(0%);
+    }
+  
+}

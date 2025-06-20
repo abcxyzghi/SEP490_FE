@@ -4,6 +4,8 @@
 
 .homepage-content {
     margin: 0 30px 210px 30px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 /* Comic/Box/Card/Cards carousel section */
@@ -20,7 +22,8 @@
 
 .homepage-comic-title h2,
 .homepage-box-title h2 {
-    font-size: 48px;
+    /* font-size: 48px; */
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
     text-align: center;
     line-height: 1.15;
     color: var(--secondary-4);
@@ -43,7 +46,7 @@
 }
 
 .homepage-comic-left {
-    flex: 1;
+    flex: 1 1 300px;
     padding: 40px;
     display: flex;
     flex-direction: column;
@@ -51,7 +54,7 @@
 }
 
 .homepage-comic-right {
-    flex: 2;
+    flex: 2 1 500px;
     position: relative;
     display: flex;
     align-items: center;
@@ -136,7 +139,7 @@
 }
 
 .homepage-box-left {
-    flex: 2;
+    flex: 2 1 300px;
     position: relative;
     display: flex;
     align-items: center;
@@ -144,7 +147,7 @@
 }
 
 .homepage-box-right {
-    flex: 1;
+    flex: 1 1 300px;
     padding: 40px 50px;
     display: flex;
     flex-direction: column;
@@ -168,6 +171,8 @@
     background-position: center;
     transition: transform 0.3s ease, z-index 0.2s ease;
     cursor: pointer;
+    aspect-ratio: 20/8.;
+
     /* opacity: 0.9;
   filter: brightness(0.85); */
 }
@@ -283,10 +288,11 @@
 .homepage-card-container {
     display: flex;
     padding: 0 20px;
+    padding-inline: 5vw;
 }
 
 .homepage-card-left {
-    flex: 1;
+    flex: 1 1 300px;
     padding: 40px;
     display: flex;
     flex-direction: column;
@@ -294,7 +300,7 @@
 }
 
 .homepage-card-right {
-    flex: 2;
+    flex: 2 1 450px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -325,10 +331,11 @@
 .homepage-card-reveal {
     position: absolute;
     top: -25%;
-    right: 0%;
+    right: -10%;
     width: auto;
     height: auto;
     object-fit: cover;
+    aspect-ratio: 20/8.;
     transform: scale(0.95);
     filter: drop-shadow(-1px 0 1px var(--secondary-1));
     /* where its card goes invisible */
@@ -390,15 +397,16 @@
 .homepage-cardSlider-title {
     width: 100%;
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
     text-align: center;
+    /* height: 270px; */
+    height: 100%;
     color: var(--dark-1);
-    /* optional: choose contrast color */
     pointer-events: none;
-    font-size: 118px;
+    /* font-size: 118px; */
     line-height: 0.7;
     flex-grow: 1;
 
@@ -409,11 +417,301 @@
 }
 
 @keyframes hue {
-  from {
-    filter: hue-rotate(0deg);
-  }
+    from {
+        filter: hue-rotate(0deg);
+    }
 
-  to {
-    filter: hue-rotate(360deg);
-  }
+    to {
+        filter: hue-rotate(360deg);
+    }
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 1200px */
+@media (max-width: 1200px) {
+
+    .homepage-comic-container,
+    .homepage-box-container,
+    .homepage-card-container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        padding: 30px;
+    }
+
+    .homepage-comic-title h2,
+    .homepage-box-title h2 {
+        font-size: 38px;
+        text-align: center;
+    }
+
+    .homepage-comic-description p,
+    .homepage-box-description p {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+}
+
+
+/* For screen width ≤ 1025px */
+@media (max-width: 1025px) {
+
+    .homepage-cardSlider-title {
+        top: 45%;
+    }
+
+}
+
+
+/* For screen width ≤ 1000px */
+@media (max-width: 1000px) {
+
+    .homepage-comic-description p,
+    .homepage-box-description p {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .homepage-comic-card-3 {
+        top: 50%;
+        right: -30%;
+    }
+
+    .homepage-card-hover-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .homepage-card-base {
+        width: 80%;
+    }
+
+
+    .homepage-card-reveal {
+        position: absolute;
+        top: -25%;
+        right: 0%;
+        width: 90%;
+        height: auto;
+    }
+}
+
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .homepage-content {
+        margin: 0 20px 160px 20px;
+    }
+
+    .homepage-comic-container,
+    .homepage-box-container,
+    .homepage-card-container,
+    .homepage-cardSlider-container {
+        margin-top: 100px;
+    }
+
+    .homepage-comic-container,
+    .homepage-box-container,
+    .homepage-card-container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+    }
+
+    .homepage-comic-title h2,
+    .homepage-box-title h2 {
+        font-size: 36px;
+        text-align: center;
+    }
+
+    .homepage-comic-description p,
+    .homepage-box-description p {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .homepage-comic-card {
+        height: 200px;
+        width: 60%;
+    }
+
+    .homepage-card-left {
+        flex: 1 1 200px;
+    }
+
+    .homepage-card-right {
+        flex: 2 1 400px;
+    }
+
+    .homepage-card-reveal {
+        position: absolute;
+        top: -10%;
+        right: 8%;
+        width: 80%;
+        height: auto;
+    }
+
+}
+
+/* For screen width ≤ 640px */
+@media (max-width: 640px) {
+    .homepage-box-card-wrapper {
+        height: 200px;
+    }
+
+    .homepage-box-left {
+        flex: 2 1 100px;
+    }
+
+    /* Re-positions for stacking for respnsive*/
+    .homepage-box-card-1 {
+        z-index: 1;
+        left: 0px;
+        transform: translateY(-50%);
+    }
+
+    .homepage-box-card-2 {
+        z-index: 2;
+        left: 50px;
+        transform: translateY(-50%);
+    }
+
+    .homepage-box-card-3 {
+        z-index: 3;
+        left: 100px;
+        transform: translateY(-50%);
+    }
+
+    .homepage-box-card-4 {
+        z-index: 4;
+        left: 150px;
+        transform: translateY(-50%);
+    }
+
+    .homepage-box-card-5 {
+        z-index: 5;
+        left: 200px;
+        transform: translateY(-50%);
+    }
+
+    .homepage-card-left {
+        flex: 1 1 100px;
+    }
+
+    .homepage-card-right {
+        flex: 2 1 200px;
+    }
+
+    .homepage-card-reveal {
+        position: absolute;
+        top: 6%;
+        right: 5%;
+        width: 87%;
+        height: auto;
+    }
+
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .homepage-content {
+        margin: 0 10px 120px 10px;
+    }
+
+    .homepage-comic-container,
+    .homepage-box-container,
+    .homepage-card-container,
+    .homepage-cardSlider-container {
+        margin-top: 80px;
+    }
+
+    .homepage-comic-title h2,
+    .homepage-box-title h2 {
+        font-size: 28px;
+    }
+
+    .homepage-comic-description p,
+    .homepage-box-description p {
+        font-size: 0.6rem;
+    }
+
+    .homepage-comic-left {
+        flex: 1 1 100px;
+        padding: 10px;
+    }
+
+    .homepage-comic-right {
+        flex: 2 1 200px;
+    }
+
+    .homepage-comic-card {
+        height: 100px;
+        width: 60%;
+    }
+
+    .homepage-box-card-wrapper {
+        height: 180px;
+    }
+
+    .homepage-box-left {
+        flex: 2 1 180px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .homepage-box-right {
+        flex: 1 1 100px;
+        padding: 10px;
+
+    }
+
+    .homepage-card-hover-wrapper {
+        height: 200px;
+    }
+
+    .homepage-card-left {
+        flex: 1 1 70px;
+        padding: 10px;
+
+    }
+
+    .homepage-card-right {
+        flex: 2 1 70px;
+    }
+
+    .homepage-card-reveal {
+        position: absolute;
+        top: 17%;
+        right: 7%;
+        width: 85%;
+        height: auto;
+    }
+
+    .card-slide-img {
+        /* adapts to screen size */
+        width: clamp(180px, 12vw, 160px);
+        height: 90%;
+    }
+
+    .homepage-cardWrapper {
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 105%;
+        /* gap: 5px; */
+    }
+
+    .homepage-cardSlider-title {
+        font-size: 36px;
+    }
+
 }
