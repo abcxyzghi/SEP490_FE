@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useRef } from 'react';
 import './Homepage.css';
 import { motion } from 'framer-motion';
 import FancyCarousel from '../../libs/FancyCarousel/FancyCarousel';
