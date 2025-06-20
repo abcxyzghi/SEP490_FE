@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Oleo+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxanium&display=swap');
+
+.footer {
+  background: linear-gradient(90deg, #3c3733, #4c433e);
+  padding: 40px 20px 20px 20px;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.footer-logo{
+    flex:1;
+}
+.footer-logo img {
+  height: 120px;
+}
+
+.footer-about, .footer-info-links {
+  flex: 1;
+  margin: 0 20px;
+}
+
+.footer-title {
+  font-weight: bold;
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+ font-family: 'Oleo Script', cursive;
+  font-style: italic;
+}
+
+.footer-title .icon {
+  width: 30px;
+  margin-right: 10px;
+}
+
+.footer-info p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #ccc;
+  display: flex;
+  margin-bottom: 28px;
+  font-family: 'Oxanium', sans-serif;
+
+  align-items: center;
+}
+
+.footer-info img {
+  margin-right: 15px;
+  color:white;
+  filter: brightness(0) invert(1);
+}
+
+.footer-links {
+  display: flex;
+  gap: 50px;
+}
+
+.footer-links p {
+  font-size: 20px;
+  color: hsl(0, 0%, 80%);
+  margin: 12px 0 0 0;
+    font-family: 'Oxanium', sans-serif;
+}
+
+.footer-links p:first-child {
+  margin-top: 0;
+}
+.footer-bottom {
+  margin-top: 30px;
+  text-align: center;
+  position: relative;
+  padding-top: 10px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.footer-bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px; /* chiều dài đường kẻ bạn muốn */
+  border-top: 1px solid #999;
+}
+
+.footer-about , .footer-info-links{
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+}
