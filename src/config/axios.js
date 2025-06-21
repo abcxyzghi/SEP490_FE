@@ -59,7 +59,8 @@ api.interceptors.response.use(
     if (error.response?.status === 403) {
       console.warn("Không có quyền truy cập vào tài nguyên này.");
       localStorage.clear();
-      window.location.href = "/login";
+      // window.location.href = "/login"; // Removed to prevent forced refresh
+      // Optionally, you can dispatch a Redux action, show a message, or handle it in the component
     }
 
     return Promise.reject(error);
