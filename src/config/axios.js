@@ -51,16 +51,18 @@ api.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
+        // Redirect to login if both tokens are expired/invalid
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
-    // 403: Không đủ quyền
+    // // 403: Không đủ quyền
     if (error.response?.status === 403) {
       console.warn("Không có quyền truy cập vào tài nguyên này.");
-      localStorage.clear();
-      // window.location.href = "/login"; // Removed to prevent forced refresh
-      // Optionally, you can dispatch a Redux action, show a message, or handle it in the component
+    //   localStorage.clear();
+    //   // window.location.href = "/login"; // Removed to prevent forced refresh
+    //   // Optionally, you can dispatch a Redux action, show a message, or handle it in the component
     }
 
     return Promise.reject(error);
