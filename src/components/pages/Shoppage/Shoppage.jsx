@@ -12,6 +12,8 @@ import vectorIcon from '../../../assets/icon/Vector.svg';
 import CartIcon from '../../../assets/icon/Bag_fill.svg';
 import { Carousel } from 'antd';
 import CarouselCustom from '../../libs/CarouselCustom/CarouselCustom';
+import { addToCart } from '../../../services/api.cart';
+import { useDispatch } from 'react-redux'; 
 
 export default function Shoppage() {
   const [boxes, setBoxes] = useState([]);
@@ -21,6 +23,7 @@ export default function Shoppage() {
   const [error, setError] = useState(null);
   const [errorProducts, setErrorProducts] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const fetchBoxes = async () => {
     try {
@@ -61,6 +64,26 @@ export default function Shoppage() {
     fetchProducts();
   }, []);
 
+const handleAddToCart = async (item) => {
+  try {
+    let payload = {};
+    if (selectedTab === 'Mystery Boxes') {
+      payload.mangaBoxId = item.id;
+    } else if (selectedTab === 'Collection Store') {
+      payload.sellProductId = item.id;
+    }
+    if (!payload.sellProductId && !payload.mangaBoxId) {
+      alert('❌ Failed to add to cart: No valid product or box ID.');
+      return;
+    }
+    await addToCart(payload);
+    // Add to Redux cart only after successful API call
+    alert('🛒 Added to cart successfully');
+  } catch (error) {
+    alert('❌ Failed to add to cart');
+  }
+}
+
   const [selectedFilter, setSelectedFilter] = useState('');
   const [selectedSort, setSelectedSort] = useState('');
   const [showFilterMenu, setShowFilterMenu] = useState(false);
@@ -97,7 +120,7 @@ export default function Shoppage() {
         <CarouselCustom
           images={[
             "https://fastcdn.hoyoverse.com/content-v2/hk4e/155721/6afd763b38f1255d26e3aaf8336bfa63_8683997898591472370.jpg",
-            "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/5e5896a5-4a79-496a-bea4-81f26cfa2650/dg68yoy-f436e5aa-1b8c-45a7-b35f-99cd7c0d0af4.png/v1/fill/w_1151,h_694/genshin_impact_version_wallpaper_4_0_by_deg5270_dg68yoy-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzcyIiwicGF0aCI6IlwvZlwvNWU1ODk2YTUtNGE3OS00OTZhLWJlYTQtODFmMjZjZmEyNjUwXC9kZzY4eW95LWY0MzZlNWFhLTFiOGMtNDVhNy1iMzVmLTk5Y2Q3YzBkMGFmNC5wbmciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.ZgwwiMHZUGdnac7mILUHEj_hHUnMooU-lwkuOUfk3Lc",
+            "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/5e5896a5-4a79-496a-bea4-81f26cfa2650/dg68yoy-f436e5aa-1b8c-45a7-b35f-99cd7c0d0af4.png",
             "https://fastcdn.hoyoverse.com/content-v2/hk4e/155721/6afd763b38f1255d26e3aaf8336bfa63_8683997898591472370.jpg"
           ]}
         />
@@ -166,12 +189,11 @@ export default function Shoppage() {
             </div>
           </div>
 
-
-
           <div className="shoppage-card-container">
             <div className="shoppage-card-grid">
               {displayedItems.map((item, index) => {
                 const isExpanded = expandedCardIndex === index;
+                const type = selectedTab === 'Mystery Boxes' ? 'box' : 'product';
                 return (
                   <div className={`shoppage-card-item ${isExpanded ? 'shoppage-card-item--expanded' : ''}`} key={index}>
                     {selectedTab === 'Mystery Boxes' && (
@@ -206,14 +228,16 @@ export default function Shoppage() {
                               <span className="shoppage-view-button-text">View Detail</span>
                             </button>
 
-                            <button className="shoppage-cart-button">
+                            <button
+                              className="shoppage-cart-button"
+                              onClick={() => handleAddToCart(item, type)}
+                            >
                               <img src={CartIcon} alt="Cart Icon" style={{ width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '4px' }} />
                               Cart
                             </button>
                           </div>
                         </>
                       )}
-
                     </div>
                   </div>
                 );
@@ -221,9 +245,8 @@ export default function Shoppage() {
             </div>
             <button className="shoppage-loadmore-button">Load more</button>
           </div>
-
         </div>
       </div>
     </div>
-  )
+  );
 }

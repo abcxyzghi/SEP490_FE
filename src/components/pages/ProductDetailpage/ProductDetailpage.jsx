@@ -11,7 +11,7 @@ export default function ProductDetailpage() {
   const [ratings, setRatings] = useState([]);
   const [ratingsLoading, setRatingsLoading] = useState(true);
 
-  // Move fetchDetail outside useEffect
+  
   const fetchDetail = async () => {
     const result = await getProductOnSaleDetail(id);
     if (result && result.status) {
@@ -20,7 +20,7 @@ export default function ProductDetailpage() {
     setLoading(false);
   };
 
-  // Move fetchRatings outside useEffect
+  
   const fetchRatings = async () => {
     setRatingsLoading(true);
     try {
