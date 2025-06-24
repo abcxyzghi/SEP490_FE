@@ -1,0 +1,101 @@
+/* Sort trigger  */
+.sort-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.sort-button {
+    background-color: var(--light-3);
+    border: 2px solid var(--primary-4);
+    color: black;
+    padding: 5px 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    min-width: 130px;
+}
+
+.sort-button:hover {
+    background-color: var(--light-4);
+}
+
+.sort-icon-wrap {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    /* Prevents shrinking on small screens */
+    flex-shrink: 0;
+}
+
+.sort-icon {
+    width: 20px;
+    height: 20px;
+    filter: #000000;
+    padding: 0.2rem;
+    background-color: #ffffff;
+    border-radius: 5px;
+    /* Ensure padding does not shrink the icon size */
+    box-sizing: content-box;
+    display: inline-block;
+}
+
+.sort-icon-wrap:hover .sort-icon {
+    background-color: var(--light-2);
+}
+
+/* Sort dropdown container (real one)*/
+.sort-menu {
+    position: absolute;
+    top: 105%;
+    right: 0;
+    background: var(--light-2-o90);
+    padding: 4px 2px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 140px;
+    z-index: 10;
+}
+
+.sort-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sort-menu li:hover,
+.sort-menu .active {
+    background-color: var(--light-2);
+    border-radius: 8px;
+    margin: 0 2px;
+    padding: 8px 10px;
+}
+
+.sort-selected-option {
+    font-weight: 600;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .sort-button {
+    font-size: 15px;
+}
+
+.sort-icon{
+    width: 20px;
+    height: 20px;
+}
+
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  
+}

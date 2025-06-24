@@ -1,419 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Oxanium&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Oleo+Script&display=swap');
-/* Áp dụng font cho toàn bộ trang */
-body {
-  font-family: 'Oxanium', sans-serif;
+.shoppage-container {
+  overflow-x: hidden;
 }
-.shoppage-divider {
-height: 0.1rem;
-    background-color: white;
-    border-radius: 2px;
-   margin: 100px 100px 20px 100px;
-}
-button.shoppage-filter-button svg , button.shoppage-sort-button svg  {
-  vertical-align: middle;
-}
-button.shoppage-filter-button,button.shoppage-sort-button {
-  line-height: 1;
-}
-.shoppage-content-container{
-  display: flex;
-  justify-content:center;
-  align-items: center;
 
+.shoppage-divider {
+  height: 0.1rem;
+  background-color: white;
+  border-radius: 2px;
+  margin: 100px 100px 20px 100px;
 }
-.shoppage-content{
-    width: 1200px;
-    display: flex;
-margin:auto;
-  flex-direction: column;
-}
+
+/* Filter wrapper */
 .shoppage-search-filter-wrapper {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 20px;
-  justify-content: center;
-}
-
-.shoppage-search-bar {
-  display: flex;
-  align-items: center;
-  border: 1px solid white;
-  border-radius: 15px;
-  overflow: hidden;
-  background-color: #1c1c1c;
-}
-
-.shoppage-search-button {
-background: linear-gradient(to bottom, #960BAF, #F8AC52);
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  font-weight: 600;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  margin: 1px 2px 1px 2px;
-}
-
-.shoppage-search-input {
-  background-color: #1c1c1c;
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  width: 500px;
-  font-size: 14px;
-  outline: none;
-}
-
-.shoppage-avatar img {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 3px solid #2196f3;
-  object-fit: cover;
-  margin-left: 8px;
-}
-
-/* Button chung */
-.shoppage-filter-button,
-.shoppage-sort-button {
-  background-color: #DFDFDF;
-  border: 2px solid #A50CC0;
-  color: black;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  min-width:130px;
-}
-.shoppage-tab-container{
-  display: flex;
   justify-content: center;
   align-items: center;
-}
-/* Tabs ở trên */
-.shoppage-tab-wrapper {
-  display: inline-flex;         /* Chiều rộng vừa khít với nội dung */
-  margin: 0 auto -2px auto;
-  margin-bottom: -2px; /* để tab active chồng lên border container */
-  border-bottom: 2px solid #FFD721; /* để tạo phần nối nếu tab không active */
-    background-color: #2a2d3f;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-.shoppage-tab {
-  padding: 8px 20px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  background-color: #2a2d3f;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-    border-bottom: none;
-   font-family: 'Oleo Script', cursive;
-
-}
-
-.shoppage-tab.active {
-  background: linear-gradient(to bottom, #DC0FFF, #FFD721);
-  color: white;
-}
-
-/* Card container với border gradient */
-.shoppage-card-container {
-  border: 2px solid transparent;
-  border-radius: 16px;
-  padding: 24px;
-  background-color: #0c0e20;
-  border-image: linear-gradient(to bottom, #FFD721, #DC0FFF) 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 1200px;
-  margin: 0 auto;
-}
-
-.shoppage-card-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* ✅ Luôn 4 cột */
-  gap: 32px;
-  width: 100%;
-  justify-items: start; /* ✅ Căn trái các item trong ô */
-}
-.shoppage-card-item {
-  background-color: #2a2d3f;
-  border-radius: 12px;
-border-top-left-radius: 12px;
-border-top-right-radius: 12px;
-border-bottom-left-radius: 0;
-border-bottom-right-radius: 0;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  max-width: 220px;
-  width: 220px;
-    border: 2px solid #545454;
-  position: relative;
-   border-radius: 8px;
-   height:330px;
-}
-
-.shoppage-card-item:hover {
-  transform: translateY(-4px);
-}
-
-.shoppage-card-item--active {
-
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
-}
-.shoppage-card-item--expanded {
-  position: relative;
-
-  z-index: 0;
-
-}
-
-.shoppage-card-item--expanded::before {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  z-index: -1;
-  border-radius: 10px 10px 0 0;
-  padding: 2px; /* độ dày border */
-
-  background: linear-gradient(to bottom, #960BAF, #F8AC52);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
+  /* flex-wrap: wrap; */
+  gap: 7px;
+  margin: 20px auto;
 }
 
 
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
 
-/* Mũi tên toggle */
-.shoppage-card-toggle {
-  text-align: center;
-  font-size: 24px;
-  color: #2F2F2F;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* For screen width ≤ 1000px */
+@media (max-width: 1000px) {
+  .shoppage-search-filter-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin: 20px 20%;
+  }
 }
 
-/* Info chỉ hiển thị khi card mở */
-.shoppage-card-info {
-  text-align: center;
-  margin-top: 12px;
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .shoppage-search-filter-wrapper {
+    margin: 20px 15%;
+  }
 }
 
-.shoppage-card-title {
-  font-weight: bold;
-  color: #2F2F2F;
-  margin-top: 10px;
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  .shoppage-search-filter-wrapper {
+    margin: 20px 6%;
+  }
 }
 
-.shoppage-card-price {
-  color: #DC0FFF;
-  font-weight: 600;
-  margin-top: 4px;
-  text-align: left;
-}
-
-.shoppage-card-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-}
-
-.shoppage-view-button {
-  position: relative;
-  padding: 0;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  background: transparent;
-  overflow: hidden;
-  font-family: 'Oleo Script', cursive;
-  font-size: 12px;
-  font-weight: bold;
-}
-.shoppage-carousel{
-  margin-left: 30px;
-  margin-right: 30px;
-}
-
-/* Viền gradient */
-.shoppage-view-button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: 10px;
-  background: linear-gradient(to bottom, #DC0FFF, #FFD721);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  z-index: 0;
-}
-
-/* Nền mờ bên trong */
-.shoppage-view-button::after {
-  content: "";
-  position: absolute;
-  inset: 1px; /* nằm bên trong phần viền */
-  background-color: rgba(244, 244, 244, 0.7); /* F4F4F4 70% */
-  border-radius: 8px;
-  z-index: 0;
-}
-
-/* Chữ gradient nằm trên cùng */
-.shoppage-view-button-text {
-  display: block;
-  padding: 6px 10px;
-  border-radius: 8px;
-
-  background-image: linear-gradient(to bottom, #DC0FFF, #FFD721);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-
-  position: relative;
-  z-index: 1; /* ✅ Nằm trên nền mờ */
-}
-
-
-.shoppage-cart-button {
-  position: relative;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: bold;
-  font-family: 'Oleo Script', cursive;
-
-  color: #656565; /* ✅ Màu chữ không gradient */
-  background-color: transparent;
-  border: none;
-  border-radius:10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-
-  z-index: 1;
-  overflow: hidden;
-}
-
-/* Viền gradient giả lập */
-.shoppage-cart-button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 1px;
-  border-radius: 10px;
-  background: linear-gradient(to bottom, #DC0FFF, #FFD721);
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  z-index: -1;
-}
-
-.shoppage-card-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.7); /* Nền mờ */
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  transition: height 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* Load more button */
-.shoppage-loadmore-button {
-  margin-top: 40px;
-  padding: 8px 20px;
-  border: 1px solid #FFD721;
-  border-radius: 12px;
-  background: transparent;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-
-  /* Gradient chữ */
-  background: linear-gradient(to bottom, #DC0FFF, #880A9F);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text; /* For Firefox */
-}
-.shoppage-loadmore-button:hover {
-  background-color: rgba(255, 0, 204, 0.1);
-}
-.dropdown-menu {
-  position: absolute;
-  top: 100%; /* đặt ngay dưới button */
-  left: 0;
-  z-index: 999; /* đảm bảo nằm trên */
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 8px 0;
-  margin-top: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  min-width: 130px;
-}
-
-.dropdown-menu > div {
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.dropdown-menu > div:hover {
-  background-color: #f5f5f5;
-}
-.shoppage-card-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  filter: blur(8px);
-  opacity: 0.3;
-  z-index: 0;
-}
-
-.shoppage-card-background img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.shoppage-card-image {
-  position: relative;
-  z-index: 0;
-  width: 100%;
-  height: auto;
-}

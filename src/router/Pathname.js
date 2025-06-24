@@ -8,6 +8,7 @@ export const PATH_NAME = {
     AUNCTION_ROOM: "/auctionroom/:id",
     BOXDETAIL_PAGE: "/boxdetailpage/:id",
     PRODUCTDETAIL_PAGE: "/productdetailpage/:id",
+    COLLECTIONDETAIL_PAGE: "/collectiondetailpage/:id",
     SETTING_PAGE: "/settingpage",
     PROFILE: "/profilepage/:id",    
     ADMIN_DASHBOARD: "/adminDashboard",
@@ -15,6 +16,9 @@ export const PATH_NAME = {
     ADMIN_SUBSCRIPTION: "/adminSubcription",
 };
 // domain sau dấu "/" nếu id là 123 thì nó là /123
+// "productdetailpage" chứa sản phẩm của ng bán; "collectiondetailpage" chứa sản phẩm dạng view
+
+
 /**
  * Utility function to retrieve a route path by name.
  * @param {string} routeKey - The key representing the route.
