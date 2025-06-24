@@ -12,6 +12,12 @@ import AuctionIcon from '../../../assets/Icon_fill/Auction_fill.svg';
 import CartIcon from '../../../assets/Icon_fill/Bag_fill.svg';
 import PlusIcon from '../../../assets/Icon_line/add-01.svg';
 import ProfileIcon from '../../../assets/Icon_line/User_cicrle.svg';
+// Importing other assets
+import ArrowDropdown from '../../../assets/Icon_fill/Arrow_drop_down.svg';
+import Chat from '../../../assets/Icon_fill/comment_fill.svg';
+import Notification from '../../../assets/Icon_fill/Bell_fill.svg';
+import Setting from '../../../assets/Icon_fill/Setting_fill.svg';
+import Logout from '../../../assets/Icon_fill/Sign_out_squre_fill.svg';
 
 
 export default function Navigation() {

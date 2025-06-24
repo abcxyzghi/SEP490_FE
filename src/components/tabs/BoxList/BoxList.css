@@ -1,4 +1,4 @@
-.productList-card-list-container {
+.boxList-card-list-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,14 +11,14 @@
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
 }
-.productList-card-list-container::-webkit-scrollbar {
+.boxList-card-list-container::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
 
 
 
 /* Main container (not include 'Load more' button)*/
-.productList-card-grid {
+.boxList-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   /* justify-content: left; */
@@ -28,7 +28,7 @@
 }
 
 
-.productList-card-item {
+.boxList-card-item {
   background-color: var(--dark-5);
   border-radius: 12px 12px 0 0;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
@@ -41,7 +41,7 @@
 }
 
 /* Card Item Hover Effect */
-.productList-card-item:hover {
+.boxList-card-item:hover {
   /* Must be 4-char alpha-hex make gradient border work */
   border: 2px solid #0000;
   background:
@@ -50,7 +50,7 @@
 }
 
 /* Card Item Expanded State */
-.productList-card-item--expanded {
+.boxList-card-item--expanded {
   /* Must be 4-char alpha-hex make gradient border work */
   border: 2px solid #0000;
   background:
@@ -60,7 +60,7 @@
 
 
 /* The product duplicate image use for background */
-.productList-card-background {
+.boxList-card-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -72,14 +72,14 @@
   z-index: 0;
 }
 
-.productList-card-background img {
+.boxList-card-background img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 /* The product image use for display */
-.productList-card-image {
+.boxList-card-image {
   position: relative;
   z-index: 0;
   width: 100%;
@@ -87,7 +87,7 @@
 }
 
 /* Info slide container bottom -> up */
-.productList-card-overlay {
+.boxList-card-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -101,7 +101,7 @@
 }
 
 /* Toggle Arrow */
-.productList-card-toggle {
+.boxList-card-toggle {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -109,7 +109,7 @@
 }
 
 /* Contain inside the bottom slide */
-.productList-card-title {
+.boxList-card-title {
   text-align: left;
   font-size: 18px;
   color: var(--dark-4);
@@ -117,7 +117,7 @@
 }
 
 
-.productList-card-price {
+.boxList-card-price {
   color: var(--primary-2);
   margin-top: 4px;
   font-size: 16px;
@@ -126,14 +126,14 @@
 
 
 /* 'View Detail' and 'Add to cart' buttons */
-.productList-card-actions {
+.boxList-card-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
 }
 
 /* View Detail btn */
-.productList-view-button{
+.boxList-view-button{
   border-radius: 10px;
   padding: 3px 15px;
   cursor: pointer;
@@ -144,7 +144,7 @@
     linear-gradient(#DC0FFF, #FFD721) border-box;
 }
 
-.productList-view-button-text {
+.boxList-view-button-text {
   font-size: 16px;
   background: linear-gradient(#DC0FFF, #FFD721);
     background-clip: text;  /* Standard property for compatibility */
@@ -153,7 +153,7 @@
     -webkit-text-fill-color: transparent;
 }
 
-.productList-view-button:hover {
+.boxList-view-button:hover {
   border: 2px solid #0000;
   background:
     linear-gradient(var(--light-3-o90), var(--light-3-o90)) padding-box,
@@ -161,7 +161,7 @@
 }
 
 /* Cart btn */
-.productList-cart-button {
+.boxList-cart-button {
   position: relative;
   padding: 6px 12px;
 
@@ -176,7 +176,7 @@
   overflow: hidden;
 }
 
-.productList-cart-button::before {
+.boxList-cart-button::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -187,11 +187,11 @@
   mask-composite: exclude;
 }
 
-.productList-cart-button:hover {
+.boxList-cart-button:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.productList-cart-icon{
+.boxList-cart-icon{
   width: 16px;
   height: 16px;
   filter: var(--darkSVG-3);
@@ -199,7 +199,7 @@
 
 
 /*  Load More Button */
-.productList-loadmore-button {
+.boxList-loadmore-button {
   margin: 40px auto 0 auto;
   padding: 4px 20px;
   border: 1px solid var(--secondary-2);
@@ -211,12 +211,12 @@
   cursor: pointer;
 }
 
-.productList-loadmore-button:hover {
+.boxList-loadmore-button:hover {
   background-color: rgba(255, 196, 0, 0.1);
 }
 
 /* End of content */
-.productList-end-content{
+.boxList-end-content{
   margin-top: 40px ;
   text-align: center;
   font-size: 16px;

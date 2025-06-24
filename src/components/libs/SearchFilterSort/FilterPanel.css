@@ -1,0 +1,166 @@
+/* Filter trigger  */
+.filter-panel-button {
+    background-color: var(--light-3);
+    border: 2px solid var(--primary-4);
+    color: black;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    min-width: 130px;
+}
+
+.filter-panel-button:hover {
+    background-color: var(--light-4);
+}
+
+.filter-panel-icon{
+    width: 21px;
+    height: 21px;
+}
+
+
+/* Filter panel when dropdown */
+.filter-panel {
+    position: absolute;
+    top: 105%;
+    left: 0px;
+    z-index: 10;
+    background-color: var(--light-2-o90);
+    border-radius: 16px;
+    padding: 16px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.filter-title {
+    font-size: 1.2rem;
+    color: var(--dark-5);
+}
+
+.filter-section {
+    background-color: var(--light-2);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.filter-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.price-display {
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: var(--dark-5);
+    background-color: var(--light-5);
+    border-radius: 2px;
+    padding: 4px 12px;
+    width: fit-content;
+}
+
+.price-range {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: var(--secondary-2);
+    border-radius: 4px;
+    outline: none;
+}
+
+.price-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--light-2);
+    border: 2px solid black;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.rarity-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rarity-card {
+    flex: 1 1 calc(33.333% - 8px);
+    padding: 8px 12px;
+    border: 1px solid gray;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: gray;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rarity-card.active {
+    color: white;
+}
+
+/* Example active rarity colors */
+.rarity-card.Common.active {
+    /* light gray */
+    background-color: var(--common-color);
+    border-color: #a0a0a0;
+}
+
+.rarity-card.Uncommon.active {
+    /* green */
+    background-color: var(--uncommon-color);
+    border-color: #388e3c;
+}
+
+.rarity-card.Rare.active {
+    /* blue */
+    background-color: var(--rare-color);
+    border-color: #196bbc;
+}
+
+.rarity-card.Epic.active {
+    /* purple */
+    background-color: var(--epic-color);
+    border-color: #7b1fa2;
+}
+
+.rarity-card.Legendary.active {
+    /* yellow */
+    background-color: var(--legendary-color);
+    border-color: #f57c00;
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .filter-panel-button {
+    font-size: 15px;
+}
+
+.filter-panel-icon{
+    width: 20px;
+    height: 20px;
+}
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  
+}
