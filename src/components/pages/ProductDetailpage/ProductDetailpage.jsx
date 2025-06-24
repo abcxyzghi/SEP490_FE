@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getProductOnSaleDetail } from '../../../services/api.product'
@@ -11,7 +12,7 @@ export default function ProductDetailpage() {
   const [ratings, setRatings] = useState([]);
   const [ratingsLoading, setRatingsLoading] = useState(true);
 
-  // Move fetchDetail outside useEffect
+  
   const fetchDetail = async () => {
     const result = await getProductOnSaleDetail(id);
     if (result && result.status) {
@@ -20,7 +21,7 @@ export default function ProductDetailpage() {
     setLoading(false);
   };
 
-  // Move fetchRatings outside useEffect
+  
   const fetchRatings = async () => {
     setRatingsLoading(true);
     try {
@@ -63,7 +64,7 @@ export default function ProductDetailpage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <img src={product.urlImage} alt={product.name} className="w-full h-64 object-cover rounded mb-4" />
+        <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name} className="w-full h-64 object-cover rounded mb-4" />
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
         <p className="text-gray-700 mb-4">{product.description}</p>
         <p className="text-lg font-semibold mb-2">Topic: {product.topic}</p>

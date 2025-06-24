@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import ImageCarousel from '../../libs/Carousel/Carousel';
 import './Shoppage.css';
+
 import SearchBar from '../../libs/SearchFilterSort/SearchBar';
 import FilterPanel from '../../libs/SearchFilterSort/FilterPanel';
 import SortDropdown from '../../libs/SearchFilterSort/SortDropdown';
@@ -19,10 +20,12 @@ export default function Shoppage() {
   const [ascending, setAscending] = useState(true);
 
   useEffect(() => {
+
     if (activeTab !== 'Collection Store') {
       setSelectedRarities([]); // Clear when switching tab
     }
   }, [activeTab]);
+
 
   // if (loading || loadingProducts) {
   //   return (
@@ -34,9 +37,12 @@ export default function Shoppage() {
 
   return (
     <div className="shoppage-container">
+
       <ImageCarousel />
 
+
       <div className="shoppage-divider" />
+
 
       <div className="shoppage-content-container">
         <div className="shoppage-search-filter-wrapper">
@@ -91,8 +97,9 @@ export default function Shoppage() {
             // A way to track active tab label and call setActiveTab.
             onTabChange={(label) => setActiveTab(label)}
           />
+
         </div>
       </div>
     </div>
-  )
+  );
 }

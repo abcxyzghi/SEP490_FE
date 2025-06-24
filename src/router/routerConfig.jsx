@@ -11,6 +11,7 @@ import BoxDetailpage from "../components/pages/BoxDetailpage/BoxDetailpage";
 import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDetailpage";
 import Settingpage from "../components/pages/Settingpage/Settingpage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
+import Cartpage from "../components/pages/Cartpage/Cartpage";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -25,6 +26,7 @@ export const publicRoutes = [
     { path: PATH_NAME.BOXDETAIL_PAGE, element: <BoxDetailpage /> },
     { path: PATH_NAME.PRODUCTDETAIL_PAGE, element: <ProductDetailpage /> },
     { path: PATH_NAME.PROFILE, element: <Profilepage /> },
+    { path: PATH_NAME.CART_PAGE, element: <Cartpage /> }, 
 ];
 
 export const privateRoutes = [
