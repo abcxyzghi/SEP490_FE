@@ -5,6 +5,9 @@ import { getAllProductsOnSale } from '../../../services/api.product';
 import CubeLoader from '../../libs/CubeLoader/CubeLoader';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import AddToCart from '../../../assets/Icon_fill/Bag_fill.svg';
+import { addToCart } from '../../../services/api.cart';
+import { useDispatch } from 'react-redux';
+import { addItemToCart } from '../../../redux/features/cartSlice';
 
 const PAGE_SIZE = 8;
 
@@ -15,6 +18,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -107,6 +111,29 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
   const truncate = (str, n) => (str.length > n ? str.slice(0, n - 1) + '…' : str);
 
+  // Add to cart handler
+  const handleAddToCart = async (productId) => {
+    try {
+      await addToCart({ sellProductId: productId });
+      // Find the product info for Redux
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        dispatch(addItemToCart({
+          id: product.id,
+          type: 'product',
+          name: product.name,
+          price: product.price,
+          image: product.urlImage,
+          quantity: 1
+        }));
+      }
+      alert('✅ Added to cart!');
+    } catch (error) {
+      alert('❌ Failed to add to cart.');
+      console.error(error);
+    }
+  };
+
   return (
     <div className="productList-card-list-container">
       <div className="productList-card-grid">
@@ -120,9 +147,9 @@ export default function ProductList({ searchText, selectedSort, ascending, price
               onMouseLeave={() => setExpandedCardIndex(null)}
             >
               <div className="productList-card-background">
-                <img src={item.urlImage} alt={`${item.name} background`} />
+                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
               </div>
-              <img src={item.urlImage} alt={item.name} className="productList-card-image" />
+              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.name} className="productList-card-image" />
               <div
                 className={`productList-card-overlay ${isExpanded ? 'productList-card-overlay--expanded' : ''}`}
                 onClick={() => setExpandedCardIndex(isExpanded ? null : index)}
@@ -158,7 +185,13 @@ export default function ProductList({ searchText, selectedSort, ascending, price
                         >
                           <span className="productList-view-button-text oleo-script-bold">View Detail</span>
                         </button>
-                        <button className="productList-cart-button oleo-script-bold">
+                        <button
+                          className="productList-cart-button oleo-script-bold"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(item.id);
+                          }}
+                        >
                           <img src={AddToCart} alt="Cart Icon" className='productList-cart-icon' />
                           Cart
                         </button>

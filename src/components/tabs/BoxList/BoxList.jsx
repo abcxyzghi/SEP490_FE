@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { getAllMysteryBoxes } from '../../../services/api.mysterybox';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import AddToCart from '../../../assets/Icon_fill/Bag_fill.svg';
+import { addToCart } from '../../../services/api.cart';
+import { useDispatch } from 'react-redux'; // <-- Import useDispatch
+import { addItemToCart } from '../../../redux/features/cartSlice'; // <-- Import addItemToCart
 
 const PAGE_SIZE = 8;
 
@@ -14,6 +17,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
     const [expandedCardIndex, setExpandedCardIndex] = useState(null);
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const navigate = useNavigate();
+    const dispatch = useDispatch(); // <-- Add dispatch
 
     useEffect(() => {
         const fetchBoxes = async () => {
@@ -103,6 +107,29 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
     const noSearchResults = boxes.length > 0 && filteredBoxes.length === 0;
 
 
+    // Add to cart handler
+    const handleAddToCart = async (boxId) => {
+        try {
+            await addToCart({ mangaBoxId: boxId });
+            // Find the box info for Redux
+            const box = boxes.find(b => b.id === boxId);
+            if (box) {
+                dispatch(addItemToCart({
+                    id: box.id,
+                    type: 'mangaBox',
+                    name: box.mysteryBoxName,
+                    price: box.mysteryBoxPrice,
+                    image: box.urlImage,
+                    quantity: 1
+                }));
+            }
+            alert('✅ Added to cart!');
+        } catch (error) {
+            alert('❌ Failed to add to cart.');
+            console.error(error);
+        }
+    };
+
     return (
         <div className="boxList-card-list-container">
             <div className="boxList-card-grid">
@@ -118,9 +145,9 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                             onMouseLeave={() => setExpandedCardIndex(null)}
                         >
                             <div className="boxList-card-background">
-                                <img src={item.urlImage} alt={`${item.name} background`} />
+                                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
                             </div>
-                            <img src={item.urlImage} alt={item.mysteryBoxName} className="boxList-card-image" />
+                            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.mysteryBoxName} className="boxList-card-image" />
                             <div
                                 className={`boxList-card-overlay ${isExpanded ? 'boxList-card-overlay--expanded' : ''}`}
                                 onClick={() => setExpandedCardIndex(isExpanded ? null : index)}
@@ -156,7 +183,13 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                                                 >
                                                     <span className="boxList-view-button-text oleo-script-bold">View Detail</span>
                                                 </button>
-                                                <button className="boxList-cart-button oleo-script-bold">
+                                                <button
+                                                    className="boxList-cart-button oleo-script-bold"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleAddToCart(item.id);
+                                                    }}
+                                                >
                                                     <img src={AddToCart} alt="Cart Icon" className='boxList-cart-icon' />
                                                     Cart
                                                 </button>
