@@ -37,7 +37,6 @@ export default function LoginForm() {
         e.preventDefault();
         setError('');
         const { userName, password } = form;
-        // Use snackbar for validation feedback
         if (!userName.trim() || !password.trim()) {
             return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
         }
@@ -46,9 +45,6 @@ export default function LoginForm() {
             params.append('grant_type', 'password');
             params.append('username', userName);
             params.append('password', password);
-            params.append('scope', '');
-            params.append('client_id', 'string');
-            params.append('client_secret', 'string');
 
             const response = await api.post('api/user/auth/login', params, {
                 headers: {
@@ -56,20 +52,47 @@ export default function LoginForm() {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
-            if (response.data.is_email_verification) {
-                localStorage.setItem('token', response.data.access_token);
-                localStorage.setItem('refreshToken', response.data.refresh_token);
-                // Dispatch redux login action
-                dispatch(loginAction(response.data));
-                alert('Login successful!');
+            const data = response.data;
+            if (data && data.access_token && data.is_email_verification) {
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('refreshToken', data.refresh_token);
+                dispatch(loginAction(data));
+                setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
                 navigate("/");
-            } else {
+            } else if (data && data.is_email_verification === false) {
                 setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'warning' });
+            } else if (data && data.success === false && data.error_code === 403) {
+                setSnackbar({ open: true, message: data.error || 'Incorrect username or password!', severity: 'error' });
+            } else {
+                setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
             }
-        } catch {
-            setSnackbar({ open: true, message: 'Login failed. Please check your credentials.', severity: 'error' });
-        }
-    };
+        } catch (error) {
+        console.error('API call error:', error);
+
+    const responseData = error?.response?.data;
+
+    if (responseData?.error_code === 403 ) {
+        setSnackbar({
+            open: true,
+            message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts. Please try again later.',
+            severity: 'error'
+    });
+    } else if (responseData?.error_code === 404) {
+        setSnackbar({
+            open: true,
+            message: responseData.error || 'Login Failed ! Incorrect username or password!',
+            severity: 'error'
+    });
+    } else {
+        setSnackbar({
+            open: true,
+            message: 'Login failed. Please check your credentials.',
+            severity: 'error'
+    });
+    }
+
+   }
+};
 
     // // Logout function
     // const handleLogout = () => {
@@ -124,7 +147,7 @@ export default function LoginForm() {
                 <button type="submit" className="login-btn oleo-script-regular
                 backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden">
                     <div
-                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
                     ></div>
                     Login
                 </button>

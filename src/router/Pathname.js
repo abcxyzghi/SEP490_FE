@@ -13,6 +13,7 @@ export const PATH_NAME = {
     ADMIN_DASHBOARD: "/adminDashboard",
     ADMIN_USERMANGEMENT: "/adminUserManagement",
     ADMIN_SUBSCRIPTION: "/adminSubcription",
+    CART_PAGE: "/cartpage",
 };
 // domain sau dấu "/" nếu id là 123 thì nó là /123
 /**
