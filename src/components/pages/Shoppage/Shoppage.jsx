@@ -13,7 +13,7 @@ import CartIcon from '../../../assets/icon/Bag_fill.svg';
 import { Carousel } from 'antd';
 import CarouselCustom from '../../libs/CarouselCustom/CarouselCustom';
 import { addToCart } from '../../../services/api.cart';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux'; 
 
 import { addItemToCart } from '../../../redux/features/cartSlice';
 export default function Shoppage() {
