@@ -68,7 +68,7 @@
   height: 100%;
   filter: blur(8px);
   opacity: 0.5;
-  scale: 1.1;
+  scale: 0.9;
   z-index: 0;
 }
 
@@ -80,9 +80,11 @@
 
 /* The product image use for display */
 .productList-card-image {
-  position: relative;
-  z-index: 0;
-  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75% !important;
   height: auto;
 }
 
@@ -116,12 +118,24 @@
   margin-top: 10px;
 }
 
+.productList-sub-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
 
 .productList-card-price {
   color: var(--primary-2);
-  margin-top: 4px;
   font-size: 16px;
   text-align: left;
+}
+
+.productList-card-sellerName{
+  color: var(--dark-3);
+  font-size: 12px;
+  text-align: right;
 }
 
 

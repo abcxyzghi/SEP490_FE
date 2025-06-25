@@ -8,6 +8,7 @@
 .footer-container {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 0 auto;
   flex-wrap: wrap;
   width: 100%;
@@ -23,6 +24,7 @@
   max-width: 100%;
   height: auto;
   display: block;
+  filter: drop-shadow(0px 4px 1px var(--light-5));
 }
 
 .footer-about,
@@ -102,6 +104,10 @@
   border-top: 1px solid #999;
 }
 
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
 @media (max-width: 900px) {
   .footer-container {
     flex-direction: column;
@@ -117,11 +123,11 @@
     max-width: 400px;
     align-items: center;
   }
-  .footer-links {
+  /* .footer-links {
     flex-direction: column;
     gap: 20px;
     align-items: center;
-  }
+  } */
 }
 
 @media (max-width: 600px) {
