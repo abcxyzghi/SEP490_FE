@@ -54,7 +54,7 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
 
                     <div className="filter-section">
                         <label className="filter-label oxanium-semibold">Price Range</label>
-                        <div className="price-display oxanium-regular">{price < 500 ? `${price}.000 VND` : 'Any price'}</div>
+                        <div className="price-display oxanium-regular">{price < 500 ? `under ${price}.000 VND` : 'Any price'}</div>
                         <input
                             type="range"
                             min="0"
