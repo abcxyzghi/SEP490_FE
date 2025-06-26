@@ -95,8 +95,8 @@ export default function ProductList({ searchText, selectedSort, ascending, price
         break;
       case 'Release date':
       default:
-        valA = new Date(a.releaseDate || 0);
-        valB = new Date(b.releaseDate || 0);
+        valA = new Date(a.createdAt || 0);
+        valB = new Date(b.createdAt || 0);
         break;
     }
     if (valA < valB) return ascending ? -1 : 1;

@@ -25,6 +25,7 @@ export default function LoginForm() {
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
     const [openForgotDialog, setOpenForgotDialog] = useState(false);
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -35,6 +36,8 @@ export default function LoginForm() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (isLoading) return; // Prevent spam
+        setIsLoading(true);
         setError('');
         const { userName, password } = form;
         if (!userName.trim() || !password.trim()) {
@@ -67,32 +70,34 @@ export default function LoginForm() {
                 setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
             }
         } catch (error) {
-        console.error('API call error:', error);
+            console.error('API call error:', error);
 
-    const responseData = error?.response?.data;
+            const responseData = error?.response?.data;
 
-    if (responseData?.error_code === 403 ) {
-        setSnackbar({
-            open: true,
-            message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts. Please try again later.',
-            severity: 'error'
-    });
-    } else if (responseData?.error_code === 404) {
-        setSnackbar({
-            open: true,
-            message: responseData.error || 'Login Failed ! Incorrect username or password!',
-            severity: 'error'
-    });
-    } else {
-        setSnackbar({
-            open: true,
-            message: 'Login failed. Please check your credentials.',
-            severity: 'error'
-    });
-    }
+            if (responseData?.error_code === 403) {
+                setSnackbar({
+                    open: true,
+                    message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts. Please try again later.',
+                    severity: 'error'
+                });
+            } else if (responseData?.error_code === 404) {
+                setSnackbar({
+                    open: true,
+                    message: responseData.error || 'Login Failed ! Incorrect username or password!',
+                    severity: 'error'
+                });
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: 'Login failed. Please check your credentials.',
+                    severity: 'error'
+                });
+            }
 
-   }
-};
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // // Logout function
     // const handleLogout = () => {
@@ -112,7 +117,7 @@ export default function LoginForm() {
                     <input
                         name="userName"
                         type="text"
-                        placeholder="User Name"
+                        placeholder="User Name or Email"
                         className="login-input input-bordered h-12 oxanium-regular"
                         value={form.userName}
                         onChange={handleChange} />
@@ -144,12 +149,21 @@ export default function LoginForm() {
                 {/* </div> */}
 
                 {/* Login submit button */}
-                <button type="submit" className="login-btn oleo-script-regular
-                backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden">
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={`login-btn oleo-script-regular
+                backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden
+                ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
                     <div
                         className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
                     ></div>
-                    Login
+                    {isLoading ? (
+                        <span className="loading loading-bars loading-md"></span>
+                    ) : (
+                        'Login'
+                    )}
                 </button>
             </form>
             {error && (

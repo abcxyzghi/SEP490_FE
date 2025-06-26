@@ -11,10 +11,16 @@ export const PATH_NAME = {
     COLLECTIONDETAIL_PAGE: "/collectiondetailpage/:id",
     SETTING_PAGE: "/settingpage",
     PROFILE: "/profilepage/:id",    
+    CART_PAGE: "/cartpage",
+    PAYMENT_PAGE: "/paymentpage",
+    CHECKOUT_PAGE: "/checkoutpage",
+
+    MODERATOR_DASHBOARD: "/moderatorDashboard",
+    
     ADMIN_DASHBOARD: "/adminDashboard",
     ADMIN_USERMANGEMENT: "/adminUserManagement",
-    ADMIN_SUBSCRIPTION: "/adminSubcription",
-    CART_PAGE: "/cartpage",
+    ADMIN_SYSTEMMANGEMENT: "/adminSystemManagement",
+    ADMIN_TRANSACTIONMANGEMENT: "/adminTransactionManagement",
 };
 // domain sau dấu "/" nếu id là 123 thì nó là /123
 // "productdetailpage" chứa sản phẩm của ng bán; "collectiondetailpage" chứa sản phẩm dạng view

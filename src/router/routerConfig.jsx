@@ -12,6 +12,16 @@ import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDeta
 import Settingpage from "../components/pages/Settingpage/Settingpage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
+import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
+import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
+
+import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
+
+import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
+import UserManagement from "../components/adminPages/UserManagement/UserManagement";
+import SystemManagement from "../components/adminPages/SystemManagement/SystemManagement";
+import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
+
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -26,20 +36,26 @@ export const publicRoutes = [
     { path: PATH_NAME.BOXDETAIL_PAGE, element: <BoxDetailpage /> },
     { path: PATH_NAME.PRODUCTDETAIL_PAGE, element: <ProductDetailpage /> },
     { path: PATH_NAME.PROFILE, element: <Profilepage /> },
-    { path: PATH_NAME.CART_PAGE, element: <Cartpage /> }, 
 ];
 
 export const privateRoutes = [
     // { path: PATH_NAME.HOME, element: <Home />, roles: ['free', 'learner', 'proUser'] },
-    { path: PATH_NAME.AUNCTION_ROOM, element: <AuctionRoom />},
-    { path: PATH_NAME.SETTING_PAGE, element: <Settingpage />},
-
+    { path: PATH_NAME.AUNCTION_ROOM, element: <AuctionRoom />, role: ['user'] },
+    { path: PATH_NAME.SETTING_PAGE, element: <Settingpage />, role: ['user'] },
+    { path: PATH_NAME.CART_PAGE, element: <Cartpage />, role: ['user'] },
+    { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
+    { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
 ];
 
-// export const adminRoutes = [
-//     {path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard /> , isAdmin: true },
-//     {path: PATH_NAME.ADMIN_USERMANGEMENT, element: <AdminUserManagement /> , isAdmin: true },
-//     {path: PATH_NAME.ADMIN_SUBSCRIPTION, element: <AdminSubscription /> , isAdmin: true },
-// ];
+export const moderatorRoutes = [
+    {path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard /> , role: ['moderator'] },
+   
+];
 
-  
+export const adminRoutes = [
+    {path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_USERMANGEMENT, element: <UserManagement /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_SYSTEMMANGEMENT, element: <SystemManagement /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_TRANSACTIONMANGEMENT, element: <TransactionManagement /> , role: ['admin'] },
+];
+
