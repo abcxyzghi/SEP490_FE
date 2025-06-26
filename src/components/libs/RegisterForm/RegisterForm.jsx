@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../config/axios';
 import { toast } from 'react-toastify';
 import './RegisterForm.css';
 import OtpDialog from '../OtpDialog/OtpDialog';
@@ -9,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
+import { registerApi, sendVerifyEmailApi, confirmOtpApi } from '../../../services/api.auth';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -82,19 +82,18 @@ export default function RegisterForm() {
             return setSnackbar({ open: true, message: 'You must agree to all policies.', severity: 'warning' });
         }
 
-        // Fix: map userName to username for API
-        const apiPayload = {
-            username: userName,
-            email,
-            password
-        };
         try {
-            await api.post('/api/user/auth/register', apiPayload);
-            await api.post(`/api/user/email/verify?email=${encodeURIComponent(email)}`, {});
+            await registerApi({ userName, email, password });
+            await sendVerifyEmailApi(email);
             toast.success('Successfully created new account. OTP sent to your email.');
             setShowOtpModal(true);
         } catch (err) {
-            toast.error(err.response?.data || 'Registration failed');
+            const apiError = err.response?.data;
+            if (apiError && apiError.error === 'registered email') {
+                setSnackbar({ open: true, message: apiError.error, severity: 'error' });
+            } else {
+                toast.error(apiError || 'Registration failed');
+            }
         }
     };
 
@@ -118,7 +117,7 @@ export default function RegisterForm() {
 
     const handleResendOtp = async () => {
         try {
-            await api.post(`/api/user/email/verify?email=${encodeURIComponent(form.email)}`, {});
+            await sendVerifyEmailApi(form.email);
             toast.success('A new OTP has been sent to your email.');
             // Reset and restart the OTP timer after successful resend
             setOtpTimer(60);
@@ -148,7 +147,7 @@ export default function RegisterForm() {
             return;
         }
         try {
-            await api.post(`/api/user/email/confirm?code=${encodeURIComponent(code)}&current_email=${encodeURIComponent(form.email)}`, {});
+            await confirmOtpApi(code, form.email);
             toast.success('Email verified successfully! Please go to the login page to access the website.');
             setShowOtpModal(false);
             navigate('/login');
