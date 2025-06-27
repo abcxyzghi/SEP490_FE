@@ -33,16 +33,12 @@ export default function Cartpage() {
     .filter(item => selectedItems.includes(item.id + '-' + item.type))
     .reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
 
+  // Không cần kiểm tra cartItems.length > 0
+  // Luôn gọi API để đảm bảo sync
   useEffect(() => {
     const fetchCart = async () => {
-      if (cartItems.length > 0) {
-        setLoading(false);
-        return;
-      }
-
       try {
         const result = await viewCart();
-        console.log('Cart data:', result);
         if (result?.status) {
           const formattedItems = [];
 
@@ -78,7 +74,8 @@ export default function Cartpage() {
     };
 
     fetchCart();
-  }, [cartItems.length, dispatch]);
+  }, [dispatch]);
+
 
   if (loading) {
     return (
@@ -94,7 +91,6 @@ export default function Cartpage() {
       } else if (item.type === 'product') {
         await removeFromCart({ sellProductId: item.id });
       }
-
       dispatch(removeItemFromCart({ id: item.id, type: item.type }));
       alert('🗑️ Remove Item!');
     } catch (error) {
@@ -189,7 +185,7 @@ export default function Cartpage() {
                       />
                       <div className="cartpage-product-box">
                         <img
-                          src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.image}` }
+                          src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.image}`}
                           alt="product"
                           className="cartpage-product-image"
                         />
@@ -202,7 +198,15 @@ export default function Cartpage() {
                       </div>
                     </div>
                     <div className="cartpage-quantity">
-                      <button onClick={() => handleRemoveItem(item)}>-</button>
+                      <button
+                        onClick={() => {
+                          if (item.quantity === 1) {
+                            handleRemoveItem(item);
+                          }
+                        }}
+                      >
+                        -
+                      </button>
                       <span>{item.quantity || 1}</span>
                       <button>+</button>
                     </div>

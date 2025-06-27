@@ -207,6 +207,10 @@
   --cocoa_brown-SVGcolor: invert(44%) sepia(32%) saturate(4893%) hue-rotate(11deg) brightness(96%) contrast(90%);
   --fire_engine_red-SVGcolor: invert(32%) sepia(98%) saturate(5175%) hue-rotate(344deg) brightness(78%) contrast(116%);
 
+  --gradient-cyan_puprle: linear-gradient(0deg,
+            rgb(12, 248, 236) 0%,
+            rgba(197, 107, 240, 1) 100%);
+            
   /* Card rarity color*/
   --common-color: #B0B0B0;
   --uncommon-color: #3FB950;

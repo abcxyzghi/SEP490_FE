@@ -33,7 +33,7 @@ export default function BoxDetailpage() {
   return (
     <div className="container mx-auto px-4 py-8"> 
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <img src={box.urlImage} alt={box.mysteryBoxName} className="w-full h-64 object-cover rounded mb-4" /> 
+        <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={box.mysteryBoxName} className="w-full h-64 object-cover rounded mb-4" /> 
         <h1 className="text-3xl font-bold mb-2">{box.mysteryBoxName}</h1>
         <p className="text-gray-700 mb-4">{box.mysteryBoxDescription}</p>
         <p className="text-lg font-semibold mb-2">Collection: {box.collectionTopic}</p>

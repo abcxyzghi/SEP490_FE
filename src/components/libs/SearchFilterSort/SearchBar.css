@@ -1,0 +1,98 @@
+/* Search Bar */
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--light-1);
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: var(--dark-4);
+  flex: 1 1 auto;
+  /* width: 100%; */
+  max-width: 580px;
+  min-width: 200px;
+  /* optional minimum */
+}
+
+.search-bar-button {
+  background: var(--gradient-dark);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  margin: 1px 2px 1px 2px;
+  transition: transform 0.2s ease;
+  /* Prevents shrinking on small screens */
+  flex-shrink: 0;
+}
+
+.search-bar-button:active {
+  transform: scale(0.96);
+}
+
+.search-bar-icon {
+  width: 20px;
+  height: 20px;
+  filter: var(--lightSVG-1);
+}
+
+/* This wraps the text, so we can hide it */
+.search-bar-button span {
+  display: inline;
+}
+
+.search-bar-input {
+  background-color: var(--dark-4);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  width: 80%;
+  min-width: 250px;
+  font-size: 15px;
+  outline: none;
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .search-bar-container {
+    border-radius: 12px;
+  }
+
+  .search-bar-button {
+    border-radius: 10px;
+    padding: 5px;
+  }
+
+  .search-bar-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    box-sizing: content-box;
+    margin: 0 auto;
+  }
+
+  .search-bar-button span {
+    display: none;
+  }
+
+
+  .search-bar-input {
+    padding: 6px 10px;
+    font-size: 12px;
+    flex: 1;
+  }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  .search-bar-container {
+    border-radius: 10px;
+  }
+}

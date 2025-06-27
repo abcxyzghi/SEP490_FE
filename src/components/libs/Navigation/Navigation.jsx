@@ -18,9 +18,11 @@ import Chat from '../../../assets/Icon_fill/comment_fill.svg';
 import Notification from '../../../assets/Icon_fill/Bell_fill.svg';
 import Setting from '../../../assets/Icon_fill/Setting_fill.svg';
 import Logout from '../../../assets/Icon_fill/Sign_out_squre_fill.svg';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../../redux/features/authSlice';
 import { fetchUserInfo } from '../../../services/api.auth';
+
 
 
 export default function Navigation() {

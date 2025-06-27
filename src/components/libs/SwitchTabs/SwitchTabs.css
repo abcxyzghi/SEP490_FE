@@ -1,0 +1,87 @@
+/* Apply SwitchTabs to reuse in all pages */
+.tabs-switcher-section {
+    --tabMain_bg: rgba(13, 19, 33, 0.96);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 20px 140px 20px;
+}
+
+/* SwitchTabs.css */
+.switchTabs-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    /* Centers tabbar & content */
+    align-items: center;
+}
+
+.switchTabs-tabbar {
+    display: flex;
+    background: var(--dark-2-o90);
+    border-radius: 16px 16px 0 0;
+    gap: 8px;
+}
+
+.switchTabs-tab {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 16px 16px 0 0;
+    transition: all 0.3s ease-in-out;
+    color: var(--light-1);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.switchTabs-tab.active {
+    background: var(--gradient-light);
+}
+
+.switchTabs-content-container {
+    flex: 1;
+    width: 100%;
+    max-width: 1300px;
+    min-width: 280px;
+    height: 1000px;
+    /* Enables scrolling within the container */
+    overflow-y: auto;
+    /* Must be 4-char alpha-hex make gradient border work */
+    border: 2px solid #0000;
+    /* padding: 20px; */
+    border-radius: 8px;
+    background:
+        linear-gradient(var(--tabMain_bg), var(--tabMain_bg)) padding-box,
+        linear-gradient(#FFD721, #DC0FFF) border-box;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .switchTabs-tab {
+        padding: 8px 18px;
+        font-size: 17px;
+    }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .tabs-switcher-section {
+        margin: 50px 10px 140px 10px;
+    }
+
+    .switchTabs-tabbar {
+        border-radius: 15px 15px 0 0;
+        gap: 5px;
+    }
+
+    .switchTabs-tab {
+        padding: 6px 14px;
+        font-size: 12px;
+        border-radius: 15px 15px 0 0;
+    }
+}
