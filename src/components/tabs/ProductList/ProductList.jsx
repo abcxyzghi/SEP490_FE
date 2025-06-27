@@ -1,3 +1,4 @@
+// System Box  ||  System Product (from other user)  ||  User’s Box List  ||  User’s Product (Sell) List
 import React, { useEffect, useState } from 'react';
 import './ProductList.css';
 import { useNavigate } from 'react-router-dom';
@@ -76,7 +77,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
   const filteredProducts = products.filter(product =>
     product.name?.toLowerCase().includes(searchText.toLowerCase()) &&
     (priceRange >= 500 || product.price / 1000 <= priceRange) &&
-    (selectedRarities.length === 0 || selectedRarities.includes(normalizeRarity(product.rarity)))
+    (selectedRarities.length === 0 || selectedRarities.includes(normalizeRarity(product.rarityName)))
     // (selectedRarities.length === 0 || selectedRarities.includes(product.rarity || ''))
   );
 
@@ -94,8 +95,8 @@ export default function ProductList({ searchText, selectedSort, ascending, price
         break;
       case 'Release date':
       default:
-        valA = new Date(a.releaseDate || 0);
-        valB = new Date(b.releaseDate || 0);
+        valA = new Date(a.createdAt || 0);
+        valB = new Date(b.createdAt || 0);
         break;
     }
     if (valA < valB) return ascending ? -1 : 1;
@@ -177,7 +178,13 @@ export default function ProductList({ searchText, selectedSort, ascending, price
                       <div className="productList-card-title oxanium-bold">
                         {truncate(item.name, 30)}
                       </div>
-                      <div className="productList-card-price oxanium-bold">{(item.price / 1000).toFixed(3)} VND</div>
+                      <div className='productList-sub-info'>
+                        <div className="productList-card-price oxanium-bold">{(item.price / 1000).toFixed(3)} VND</div>
+                        <div className="productList-card-sellerName oxanium-bold" >
+                          {/* Add On-click to seller profile */}
+                          {truncate(item.username, 10)}
+                        </div>
+                      </div>
                       <div className="productList-card-actions">
                         <button
                           className="productList-view-button"

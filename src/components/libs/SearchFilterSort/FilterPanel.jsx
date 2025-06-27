@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FilterPanel.css';
 import FilterIcon from '../../../assets/Icon_fill/Filter_fill.svg';
 
-export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity }) {
+export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity = false }) {
     const [show, setShow] = useState(false);
     const [price, setPrice] = useState(500);
     const [activeRarities, setActiveRarities] = useState([]);
@@ -24,7 +24,8 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
         onRaritySelect(updated); // Pass full selected list
     };
 
-
+    // Debug check rarity section shown True or False
+    // console.log("showRarity prop:", showRarity);
 
     useEffect(() => {
         if (!show) return;
@@ -53,7 +54,7 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
 
                     <div className="filter-section">
                         <label className="filter-label oxanium-semibold">Price Range</label>
-                        <div className="price-display oxanium-regular">{price < 500 ? `${price}.000 VND` : 'Any price'}</div>
+                        <div className="price-display oxanium-regular">{price < 500 ? `under ${price}.000 VND` : 'Any price'}</div>
                         <input
                             type="range"
                             min="0"

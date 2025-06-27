@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './Navigation.css';
-import { PATH_NAME, Pathname } from '../../../router/Pathname';
+import { Pathname } from '../../../router/Pathname';
 // Importing logos
 import FullLogoGrD from '../../../assets/logoSVG/Full_logo-Grdient.svg';
 import GrDLogo from '../../../assets/logoSVG/Logo-Grdient.svg';

@@ -27,6 +27,7 @@ export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
+    const [isLoading, setIsLoading] = useState(false);
     const [showOtpModal, setShowOtpModal] = useState(false);
     const [otpTimer, setOtpTimer] = useState(0);
     const timerRef = useRef(null);
@@ -48,6 +49,8 @@ export default function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isLoading) return; // Prevent spam
+        setIsLoading(true);
         const { userName, email, password, confirmPassword, accepted } = form;
 
         if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
@@ -88,12 +91,16 @@ export default function RegisterForm() {
             toast.success('Successfully created new account. OTP sent to your email.');
             setShowOtpModal(true);
         } catch (err) {
+
             const apiError = err.response?.data;
             if (apiError && apiError.error === 'registered email') {
                 setSnackbar({ open: true, message: apiError.error, severity: 'error' });
             } else {
                 toast.error(apiError || 'Registration failed');
             }
+
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -240,11 +247,20 @@ export default function RegisterForm() {
                 </div>
 
                 {/* Register submit button */}
-                <button type="submit" className="register-btn oleo-script-regular backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden">
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={`register-btn oleo-script-regular
+                     backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden 
+                     ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}>
                     <div
                         class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
                     ></div>
-                    Register an account
+                    {isLoading ? (
+                        <span className="loading loading-bars loading-md"></span>
+                    ) : (
+                        'Register an account'
+                    )}
                 </button>
             </form>
 

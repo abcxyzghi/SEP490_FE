@@ -89,8 +89,8 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
             case 'Release date':
             default:
                 // Use a fallback value of 0 for undefined releaseDate
-                valA = new Date(a.releaseDate || 0);
-                valB = new Date(b.releaseDate || 0);
+                valA = new Date(a.createdAt || 0);
+                valB = new Date(b.createdAt || 0);
                 break;
         }
 
