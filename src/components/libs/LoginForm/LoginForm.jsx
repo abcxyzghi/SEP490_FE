@@ -6,7 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import api from '../../../config/axios';
+import { loginApi } from '../../../services/api.auth';
 import { useDispatch } from 'react-redux';
 import { login as loginAction } from '../../../redux/features/userSlice';
 
@@ -41,18 +41,7 @@ export default function LoginForm() {
             return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
         }
         try {
-            const params = new URLSearchParams();
-            params.append('grant_type', 'password');
-            params.append('username', userName);
-            params.append('password', password);
-
-            const response = await api.post('api/user/auth/login', params, {
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            });
-            const data = response.data;
+            const data = await loginApi(userName, password);
             if (data && data.access_token && data.is_email_verification) {
                 localStorage.setItem('token', data.access_token);
                 localStorage.setItem('refreshToken', data.refresh_token);
@@ -67,32 +56,29 @@ export default function LoginForm() {
                 setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
             }
         } catch (error) {
-        console.error('API call error:', error);
-
-    const responseData = error?.response?.data;
-
-    if (responseData?.error_code === 403 ) {
-        setSnackbar({
-            open: true,
-            message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts. Please try again later.',
-            severity: 'error'
-    });
-    } else if (responseData?.error_code === 404) {
-        setSnackbar({
-            open: true,
-            message: responseData.error || 'Login Failed ! Incorrect username or password!',
-            severity: 'error'
-    });
-    } else {
-        setSnackbar({
-            open: true,
-            message: 'Login failed. Please check your credentials.',
-            severity: 'error'
-    });
-    }
-
-   }
-};
+            console.error('API call error:', error);
+            const responseData = error?.response?.data;
+            if (responseData?.error_code === 403 ) {
+                setSnackbar({
+                    open: true,
+                    message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts. Please try again later.',
+                    severity: 'error'
+                });
+            } else if (responseData?.error_code === 404) {
+                setSnackbar({
+                    open: true,
+                    message: responseData.error || 'Login Failed ! Incorrect username or password!',
+                    severity: 'error'
+                });
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: 'Login failed. Please check your credentials.',
+                    severity: 'error'
+                });
+            }
+        }
+    };
 
     // // Logout function
     // const handleLogout = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './forgotPasswordDialog.css';
 import {
     Dialog,
@@ -24,7 +24,7 @@ import MuiAlert from '@mui/material/Alert';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { unstable_OneTimePasswordField as OTPField } from "radix-ui";
 import EmailSetting from '../../../assets/Icon_line/Setting_line.svg';
-import api from '../../../config/axios';
+import { sendForgotPasswordOtpApi, confirmForgotPasswordApi } from '../../../services/api.auth';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -43,11 +43,11 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     const [timer, setTimer] = useState(300); // 5 mins
     const [resendTimer, setResendTimer] = useState(30);
     const [loadingResetPwd, setLoadingResetPwd] = useState(false);
-    const otpRefs = useRef([]);
+    // const otpRefs = useRef([]);
 
     // Stepper logic
     // Connector
-    const QontoConnector = styled(StepConnector)(({ theme }) => ({
+    const QontoConnector = styled(StepConnector)(( theme ) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
             top: 10,
             left: 'calc(-50% + 16px)',
@@ -71,7 +71,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     }));
 
     // Step Icon
-    const QontoStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+    const QontoStepIconRoot = styled('div')(({  theme,  ownerState }) => ({
         color: '#eaeaf0',
         display: 'flex',
         height: 22,
@@ -150,7 +150,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
         setResendTimer(30);
         setTimer(300);
         try {
-            await api.post(`/api/user/password-recovery/verify?email=${encodeURIComponent(email)}`, {});
+            await sendForgotPasswordOtpApi(email);
             setSnackbar({ open: true, message: 'OTP resent to your email.', severity: 'success' });
         } catch (err) {
             setSnackbar({ open: true, message: err.response?.data || 'Failed to resend OTP.', severity: 'error' });
@@ -160,7 +160,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     // Send OTP to email for password recovery (query param version)
     const handleSendOtp = async () => {
         try {
-            await api.post(`/api/user/password-recovery/verify?email=${encodeURIComponent(email)}`, {});
+            await sendForgotPasswordOtpApi(email);
             setSnackbar({ open: true, message: 'OTP sent to your email.', severity: 'success' });
             setActiveStep(1);
             setTimer(300); // reset timer for OTP
@@ -178,16 +178,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
         }
         setLoadingResetPwd(true);
         try {
-            await api.post('/api/user/password-recovery/confirm', {
-                email,
-                code: otp,
-                password: newPassword
-            }, {
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
+            await confirmForgotPasswordApi({ email, code: otp, password: newPassword });
             setSnackbar({ open: true, message: 'Password reset successful!', severity: 'success' });
             setActiveStep(2);
         } catch (err) {
@@ -244,7 +235,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                 onClose();
                 return;
             }
-        } catch (e) {
+        } catch {
             setSnackbar({ open: true, message: 'An error occurred', severity: 'error' });
         } finally {
             setLoadingResetPwd(false);
