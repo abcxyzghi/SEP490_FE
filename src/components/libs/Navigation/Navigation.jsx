@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './Navigation.css';
 import { Pathname } from '../../../router/Pathname';
@@ -19,10 +19,17 @@ import Notification from '../../../assets/Icon_fill/Bell_fill.svg';
 import Setting from '../../../assets/Icon_fill/Setting_fill.svg';
 import Logout from '../../../assets/Icon_fill/Sign_out_squre_fill.svg';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../../../redux/features/authSlice';
+import { fetchUserInfo } from '../../../services/api.auth';
+
+
 
 export default function Navigation() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
+  const user = useSelector(state => state.auth.user);
+  const dispatch = useDispatch();
 
   const toggleCollapse = () => {
     setIsCollapsed(prev => !prev);
@@ -33,6 +40,18 @@ export default function Navigation() {
     { label: 'Shop', path: Pathname('SHOP_PAGE'), icon: ShopIcon },
     { label: 'Auction', path: Pathname('AUNCTION_PAGE'), icon: AuctionIcon },
   ];
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && !user) {
+      fetchUserInfo(token).then(res => {
+        if (res.status && res.data) {
+          dispatch(setUser(res.data));
+        }
+      });
+    }
+  }, [dispatch, user]);
 
   return (
     <div className={`nav-container ${isCollapsed ? 'collapsed' : ''}`}>
@@ -66,14 +85,28 @@ export default function Navigation() {
 
       {!isCollapsed && (
         <div className="nav-right">
-          <button className="nav-auth-btn oxanium-bold" onClick={() => navigate(Pathname('LOGIN'))}>
-            <img src={ProfileIcon} alt="Profile Icon" className="nav-login-icon" />
-            Login
-          </button>
-          <button className="nav-auth-btn register oxanium-bold" onClick={() => navigate(Pathname('REGISTER'))}>
-            <img src={PlusIcon} alt="Profile Icon" className="nav-register-icon" />
-            Join the box party
-          </button>
+          {user ? (
+            <div className="nav-profile">
+              {/* <img
+                src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${user.profile_image}`}
+                alt="Profile"
+                className="nav-profile-img"
+              /> */}
+              <span className="nav-profile-name oxanium-bold">{user.username}</span>
+              <span className="nav-profile-wallet oxanium-bold">Wallet: {user.wallet_amount}₫</span>
+            </div>
+          ) : (
+            <>
+              <button className="nav-auth-btn oxanium-bold" onClick={() => navigate(Pathname('LOGIN'))}>
+                <img src={ProfileIcon} alt="Profile Icon" className="nav-login-icon" />
+                Login
+              </button>
+              <button className="nav-auth-btn register oxanium-bold" onClick={() => navigate(Pathname('REGISTER'))}>
+                <img src={PlusIcon} alt="Profile Icon" className="nav-register-icon" />
+                Join the box party
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>
