@@ -114,6 +114,14 @@
   font-size: 18px;
   color: var(--dark-4);
   margin-top: 10px;
+  /* Truncate text to 2 lines */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* max 2 lines */
+  line-clamp: 2; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* allow wrapping */
 }
 
 
@@ -156,7 +164,7 @@
 .boxList-view-button:hover {
   border: 2px solid #0000;
   background:
-    linear-gradient(var(--light-3-o90), var(--light-3-o90)) padding-box,
+    linear-gradient(var(--light-1-o90), var(--light-1-o90)) padding-box,
     linear-gradient(#DC0FFF, #FFD721) border-box;
 }
 

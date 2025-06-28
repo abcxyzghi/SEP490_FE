@@ -1,0 +1,232 @@
+/* The container and trigger */
+.nav-dropdown-root {
+    position: relative;
+    display: inline-block;
+    /* Vô hiệu kéo-thả */
+    -webkit-user-drag: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+    user-select: none;
+}
+
+.nav-profile-container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.nav-arrow-dropdown {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--light-2);
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Main menu content */
+.nav-dropdown-menu {
+    position: absolute;
+    top: 105%;
+    right: 0;
+    min-width: 240px;
+    background: var(--dark-5-o90);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    z-index: 1000;
+    padding: 0.5rem;
+    overflow: hidden;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.nav-dropdown-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-dropdown-avatar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.07); */
+}
+
+.nav-dropdown-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem 0.7rem;
+    font-size: 1rem;
+    color: var(--light-1);
+    border-radius: 8px;
+    transition: background-color 0.26s;
+    cursor: pointer;
+}
+
+.nav-dropdown-list li:hover {
+    background-color: var(--dark-3);
+}
+
+.nav-sub-expand {
+    justify-content: space-between;
+}
+
+.nav-dropdown-sub-container {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.nav-dropdown-item-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+    background: var(--light-2);
+    padding: 7px;
+    border-radius: 25px;
+    /* Ensure padding does not shrink the icon size */
+    box-sizing: content-box;
+    display: inline-block;
+}
+
+.nav-dropdown-item-subIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    filter: var(--lightSVG-1);
+}
+
+.nav-dropdown-divider {
+    height: 1px;
+    background: var(--dark-1);
+    margin: 0.3rem 0;
+}
+
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+}
+
+.nav-submenu-panel {
+    width: 300px;
+    background: var(--dark-4-o50);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 0.5rem 0 1rem 0;
+    animation: slideInRight 0.3s forwards;
+}
+
+.nav-submenu-panel.exiting {
+    animation: slideOutLeft 0.3s forwards;
+}
+
+.nav-submenu-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.3rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    color: var(--light-1);
+}
+
+.nav-dropdown-close-subIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    filter: var(--lightSVG-1);
+    padding: 0.4rem;
+    border-radius: 20px;
+    cursor: pointer;
+    /* Ensure padding does not shrink the icon size */
+    box-sizing: content-box;
+    display: inline-block;
+}
+
+.nav-dropdown-close-subIcon:hover {
+    background-color: var(--light-5-o90);
+}
+
+.nav-submenu-header span {
+    color: #ffb347;
+    font-size: 24px;
+}
+
+.nav-submenu-content {
+    padding: 0.8rem;
+    color: var(--light-1);
+    text-align: center;
+    font-size: 0.98rem;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 880px */
+@media (max-width: 880px) {
+    .nav-dropdown-menu {
+        min-width: 200px;
+    }
+
+    .nav-dropdown-avatar-item {
+        padding: 0.5rem 0.7rem;
+    }
+}
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .nav-dropdown-list li {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .nav-dropdown-item-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        padding: 5px;
+        border-radius: 20px;
+    }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .nav-submenu-panel {
+        width: 240px;
+    }
+}

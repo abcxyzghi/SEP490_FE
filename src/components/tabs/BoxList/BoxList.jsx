@@ -173,7 +173,8 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                                     {isExpanded && (
                                         <>
                                             <div className="boxList-card-title oxanium-bold">
-                                                {truncate(item.mysteryBoxName, 30)}
+                                                {item.mysteryBoxName}
+                                                {/* {truncate(item.mysteryBoxName, 30)} */}
                                             </div>
                                             <div className="boxList-card-price oxanium-bold">{(item.mysteryBoxPrice / 1000).toFixed(3)} VND</div>
                                             <div className="boxList-card-actions">

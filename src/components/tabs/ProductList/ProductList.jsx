@@ -176,7 +176,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
                   {isExpanded && (
                     <>
                       <div className="productList-card-title oxanium-bold">
-                        {truncate(item.name, 30)}
+                        {item.name}
                       </div>
                       <div className='productList-sub-info'>
                         <div className="productList-card-price oxanium-bold">{(item.price / 1000).toFixed(3)} VND</div>
