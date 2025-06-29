@@ -21,7 +21,7 @@ const Footer = () => {
             <img src={AboutFooter} alt="icon" className="icon" /> About
           </div>
           <div className="footer-info">
-            <p> <img src={StreetIcon} alt="icon" className="icon" /> 7 D. D1, Long Thạnh Mỹ, Thủ Đức, Hồ Chí Minh</p>
+            <p> <img src={StreetIcon} alt="icon" className="icon" /> 7 D. D1, Long Thanh My, Thu Duc, Ho Chi Minh</p>
             <p><img src={SendIcon} alt="icon" className="icon" /> MMB@gmail.com</p>
             <p><img src={PhoneIcon} alt="icon" className="icon" />0988776655</p>
           </div>

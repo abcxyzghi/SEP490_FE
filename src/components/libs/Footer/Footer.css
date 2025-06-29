@@ -48,7 +48,7 @@
 }
 
 .footer-title .icon {
-  width: 30px;
+  width: 40px;
   margin-right: 10px;
 }
 
@@ -100,7 +100,8 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px; /* chiều dài đường kẻ bạn muốn */
+  width: 400px;
+  /* chiều dài đường kẻ bạn muốn */
   border-top: 1px solid #999;
 }
 
@@ -114,6 +115,7 @@
     align-items: center;
     gap: 30px;
   }
+
   .footer-logo,
   .footer-about,
   .footer-info-links {
@@ -123,6 +125,7 @@
     max-width: 400px;
     align-items: center;
   }
+
   /* .footer-links {
     flex-direction: column;
     gap: 20px;
@@ -135,18 +138,23 @@
     padding: 30px 5px 10px 5px;
     font-size: 14px;
   }
+
   .footer-title {
     font-size: 18px;
   }
+
   .footer-logo img {
     height: 70px;
   }
+
   .footer-info p {
     font-size: 14px;
   }
+
   .footer-links p {
     font-size: 16px;
   }
+
   .footer-bottom::before {
     width: 90vw;
   }
@@ -173,31 +181,42 @@
     padding: 0;
     gap: 15px;
   }
+
   .footer-logo,
   .footer-about,
   .footer-info-links {
     max-width: 100%;
     padding: 0 5px;
   }
+
   .footer-title {
     font-size: 16px;
   }
+
   .footer-info p {
     font-size: 12px;
     margin-bottom: 16px;
   }
+
   .footer-links {
     gap: 10px;
   }
+
   .footer-links p {
     font-size: 14px;
   }
+
   .footer-bottom {
     font-size: 12px;
     padding-top: 5px;
   }
+
   .footer-bottom::before {
     width: 98vw;
+  }
+
+  .footer-title .icon {
+    width: 30px;
   }
 }
 
