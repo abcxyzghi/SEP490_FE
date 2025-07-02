@@ -54,14 +54,20 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
 
                     <div className="filter-section">
                         <label className="filter-label oxanium-semibold">Price Range</label>
-                        <div className="price-display oxanium-regular">{price < 500 ? `under ${price}.000 VND` : 'Any price'}</div>
+                        <div className="filter-price-display oxanium-regular">
+                            {price === "0" || price === 0
+                                ? "Free"
+                                : price < 500
+                                    ? `Under ${price}.000 VND`
+                                    : "Any price"}
+                        </div>
                         <input
                             type="range"
                             min="0"
                             max="500"
                             value={price}
                             onChange={handlePriceChange}
-                            className="price-range"
+                            className="filter-price-range"
                         />
                     </div>
 
@@ -69,11 +75,11 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
                     {showRarity && (
                         <div className="filter-section">
                             <label className="filter-label oxanium-semibold">Rarity</label>
-                            <div className="rarity-options">
+                            <div className="filter-rarity-options">
                                 {rarities.map((rarity) => (
                                     <div
                                         key={rarity}
-                                        className={`rarity-card ${rarity} ${activeRarities.includes(rarity) ? 'active' : ''}`}
+                                        className={`filter-rarity-card ${rarity} ${activeRarities.includes(rarity) ? 'active' : ''}`}
                                         onClick={() => handleRarityClick(rarity)}
                                     >
                                         {rarity}

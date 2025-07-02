@@ -1,120 +1,31 @@
-.cartpage-content {
-  width: 1200px;
-  display: flex;
-  margin: auto;
-  flex-direction: column;
-  margin-top: 100px;
-
+.cartpage-container {
+  overflow-x: hidden;
+  margin-top: 50px;
 }
 
-.cartpage-tab-container {
+.cartpage-search-filter-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 7px;
+  margin: 20px auto;
 }
 
-/* Tabs ở trên */
-.cartpage-tab-wrapper {
-  
-  display: inline-flex;
-  /* Chiều rộng vừa khít với nội dung */
-  margin: 0 auto -2px auto;
-  margin-bottom: -2px;
-  /* để tab active chồng lên border container */
-  border-bottom: 2px solid #FFD721;
-  /* để tạo phần nối nếu tab không active */
-  background-color: #2a2d3f;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
 
-.cartpage-tab {
-  padding: 8px 20px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  background-color: #2a2d3f;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  border-bottom: none;
-  font-family: 'Oleo Script', cursive;
-
-}
-
-.cartpage-tab.active {
-  background: linear-gradient(to bottom, #DC0FFF, #FFD721);
-  color: white;
-}
-
-/* Card container với border gradient */
-.cartpage-card-container {
-  position: relative;
-
-  border-radius: 30px;
-  padding: 24px;
-  background-color: rgba(217, 217, 217, 0.06);
-  border: 1px solid transparent;
-  background: linear-gradient(#0c0e20, #0c0e20) padding-box,
-    linear-gradient(to bottom, #FFD721, #DC0FFF) border-box;
-
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 1200px;
-  margin: 0 auto;
-}
-
-.cartpage-card-label {
-  position: absolute;
-  top: -34px;
-  left: 24px;
-  z-index: 2;
-  padding: 0 12px;
-}
-
-/* phần span bên trong mới là nơi xử lý gradient chữ + nền */
-.cartpage-card-label-inner {
-  position: relative;
-  font-weight: bold;
-  font-size: 40px;
-  font-family: 'Oleo Script', cursive;
-  background: linear-gradient(to bottom, #DC0FFF 0%, #FFD721 22%);
-  background-size: 100% 200%;
-  /* Tăng chiều cao vùng gradient */
-  background-position: top;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-  padding: 0 4px;
-}
-
-/* lớp nền đen để che viền */
-.cartpage-card-label-inner::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  width: 100%;
-  height: 1.2em;
-  background-color: #0c0e20;
-  z-index: -1;
-  border-radius: 4px;
-}
+/* Main container inside tab (which used by both CartBoxList and CartProductList */
 .cartpage-card-grid {
   display: flex;
+  justify-content: center;
   background-color: #353c47;
+  margin: 40px;
   border-radius: 16px;
   overflow: hidden;
-  font-family: 'Orbitron', sans-serif;
   color: white;
-  width:1000px;
 }
 
 .cartpage-left-section {
   flex: 1;
-padding: 2px 16px 16px 16px;
+  padding: 2px 16px 16px 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -124,9 +35,40 @@ padding: 2px 16px 16px 16px;
 .cartpage-select-all {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   position: relative;
-  margin-left:-15px;
+  margin-left: -15px;
+}
+
+.cartpage-select-all-checkbox-wrapper {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+input.cartpage-product-checkbox,
+input#cartpage-select-all-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--dark-1);
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+input.cartpage-product-checkbox:checked,
+input#cartpage-select-all-checkbox:checked {
+  background-color: var(--secondary-5);
+}
+
+.cartpage-select-numCheck {
+  font-size: 14px;
+  color: var(--primary-1);
 }
 
 .cartpage-gradient-border {
@@ -155,13 +97,15 @@ padding: 2px 16px 16px 16px;
   gap: 90px;
   padding-inline: 50px;
 }
+
 .cartpage-product-item:last-child {
   border-bottom: none;
 }
-.cartpage-product-wrapper{
+
+.cartpage-product-wrapper {
   display: flex;
   flex-direction: row;
-  gap:12px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -173,37 +117,34 @@ padding: 2px 16px 16px 16px;
   border-bottom-right-radius: 20px;
   padding: 8px 12px;
   flex: 1;
-  gap:20px;
-  width:380px;
+  gap: 7px;
+  width: 380px;
   justify-content: space-between;
 }
 
 .cartpage-product-image {
-  width: 50px;
-  height: 65px;
+  width: 80px;
+  height: auto;
   object-fit: cover;
-  border-radius: 4px;
 }
 
 .cartpage-product-text {
-display: flex;
-flex-direction: column;
-align-items: flex-end;
-
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .cartpage-product-name {
   font-size: 20px;
   font-family: 'Oxanium', sans-serif;
-  background: linear-gradient(
-    to bottom,
-    #FFFFFF 0%,
-    #F1F1F1 30%,
-    #D1D1D1 67%,
-    #BDBDBD 100%
-  );
+  background: linear-gradient(to bottom,
+      #FFFFFF 0%,
+      #F1F1F1 30%,
+      #D1D1D1 67%,
+      #BDBDBD 100%);
   text-align: right;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -211,13 +152,14 @@ align-items: flex-end;
   font-size: 20px;
   color: #FFFFFF;
   font-weight: 500;
-     font-family: 'Oxanium', sans-serif;
+  font-family: 'Oxanium', sans-serif;
 }
 
 .cartpage-quantity {
   display: flex;
   align-items: center;
-  gap: 5px; /* khoảng cách giữa các phần tử */
+  gap: 5px;
+  /* khoảng cách giữa các phần tử */
   height: 36px;
 }
 
@@ -255,25 +197,28 @@ align-items: flex-end;
   font-weight: bold;
   font-size: 16px;
   color: black;
-  border-radius: 5px; /* nhẹ nhàng nếu cần */
+  border-radius: 5px;
+  /* nhẹ nhàng nếu cần */
 }
+
 .cartpage-clear-button {
   background-color: #a3a4a6;
   color: white;
-  font-weight: bold;
   font-size: 24px;
-  font-family: 'Londrina Solid', cursive;
   padding: 2px 50px;
   border: none;
-  border-radius: 10px 0 30px 0; /* Tùy chỉnh góc nếu cần */
+  border-radius: 10px 0 30px 0;
+  /* Tùy chỉnh góc nếu cần */
   position: relative;
   z-index: 1;
   cursor: pointer;
 }
+
 .cartpage-clear-button[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .cartpage-clear-button::before {
   content: '';
   position: absolute;
@@ -281,17 +226,20 @@ align-items: flex-end;
   left: -2px;
   right: -2px;
   bottom: -2px;
-  border-radius: 15px 0 33px 0; /* khớp với button */
+  border-radius: 15px 0 33px 0;
+  /* khớp với button */
   padding: 2px;
   background: linear-gradient(to right, #DC0FFF, #FFD721, #FF7F50);
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   z-index: -1;
 }
-
 
 
 .cartpage-summary {
@@ -307,10 +255,14 @@ align-items: flex-end;
 
 .cartpage-summary-price,
 .cartpage-summary-quantity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 20px 0;
   text-align: center;
   width: 100%;
-  border-top: 1px solid rgba(255,255,255,0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .cartpage-summary-price {
@@ -327,59 +279,155 @@ align-items: flex-end;
   font-weight: bold;
   margin-top: 8px;
 }
-input.cartpage-product-checkbox,
-input#cartpage-select-all-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 2px solid black;
-  background-color: transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  position: relative;
-  transition: background-color 0.2s ease;
-}
 
-input.cartpage-product-checkbox:checked,
-input#cartpage-select-all-checkbox:checked {
-  background-color: black;
-}
 
+/* Footer section (Total + Buy btn) */
 .cartpage-footer {
-  background-color: #2f323a; /* xám đậm */
+  /* xám đậm */
+  background-color: #2f323a;
+  position: sticky;
+  bottom: 0;
+  z-index: 999;
+  width: 100%;
   padding: 12px 24px;
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid black;
-  margin-top:30px;
 }
 
 .cartpage-footer-content {
   display: flex;
   align-items: center;
-  gap: 12px;
-  
+  gap: 16px;
+
 }
 
 .cartpage-total {
-  font-weight: bold;
   color: white;
-    font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+}
+
+#cartpage-total-value {
+  font-size: 18px;
 }
 
 .cartpage-buy-button {
-  background-color: rgba(90, 3, 106, 0.9); /* màu tím */
+  /* màu tím */
+  background-color: rgba(90, 3, 106, 0.9);
+  font-size: 18px;
   color: white;
-  padding: 8px 16px;
+  padding: 8px 26px;
   border-radius: 6px;
-  border: 2px solid #FF50F9; /* viền hồng */
-  font-weight: bold;
+  /* viền hồng */
+  border: 2px solid #FF50F9;
   cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
   transition: 0.3s ease;
 }
 
 .cartpage-buy-button:hover {
-  background-color: #9b2eea;
+  background-color: rgba(74, 2, 87, 0.9);
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 1080px */
+@media (max-width: 1080px) {
+  .cartpage-search-filter-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin: 20px 20%;
+  }
+
+  .cartpage-card-grid {
+    flex-direction: column;
+  }
+
+  .cartpage-summary {
+    width: 100%;
+  }
+}
+
+/* For screen width ≤ 870px */
+@media (max-width: 870px) {
+  .cartpage-product-box {
+    gap: 7px;
+    width: 335px;
+  }
+
+  .cartpage-product-image {
+    width: 60px;
+    height: auto;
+  }
+
+  .cartpage-product-name,
+  .cartpage-product-price {
+    font-size: 18px;
+  }
+
+}
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .cartpage-search-filter-wrapper {
+    margin: 20px 15%;
+  }
+
+  .cartpage-card-grid {
+    margin: 30px;
+  }
+
+  .cartpage-product-item {
+    gap: 10%;
+    padding-inline: 2%;
+  }
+}
+
+/* For screen width ≤ 695px */
+@media (max-width: 695px) {
+  .cartpage-product-item {
+    flex-direction: column;
+  }
+
+  .cartpage-product-box {
+    margin-bottom: 16px
+  }
+}
+
+/* For screen width ≤ 505px */
+@media (max-width: 505px) {
+  .cartpage-product-box {
+    padding: 6px 10px;
+    gap: 5px;
+    width: 285px;
+  }
+
+  .cartpage-product-image {
+    width: 50px;
+    height: auto;
+  }
+
+  .cartpage-product-name,
+  .cartpage-product-price {
+    font-size: 16px;
+  }
+
+  .cartpage-clear-button {
+    font-size: 22px;
+    padding: 2px 12%;
+  }
+}
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+  .cartpage-search-filter-wrapper {
+    margin: 20px 6%;
+  }
+
+  .cartpage-card-grid {
+    margin: 15px;
+  }
 }

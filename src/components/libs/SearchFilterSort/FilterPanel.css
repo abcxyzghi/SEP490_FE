@@ -17,7 +17,7 @@
     background-color: var(--light-4);
 }
 
-.filter-panel-icon{
+.filter-panel-icon {
     width: 21px;
     height: 21px;
 }
@@ -58,7 +58,7 @@
     margin-bottom: 4px;
 }
 
-.price-display {
+.filter-price-display {
     font-size: 13px;
     margin-bottom: 4px;
     color: var(--dark-5);
@@ -68,7 +68,7 @@
     width: fit-content;
 }
 
-.price-range {
+.filter-price-range {
     width: 100%;
     -webkit-appearance: none;
     appearance: none;
@@ -78,7 +78,7 @@
     outline: none;
 }
 
-.price-range::-webkit-slider-thumb {
+.filter-price-range::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 16px;
@@ -89,13 +89,13 @@
     cursor: pointer;
 }
 
-.rarity-options {
+.filter-rarity-options {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.rarity-card {
+.filter-rarity-card {
     flex: 1 1 calc(33.333% - 8px);
     padding: 8px 12px;
     border: 1px solid gray;
@@ -109,39 +109,48 @@
     transition: all 0.2s ease;
 }
 
-.rarity-card.active {
+.filter-rarity-card.active {
     color: white;
 }
 
 /* Example active rarity colors */
-.rarity-card.Common.active {
+.filter-rarity-card.Common.active {
     /* light gray */
     background-color: var(--common-color);
     border-color: #a0a0a0;
 }
 
-.rarity-card.Uncommon.active {
+.filter-rarity-card.Uncommon.active {
     /* green */
     background-color: var(--uncommon-color);
     border-color: #388e3c;
 }
 
-.rarity-card.Rare.active {
+.filter-rarity-card.Rare.active {
     /* blue */
     background-color: var(--rare-color);
     border-color: #196bbc;
 }
 
-.rarity-card.Epic.active {
+.filter-rarity-card.Epic.active {
     /* purple */
     background-color: var(--epic-color);
     border-color: #7b1fa2;
 }
 
-.rarity-card.Legendary.active {
+.filter-rarity-card.Legendary.active {
     /* yellow */
     background-color: var(--legendary-color);
     border-color: #f57c00;
+}
+
+.filter-title,
+.filter-label,
+.filter-price-display,
+.filter-rarity-options {
+    -webkit-user-drag: none;        /* Disable drag functionality */
+    user-select: none;              /* Disable text selection */
+    -webkit-touch-callout: none;    /* Prevent text selection on iOS */
 }
 
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
@@ -150,17 +159,15 @@
 
 /* For screen width ≤ 765px */
 @media (max-width: 765px) {
-  .filter-panel-button {
-    font-size: 15px;
-}
+    .filter-panel-button {
+        font-size: 15px;
+    }
 
-.filter-panel-icon{
-    width: 20px;
-    height: 20px;
-}
+    .filter-panel-icon {
+        width: 20px;
+        height: 20px;
+    }
 }
 
 /* For screen width ≤ 480px */
-@media (max-width: 480px) {
-  
-}
+@media (max-width: 480px) {}
