@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getMysteryBoxDetail } from '../../../services/api.mysterybox'
+import BoxInformation from '../../tabs/BoxInformation/BoxInformation'
+import BoxRatelity from '../../tabs/BoxRatelity/BoxRatelity'
+import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 
 export default function BoxDetailpage() {
   const { id } = useParams();
   const [box, setBox] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('Information');
 
   // Fetch box details
   const fetchDetail = async () => {
@@ -32,12 +36,28 @@ export default function BoxDetailpage() {
 
   return (
     <div className="container mx-auto px-4 py-8"> 
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
         <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={box.mysteryBoxName} className="w-full h-64 object-cover rounded mb-4" /> 
         <h1 className="text-3xl font-bold mb-2">{box.mysteryBoxName}</h1>
-        <p className="text-gray-700 mb-4">{box.mysteryBoxDescription}</p>
-        <p className="text-lg font-semibold mb-2">Collection: {box.collectionTopic}</p>
         <p className="text-xl font-bold text-blue-600 mb-4">{(box.mysteryBoxPrice / 1000).toFixed(3)} VND</p>
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
+          <SwitchTabs
+            tabs={[
+              {
+                label: 'Information',
+                content: <BoxInformation mysteryBoxDetail={box} />
+              },
+              {
+                label: 'Ratelity',
+                content: <BoxRatelity mysteryBoxDetail={box} />
+              },
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+        </div>
+        {/* <p className="text-gray-700 mb-4">{box.mysteryBoxDescription}</p>
+        <p className="text-lg font-semibold mb-2">Collection: {box.collectionTopic}</p> */}
         {/* Add more details or actions here if needed */}
       </div>
     </div>
