@@ -83,3 +83,27 @@ export const clearAllCart = async () => {
   }
 };
 
+export const updateCartQuantity = async ({ sellProductId, quantity }) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.put(
+      `https://mmb-be-dotnet.onrender.com/api/Cart/update-quantity`,
+      {
+        id: sellProductId,
+        quantity: quantity,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Update cart quantity failed:", error);
+    throw error;
+  }
+};

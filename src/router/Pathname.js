@@ -16,7 +16,6 @@ export const PATH_NAME = {
     CHECKOUT_PAGE: "/checkoutpage",
     CHAT_ROOM: "/chatroom/:id",
     NOTIFICATION_PAGE: "/notification/:id",
-    SETTING_PAGE: "/setting",
 
     MODERATOR_DASHBOARD: "/moderatorDashboard",
     

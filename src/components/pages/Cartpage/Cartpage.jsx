@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCartFromServer, clearCart, removeItemFromCart } from '../../../redux/features/cartSlice';
-import { viewCart, clearAllCart, removeFromCart } from '../../../services/api.cart';
+import { setCartFromServer, clearCart, removeItemFromCart, updateQuantity } from '../../../redux/features/cartSlice';
+import { viewCart, clearAllCart, removeFromCart, updateCartQuantity } from '../../../services/api.cart';
 import './Cartpage.css';
 
 export default function Cartpage() {
@@ -98,6 +98,32 @@ export default function Cartpage() {
       console.error(error);
     }
   };
+  const handleQuantityChange = async (item, newQuantity) => {
+    if (newQuantity < 1) {
+      handleRemoveItem(item);
+      return;
+    }
+
+    try {
+      await updateCartQuantity({ sellProductId: item.id, quantity: newQuantity });
+
+      dispatch({
+        type: "cart/updateQuantity",
+        payload: {
+          id: item.id,
+          type: item.type,
+          quantity: newQuantity,
+        },
+      });
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Failed to update quantity.";
+      alert(errorMessage); // Hoặc dùng toast.error(errorMessage) nếu dùng thư viện thông báo
+      console.error("❌ Failed to update quantity:", errorMessage);
+    }
+  };
+
+
   const handleClearAll = async () => {
     setIsClearing(true); // 👉 Hiển thị loading
 
@@ -201,14 +227,20 @@ export default function Cartpage() {
                       <button
                         onClick={() => {
                           if (item.quantity === 1) {
-                            handleRemoveItem(item);
+                            handleRemoveItem(item); // Xóa khỏi giỏ
+                          } else {
+                            handleQuantityChange(item, item.quantity - 1); // Giảm số lượng
                           }
                         }}
                       >
                         -
                       </button>
                       <span>{item.quantity || 1}</span>
-                      <button>+</button>
+                      <button
+                        onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 ))}

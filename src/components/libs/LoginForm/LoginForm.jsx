@@ -9,7 +9,7 @@ import MuiAlert from '@mui/material/Alert';
 import { loginApi } from '../../../services/api.auth';
 import { useDispatch } from 'react-redux';
 import { login as loginAction } from '../../../redux/features/userSlice';
-
+import { setToken } from '../../../redux/features/authSlice';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -49,6 +49,7 @@ export default function LoginForm() {
                 localStorage.setItem('token', data.access_token);
                 localStorage.setItem('refreshToken', data.refresh_token);
                 dispatch(loginAction(data));
+                dispatch(setToken(data.access_token));
                 setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
                 navigate("/");
             } else if (data && data.is_email_verification === false) {
@@ -62,7 +63,7 @@ export default function LoginForm() {
             console.error('API call error:', error);
 
             const responseData = error?.response?.data;
-            if (responseData?.error_code === 403 ) {
+            if (responseData?.error_code === 403) {
 
                 setSnackbar({
                     open: true,

@@ -47,14 +47,23 @@ export default function Navigation() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && !user) {
-      fetchUserInfo(token).then(res => {
-        if (res.status && res.data) {
-          dispatch(setUser(res.data));
-        }
-      });
+      fetchUserInfo(token)
+        .then(res => {
+          if (res.status && res.data) {
+            dispatch(setUser(res.data));
+          }
+        })
+        .catch(err => {
+          if (err.response?.status === 401) {
+            localStorage.removeItem('token');
+            dispatch(setUser(null));
+            navigate('/login');
+          } else {
+            console.error('Lỗi fetch user info:', err);
+          }
+        });
     }
   }, [dispatch, user]);
-
 
   return (
     <div className={`nav-container ${isCollapsed ? 'collapsed' : ''}`}>

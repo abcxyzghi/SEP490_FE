@@ -66,11 +66,12 @@ export default function ProductDetailpage() {
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
         <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name} className="w-full h-64 object-cover rounded mb-4" />
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-        <p className="text-gray-700 mb-4">{product.description}</p>
+        <p className="text-xl font-bold text-green-600 mb-4">{(product.price / 1000).toFixed(3)} VND</p>
+        <p className="text-gray-700 mb-4">Description:{product.description}</p>
+        <p className="text-gray-700 mb-4">Quantity:{product.quantity}</p>
         <p className="text-lg font-semibold mb-2">Topic: {product.topic}</p>
         <p className="text-gray-500 mb-2">Seller: {product.username}</p>
-        <p className="text-lg font-semibold mb-2">Rate: {product.rateName}</p>
-        <p className="text-xl font-bold text-green-600 mb-4">{(product.price / 1000).toFixed(3)} VND</p>
+        <p className="text-lg font-semibold mb-2">Rate: {product.rateName}</p>        
         {/* Ratings Section */}
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-2">Ratings</h2>

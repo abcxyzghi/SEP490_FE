@@ -32,9 +32,18 @@ const cartSlice = createSlice({
     (item) => !(item.id === action.payload.id && item.type === action.payload.type)
   );
 },
+updateQuantity: (state, action) => {
+    const { id, type, quantity } = action.payload;
+    const item = state.items.find(
+      (item) => item.id === id && item.type === type
+    );
+    if (item) {
+      item.quantity = quantity;
+    }
+  },
     // other reducers...
   },
 });
 
-export const { addItemToCart, setCartFromServer, clearCart ,removeItemFromCart} = cartSlice.actions;
+export const { addItemToCart, setCartFromServer, clearCart ,removeItemFromCart,updateQuantity} = cartSlice.actions;
 export default cartSlice.reducer;
