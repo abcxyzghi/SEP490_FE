@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCartFromServer, clearCart, removeItemFromCart } from '../../../redux/features/cartSlice';
-import { viewCart, clearAllCart, removeFromCart } from '../../../services/api.cart';
+import { setCartFromServer, clearCart, removeItemFromCart, updateQuantity } from '../../../redux/features/cartSlice';
+import { viewCart, clearAllCart, removeFromCart, updateCartQuantity } from '../../../services/api.cart';
 import './CartProductList.css';
 //import icons
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
@@ -68,6 +68,31 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
         } catch (error) {
             alert('❌ Failed to remove item from cart.');
             console.error(error);
+        }
+    };
+
+    // Handle quantity change for product items
+    const handleQuantityChange = async (item, newQuantity) => {
+        if (newQuantity < 1) {
+            handleRemoveItem(item);
+            return;
+        }
+
+        try {
+            await updateCartQuantity({ Id: item.id, quantity: newQuantity });
+            dispatch({
+                type: "cart/updateQuantity",
+                payload: {
+                    id: item.id,
+                    type: item.type,
+                    quantity: newQuantity,
+                },
+            });
+        } catch (error) {
+            const errorMessage =
+                error.response?.data?.error || "Failed to update quantity.";
+            alert(errorMessage);
+            console.error("❌ Failed to update quantity:", errorMessage);
         }
     };
 
@@ -205,16 +230,14 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
                                 </div>
                                 <div className="cartpage-quantity">
                                     <button
-                                        onClick={() => {
-                                            if (item.quantity === 1) {
-                                                handleRemoveItem(item);
-                                            }
-                                        }}
+                                        onClick={() => handleQuantityChange(item, (item.quantity || 1) - 1)}
                                     >
                                         <img src={ReduceQuantity} style={{ width: "20px", height: "20px" }} alt="-" />
                                     </button>
                                     <span className='oxanium-regular'>{item.quantity || 1}</span>
-                                    <button>
+                                    <button
+                                        onClick={() => handleQuantityChange(item, (item.quantity || 1) + 1)}
+                                    >
                                         <img src={AddQuantity} style={{ width: "20px", height: "20px" }} alt="+" />
                                     </button>
                                 </div>
