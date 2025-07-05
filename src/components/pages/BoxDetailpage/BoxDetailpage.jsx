@@ -2,9 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import "./BoxDetailpage.css";
 import { useParams } from 'react-router-dom'
 import { getMysteryBoxDetail, buyMysteryBox } from '../../../services/api.mysterybox'
+import { addToCart } from '../../../services/api.cart';
 import { fetchUserInfo } from '../../../services/api.auth';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../../redux/features/authSlice';
+import { addItemToCart } from '../../../redux/features/cartSlice';
 import BoxInformation from '../../tabs/BoxInformation/BoxInformation'
 import BoxRatelity from '../../tabs/BoxRatelity/BoxRatelity'
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
@@ -35,7 +37,24 @@ export default function BoxDetailpage() {
   useEffect(() => {
     fetchDetail();
   }, [id]);
-
+  // Handle add to cart
+  const handleAddToCart = async () => {
+    try {
+      await addToCart({ mangaBoxId: box.id });
+      dispatch(addItemToCart({
+        id: box.id,
+        type: 'box',
+        name: box.mysteryBoxName,
+        price: box.mysteryBoxPrice,
+        image: box.urlImage,
+        quantity: 1
+      }));
+      alert('✅ Added to cart!');
+    } catch (error) {
+      alert('❌ Failed to add to cart.');
+      console.error(error);
+    }
+  };
   // Close dropdown on outside click
   useEffect(() => {
     if (!isOpen) return;
@@ -185,18 +204,18 @@ export default function BoxDetailpage() {
                 <ul className="boxdetailP-dropdown-menu">
                   <li
                     className="boxdetailP-dropdown-item oxanium-regular"
-                    onClick={() => {
+                    onClick={async () => {
                       setIsOpen(false);
-                      // Replace actual api handling
+                      await handlePayInstant();
                     }}
                   >
                   Pay instant
                   </li>
                   <li
                     className="boxdetailP-dropdown-item oxanium-regular"
-                    onClick={() => {
+                    onClick={async () => {
                       setIsOpen(false);
-                      // Replace actual api handling
+                      await handleAddToCart();
                     }}
                   >
                     Add to cart
