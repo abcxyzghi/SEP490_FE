@@ -1,11 +1,32 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getProductOnSaleDetail } from '../../../services/api.product'
+import { getProductOnSaleDetail, buyProductOnSale } from '../../../services/api.product'
+import { fetchUserInfo } from '../../../services/api.auth';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../redux/features/authSlice';
 import CommentSection from '../../libs/CommentSection/CommentSection'
 import { getAllRatingsBySellProduct } from '../../../services/api.comment'
 
 export default function ProductDetailpage() {
+  const dispatch = useDispatch();
+  // Handle instant pay
+  const handlePayInstant = async () => {
+    const result = await buyProductOnSale({ sellProductId: product.id, quantity: 1 });
+    if (result?.status) {
+      // Refetch user info to update wallet amount
+      const token = localStorage.getItem('token');
+      if (token) {
+        const res = await fetchUserInfo(token);
+        if (res.status && res.data) {
+          dispatch(setUser(res.data));
+        }
+      }
+      alert(result.data?.message || 'Buy product on sale successfully!');
+    } else {
+      alert(result?.error || 'Failed to buy product on sale.');
+    }
+  };
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -67,6 +88,13 @@ export default function ProductDetailpage() {
         <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name} className="w-full h-64 object-cover rounded mb-4" />
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
         <p className="text-xl font-bold text-green-600 mb-4">{(product.price / 1000).toFixed(3)} VND</p>
+        <button
+          className="oxanium-bold"
+          style={{ marginBottom: 16, padding: '10px 24px', background: '#1e90ff', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 18 }}
+          onClick={handlePayInstant}
+        >
+          Pay Instant
+        </button>
         <p className="text-gray-700 mb-4">Description:{product.description}</p>
         <p className="text-gray-700 mb-4">Quantity:{product.quantity}</p>
         <p className="text-lg font-semibold mb-2">Topic: {product.topic}</p>

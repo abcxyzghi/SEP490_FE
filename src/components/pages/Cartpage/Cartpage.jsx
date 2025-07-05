@@ -1,5 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { buyMysteryBox } from '../../../services/api.mysterybox';
+import { buyProductOnSale } from '../../../services/api.product';
+import { fetchUserInfo } from '../../../services/api.auth';
+import { setUser } from '../../../redux/features/authSlice';
+import { clearCart, removeItemFromCart } from '../../../redux/features/cartSlice';
+import { clearAllCart, removeFromCart } from '../../../services/api.cart';
 import './Cartpage.css';
 import SearchBar from '../../libs/SearchFilterSort/SearchBar';
 import FilterPanel from '../../libs/SearchFilterSort/FilterPanel';
@@ -8,6 +14,7 @@ import CartBoxList from '../../tabs/CartBoxList/CartBoxList';
 import CartProductList from '../../tabs/CartProductList/CartProductList';
 
 export default function Cartpage() {
+  const dispatch = useDispatch();
   const [searchText, setSearchText] = useState('');
   const [priceRange, setPriceRange] = useState(500);
   const [selectedRarities, setSelectedRarities] = useState([]);
@@ -24,6 +31,75 @@ export default function Cartpage() {
     (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
     0
   );
+
+  // Buy handler for Cartpage
+  const handleBuyAllSelected = async () => {
+    if (selectedItemsData.length === 0) {
+      alert('Please select at least one item to buy.');
+      return;
+    }
+    let boughtCount = 0;
+    let isBoxTab = activeTab === 'Mystery Boxes';
+    let isProductTab = activeTab === 'Collection Store';
+    for (const item of selectedItemsData) {
+      if (isBoxTab && item.type === 'box') {
+        const result = await buyMysteryBox({ mangaBoxId: item.id, quantity: item.quantity });
+        if (result?.status) {
+          boughtCount++;
+        } else {
+          alert(result?.error || `Failed to buy mystery box: ${item.name}`);
+        }
+      } else if (isProductTab && item.type === 'product') {
+        const result = await buyProductOnSale({ sellProductId: item.id, quantity: item.quantity });
+        if (result?.status) {
+          boughtCount++;
+        } else {
+          alert(result?.error || `Failed to buy product: ${item.name}`);
+        }
+      }
+    }
+    if (boughtCount > 0) {
+      // Refetch user info to update wallet amount
+      const token = localStorage.getItem('token');
+      if (token) {
+        const res = await fetchUserInfo(token);
+        if (res.status && res.data) {
+          dispatch(setUser(res.data));
+        }
+      }
+      // Remove only the bought items from cart (backend and redux), or clear all if all selected
+      // Fix: Only clear all if ALL products in cart are selected
+      const cartItems = JSON.parse(localStorage.getItem('persist:root'))?.cart
+        ? JSON.parse(JSON.parse(localStorage.getItem('persist:root')).cart).items
+        : [];
+      const productCartItems = cartItems.filter(item => item.type === 'product');
+      const boxCartItems = cartItems.filter(item => item.type === 'box');
+      const selectedProductIds = selectedItemsData.filter(item => item.type === 'product').map(item => item.id);
+      const selectedBoxIds = selectedItemsData.filter(item => item.type === 'box').map(item => item.id);
+      const allBoxSelected = isBoxTab && boxCartItems.length > 0 && boxCartItems.every(item => selectedBoxIds.includes(item.id));
+      const allProductSelected = isProductTab && productCartItems.length > 0 && productCartItems.every(item => selectedProductIds.includes(item.id));
+      if (allBoxSelected) {
+        await clearAllCart('box');
+        dispatch(clearCart({ type: 'box' }));
+      } else if (allProductSelected) {
+        await clearAllCart('product');
+        dispatch(clearCart({ type: 'product' }));
+      } 
+      // Always remove bought items from cart (backend and redux), regardless of clearAllCart
+      for (const item of selectedItemsData) {
+        if (isBoxTab && item.type === 'box') {
+          await removeFromCart({ mangaBoxId: item.id });
+          dispatch(removeItemFromCart({ id: item.id, type: 'box' }));
+        } else if (isProductTab && item.type === 'product') {
+          await removeFromCart({ sellProductId: item.id });
+          dispatch(removeItemFromCart({ id: item.id, type: 'product' }));
+        }
+      }
+      // Optionally, you can keep the clearAllCart/clearCart for efficiency if all are selected, but always run the above loop to ensure removal
+      // alert success
+      alert(`Successfully bought ${boughtCount} item(s)!`);
+    }
+  };
 
   return (
     <>
@@ -78,7 +154,7 @@ export default function Cartpage() {
               {totalSelectedPrice.toLocaleString('vi-VN')} VND
             </span>
           </div>
-          <button className="cartpage-buy-button oxanium-bold">Buy</button>
+          <button className="cartpage-buy-button oxanium-bold" onClick={handleBuyAllSelected}>Buy</button>
         </div>
       </div>
     </>

@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "./BoxDetailpage.css";
 import { useParams } from 'react-router-dom'
-import { getMysteryBoxDetail } from '../../../services/api.mysterybox'
+import { getMysteryBoxDetail, buyMysteryBox } from '../../../services/api.mysterybox'
+import { fetchUserInfo } from '../../../services/api.auth';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../redux/features/authSlice';
 import BoxInformation from '../../tabs/BoxInformation/BoxInformation'
 import BoxRatelity from '../../tabs/BoxRatelity/BoxRatelity'
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
@@ -12,6 +15,7 @@ import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
 
 
 export default function BoxDetailpage() {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const [box, setBox] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -92,7 +96,26 @@ export default function BoxDetailpage() {
     return <div className="text-center mt-10 text-red-500">Box not found or error loading data.</div>;
   }
 
+  // Handle instant pay
+  const handlePayInstant = async () => {
+    const result = await buyMysteryBox({ mangaBoxId: box.id, quantity: 1 });
+    if (result?.status) {
+      // Refetch user info to update wallet amount
+      const token = localStorage.getItem('token');
+      if (token) {
+        const res = await fetchUserInfo(token);
+        if (res.status && res.data) {
+          dispatch(setUser(res.data));
+        }
+      }
+      alert(result.data?.message || 'Buy mystery box successfully!');
+    } else {
+      alert(result?.error || 'Failed to buy mystery box.');
+    }
+  };
+
   return (
+
     <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-16">
       <div className="flex w-full flex-col lg:flex-row pb-8">
         <div className="boxdetailP-image-wrapper">
@@ -167,7 +190,7 @@ export default function BoxDetailpage() {
                       // Replace actual api handling
                     }}
                   >
-                    Pay instant
+                  Pay instant
                   </li>
                   <li
                     className="boxdetailP-dropdown-item oxanium-regular"

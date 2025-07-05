@@ -42,6 +42,28 @@ export default function Navigation() {
     { label: 'Shop', path: Pathname('SHOP_PAGE'), icon: ShopIcon },
     { label: 'Auction', path: Pathname('AUNCTION_PAGE'), icon: AuctionIcon },
   ];
+  const handleSafeNavigate = async (to) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch(setUser(null));
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const res = await fetchUserInfo(token);
+      if (res.status) {
+        dispatch(setUser(res.data));
+        navigate(to);
+      } else {
+        throw new Error('Unauthorized');
+      }
+    } catch (err) {
+      localStorage.removeItem('token');
+      dispatch(setUser(null));
+      navigate('/login');
+    }
+  };
 
 
   useEffect(() => {

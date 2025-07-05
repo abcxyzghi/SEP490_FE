@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 import { getProfile, getOtherProfile, getAllProductOnSaleOfUser } from '../../../services/api.user';
 import UserOnSale from '../../tabs/UserOnSale/UserOnSale';
+import UserBox from '../../tabs/UserBox/UserBox';
+import UserCollectionList from '../../tabs/UserCollectionList/UserCollectionList';
+
 
 export default function Profilepage() {
   const { id } = useParams();
@@ -89,6 +91,8 @@ export default function Profilepage() {
         <button onClick={() => alert('Report feature coming soon!')}>Report</button>        
       )}
       <UserOnSale products={products} productsLoading={productsLoading} />
+      <UserBox />
+      <UserCollectionList />
     </div>
   );
 }

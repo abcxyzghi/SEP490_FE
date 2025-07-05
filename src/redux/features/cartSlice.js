@@ -21,12 +21,32 @@ const cartSlice = createSlice({
     state.items.push(action.payload);
   }
 },
-    setCartFromServer: (state, action) => {
-      state.items = action.payload;
-    },
-     clearCart: (state) => {
-      state.items = [];
-    },
+   setCartFromServer: (state, action) => {
+  const incomingItems = action.payload;
+
+  incomingItems.forEach((incomingItem) => {
+    const existingItem = state.items.find(
+      (item) => item.id === incomingItem.id && item.type === incomingItem.type
+    );
+
+    if (existingItem) {
+      existingItem.quantity = incomingItem.quantity;
+    } else {
+      state.items.push(incomingItem);
+    }
+  });
+},
+   clearCart: (state, action) => {
+  const typeToClear = action.payload?.type;
+
+  if (typeToClear) {
+    // Chỉ xóa những item có type tương ứng
+    state.items = state.items.filter(item => item.type !== typeToClear);
+  } else {
+    // Nếu không truyền type thì xóa hết
+    state.items = [];
+  }
+},
     removeItemFromCart: (state, action) => {
   state.items = state.items.filter(
     (item) => !(item.id === action.payload.id && item.type === action.payload.type)
