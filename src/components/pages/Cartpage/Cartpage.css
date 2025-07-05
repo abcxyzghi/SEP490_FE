@@ -313,19 +313,19 @@ input#cartpage-select-all-checkbox:checked {
 
 .cartpage-buy-button {
   /* màu tím */
-  background-color: rgba(90, 3, 106, 0.9);
+  background-color: var(--purpleBG-buyBtn);
   font-size: 18px;
   color: white;
   padding: 8px 26px;
   border-radius: 6px;
   /* viền hồng */
-  border: 2px solid #FF50F9;
+  border: 2px solid var(--pinkBorder-buyBtn);
   cursor: pointer;
   transition: 0.3s ease;
 }
 
 .cartpage-buy-button:hover {
-  background-color: rgba(74, 2, 87, 0.9);
+  background-color: var(--darkPurpleBG-buyBtn);
 }
 
 

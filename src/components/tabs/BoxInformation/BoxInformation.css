@@ -1,0 +1,87 @@
+.boxInfotab-container {
+    overflow-x: hidden;
+    margin: 40px 90px 10px 40px;
+    color: var(--light-1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.boxInfotab-topic-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.boxInfotab-topic {
+    font-size: 23px;
+}
+
+.boxInfotab-topic-content {
+    font-size: 18px;
+}
+
+.boxInfotab-description {
+    font-size: 30px;
+}
+
+.boxInfotab-description-content {
+    font-size: 16px;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 1024px */
+@media (max-width: 1024px) {
+    .boxInfotab-container {
+        margin: 30px 20px 10px 20px;
+    }
+
+    .boxInfotab-topic {
+        font-size: 20px;
+    }
+
+    .boxInfotab-topic-content {
+        font-size: 16px;
+    }
+
+    .boxInfotab-description {
+        font-size: 25px;
+    }
+
+    .boxInfotab-description-content {
+        font-size: 14px;
+    }
+}
+
+
+/* For screen width ≤ 600px */
+@media (max-width: 600px) {
+    .boxInfotab-topic-container {
+        margin-bottom: 10px;
+    }
+
+    .boxInfotab-container {
+        margin: 15px 5px 5px 5px;
+    }
+
+    .boxInfotab-topic {
+        font-size: 16px;
+    }
+
+    .boxInfotab-topic-content {
+        font-size: 13px;
+    }
+
+    .boxInfotab-description {
+        font-size: 18px;
+    }
+
+    .boxInfotab-description-content {
+        font-size: 12px;
+    }
+}
