@@ -14,7 +14,7 @@ import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
 import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
 import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
-
+import CollectionDetail from "../components/pages/CollectionDetail/CollectionDetail";
 import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
 
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
@@ -36,6 +36,7 @@ export const publicRoutes = [
     { path: PATH_NAME.BOXDETAIL_PAGE, element: <BoxDetailpage /> },
     { path: PATH_NAME.PRODUCTDETAIL_PAGE, element: <ProductDetailpage /> },
     { path: PATH_NAME.PROFILE, element: <Profilepage /> },
+    { path: PATH_NAME.COLLECTIONDETAIL_PAGE, element: <CollectionDetail /> },    
 ];
 
 export const privateRoutes = [
