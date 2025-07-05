@@ -65,23 +65,28 @@ export const removeFromCart = async ({ sellProductId, mangaBoxId }) => {
   }
 };
 
-export const clearAllCart = async () => {
+export const clearAllCart = async (type) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.delete(
-      `https://mmb-be-dotnet.onrender.com/api/Cart/clear-all-cart`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+
+    // Tạo URL có hoặc không có query `type`
+    const url = type
+      ? `https://mmb-be-dotnet.onrender.com/api/Cart/clear-all-cart?type=${type}`
+      : `https://mmb-be-dotnet.onrender.com/api/Cart/clear-all-cart`;
+
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return response.data;
   } catch (error) {
     console.error("Clear all cart failed:", error);
     throw error;
   }
 };
+
 
 export const updateCartQuantity = async ({ Id, quantity }) => {
   try {

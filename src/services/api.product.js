@@ -57,3 +57,23 @@ export const getProductOnSaleDetail = async (id) => {
     return null;
   }
 }
+
+// Buy product on sale API call
+export const buyProductOnSale = async ({ sellProductId, quantity }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await api.post(
+      "https://mmb-be-dotnet.onrender.com/api/SellProduct/buy-sell-product",
+      { sellProductId, quantity },
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error buying product on sale");
+    return null;
+  }
+}

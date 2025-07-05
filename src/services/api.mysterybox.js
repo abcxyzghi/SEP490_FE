@@ -20,3 +20,23 @@ export const getMysteryBoxDetail = async (id) => {
     return null;
   }
 }
+
+// Buy mystery box API call
+export const buyMysteryBox = async ({ mangaBoxId, quantity }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await api.post(
+      "https://mmb-be-dotnet.onrender.com/api/MangaBox/buy-mystery-box",
+      { mangaBoxId, quantity },
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error buying mystery box");
+    return null;
+  }
+}
