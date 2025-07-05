@@ -230,28 +230,38 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
               {selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length}
               {' / '}
               {filteredBoxes.length} Selected
+
             </div>
           )}
         </div>
 
 
-        {/* Box List */}
-        <div className="cartpage-product-list">
-          {loading
-            ? Array.from({ length: 3 }).map((_, idx) => (
-              <div className="cartpage-product-item" key={idx}>
-                <div className="cartpage-product-wrapper">
-                  <div className="cartpage-product-box">
-                    <div className="skeleton w-20 h-20 rounded-lg" />
-                    <div className="cartpage-product-text">
-                      <div className="skeleton h-4 w-32 mb-2 rounded" />
-                      <div className="skeleton h-4 w-20 rounded" />
+            <div className="cartpage-summary">
+                <div className="cartpage-summary-price">
+                    <div className="cartpage-summary-title oxanium-light">Total Price</div>
+                    <div className="cartpage-summary-value oxanium-semibold">
+                        {loading ? (
+                            <div className="skeleton h-6 w-24 rounded bg-slate-300" />
+                        ) : (
+                            <>
+                                {totalPrice.toLocaleString('vi-VN')}<br />VND
+                            </>
+                        )}
+
+
+
                     </div>
                   </div>
                 </div>
                 <div className="cartpage-quantity">
                   <div className="skeleton h-8 w-26 rounded" />
                 </div>
+
+                <div className="cartpage-summary-quantity">
+                    <div className="cartpage-summary-title oxanium-light">Total Quantity</div>
+                    <div className="cartpage-summary-value oxanium-semibold">
+                        {loading ? <div className="skeleton h-6 w-12 rounded bg-slate-300" /> : totalQuantity}
+
               </div>
             ))
             : filteredBoxes.map((item) => (
@@ -274,6 +284,7 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
                       <div className="cartpage-product-price">
                         {(item.price || 0).toLocaleString('vi-VN')} VND
                       </div>
+
                     </div>
                   </div>
                 </div>

@@ -1,0 +1,120 @@
+.box-ratelity-container {
+    width: 100%;
+    padding: 20px;
+}
+
+.box-ratelity-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--light-1);
+    text-align: center;
+}
+
+.box-ratelity-accordion {
+    margin-bottom: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.box-ratelity-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    align-items: center;
+    color: var(--light-1);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.box-rarity-label {
+    color: var(--light-1);
+    font-size: 1.1rem;
+}
+
+.box-ratelity-chance-label {
+    color: var(--light-1);
+}
+
+.box-ratelity-product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 8px;
+}
+
+.box-ratelity-product-card {
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.box-ratelity-product-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+.box-ratelity-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 5px;
+    background: rgba(10, 10, 10, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Show on hover */
+.box-ratelity-product-card:hover .box-ratelity-card-overlay {
+    opacity: 1;
+}
+
+/* Content inside the overlay */
+.box-ratelity-card-content {
+    text-align: center;
+    color: var(--light-1);
+}
+
+.box-ratelity-product-name {
+    font-size: 1rem;
+    /* font-weight: 600; */
+    margin-bottom: 8px;
+}
+
+.box-ratelity-view-btn {
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--light-1);
+    border-radius: 6px;
+    color: var(--light-1);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.box-ratelity-view-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.box-ratelity-product-name,
+.box-ratelity-view-btn {
+    /* Vô hiệu kéo-thả */
+    -webkit-user-drag: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+    user-select: none;
+}
