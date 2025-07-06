@@ -78,7 +78,7 @@ const HoverCard = ({ defaultImg, hoverImg, charImg }) => {
                 <Tilt className="char-wrapper"
                     tiltMaxAngleX={15} //maximum tilt range on X and Y axes (0–90)
                     tiltMaxAngleY={15}
-                    perspective={1000} //Sets how "deep" the tilt looks (Smaller number → more intense tilt)
+                    perspective={500} //Sets how "deep" the tilt looks (Smaller number → more intense tilt)
                     scale={1.05} //Scales the entire component on hover (default: 1)
                     glareEnable={false} //Enables a light reflection glare on hover
                     glareMaxOpacity={0.45} //Controls how strong the glare is (0 = none, 1 = full)
