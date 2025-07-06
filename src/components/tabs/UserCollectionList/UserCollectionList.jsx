@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllCollectionOfProfile } from '../../../services/api.user';
-import CollectionDetail from '../../pages/CollectionDetail/CollectionDetail';
+import CollectionDetailPage from '../../pages/CollectionDetailPage/CollectionDetailPage';
 import { getAllProductOfUserCollection, createSellProduct } from '../../../services/api.user';
 
 export default function UserCollectionList({ refreshOnSaleProducts }) {

@@ -78,7 +78,7 @@ export const buyProductOnSale = async ({ sellProductId, quantity }) => {
   }
 }
 
-export const getProductDetailRatelity = async (id) => {
+export const getCollectionDetail = async (id) => {
   try {
     const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/Product/get-product/${id}`);
     return response.data;

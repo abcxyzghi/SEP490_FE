@@ -8,13 +8,14 @@ import Shoppage from "../components/pages/Shoppage/Shoppage";
 import Auctionpage from "../components/pages/Auctionpage/Auctionpage";
 import AuctionRoom from "../components/pages/AuctionRoom/AuctionRoom";
 import BoxDetailpage from "../components/pages/BoxDetailpage/BoxDetailpage";
+import CollectionDetailPage from "../components/pages/CollectionDetailPage/CollectionDetailPage";
 import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDetailpage";
 import Settingpage from "../components/pages/Settingpage/Settingpage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
 import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
 import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
-import CollectionDetail from "../components/pages/CollectionDetail/CollectionDetail";
+
 import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
 
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
@@ -34,9 +35,9 @@ export const publicRoutes = [
     { path: PATH_NAME.SHOP_PAGE, element: <Shoppage /> },
     { path: PATH_NAME.AUNCTION_PAGE, element: <Auctionpage /> },
     { path: PATH_NAME.BOXDETAIL_PAGE, element: <BoxDetailpage /> },
+    { path: PATH_NAME.COLLECTIONDETAIL_PAGE, element: <CollectionDetailPage /> },    
     { path: PATH_NAME.PRODUCTDETAIL_PAGE, element: <ProductDetailpage /> },
     { path: PATH_NAME.PROFILE, element: <Profilepage /> },
-    { path: PATH_NAME.COLLECTIONDETAIL_PAGE, element: <CollectionDetail /> },    
 ];
 
 export const privateRoutes = [
