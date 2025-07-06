@@ -35,3 +35,13 @@ export const openUserBox = async (userBoxId) => {
   return response.data;
 };
 
+// Create sell product API
+export const createSellProduct = async ({ userProductId, quantity, description, price }) => {
+  const response = await axios.post('https://mmb-be-dotnet.onrender.com/api/SellProduct/create-sell-product', {
+    UserProductId: userProductId,
+    quantity,
+    description,
+    price
+  });
+  return response.data;
+};

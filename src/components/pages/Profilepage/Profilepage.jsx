@@ -49,30 +49,32 @@ export default function Profilepage() {
     }
   }, [id, currentUserId]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setProductsLoading(true);
-      try {
-        const userId = id || currentUserId;
-        if (userId) {
-          const res = await getAllProductOnSaleOfUser(userId);
-          if (res && res.status) {
-            setProducts(res.data);
-          } else {
-            setProducts([]);
-          }
+  // Refetchable fetchProducts for on-sale products
+  const fetchProducts = React.useCallback(async () => {
+    setProductsLoading(true);
+    try {
+      const userId = id || currentUserId;
+      if (userId) {
+        const res = await getAllProductOnSaleOfUser(userId);
+        if (res && res.status) {
+          setProducts(res.data);
         } else {
           setProducts([]);
         }
-      } catch {
+      } else {
         setProducts([]);
       }
-      setProductsLoading(false);
-    };
+    } catch {
+      setProducts([]);
+    }
+    setProductsLoading(false);
+  }, [id, currentUserId]);
+
+  useEffect(() => {
     if (id || currentUserId) {
       fetchProducts();
     }
-  }, [id, currentUserId]);
+  }, [id, currentUserId, fetchProducts]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -92,7 +94,7 @@ export default function Profilepage() {
       )}
       <UserOnSale products={products} productsLoading={productsLoading} />
       <UserBox />
-      <UserCollectionList />
+      <UserCollectionList refreshOnSaleProducts={fetchProducts} />
     </div>
   );
 }

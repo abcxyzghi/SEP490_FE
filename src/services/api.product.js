@@ -77,3 +77,13 @@ export const buyProductOnSale = async ({ sellProductId, quantity }) => {
     return null;
   }
 }
+
+export const getProductDetailRatelity = async (id) => {
+  try {
+    const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/Product/get-product/${id}`);
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching product detail");
+    return null;
+  }
+}
