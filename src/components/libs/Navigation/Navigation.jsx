@@ -23,15 +23,27 @@ import { fetchUserInfo } from '../../../services/api.auth';
 
 export default function Navigation() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // const [isOpen, setIsOpen] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(false);
+
   const navigate = useNavigate();
   const user = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
 
-  const truncateNumber = (numStr, n) => {
-    const str = String(numStr);
-    return str.length > n ? str.slice(0, n - 1) + '…' : str;
+  const formatShortNumber = (num) => {
+    if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return num.toString();
   };
+
+  const formatFullWithDots = (num) => {
+    return Number(num).toLocaleString('de-DE'); // Ex: 9.000.000
+  };
+
+  // const truncateNumber = (numStr, n) => {
+  //   const str = String(numStr);
+  //   return str.length > n ? str.slice(0, n - 1) + '…' : str;
+  // };
 
   const toggleCollapse = () => {
     setIsCollapsed(prev => !prev);
@@ -69,6 +81,7 @@ export default function Navigation() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && !user) {
+      setLoadingUser(true);
       fetchUserInfo(token)
         .then(res => {
           if (res.status && res.data) {
@@ -83,9 +96,13 @@ export default function Navigation() {
           } else {
             console.error('Lỗi fetch user info:', err);
           }
+        })
+        .finally(() => {
+          setLoadingUser(false);
         });
     }
   }, [dispatch, user]);
+
 
   return (
     <div className={`nav-container ${isCollapsed ? 'collapsed' : ''}`}>
@@ -119,7 +136,13 @@ export default function Navigation() {
 
       {!isCollapsed && (
         <div className="nav-right">
-          {user ? (
+          {loadingUser ? (
+            <div className="nav-right flex items-center gap-5">
+              <div className="skeleton w-24 h-8 rounded-lg"></div>
+              <div className="skeleton w-30 h-8 rounded-lg"></div>
+              <div className="skeleton w-12 h-12 rounded-full"></div>
+            </div>
+          ) : user ? (
             user.role === 'user' ? (
               <>
                 {/* Cart page Navigation */}
@@ -136,9 +159,14 @@ export default function Navigation() {
                 </NavLink>
 
                 {/* Add tooltip for currency bar */}
-                <div className="nav-curency-container ml-2" onClick={() => navigate(Pathname('PAYMENT_PAGE'))}>
+                <div className="nav-curency-container ml-2 tooltip tooltip-bottom tooltip-success"
+                  data-tip={`${formatFullWithDots(user.wallet_amount)} VND`}
+                  onClick={() => navigate(Pathname('PAYMENT_PAGE'))}
+                >
                   {/* <div class="nav-curency-digit oxanium-bold">{truncateNumber(`12.000.000.00${(user.wallet_amount / 1000).toFixed(3)}`, 10)} VND</div> */}
-                  <div className="nav-curency-digit oxanium-bold">{truncateNumber((user.wallet_amount / 1000).toFixed(3), 10)} VND</div>
+                  <div className="nav-curency-digit oxanium-bold">
+                    {formatShortNumber(user.wallet_amount)} VND
+                  </div>
                 </div>
 
                 {/* Navigation dropdown menu */}

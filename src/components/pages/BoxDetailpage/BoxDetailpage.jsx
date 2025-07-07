@@ -135,7 +135,7 @@ export default function BoxDetailpage() {
 
   return (
 
-    <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-16">
+    <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
       <div className="flex w-full flex-col lg:flex-row pb-8">
         <div className="boxdetailP-image-wrapper">
           <div className="boxdetailP-box-imgBG">
@@ -146,7 +146,7 @@ export default function BoxDetailpage() {
             className="boxdetailP-box-img" />
         </div>
 
-        <div className="boxdetailP-divider"></div>
+        {/* <div className="boxdetailP-divider"></div> */}
 
         <div className="boxdetailP-info-content">
           {/* REplace with actual api figure */}
