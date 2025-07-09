@@ -33,6 +33,28 @@
     z-index: 0;
     width: 100%;
     height: auto;
+    transition: filter 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.boxdetailP-image-wrapper:hover .boxdetailP-box-img {
+    filter: drop-shadow(-8px -8px 10px #7a7575);
+    transform: scale(1.06);
+    animation: boxdetailP-bounce 0.65s;
+}
+
+@keyframes boxdetailP-bounce {
+    0% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.09);
+    }
+    60% {
+        transform: scale(1.04);
+    }
+    100% {
+        transform: scale(1.06);
+    }
 }
 
 
@@ -53,37 +75,15 @@
     border-radius: 8px;
     border: 1px solid var(--steel_gray-color);
     /* align-items: center; */
-    padding: 20px 30px;
+    padding: 30px 40px;
     overflow: visible;
-}
-
-.boxdetailP-boxReview-container {
-    width: 36%;
-    margin-left: auto;
-    padding: 8px 100px;
-    clip-path: polygon(95% 0%, 100% 50%, 95% 100%, 5% 100%, 0 50%, 5% 0);
-    background: var(--dark-4-o90);
-    color: var(--light-1);
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-    align-items: center;
-}
-
-.boxdetailP-rating-responsive {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Box info container*/
 .boxdetailP-box-title {
     margin-bottom: 8px;
     text-align: left;
-    font-size: 3rem;
+    font-size: 2.8rem;
     background: linear-gradient(to bottom,
             #FFFFFF 0%,
             #F1F1F1 30%,
@@ -173,8 +173,7 @@
 
 .boxdetailP-buyNow-button {
     width: 100%;
-    /* max-width: 480px; */
-    min-width: 420px;
+    min-width: 380px;
     display: block;
     margin: 0 auto;
     text-align: center;
@@ -185,12 +184,20 @@
     border-radius: 10px;
     border: 2px solid var(--pinkBorder-buyBtn);
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
 }
 
+/* Yellow glow on hover */
 .boxdetailP-buyNow-button:hover {
     background-color: var(--darkPurpleBG-buyBtn);
+    box-shadow: 0 0 2px 0px var(--secondary-5-o50), 0 0 12px 4px rgba(255, 255, 0, 0.3);
+}
+
+/* Scale down on press */
+.boxdetailP-buyNow-button:active {
+    transform: scale(0.99);
+    box-shadow: 0 0 10px 2px rgba(255, 255, 0, 0.3);
 }
 
 .boxdetailP-dropdown-menu {
@@ -261,7 +268,7 @@
 /* For screen width ≤ 645px */
 @media (max-width: 645px) {
     .boxdetailP-buyNow-button {
-        min-width: 180px;
+        min-width: 150px;
         font-size: 15px;
     }
 
