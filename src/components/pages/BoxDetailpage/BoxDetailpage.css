@@ -75,30 +75,8 @@
     border-radius: 8px;
     border: 1px solid var(--steel_gray-color);
     /* align-items: center; */
-    padding: 20px 40px;
+    padding: 30px 40px;
     overflow: visible;
-}
-
-.boxdetailP-boxReview-container {
-    width: 36%;
-    margin-left: auto;
-    padding: 8px 100px;
-    clip-path: polygon(95% 0%, 100% 50%, 95% 100%, 5% 100%, 0 50%, 5% 0);
-    background: var(--dark-4-o90);
-    color: var(--light-1);
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-    align-items: center;
-}
-
-.boxdetailP-rating-responsive {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Box info container*/
@@ -213,12 +191,12 @@
 /* Yellow glow on hover */
 .boxdetailP-buyNow-button:hover {
     background-color: var(--darkPurpleBG-buyBtn);
-    box-shadow: 0 0 2px 0px var(--secondary-5-o50), 0 0 24px 8px rgba(255, 255, 0, 0.3);
+    box-shadow: 0 0 2px 0px var(--secondary-5-o50), 0 0 12px 4px rgba(255, 255, 0, 0.3);
 }
 
 /* Scale down on press */
 .boxdetailP-buyNow-button:active {
-    transform: scale(0.98);
+    transform: scale(0.99);
     box-shadow: 0 0 10px 2px rgba(255, 255, 0, 0.3);
 }
 

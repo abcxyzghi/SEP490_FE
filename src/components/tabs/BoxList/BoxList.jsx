@@ -5,8 +5,9 @@ import { getAllMysteryBoxes } from '../../../services/api.mysterybox';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import AddToCart from '../../../assets/Icon_fill/Bag_fill.svg';
 import { addToCart } from '../../../services/api.cart';
-import { useDispatch } from 'react-redux'; // <-- Import useDispatch
+import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from '../../../redux/features/cartSlice'; // <-- Import addItemToCart
+import MessageModal from '../../libs/MessageModal/MessageModal';
 
 const PAGE_SIZE = 8;
 
@@ -16,8 +17,16 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
   const [error, setError] = useState(null);
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [loadingBtnId, setLoadingBtnId] = useState(null);
+  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+
   const navigate = useNavigate();
   const dispatch = useDispatch(); // <-- Add dispatch
+  const user = useSelector((state) => state.auth.user);
+
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
 
   useEffect(() => {
     const fetchBoxes = async () => {
@@ -109,9 +118,13 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
 
   // Add to cart handler
   const handleAddToCart = async (boxId) => {
+    if (!user || user.role !== 'user') {
+      return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+    }
+
+    setLoadingBtnId(boxId);
     try {
       await addToCart({ mangaBoxId: boxId });
-      // Find the box info for Redux
       const box = boxes.find(b => b.id === boxId);
       if (box) {
         dispatch(addItemToCart({
@@ -123,15 +136,18 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
           quantity: 1
         }));
       }
-      alert('✅ Added to cart!');
+      showModal('default', 'Success', 'Successfully added to cart!');
     } catch (error) {
-      alert('❌ Failed to add to cart.');
+      showModal('error', 'Error', 'Failed to add to cart.');
       console.error(error);
+    } finally {
+      setLoadingBtnId(null);
     }
   };
 
   return (
     <div className="boxList-card-list-container">
+      {/* Box list main content */}
       <div className="boxList-card-grid">
         {visibleBoxes.map((item, index) => {
           const isExpanded = expandedCardIndex === index;
@@ -185,14 +201,21 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                           <span className="boxList-view-button-text oleo-script-bold">View Detail</span>
                         </button>
                         <button
-                          className="boxList-cart-button oleo-script-bold"
+                          className={`boxList-cart-button oleo-script-bold ${loadingBtnId === item.id  ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                          disabled={loadingBtnId === item.id}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleAddToCart(item.id);
                           }}
                         >
-                          <img src={AddToCart} alt="Cart Icon" className='boxList-cart-icon' />
-                          Cart
+                          {loadingBtnId === item.id ? (
+                            <span className="loading loading-bars loading-md"></span>
+                          ) : (
+                            <>
+                              <img src={AddToCart} alt="Cart Icon" className='boxList-cart-icon' />
+                              Cart
+                            </>
+                          )}
                         </button>
                       </div>
                     </>
@@ -224,6 +247,15 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
           Load more
         </button>
       )}
+
+      {/* Message Modal */}
+       <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
     </div>
   );
 }

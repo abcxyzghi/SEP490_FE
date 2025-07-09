@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './Navigation.css';
-import { Pathname } from '../../../router/Pathname';
+import { Pathname, PATH_NAME } from '../../../router/Pathname';
 import NavigationDropdownMenu from '../NavigationDropdownMenu/NavigationDropdownMenu';
 // Importing logos
 import FullLogoGrD from '../../../assets/logoSVG/Full_logo-Grdient.svg';
@@ -29,6 +29,7 @@ export default function Navigation() {
   const user = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
 
+  // Format currency number from "9000000" to "9M"
   const formatShortNumber = (num) => {
     if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -54,6 +55,7 @@ export default function Navigation() {
     { label: 'Shop', path: Pathname('SHOP_PAGE'), icon: ShopIcon },
     { label: 'Auction', path: Pathname('AUNCTION_PAGE'), icon: AuctionIcon },
   ];
+
   const handleSafeNavigate = async (to) => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -78,6 +80,7 @@ export default function Navigation() {
   };
 
 
+  // Initial login / user fetch (one-time user init)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && !user) {
@@ -92,7 +95,7 @@ export default function Navigation() {
           if (err.response?.status === 401) {
             localStorage.removeItem('token');
             dispatch(setUser(null));
-            navigate('/login');
+            navigate(PATH_NAME.LOGIN);
           } else {
             console.error('Lỗi fetch user info:', err);
           }
@@ -103,6 +106,28 @@ export default function Navigation() {
     }
   }, [dispatch, user]);
 
+
+  // Poll for wallet changes every 2 minutes (wallet-only silent refetch)
+  useEffect(() => {
+    if (user) {
+      const interval = setInterval(async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetchUserInfo(token);
+          if (res?.status && res.data) {
+            const newAmount = res.data.wallet_amount;
+            if (newAmount !== user.wallet_amount) {
+              dispatch(setUser({ ...user, wallet_amount: newAmount }));
+            }
+          }
+        } catch (err) {
+          console.error('Wallet refetch failed:', err);
+        }
+      }, 120000); // 2 minutes
+
+      return () => clearInterval(interval);
+    }
+  }, [user, dispatch]);
 
   return (
     <div className={`nav-container ${isCollapsed ? 'collapsed' : ''}`}>
@@ -158,7 +183,7 @@ export default function Navigation() {
                   )}
                 </NavLink>
 
-                {/* Add tooltip for currency bar */}
+                {/* Currency bar */}
                 <div className="nav-curency-container ml-2 tooltip tooltip-bottom tooltip-success"
                   data-tip={`${formatFullWithDots(user.wallet_amount)} VND`}
                   onClick={() => navigate(Pathname('PAYMENT_PAGE'))}
