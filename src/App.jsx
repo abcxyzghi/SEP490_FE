@@ -38,7 +38,8 @@ const AnimatedRoute = ({ children }) => {
 };
 
 function App() {
-  const user = useSelector((state) => state.user); // Already from persisted Redux state
+  // Improved: useSelector for both user and userRole
+  const user = useSelector((state) => state.auth.user);
   const userRole = user?.role;
 
   return (

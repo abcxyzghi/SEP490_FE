@@ -13,7 +13,7 @@ import SettingIcon from "../../../assets/Icon_fill/Setting_fill.svg";
 import LogoutIcon from "../../../assets/Icon_fill/Sign_out_squre_fill.svg";
 import CloseSubMenu from "../../../assets/Icon_line/Chevron_Left.svg";
 // Importing api services
-import { Pathname } from "../../../router/Pathname";
+import { Pathname,PATH_NAME } from "../../../router/Pathname";
 import { setUser, logout } from "../../../redux/features/authSlice";
 import { fetchUserInfo } from "../../../services/api.auth";
 
@@ -65,20 +65,41 @@ export default function NavigationDropdownMenu() {
     setSubMenu(null);
   };
 
-  const handleLogout = () => {
-    persistor.pause(); // stop persisting
-    persistor.flush().then(() => {
-      persistor.purge(); // mark persisted state as gone
-      dispatch(logout()); // clear auth from Redux
-      localStorage.removeItem("persist:root"); // force-remove immediately
-      localStorage.clear(); // optional: clear everything else
-      sessionStorage.clear();
-      caches
-        .keys()
-        .then((names) => names.forEach((name) => caches.delete(name)));
-    });
-    // ✅ Reload cleanly to make sure Redux state is empty
-    window.location.href = Pathname("LOGIN"); // <- hard reload
+  // const handleLogout = () => {
+  //   persistor.pause(); // stop persisting
+  //   persistor.flush().then(() => {
+  //     persistor.purge(); // mark persisted state as gone
+  //     dispatch(logout()); // clear auth from Redux
+  //     localStorage.removeItem("persist:root"); // force-remove immediately
+  //     localStorage.clear(); // optional: clear everything else
+  //     sessionStorage.clear();
+  //     caches
+  //       .keys()
+  //       .then((names) => names.forEach((name) => caches.delete(name)));
+  //   });
+  //   // ✅ Reload cleanly to make sure Redux state is empty
+  //   window.location.href = Pathname("LOGIN"); // <- hard reload
+  // }; 
+  const handleLogout = async () => {
+    // Clear Redux memory state
+    dispatch(logout());
+
+    // Clear localStorage/sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Clear all browser caches (for PWAs or service workers)
+    if ('caches' in window) {
+      try {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      } catch (e) {
+        // Ignore cache errors
+      }
+    }
+
+    // Navigate to login page (soft)
+    navigate(PATH_NAME.LOGIN, { replace: true });
   };
 
   const handleCloseSubMenu = () => {

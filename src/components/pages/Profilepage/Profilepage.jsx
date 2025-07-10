@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+import { React, useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { getProfile, getOtherProfile, getAllProductOnSaleOfUser } from '../../../services/api.user';
+import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
 import UserOnSale from '../../tabs/UserOnSale/UserOnSale';
 import UserBox from '../../tabs/UserBox/UserBox';
 import UserCollectionList from '../../tabs/UserCollectionList/UserCollectionList';
 
-
+import './Profilepage.css';
 export default function Profilepage() {
   const { id } = useParams();
   const currentUserId = useSelector(state => state.auth.user?.user_id);
@@ -16,6 +17,10 @@ export default function Profilepage() {
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
 
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportTitle, setReportTitle] = useState('');
+  const [reportContent, setReportContent] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -50,7 +55,7 @@ export default function Profilepage() {
   }, [id, currentUserId]);
 
   // Refetchable fetchProducts for on-sale products
-  const fetchProducts = React.useCallback(async () => {
+  const fetchProducts = useCallback(async () => {
     setProductsLoading(true);
     try {
       const userId = id || currentUserId;
@@ -82,6 +87,37 @@ export default function Profilepage() {
 
   const isMyProfile = currentUserId && (id === currentUserId || !id);
 
+  const handleSubmitReport = async () => {
+    if (!reportTitle || !reportContent) {
+      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
+      return;
+    }
+
+    try {
+      setReportSubmitting(true);
+      const res = await createReport({
+        sellProductId: "null",
+        sellerId: id,
+        title: reportTitle,
+        content: reportContent,
+      });
+
+      if (res?.success || res?.status) {
+        alert('Gửi báo cáo thành công!');
+        setShowReportModal(false);
+        setReportTitle('');
+        setReportContent('');
+      } else {
+        alert('Gửi không thành công (response không hợp lệ)');
+      }
+    } catch (err) {
+      console.error("Report error:", err);
+      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+    } finally {
+      setReportSubmitting(false);
+    }
+
+  };
   return (
     <div>
       <h2>{isMyProfile ? 'My Profile' : `User Profile: ${profile.username || id}`}</h2>
@@ -90,11 +126,43 @@ export default function Profilepage() {
       <button onClick={() => alert('Copy link feature coming soon!')}>Copy link</button>
       {/* Add more fields as needed */}
       {!isMyProfile && (
-        <button onClick={() => alert('Report feature coming soon!')}>Report</button>        
+        <button
+          onClick={() => {
+            console.log("Open modal");
+            setShowReportModal(true);
+          }}
+          style={{ color: 'white', backgroundColor: '#c0392b', padding: '6px 12px', borderRadius: 4 }}
+        >
+          Report
+        </button>
       )}
       <UserOnSale products={products} productsLoading={productsLoading} />
       <UserBox />
       <UserCollectionList refreshOnSaleProducts={fetchProducts} />
+      {showReportModal && (
+        <div className="modal2-overlay">
+          <div className="modal2">
+            <h3>Gửi báo cáo</h3>
+            <input
+              type="text"
+              placeholder="Tiêu đề"
+              value={reportTitle}
+              onChange={(e) => setReportTitle(e.target.value)}
+            />
+            <textarea
+              placeholder="Nội dung"
+              value={reportContent}
+              onChange={(e) => setReportContent(e.target.value)}
+            />
+            <div className="modal2-actions">
+              <button onClick={handleSubmitReport} disabled={reportSubmitting}>
+                {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
+              </button>
+              <button onClick={() => setShowReportModal(false)}>Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,7 +8,6 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { loginApi } from '../../../services/api.auth';
 import { useDispatch } from 'react-redux';
-import { login as loginAction } from '../../../redux/features/userSlice';
 import { setToken } from '../../../redux/features/authSlice';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -48,7 +47,6 @@ export default function LoginForm() {
             if (data && data.access_token && data.is_email_verification) {
                 localStorage.setItem('token', data.access_token);
                 localStorage.setItem('refreshToken', data.refresh_token);
-                dispatch(loginAction(data));
                 dispatch(setToken(data.access_token));
                 setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
                 navigate("/");
