@@ -162,6 +162,7 @@
     padding: 6px 12px;
     background: var(--dark-5);
     cursor: pointer;
+    z-index:2
 }
 
 .productdetailP-quantity-iconWrapper-left:hover,

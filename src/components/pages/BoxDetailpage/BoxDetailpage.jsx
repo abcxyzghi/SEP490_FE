@@ -26,6 +26,7 @@ export default function BoxDetailpage() {
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [activeTab, setActiveTab] = useState('Information');
   const [isOpen, setIsOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const menuRef = useRef(null);
 
   const showModal = (type, title, message) => {
@@ -71,14 +72,14 @@ export default function BoxDetailpage() {
 
     setLoadingBtn(true);
     try {
-      await addToCart({ mangaBoxId: box.id });
+      await addToCart({ mangaBoxId: box.id, quantity });
       dispatch(addItemToCart({
         id: box.id,
         type: 'box',
         name: box.mysteryBoxName,
         price: box.mysteryBoxPrice,
         image: box.urlImage,
-        quantity: 1
+        quantity: quantity
       }));
       showModal('default', 'Success', 'Successfully added to cart!');
     } catch (error) {
@@ -101,6 +102,13 @@ export default function BoxDetailpage() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
+  const increaseQuantity = () => {
+    setQuantity(prev => prev + 1);
+  };
+
+  const decreaseQuantity = () => {
+    setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
+  };
 
   if (loading) {
     return (
@@ -173,7 +181,7 @@ export default function BoxDetailpage() {
 
     setLoadingBtn(true);
     try {
-      const result = await buyMysteryBox({ mangaBoxId: box.id, quantity: 1 });
+      const result = await buyMysteryBox({ mangaBoxId: box.id, quantity: quantity });
       if (result?.status) {
         const token = localStorage.getItem('token');
         if (token) {
@@ -223,15 +231,32 @@ export default function BoxDetailpage() {
 
           <div className="boxdetailP-quantyNbuy-container">
             <div className="boxdetailP-quantity-measure">
-              <div className="boxdetailP-quantity-iconWrapper-left">
-                <img src={ReduceQuantity} alt="-" className="boxdetailP-quantity-icon" />
+              <div
+                className="boxdetailP-quantity-iconWrapper-left"
+                onClick={decreaseQuantity}
+                style={{ cursor: "pointer" }}
+              >
+                <img
+                  src={ReduceQuantity}
+                  alt="-"
+                  className="boxdetailP-quantity-icon"
+                />
               </div>
+
               <div className="boxdetailP-quantity-text oxanium-regular">
-                {/* Replace with dynamic api number (default = 1) */}
-                1
+                {quantity}
               </div>
-              <div className="boxdetailP-quantity-iconWrapper-right">
-                <img src={AddQuantity} alt="+" className="boxdetailP-quantity-icon" />
+
+              <div
+                className="boxdetailP-quantity-iconWrapper-right"
+                onClick={increaseQuantity}
+                style={{ cursor: "pointer" }}
+              >
+                <img
+                  src={AddQuantity}
+                  alt="+"
+                  className="boxdetailP-quantity-icon"
+                />
               </div>
             </div>
 

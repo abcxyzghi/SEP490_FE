@@ -201,6 +201,14 @@ export default function ProductDetailpage() {
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  const [quantity, setQuantity] = useState(1);
+  const increaseQuantity = () => {
+    setQuantity(prev => prev + 1);
+  };
+
+  const decreaseQuantity = () => {
+    setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
+  };
 
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
@@ -256,13 +264,17 @@ export default function ProductDetailpage() {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
 
-    if (user.wallet_amount < product.price) {
+    if (user.wallet_amount < product.price * quantity) {
       return showModal('warning', 'Currency Crunch', 'You do not have enough currency');
+    }
+
+    if (quantity > product.quantity) {
+      return showModal('warning', 'Quantity Error', 'You cannot buy more than the available stock.');
     }
 
     setLoadingBtn(true);
     try {
-      const result = await buyProductOnSale({ sellProductId: product.id, quantity: 1 });
+      const result = await buyProductOnSale({ sellProductId: product.id, quantity: quantity });
       if (result?.status) {
         const token = localStorage.getItem('token');
         if (token) {
@@ -271,17 +283,24 @@ export default function ProductDetailpage() {
             dispatch(setUser(res.data));
           }
         }
-        showModal('default', 'Success', result.data?.message || 'Product purchased successfully!');
 
-        // Sửa lại đồng bộ UI để quantity ng dùng tự chỉnh và lệnh if dưới đưa ng dùng về trang shop khi món hàng hết stock 
-        // Ý là thêm lệnh điều chỉnh quantity vs sửa lại lệnh if hết stock thì đưa ng dùng về trang shop
-        if (product.quantity === 1) {
-          navigate(PATH_NAME.SHOP_PAGE);
+        // Determine if user just bought out the stock
+        if (quantity === product.quantity) {
+          showModal('default', 'Out of Stock', 'You have bought out the product quantity. You will be routed to the shop page.');
+          setTimeout(() => {
+            navigate(PATH_NAME.SHOP_PAGE);
+          }, 2000);
+        } else if (product.quantity - quantity === 0) {
+          showModal('default', 'Out of Stock', 'You have bought out the product quantity. You will be routed to the shop page.');
+          setTimeout(() => {
+            navigate(PATH_NAME.SHOP_PAGE);
+          }, 2000);
         } else {
+          showModal('default', 'Success', result.data?.message || 'Product purchased successfully!');
           fetchDetail();
         }
       } else {
-        showModal('error', 'Error', result?.error || 'Purchase failed.');
+        showModal('error', `Error`, result.error || 'Purchase failed.');
       }
     } catch (error) {
       showModal('error', 'Oops!', 'Something went wrong while purchasing.');
@@ -298,14 +317,14 @@ export default function ProductDetailpage() {
 
     setLoadingBtn(true);
     try {
-      await addToCart({ sellProductId: product.id });
+      await addToCart({ sellProductId: product.id, quantity });
       dispatch(addItemToCart({
         id: product.id,
         type: 'product',
         name: product.name,
         price: product.price,
         image: product.urlImage,
-        quantity: 1
+        quantity: quantity
       }));
       showModal('default', 'Success', 'Successfully added to cart!');
     } catch (error) {
@@ -369,8 +388,8 @@ export default function ProductDetailpage() {
             <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={`${product.name} background`} />
           </div>
           <div className="productdetailP-box-img-wrapper">
-            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name} 
-            className="productdetailP-box-img" />
+            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name}
+              className="productdetailP-box-img" />
           </div>
         </div>
 
@@ -403,14 +422,15 @@ export default function ProductDetailpage() {
           <div className="productdetailP-quantyNbuy-container">
             {/* Quantity toggle section */}
             <div className="productdetailP-quantity-measure">
-              <div className="productdetailP-quantity-iconWrapper-left">
+              <div className="productdetailP-quantity-iconWrapper-left" onClick={decreaseQuantity} style={{ cursor: "pointer" }} >
                 <img src={ReduceQuantity} alt="-" className="productdetailP-quantity-icon" />
               </div>
               <div className="productdetailP-quantity-text oxanium-regular">
                 {/* Replace with dynamic api number (default = 1) */}
-                1
+                {quantity}
               </div>
-              <div className="productdetailP-quantity-iconWrapper-right">
+              <div className="productdetailP-quantity-iconWrapper-right" onClick={increaseQuantity}
+                style={{ cursor: "pointer" }}>
                 <img src={AddQuantity} alt="+" className="productdetailP-quantity-icon" />
               </div>
             </div>
@@ -435,9 +455,9 @@ export default function ProductDetailpage() {
                   >
                     Pay instant
                   </li>
-                   <li
+                  <li
                     className={`productdetailP-dropdown-item oxanium-regular ${loadingBtn ? 'disabled' : ''}`}
-                    // Exchange handle here
+                  // Exchange handle here
                   >
                     Exchange
                   </li>

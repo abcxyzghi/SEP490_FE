@@ -27,16 +27,20 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   }, []);
 
   // Fetch products of selected collection
-  const handleShowProducts = async (collectionId) => {
-    setSelectedCollectionId(collectionId);
-    setShowProducts(true);
-    setSellResult(null);
+  const fetchProductsOfCollection = async (collectionId) => {
     const res = await getAllProductOfUserCollection(collectionId);
     if (res.status && Array.isArray(res.data)) {
       setProducts(res.data);
     } else {
       setProducts([]);
     }
+  };
+
+  const handleShowProducts = async (collectionId) => {
+    setSelectedCollectionId(collectionId);
+    setShowProducts(true);
+    setSellResult(null);
+    await fetchProductsOfCollection(collectionId);
   };
 
   // Open sell modal
@@ -86,6 +90,10 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       // Refetch on-sale products for UI update
       if (typeof refreshOnSaleProducts === 'function') {
         refreshOnSaleProducts();
+      }
+      // Refresh the user's collection products after selling
+      if (selectedCollectionId) {
+        await fetchProductsOfCollection(selectedCollectionId);
       }
       // Show user a confirmation and refetch their on-sale products
       alert('Sell successful! Your product is now on sale.');

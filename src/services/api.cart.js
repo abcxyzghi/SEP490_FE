@@ -1,16 +1,18 @@
 import axios from "axios";
 
 
-export const addToCart = async ({ sellProductId, mangaBoxId }) => {
+export const addToCart = async ({ sellProductId, mangaBoxId, quantity = 1 }) => {
   try {
     const token = localStorage.getItem("token");
     // Only include non-empty params
     const params = {};
     if (sellProductId) params.SellProductId = sellProductId;
     if (mangaBoxId) params.MangaBoxId = mangaBoxId;
+    params.Quantity = quantity; // ✅ thêm dòng này
+
     const response = await axios.post(
-      `https://mmb-be-dotnet.onrender.com/api/Cart/add-to-cart`, 
-      null, 
+      `https://mmb-be-dotnet.onrender.com/api/Cart/add-to-cart`,
+      null,
       {
         params,
         headers: {
@@ -24,6 +26,7 @@ export const addToCart = async ({ sellProductId, mangaBoxId }) => {
     throw error;
   }
 };
+
 
 export const viewCart = async () => {
   try {

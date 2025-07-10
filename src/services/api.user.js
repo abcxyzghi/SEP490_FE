@@ -45,3 +45,14 @@ export const createSellProduct = async ({ userProductId, quantity, description, 
   });
   return response.data;
 };
+
+// Create report API
+export const createReport = async ({ sellProductId, sellerId, title, content }) => {
+  const response = await axios.post('https://mmb-be-dotnet.onrender.com/api/Report/create-report', {
+    sellProductId,
+    sellerId,
+    title,
+    content
+  });
+  return response.data;
+};

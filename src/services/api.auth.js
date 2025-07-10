@@ -1,5 +1,5 @@
 import axios from 'axios';
-import api from '../config/axios';
+import { api, pythonApiWithFallback } from '../config/axios';
 
 export const fetchUserInfo = (token) =>
   axios.get('https://mmb-be-dotnet.onrender.com/api/Auth/who-am-i', {
@@ -8,19 +8,43 @@ export const fetchUserInfo = (token) =>
     },
   }).then(res => res.data);
 
+// export const loginApi = async (userName, password) => {
+//   const params = new URLSearchParams();
+//   params.append('grant_type', 'password');
+//   params.append('username', userName);
+//   params.append('password', password);
+
+//   const response = await api.post('api/user/auth/login', params, {
+//     headers: {
+//       'accept': 'application/json',
+//       'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//   });
+//   return response.data;
+// };
+
 export const loginApi = async (userName, password) => {
   const params = new URLSearchParams();
   params.append('grant_type', 'password');
   params.append('username', userName);
   params.append('password', password);
 
-  const response = await api.post('api/user/auth/login', params, {
-    headers: {
-      'accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  });
-  return response.data;
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: "/api/user/auth/login",
+      data: params,
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw error;
+  }
 };
 
 export const registerApi = async ({ userName, email, password }) => {

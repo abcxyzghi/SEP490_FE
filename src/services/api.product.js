@@ -1,6 +1,6 @@
 import { toast } from "react-toastify"
 import api from "../config/axios"
-
+import { apiWithFallback } from "../config/axios";
 // export const getProduct = async () => {
 //    try{
 //     const response = await api.get("product")
@@ -38,9 +38,22 @@ import api from "../config/axios"
 //    }
 // };
 
+// export const getAllProductsOnSale = async () => {
+//   try {
+//     const response = await api.get("/api/SellProduct/get-all-product-on-sale");
+//     return response.data;
+//   } catch (error) {
+//     toast.error(error.response?.data?.error || "Error fetching products on sale");
+//     return null;
+//   }
+// }
+
 export const getAllProductsOnSale = async () => {
   try {
-    const response = await api.get("https://mmb-be-dotnet.onrender.com/api/SellProduct/get-all-product-on-sale");
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/SellProduct/get-all-product-on-sale",
+    });
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching products on sale");
@@ -67,16 +80,26 @@ export const buyProductOnSale = async ({ sellProductId, quantity }) => {
       { sellProductId, quantity },
       {
         headers: {
-          "Authorization": `Bearer ${token}`,
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data;
   } catch (error) {
-    toast.error(error.response?.data?.error || "Error buying product on sale");
-    return null;
+    const backendError = error.response?.data || {
+      status: false,
+      error: "Unexpected error occurred.",
+      errorCode: 500,
+    };
+
+    // ✅ vẫn hiển thị toast
+    toast.error(backendError.error || "Error buying product on sale");
+
+    // ✅ trả về lỗi cho component xử lý tiếp
+    return backendError;
   }
-}
+};
+
 
 export const getCollectionDetail = async (id) => {
   try {
@@ -87,3 +110,17 @@ export const getCollectionDetail = async (id) => {
     return null;
   }
 }
+
+// Create rating only API call
+export const createRatingOnly = async ({ sellProductId, rating }) => {
+  try {
+    const response = await api.post(
+      'https://mmb-be-dotnet.onrender.com/api/Comment/create-rating-only',
+      { sellProductId, rating }
+    );
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || 'Error creating rating');
+    return null;
+  }
+};

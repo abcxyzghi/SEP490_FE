@@ -1,72 +1,114 @@
 import axios from "axios";
 
-// Tạo instance Axios
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_KEY || 'default_base_url',
+// 🌐 Lấy API URL từ biến môi trường
+const CS_API = import.meta.env.VITE_API_CS_KEY;
+const BACKUP_CS_API = import.meta.env.VITE_BACKUP_CS_KEY;
+
+const PY_API = import.meta.env.VITE_API_PY_KEY;
+const BACKUP_PY_API = import.meta.env.VITE_BACKUP_PY_KEY;
+
+// 🛠️ Tạo instance Axios cho từng API
+const primaryAxios = axios.create({
+  baseURL: CS_API,
+  timeout: 5000,
 });
 
-// Gắn accessToken vào header của mỗi request
-api.interceptors.request.use(
-  function (config) {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  function (error) {
-    return Promise.reject(error);
-  }
-);
+const backupAxios = axios.create({
+  baseURL: BACKUP_CS_API,
+  timeout: 5000,
+});
 
-// Xử lý response interceptor
-api.interceptors.response.use(
-  function (response) {
-    // Nếu muốn xử lý riêng với status 201 (Created)
+const pythonAxios = axios.create({
+  baseURL: PY_API,
+  timeout: 5000,
+});
+
+const backupPythonAxios = axios.create({
+  baseURL: BACKUP_PY_API,
+  timeout: 5000,
+});
+
+// 🔐 Gắn token cho tất cả instance
+const attachToken = (instance) => {
+  instance.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+};
+
+[primaryAxios, backupAxios, pythonAxios, backupPythonAxios].forEach(attachToken);
+
+// 🔁 Interceptor xử lý refresh token cho .NET (C#)
+primaryAxios.interceptors.response.use(
+  (response) => {
     if (response.status === 201) {
       console.log("Tạo mới thành công:", response.data);
     }
     return response;
   },
-  async function (error) {
+  async (error) => {
     const originalRequest = error.config;
-
-    // Nếu token hết hạn → gọi refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        // Pass refreshToken as a query parameter, not in the body
-        const res = await api.post(`/api/user/auth/refresh?token=${refreshToken}`);
-        // Use access_token from response
+        const res = await pythonAxios.post(`/api/user/auth/refresh?token=${refreshToken}`);
         const newAccessToken = res.data.access_token;
         localStorage.setItem("token", newAccessToken);
-        // Optionally update refresh_token if provided
         if (res.data.refresh_token) {
           localStorage.setItem("refreshToken", res.data.refresh_token);
         }
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
+        return primaryAxios(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
-        // Redirect to login if both tokens are expired/invalid
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
-    // // 403: Không đủ quyền
     if (error.response?.status === 403) {
       console.warn("Không có quyền truy cập vào tài nguyên này.");
-    //   localStorage.clear();
-    //   // window.location.href = "/login"; // Removed to prevent forced refresh
-    //   // Optionally, you can dispatch a Redux action, show a message, or handle it in the component
     }
 
     return Promise.reject(error);
   }
 );
 
-export default api;
+// 🧩 Fallback API cho C# backend
+const apiWithFallback = async (config) => {
+  try {
+    return await primaryAxios(config);
+  } catch (err) {
+    console.warn("[Fallback] C# API failed. Retrying with backup...");
+    return await backupAxios(config);
+  }
+};
+
+// 🧩 Fallback API cho Python backend
+const pythonApiWithFallback = async (config) => {
+  try {
+    return await pythonAxios(config);
+  } catch (err) {
+    console.warn("[Fallback] Python API failed. Retrying with backup...");
+    return await backupPythonAxios(config);
+  }
+};
+
+export const api = pythonAxios;
+// ✅ Export các instance để dùng trực tiếp nếu cần
+export default primaryAxios; // Dùng mặc định là C#
+export {
+  pythonAxios,
+  backupAxios,
+  backupPythonAxios,
+  apiWithFallback,
+  pythonApiWithFallback,
+};
