@@ -44,43 +44,94 @@ const attachToken = (instance) => {
 
 [primaryAxios, backupAxios, pythonAxios, backupPythonAxios].forEach(attachToken);
 
+attachInterceptorsTo(primaryAxios);
+attachInterceptorsTo(backupAxios);
+
 // 🔁 Interceptor xử lý refresh token cho .NET (C#)
-primaryAxios.interceptors.response.use(
-  (response) => {
-    if (response.status === 201) {
-      console.log("Tạo mới thành công:", response.data);
-    }
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const refreshToken = localStorage.getItem("refreshToken");
-        const res = await pythonAxios.post(`/api/user/auth/refresh?token=${refreshToken}`);
-        const newAccessToken = res.data.access_token;
-        localStorage.setItem("token", newAccessToken);
-        if (res.data.refresh_token) {
-          localStorage.setItem("refreshToken", res.data.refresh_token);
-        }
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return primaryAxios(originalRequest);
-      } catch (refreshError) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
-        return Promise.reject(refreshError);
+// primaryAxios.interceptors.response.use(
+//   (response) => {
+//     if (response.status === 201) {
+//       console.log("Tạo mới thành công:", response.data);
+//     }
+//     return response;
+//   },
+//   async (error) => {
+//     const originalRequest = error.config;
+//     if (error.response?.status === 401 && !originalRequest._retry) {
+//       originalRequest._retry = true;
+//       try {
+//         const refreshToken = localStorage.getItem("refreshToken");
+//         const res = await pythonAxios.post(`/api/user/auth/refresh?token=${refreshToken}`);
+//         const newAccessToken = res.data.access_token;
+//         localStorage.setItem("token", newAccessToken);
+//         if (res.data.refresh_token) {
+//           localStorage.setItem("refreshToken", res.data.refresh_token);
+//         }
+//         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+//         return primaryAxios(originalRequest);
+//       } catch (refreshError) {
+//         localStorage.removeItem("token");
+//         localStorage.removeItem("refreshToken");
+//         window.location.href = "/login";
+//         return Promise.reject(refreshError);
+//       }
+//     }
+
+//     if (error.response?.status === 403) {
+//       console.warn("Không có quyền truy cập vào tài nguyên này.");
+//     }
+
+//     return Promise.reject(error);
+//   }
+// );
+
+function attachInterceptorsTo(instance) {
+  instance.interceptors.response.use(
+    (response) => {
+      if (response.status === 201) {
+        console.log("Tạo mới thành công:", response.data);
       }
-    }
+      return response;
+    },
+    async (error) => {
+      const originalRequest = error.config;
 
-    if (error.response?.status === 403) {
-      console.warn("Không có quyền truy cập vào tài nguyên này.");
-    }
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          const refreshToken = localStorage.getItem("refreshToken");
+          // const res = await pythonAxios.post(`/api/user/auth/refresh?token=${refreshToken}`);
 
-    return Promise.reject(error);
-  }
-);
+          // ✅ Sửa lại ở đây
+          const res = await pythonApiWithFallback({
+            method: "post",
+            url: `/api/user/auth/refresh?token=${refreshToken}`,
+          });
+
+          const newAccessToken = res.data.access_token;
+          localStorage.setItem("token", newAccessToken);
+          if (res.data.refresh_token) {
+            localStorage.setItem("refreshToken", res.data.refresh_token);
+          }
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return instance(originalRequest);
+        } catch (refreshError) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/login";
+          return Promise.reject(refreshError);
+        }
+      }
+
+      if (error.response?.status === 403) {
+        console.warn("Không có quyền truy cập vào tài nguyên này.");
+      }
+
+      return Promise.reject(error);
+    }
+  );
+}
+
 
 // 🧩 Fallback API cho C# backend
 const apiWithFallback = async (config) => {

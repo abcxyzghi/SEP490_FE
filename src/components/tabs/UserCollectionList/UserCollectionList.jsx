@@ -175,7 +175,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
               <div style={{ marginTop: 8, color: sellResult.status ? 'green' : 'red' }}>
                 {sellResult.status ? sellResult.data?.message : (sellResult.error || 'Failed to sell product.')}
                 {sellResult.status && sellResult.data?.exchangeCode && (
-                  <div>Exchange Code: <b>{sellResult.data.exchangeCode}</b></div>
+                  <div>Exchange Code: <b>{sellResult.data.exchangeCode}</b>
+                  <p>After you sell successful , we will deduct 5% of your profit</p>
+                  </div>
                 )}
               </div>
             )}
@@ -188,7 +190,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
             <div style={{ marginTop: 8, color: sellResult.status ? 'green' : 'red' }}>
               {sellResult.status ? sellResult.data?.message : (sellResult.error || 'Failed to sell product.')}
               {sellResult.status && sellResult.data?.exchangeCode && (
-                <div>Exchange Code: <b>{sellResult.data.exchangeCode}</b></div>
+                <div>Exchange Code: <b>{sellResult.data.exchangeCode}</b>
+                 <p>After you sell successful , we will deduct 5% of your profit</p>
+                </div>               
               )}
             </div>
           )}
