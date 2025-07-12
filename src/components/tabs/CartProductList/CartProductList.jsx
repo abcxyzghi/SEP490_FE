@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import './CartProductList.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCartFromServer, clearCart, removeItemFromCart, updateQuantity } from '../../../redux/features/cartSlice';
 import { viewCart, clearAllCart, removeFromCart, updateCartQuantity } from '../../../services/api.cart';
-import './CartProductList.css';
+import MessageModal from '../../libs/MessageModal/MessageModal';
 //import icons
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
 import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
@@ -13,6 +14,11 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
     const [loading, setLoading] = useState(true);
     const [isClearing, setIsClearing] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+
+    const showModal = (type, title, message) => {
+        setModal({ open: true, type, title, message });
+    };
 
     // Only products
     const products = cartItems.filter((item) => item.type === 'product');
@@ -64,9 +70,9 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
         try {
             await removeFromCart({ sellProductId: item.id });
             dispatch(removeItemFromCart({ id: item.id, type: item.type }));
-            alert('🗑️ Remove Item!');
+            showModal('default', 'Removed', 'Item Removed!');
         } catch (error) {
-            alert('❌ Failed to remove item from cart.');
+            showModal('error', 'Error', 'Failed to remove item from cart.');
             console.error(error);
         }
     };
@@ -91,7 +97,7 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
         } catch (error) {
             const errorMessage =
                 error.response?.data?.error || "Failed to update quantity.";
-            alert(errorMessage);
+            showModal('error', 'Error', errorMessage || 'Failed to update quantity');
             console.error("❌ Failed to update quantity:", errorMessage);
         }
     };
@@ -104,7 +110,7 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
         );
         if (selectedFilteredItems.length === 0) {
             setIsClearing(false);
-            alert("⚠️ Please select items to remove.");
+            showModal('warning', 'No Selection', 'Please select items to remove.');
             return;
         }
         try {
@@ -112,7 +118,7 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
             if (selectedFilteredItems.length === filteredProducts.length) {
                 await clearAllCart("product");
                 dispatch(clearCart({ type: 'product' }));
-                alert('🗑️ Cleared all items!');
+                showModal('default', 'Success', 'Cleared all items!');
             } else {
                 for (const item of selectedFilteredItems) {
                     await removeFromCart({ sellProductId: item.id });
@@ -121,10 +127,10 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
                 for (const item of selectedFilteredItems) {
                     dispatch(removeItemFromCart({ id: item.id, type: item.type }));
                 }
-                alert(`🗑️ Removed ${selectedFilteredItems.length} item(s)!`);
+                showModal('default', 'Success', `Removed ${selectedFilteredItems.length} item(s)!`);
             }
         } catch (err) {
-            alert('❌ Failed to remove items from cart.');
+            showModal('error', 'Error', 'Failed to remove item from cart.');
             console.error(err);
         } finally {
             setIsClearing(false);
@@ -151,21 +157,21 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
     const totalQuantity = products.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
     const prevSelectedRef = useRef([]);
-    
-        useEffect(() => {
-            const selected = filteredProducts.filter(item =>
-                selectedItems.includes(item.id + '-' + item.type)
-            );
-    
-            // Convert to string to compare shallow arrays (or use lodash isEqual if needed)
-            const prevSelectedStr = JSON.stringify(prevSelectedRef.current);
-            const currentSelectedStr = JSON.stringify(selected);
-    
-            if (prevSelectedStr !== currentSelectedStr) {
-                prevSelectedRef.current = selected;
-                onSelectedItemsChange?.(selected);
-            }
-        }, [selectedItems, filteredProducts, onSelectedItemsChange]);
+
+    useEffect(() => {
+        const selected = filteredProducts.filter(item =>
+            selectedItems.includes(item.id + '-' + item.type)
+        );
+
+        // Convert to string to compare shallow arrays (or use lodash isEqual if needed)
+        const prevSelectedStr = JSON.stringify(prevSelectedRef.current);
+        const currentSelectedStr = JSON.stringify(selected);
+
+        if (prevSelectedStr !== currentSelectedStr) {
+            prevSelectedRef.current = selected;
+            onSelectedItemsChange?.(selected);
+        }
+    }, [selectedItems, filteredProducts, onSelectedItemsChange]);
 
     return (
         <div className="cartpage-card-grid">
@@ -288,6 +294,15 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
                     </div>
                 </div>
             </div>
+
+            {/* Message Modal */}
+            <MessageModal
+                open={modal.open}
+                onClose={() => setModal(prev => ({ ...prev, open: false }))}
+                type={modal.type}
+                title={modal.title}
+                message={modal.message}
+            />
         </div>
     );
 }
