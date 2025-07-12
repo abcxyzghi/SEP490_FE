@@ -181,6 +181,7 @@ import { setUser } from '../../../redux/features/authSlice';
 import { addItemToCart } from '../../../redux/features/cartSlice';
 import { getAllRatingsBySellProduct } from '../../../services/api.comment';
 import { Pathname, PATH_NAME } from '../../../router/Pathname';
+import { createReport } from '../../../services/api.user';
 import Rating from '@mui/material/Rating';
 import CommentSection from '../../libs/CommentSection/CommentSection';
 import MessageModal from '../../libs/MessageModal/MessageModal';
@@ -205,6 +206,19 @@ export default function ProductDetailpage() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [quantity, setQuantity] = useState(1);
+  
+  //=========================================================Dạ nhớ style cái cái report modal cho đẹp nha======================================
+  // Product report modal state
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportTitle, setReportTitle] = useState('');
+  const [reportContent, setReportContent] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+
+  // User report modal state
+  const [showUserReportModal, setShowUserReportModal] = useState(false);
+  const [userReportTitle, setUserReportTitle] = useState('');
+  const [userReportContent, setUserReportContent] = useState('');
+  const [userReportSubmitting, setUserReportSubmitting] = useState(false);
 
   const increaseQuantity = () => {
     setQuantity(prev => (prev < product.quantity ? prev + 1 : prev)); // không tăng quá giới hạn stock
@@ -348,7 +362,9 @@ export default function ProductDetailpage() {
     } finally {
       setLoadingBtn(false);
     }
-  };
+  }; 
+
+
 
   const rarityColors = {
     Legendary: '#FFD700',
@@ -364,6 +380,66 @@ export default function ProductDetailpage() {
   const getRateColorClass = (rarity) => {
     const normalized = normalizeRarity(rarity);
     return rarityColors[normalized] || '#A9A9A9'; // default to Common color
+  };
+
+  // Handle product report submit
+  const handleSubmitProductReport = async () => {
+    if (!reportTitle || !reportContent) {
+      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
+      return;
+    }
+    try {
+      setReportSubmitting(true);
+      const res = await createReport({
+        sellProductId: product.id,
+        sellerId: product.userId,
+        title: reportTitle,
+        content: reportContent,
+      });
+      if (res?.success || res?.status) {
+        alert('Gửi báo cáo thành công!');
+        setShowReportModal(false);
+        setReportTitle('');
+        setReportContent('');
+      } else {
+        alert('Gửi không thành công (response không hợp lệ)');
+      }
+    } catch (err) {
+      console.error('Report error:', err);
+      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
+
+  // Handle user (seller) report submit (logic from Profilepage)
+  const handleSubmitUserReport = async () => {
+    if (!userReportTitle || !userReportContent) {
+      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
+      return;
+    }
+    try {
+      setUserReportSubmitting(true);
+      const res = await createReport({
+        sellProductId: "null",
+        sellerId: product.userId,
+        title: userReportTitle,
+        content: userReportContent,
+      });
+      if (res?.success || res?.status) {
+        alert('Gửi báo cáo thành công!');
+        setShowUserReportModal(false);
+        setUserReportTitle('');
+        setUserReportContent('');
+      } else {
+        alert('Gửi không thành công (response không hợp lệ)');
+      }
+    } catch (err) {
+      console.error('Report error:', err);
+      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+    } finally {
+      setUserReportSubmitting(false);
+    }
   };
 
 
@@ -464,13 +540,39 @@ export default function ProductDetailpage() {
 
             {/* Product Report button */}
             <div className="productdetailP-report-container oxanium-semibold">
-              <button className="productdetailP-report-btn"
-              //  Api Report product here
+              <button
+                className="productdetailP-report-btn"
+                onClick={() => setShowReportModal(true)}
               >
                 <img src={ReportIcon} alt="Report" className="productdetailP-report-icon" />
                 <span className="productdetailP-report-label">Report</span>
               </button>
             </div>
+      {/* Product Report Modal */}
+      {showReportModal && (
+        <div className="modal2-overlay">
+          <div className="modal2">
+            <h3>Gửi báo cáo sản phẩm</h3>
+            <input
+              type="text"
+              placeholder="Tiêu đề"
+              value={reportTitle}
+              onChange={e => setReportTitle(e.target.value)}
+            />
+            <textarea
+              placeholder="Nội dung"
+              value={reportContent}
+              onChange={e => setReportContent(e.target.value)}
+            />
+            <div className="modal2-actions">
+              <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
+                {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
+              </button>
+              <button onClick={() => setShowReportModal(false)}>Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
           </div>
 
           {/* Title + Price + Stock quantity*/}
@@ -594,8 +696,9 @@ export default function ProductDetailpage() {
           </div>
 
           <div className="productdetailP-seller-actions">
-            <button className="productdetailP-seller-btn-outline oxanium-regular"
-            //  Api Report user here
+            <button
+              className="productdetailP-seller-btn-outline oxanium-regular"
+              onClick={() => setShowUserReportModal(true)}
             >
               <img src={ReportIcon} alt="Report" className="productdetailP-seller-rIcon" />
               Report
@@ -607,6 +710,31 @@ export default function ProductDetailpage() {
               Message
             </button>
           </div>
+      {/* User Report Modal */}
+      {showUserReportModal && (
+        <div className="modal2-overlay">
+          <div className="modal2">
+            <h3>Gửi báo cáo người bán</h3>
+            <input
+              type="text"
+              placeholder="Tiêu đề"
+              value={userReportTitle}
+              onChange={e => setUserReportTitle(e.target.value)}
+            />
+            <textarea
+              placeholder="Nội dung"
+              value={userReportContent}
+              onChange={e => setUserReportContent(e.target.value)}
+            />
+            <div className="modal2-actions">
+              <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
+                {userReportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
+              </button>
+              <button onClick={() => setShowUserReportModal(false)}>Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
         </div>
       </div>
 
