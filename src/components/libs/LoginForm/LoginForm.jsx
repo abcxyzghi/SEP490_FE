@@ -40,6 +40,7 @@ export default function LoginForm() {
         setError('');
         const { userName, password } = form;
         if (!userName.trim() || !password.trim()) {
+            setIsLoading(false);
             return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
         }
         try {

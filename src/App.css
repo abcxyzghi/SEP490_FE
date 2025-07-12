@@ -196,6 +196,7 @@
 
   /* Third party color */
   --page-mainBG: #0D1321;
+  --tabMain_bg: rgba(13, 19, 33, 0.795);
   --currency_digit-color: #6a994e;
   --steel_gray-color: #444C5C;
   --teal_blue-color: #50C9CE;

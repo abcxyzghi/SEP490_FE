@@ -207,14 +207,16 @@ export default function BoxDetailpage() {
 
     <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
       {/* Box image and information display */}
-      <div className="flex w-full flex-col lg:flex-row pb-8">
-        <div className="boxdetailP-image-wrapper">
-          <div className="boxdetailP-box-imgBG">
-            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={`${box.mysteryBoxName} background`} />
-          </div>
+      <div className="flex w-full flex-col lg:flex-row flex-wrap pb-8">
+        <div className="boxdetailP-image-grandWrapper">
+          <div className="boxdetailP-image-wrapper">
+            <div className="boxdetailP-box-imgBG">
+              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={`${box.mysteryBoxName} background`} />
+            </div>
 
-          <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={box.mysteryBoxName}
-            className="boxdetailP-box-img" />
+            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={box.mysteryBoxName}
+              className="boxdetailP-box-img" />
+          </div>
         </div>
 
         {/* <div className="boxdetailP-divider"></div> */}

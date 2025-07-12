@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import './CartBoxList.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCartFromServer, clearCart, removeItemFromCart } from '../../../redux/features/cartSlice';
 import { viewCart, removeFromCart, clearAllCart, updateCartQuantity } from '../../../services/api.cart';
-import './CartBoxList.css';
+import MessageModal from '../../libs/MessageModal/MessageModal';
 //import icons
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
 import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
@@ -13,6 +14,11 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
     const [loading, setLoading] = useState(true);
     const [isClearing, setIsClearing] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+
+    const showModal = (type, title, message) => {
+        setModal({ open: true, type, title, message });
+    };
 
     // Only boxes
     const boxes = cartItems.filter((item) => item.type === 'box');
@@ -44,94 +50,94 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
         fetchCart();
     }, [dispatch]);
 
-  // Handle toggle select for a box item
-  const handleToggleItem = (item) => {
-    const key = item.id + '-' + item.type;
-    setSelectedItems((prev) =>
-      prev.includes(key) ? prev.filter((i) => i !== key) : [...prev, key]
-    );
-  };
+    // Handle toggle select for a box item
+    const handleToggleItem = (item) => {
+        const key = item.id + '-' + item.type;
+        setSelectedItems((prev) =>
+            prev.includes(key) ? prev.filter((i) => i !== key) : [...prev, key]
+        );
+    };
 
-  // Handle remove a box item from cart
-  const handleRemoveItem = async (item) => {
-    try {
-      await removeFromCart({ mangaBoxId: item.id });
-      dispatch(removeItemFromCart({ id: item.id, type: item.type }));
-      alert('🗑️ Remove Item!');
-    } catch (error) {
-      alert('❌ Failed to remove item from cart.');
-      console.error(error);
-    }
-  };
-
-  // Handle quantity change for box items
-  const handleQuantityChange = async (item, newQuantity) => {
-    if (newQuantity < 1) {
-      handleRemoveItem(item);
-      return;
-    }
-    try {
-      await updateCartQuantity({ Id: item.id, quantity: newQuantity });
-      dispatch({
-        type: "cart/updateQuantity",
-        payload: {
-          id: item.id,
-          type: item.type,
-          quantity: newQuantity,
-        },
-      });
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Failed to update quantity.";
-      alert(errorMessage);
-      console.error("❌ Failed to update quantity:", errorMessage);
-    }
-  };
-
-  // Handle select all boxes
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedItems(filteredBoxes.map(item => item.id + '-' + item.type));
-    } else {
-      setSelectedItems([]);
-    }
-  };
-
-  // Handle clear all selected boxes
-  const handleClearAll = async () => {
-    setIsClearing(true);
-    // Filter selected items
-    const selectedFilteredItems = filteredBoxes.filter(item =>
-      selectedItems.includes(item.id + '-' + item.type)
-    );
-    if (selectedFilteredItems.length === 0) {
-      setIsClearing(false);
-      alert("⚠️ Please select items to remove.");
-      return;
-    }
-    try {
-      // Remove from backend first
-      if (selectedFilteredItems.length === filteredBoxes.length) {
-        await clearAllCart("box");
-        dispatch(clearCart({ type: 'box' }));
-        alert("🗑️ Cleared all items!");
-      } else {
-        for (const item of selectedFilteredItems) {
-          await removeFromCart({ mangaBoxId: item.id });
+    // Handle remove a box item from cart
+    const handleRemoveItem = async (item) => {
+        try {
+            await removeFromCart({ mangaBoxId: item.id });
+            dispatch(removeItemFromCart({ id: item.id, type: item.type }));
+            showModal('default', 'Removed', 'Item Removed!');
+        } catch (error) {
+            showModal('error', 'Error', 'Failed to remove item from cart.');
+            console.error(error);
         }
-        // Remove from Redux after backend success
-        for (const item of selectedFilteredItems) {
-          dispatch(removeItemFromCart({ id: item.id, type: item.type }));
+    };
+
+    // Handle quantity change for box items
+    const handleQuantityChange = async (item, newQuantity) => {
+        if (newQuantity < 1) {
+            handleRemoveItem(item);
+            return;
         }
-        alert(`🗑️ Removed ${selectedFilteredItems.length} item(s)!`);
-      }
-    } catch (err) {
-      alert("❌ Failed to remove items from cart.");
-      console.error(err);
-    } finally {
-      setIsClearing(false);
-    }
-  };
+        try {
+            await updateCartQuantity({ Id: item.id, quantity: newQuantity });
+            dispatch({
+                type: "cart/updateQuantity",
+                payload: {
+                    id: item.id,
+                    type: item.type,
+                    quantity: newQuantity,
+                },
+            });
+        } catch (error) {
+            const errorMessage =
+                error.response?.data?.error || "Failed to update quantity.";
+            showModal('error', 'Error', errorMessage || 'Failed to update quantity');
+            console.error("Failed to update quantity:", errorMessage);
+        }
+    };
+
+    // Handle select all boxes
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedItems(filteredBoxes.map(item => item.id + '-' + item.type));
+        } else {
+            setSelectedItems([]);
+        }
+    };
+
+    // Handle clear all selected boxes
+    const handleClearAll = async () => {
+        setIsClearing(true);
+        // Filter selected items
+        const selectedFilteredItems = filteredBoxes.filter(item =>
+            selectedItems.includes(item.id + '-' + item.type)
+        );
+        if (selectedFilteredItems.length === 0) {
+            setIsClearing(false);
+            showModal('warning', 'No Selection', 'Please select items to remove.');
+            return;
+        }
+        try {
+            // Remove from backend first
+            if (selectedFilteredItems.length === filteredBoxes.length) {
+                await clearAllCart("box");
+                dispatch(clearCart({ type: 'box' }));
+                showModal('default', 'Success', 'Cleared all items!');
+            } else {
+                for (const item of selectedFilteredItems) {
+                    await removeFromCart({ mangaBoxId: item.id });
+                }
+                // Remove from Redux after backend success
+                for (const item of selectedFilteredItems) {
+                    dispatch(removeItemFromCart({ id: item.id, type: item.type }));
+                }
+                showModal('default', 'Success', `Removed ${selectedFilteredItems.length} item(s)!`);
+            }
+        } catch (err) {
+            showModal('error', 'Error', 'Failed to remove item from cart.');
+            console.error(err);
+        } finally {
+            setIsClearing(false);
+        }
+    };
 
     // Filter based on search text and price range (no rarity)
     const filteredBoxes = useMemo(() => {
@@ -283,6 +289,15 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
                     </div>
                 </div>
             </div>
+
+            {/* Message Modal */}
+            <MessageModal
+                open={modal.open}
+                onClose={() => setModal(prev => ({ ...prev, open: false }))}
+                type={modal.type}
+                title={modal.title}
+                message={modal.message}
+            />
         </div>
     );
 }

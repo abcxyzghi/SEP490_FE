@@ -180,13 +180,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../../redux/features/authSlice';
 import { addItemToCart } from '../../../redux/features/cartSlice';
 import { getAllRatingsBySellProduct } from '../../../services/api.comment';
-import { PATH_NAME } from '../../../router/Pathname';
+import { Pathname, PATH_NAME } from '../../../router/Pathname';
 import Rating from '@mui/material/Rating';
 import CommentSection from '../../libs/CommentSection/CommentSection';
 import MessageModal from '../../libs/MessageModal/MessageModal';
-//import icons
+//import asset
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
 import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
+import ProfileHolder from "../../../assets/others/mmbAvatar.png";
+import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
+import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 
 export default function ProductDetailpage() {
   const dispatch = useDispatch();
@@ -202,9 +205,11 @@ export default function ProductDetailpage() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [quantity, setQuantity] = useState(1);
+
   const increaseQuantity = () => {
-    setQuantity(prev => prev + 1);
+    setQuantity(prev => (prev < product.quantity ? prev + 1 : prev)); // không tăng quá giới hạn stock
   };
+
 
   const decreaseQuantity = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
@@ -260,16 +265,22 @@ export default function ProductDetailpage() {
 
   // Handle instant pay
   const handlePayInstant = async () => {
+    // ❗️Prevent unsigned user commit action
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
-
+    // ❗️Prevent seller from buying their own product
+    if (product.userId === user.user_id) {
+      // return showModal('warning', 'Action Not Allowed', "You cannot purchase your own product.");
+      return showModal('warning', 'Action Not Allowed', "Nuh uh, I don't think so >:)");
+    }
+    // ❗️Prevent user cheating currency imbalance 
     if (user.wallet_amount < product.price * quantity) {
       return showModal('warning', 'Currency Crunch', 'You do not have enough currency');
     }
-
+    // ❗️Prevent user from buying what more seller have in stock
     if (quantity > product.quantity) {
-      return showModal('warning', 'Quantity Error', 'You cannot buy more than the available stock.');
+      return showModal('warning', 'Quantity Error', 'You cannot buy more than what is available in stock');
     }
 
     setLoadingBtn(true);
@@ -311,10 +322,14 @@ export default function ProductDetailpage() {
 
   // Handle add to cart
   const handleAddToCart = async () => {
+    // ❗️Prevent unsigned user commit action
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
-
+    // ❗️Prevent seller from adding own product to cart
+    if (product.userId === user.user_id) {
+      return showModal('warning', 'Action Not Allowed', "You cannot add your own product to the cart.");
+    }
     setLoadingBtn(true);
     try {
       await addToCart({ sellProductId: product.id, quantity });
@@ -335,18 +350,38 @@ export default function ProductDetailpage() {
     }
   };
 
+  const rarityColors = {
+    Legendary: '#FFD700',
+    Epic: '#A915C6',
+    Rare: '#4169E1',
+    Uncommon: '#32CD32',
+    Common: '#A9A9A9',
+  };
+
+  const normalizeRarity = (rarity) =>
+    rarity ? rarity.trim().toLowerCase().replace(/^\w/, (c) => c.toUpperCase()) : '';
+
+  const getRateColorClass = (rarity) => {
+    const normalized = normalizeRarity(rarity);
+    return rarityColors[normalized] || '#A9A9A9'; // default to Common color
+  };
+
+
   if (loading) {
     return (
-      <div className="productdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-16">
+      <div className="productdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
         <div className="flex w-full gap-3 flex-col lg:flex-row pb-8">
           {/* Image skeleton */}
           <div className="productdetailP-image-wrapper">
             <div className="skeleton w-full h-90 rounded-lg bg-slate-300" />
           </div>
           <div className="productdetailP-info-content">
-            {/* Review bar skeleton */}
-            <div className="productdetailP-boxReview-container oxanium-light">
-              <div className="skeleton h-5 w-full rounded bg-slate-300" />
+            {/* Review bar skeleton and Product Report button */}
+            <div className="productdetailP-header-info">
+              <div className="productdetailP-boxReview-container oxanium-light">
+                <div className="skeleton h-5 w-full rounded bg-slate-300" />
+              </div>
+              <div className="skeleton w-10 h-10 rounded-full"></div>
             </div>
             {/* Title and price skeleton */}
             <div className="productdetailP-info-wrapper mt-5 mb-10">
@@ -366,6 +401,17 @@ export default function ProductDetailpage() {
             </div>
           </div>
         </div>
+        {/* Seller profile skeleton */}
+        <div className="productdetailP-seller-wrapper flex gap-2 flex-col lg:flex-row">
+          <div className="skeleton w-18 h-18 rounded-full"></div>
+          <div className="productdetailP-seller-info">
+            <div className="skeleton h-8 w-2/3 mb-4 rounded bg-slate-300" />
+            <div className="productdetailP-seller-actions">
+              <div className="skeleton h-10 w-32 rounded bg-slate-300" />
+              <div className="skeleton h-10 w-32 rounded bg-slate-300" />
+            </div>
+          </div>
+        </div>
         {/* Tabs skeleton */}
         <div className="tabs-switcher-section flex flex-col gap-3 mt-8">
           <div className="skeleton h-10 w-32 rounded bg-slate-300" />
@@ -382,57 +428,78 @@ export default function ProductDetailpage() {
   return (
     <div className="productdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
       {/* Product image and information display */}
-      <div className="flex w-full gap-2 flex-col lg:flex-row pb-8">
-        <div className="productdetailP-image-wrapper">
-          <div className="productdetailP-box-imgBG">
-            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={`${product.name} background`} />
-          </div>
-          <div className="productdetailP-box-img-wrapper">
-            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name}
-              className="productdetailP-box-img" />
+      <div className="flex w-full gap-2 flex-col lg:flex-row flex-wrap pb-8 gap-6 sm:gap-12 md:gap-18 lg:gap-26">
+        <div className="productdetailP-image-grandWrapper">
+          <div className="productdetailP-image-wrapper">
+            <div className="productdetailP-box-imgBG">
+              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={`${product.name} background`} />
+            </div>
+            <div className="productdetailP-box-img-wrapper">
+              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name}
+                className="productdetailP-box-img" />
+            </div>
           </div>
         </div>
 
         <div className="productdetailP-info-content">
           {/* Ratings Section */}
-          <div className="productdetailP-boxReview-container oxanium-light">
-            <span className='oxanium-semibold'>{ratings.length}</span> Reviews:
-            <span className="productdetailP-rating-responsive">
-              <Rating
-                name="read-only"
-                value={averageRating}
-                precision={0.1}
-                readOnly
-                size="small"
-                sx={{
-                  fontSize: { xs: '0.7rem', sm: '0.9rem', md: '1rem', lg: '1rem' },
-                  '& .MuiRating-iconFilled': { color: '#FFD700' },
-                  '& .MuiRating-iconEmpty': { color: '#666666' },
-                }}
-              />
-            </span>
+          <div className="productdetailP-header-info">
+            <div className="productdetailP-boxReview-container oxanium-light">
+              <span className='oxanium-semibold'>{ratings.length}</span> Review(s):
+              <span className="productdetailP-rating-responsive">
+                <Rating
+                  name="read-only"
+                  value={averageRating}
+                  precision={0.1}
+                  readOnly
+                  size="small"
+                  sx={{
+                    fontSize: { xs: '0.7rem', sm: '0.9rem', md: '1rem', lg: '1rem' },
+                    '& .MuiRating-iconFilled': { color: '#FFD700' },
+                    '& .MuiRating-iconEmpty': { color: '#666666' },
+                  }}
+                />
+              </span>
+            </div>
+
+            {/* Product Report button */}
+            <div className="productdetailP-report-container oxanium-semibold">
+              <button className="productdetailP-report-btn"
+              //  Api Report product here
+              >
+                <img src={ReportIcon} alt="Report" className="productdetailP-report-icon" />
+                <span className="productdetailP-report-label">Report</span>
+              </button>
+            </div>
           </div>
 
           {/* Title + Price + Stock quantity*/}
-          <div className="productdetailP-info-wrapper mb-10">
+          <div className="productdetailP-info-wrapper mb-4 sm:mb-7 lg:mb-10">
             <h1 className="productdetailP-box-title oleo-script-bold">{product.name}</h1>
             <p className="productdetailP-box-prize oxanium-bold">{(product.price / 1000).toFixed(3)} VND</p>
           </div>
 
           <div className="productdetailP-quantyNbuy-container">
-            {/* Quantity toggle section */}
-            <div className="productdetailP-quantity-measure">
-              <div className="productdetailP-quantity-iconWrapper-left" onClick={decreaseQuantity} style={{ cursor: "pointer" }} >
-                <img src={ReduceQuantity} alt="-" className="productdetailP-quantity-icon" />
+
+            <div className='productdetailP-quantyNStock-container'>
+              {/* Quantity toggle section */}
+              <div className="productdetailP-quantity-measure">
+                <div className="productdetailP-quantity-iconWrapper-left" onClick={decreaseQuantity} style={{ cursor: "pointer" }} >
+                  <img src={ReduceQuantity} alt="-" className="productdetailP-quantity-icon" />
+                </div>
+                <div className="productdetailP-quantity-text oxanium-regular">
+                  {quantity}
+                </div>
+                <div className="productdetailP-quantity-iconWrapper-right" onClick={increaseQuantity}
+                  style={{ cursor: "pointer" }}>
+                  <img src={AddQuantity} alt="+" className="productdetailP-quantity-icon" />
+                </div>
               </div>
-              <div className="productdetailP-quantity-text oxanium-regular">
-                {/* Replace with dynamic api number (default = 1) */}
-                {quantity}
-              </div>
-              <div className="productdetailP-quantity-iconWrapper-right" onClick={increaseQuantity}
-                style={{ cursor: "pointer" }}>
-                <img src={AddQuantity} alt="+" className="productdetailP-quantity-icon" />
-              </div>
+
+              {/* Stock */}
+              <p className="productdetailP-product-stock oxanium-regular text-sm lg:text-base mt-2 ml-1">
+                <span className="oxanium-semibold productdetailP-stock-head">Stock left:</span> {product.quantity}
+              </p>
             </div>
 
             {/* Buy now dropdown section */}
@@ -475,13 +542,81 @@ export default function ProductDetailpage() {
             </div>
           </div>
 
-          <p className="text-gray-700 my-2">Description: {product.description}</p>
-          <p className="text-gray-700 my-2">Quantity: {product.quantity}</p>
-          <p className="text-lg font-semibold my-2">Topic: {product.topic}</p>
-          <p className="text-gray-500 my-2">Seller: {product.username}</p>
-          <p className="text-lg font-semibold my-2">Rate: {product.rateName}</p>
+
+          {/* Additional Product Info Section */}
+          <div className="productdetailP-info-extra space-y-2 mt-6">
+            {/* Rate with dynamic color */}
+            <p
+              className="productdetailP-product-data productdetailP-info-rate oxanium-semibold"
+              style={{ color: getRateColorClass(product.rateName) }}
+            >
+              <span className="productdetailP-product-label oxanium-regular">Rarity:</span> {normalizeRarity(product.rateName)}
+            </p>
+
+            {/* Topic */}
+            <p className="productdetailP-product-data oxanium-semibold text-sm lg:text-base">
+              <span className="oxanium-regular productdetailP-pData-head">Topic:</span> {product.topic}
+            </p>
+
+            {/* Description */}
+            <div className="productdetailP-product-data oxanium-semibold text-sm leading-relaxed lg:text-base">
+              <p className="oxanium-regular productdetailP-pData-head">Description:</p> {product.description}
+            </div>
+          </div>
+
         </div>
       </div>
+
+      {/* Seller Info Section */}
+      <div className="productdetailP-seller-wrapper flex gap-2 flex-col lg:flex-row">
+        <div className="productdetailP-profile-img avatar">
+          <div className='w-16 sm:w-18 lg:w-20 rounded-full border-2 border-white relative'>
+            <img
+              src={
+                product.userProfileImage
+                  ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.userProfileImage}`
+                  : ProfileHolder
+              }
+              alt="Profile"
+              className="productdetailP-seller-avatar"
+            />
+          </div>
+        </div>
+
+        <div className="productdetailP-seller-info">
+          <div className="productdetailP-seller-nameHdr oxanium-semibold">
+            Collection owner:
+            <span className="productdetailP-seller-name oxanium-bold"
+              onClick={() => navigate(Pathname("PROFILE").replace(":id", product.userId))}
+            >
+              {product.username}
+            </span>
+          </div>
+
+          <div className="productdetailP-seller-actions">
+            <button className="productdetailP-seller-btn-outline oxanium-regular"
+            //  Api Report user here
+            >
+              <img src={ReportIcon} alt="Report" className="productdetailP-seller-rIcon" />
+              Report
+            </button>
+            <button className="productdetailP-seller-btn-outfill oxanium-regular"
+            //  Api navigate to Chatroom here
+            >
+              <img src={MessageIcon} alt="Message" className="productdetailP-seller-mIcon" />
+              Message
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      {/* Comments */}
+      <div className="max-w-2xl mx-auto mt-8">
+        <h2 className="text-2xl font-bold mb-4">Comments</h2>
+        <CommentSection sellProductId={product.id} />
+      </div>
+
 
       {/* Message Modal */}
       <MessageModal
@@ -491,12 +626,6 @@ export default function ProductDetailpage() {
         title={modal.title}
         message={modal.message}
       />
-
-      {/* Comments */}
-      <div className="max-w-2xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4">Comments</h2>
-        <CommentSection sellProductId={product.id} />
-      </div>
     </div>
   );
 }
