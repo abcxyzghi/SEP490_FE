@@ -230,3 +230,47 @@
         width: 240px;
     }
 }
+
+/* For screen width ≤ 242px */
+@media (max-width: 242px) {
+    .nav-dropdown-menu {
+        top: 105%;
+        left: 0;
+        min-width: 100px;
+        padding: 0.2rem;
+    }
+
+    .nav-dropdown-avatar-item,
+    .nav-dropdown-sub-container,
+    .nav-dropdown-list li {
+        gap: 0.3rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .nav-dropdown-list li {
+        font-size: 0.65rem;
+        padding: 0.35rem 0.5rem;
+    }
+
+    .nav-dropdown-item-icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        padding: 4px;
+    }
+
+    .nav-dropdown-item-subIcon,
+    .nav-dropdown-close-subIcon {
+        width: 1.2rem;
+        height: 1.2rem;
+        padding: 0.25rem;
+    }
+
+    /* Sub menu section (Maybe until we have real api list file :v)*/
+    .nav-submenu-panel {
+        width: 250px;
+    }
+
+    
+}
