@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import "./CommentSection.css";
-import { getAllCommentsBySellProduct, createComment } from '../../../services/api.comment';
+import { getAllCommentsBySellProduct, createComment, getAllBadwords } from '../../../services/api.comment';
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 
 // Utility to remove Vietnamese accents
@@ -8,18 +8,16 @@ function removeVietnameseTones(str) {
   return str.normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
 }
 
-const BAD_WORDS = [
-  // English & Vietnamese offensive words
-  'anal', 'cứt', 'anus', 'arse', 'ass', 'asshole', 'ballsack', 'bastard', 'bdsm', 'bimbo', 'bitch', 'blow job', 'blowjob', 'blue waffle', 'bondage', 'boner', 'boob', 'booobs', 'booty call', 'breasts', 'bullshit', 'burn in hell', 'busty', 'butthole', 'bố mày nhịn mày lâu lắm rồi đấy', 'cawk', 'cc', 'chets', 'ching chong', 'chink', 'chó', 'cink', 'clit', 'cnut', 'cock', 'cockmuncher', 'con bóng long xiên', 'con chó', 'con cặk', 'con cẹc', 'cowgirl', 'crap', 'crotch', 'cuc', 'cum', 'cumbag', 'cumdump', 'cunt', 'cuts', 'cái địt mẹ cuộc đời', 'còn cái nịt', 'có làm thì mới có ăn, không làm mà muốn có ăn thì ăn đầu bùi ăn cứt', 'cằk', 'cặc', 'cức', 'damn', 'dmm', 'dm', 'deep throat', 'deepthroat', 'dick', 'dickhead', 'dildo', 'dink', 'dm', 'dog style', 'doggie style', 'doggy style', 'doosh', 'douche', 'duche', 'ejaculate', 'ejaculating', 'ejaculation', 'ejakulate', 'erotic', 'erotism', 'f.y.m', 'fag', 'faggots', 'fatass', 'fcuk', 'femdom', 'fingerfuck', 'fingering', 'fistfuck', 'fook', 'fooker', 'foot job', 'footjob', 'fuck', 'fuck you mean', 'fuk', 'gang bang', 'gangbang', 'gaysex', 'gay', 'goddammit', 'hand job', 'handjob', 'hentai', 'hoer', 'homo', 'hooker', 'hope your family dies', 'horny', 'incest', 'i’ll find you and kill you', 'jack off', 'jackoff', 'jerk off', 'jerkoff', 'jizz', 'k.y.s', 'khôn lỏi', 'khốn nạn', 'kill yourself', 'lót tích', 'masturbate', 'milf', 'mofo', 'mom jokes', 'mothafuck', 'motherfuck', 'motherfucker', 'muff', 'mày có biết bố mày là ai không', 'mày không thoát được đâu con trai à', 'mày đừng có bốc phép, mồm điêu', 'mẹ mày', 'n!99@', 'nazi', 'ngu', 'ngu dốt', 'ni99a', 'nigga', 'nigger', 'nipple', 'nob', 'nude', 'numbnuts', 'nutsack', 'orgasm', 'orgy', 'pajeet', 'panties', 'panty', 'papist', 'penis', 'pimp', 'playboy', 'porn', 'pussies', 'pussy', 'rape', 'raping', 'rapist', 'rectum', 'retard', 'rimming', 'sadism', 'sadist', 'sao mày ngu thế hả', 'scrotum', 'semen', 'sex', 'saygex', 'she male', 'shemale', 'shibaiii', 'shit', 'slut', 'sluts', 'son of a bitch', 'spinhand', 'spunk', 'strip club', 'stripclub', 'sợ sợ quá phải ban nó thôi', 'three some', 'threesome', 'throating', 'tit', 'towelhead', 'tranny', 'trời ơi ghê chưa', 'twat', 'tôi năm nay 70 tuổi rồi chưa từng gặp trường hợp nào như vậy', 'vagina', 'vai lon', 'vail*n', 'vailon', 'vcl', 'viagra', 'vkl', 'vl', 'vãi lồn', 'vô học', 'vô liêm sỹ', 'w.t.f', 'w.t.h', 'wank', 'wanker', 'ashole', 'ashol', 'what the fuck', 'what the hell', 'whoar', 'whore', 'xxx', 'lz', 'xà lách kim cương', 'xàm lol', 'you should’ve been aborted', 'à thì ra mày chọn cái chết', 'đàn ông mặc váy', 'đéo hiểu kiểu gì', 'địt mẹ', 'địt mẹ mày ảo thật đấy', 'đồ ngu đồ ăn hại cút mẹ mày đi', 'đụ má', 'ối giời ơi dễ vãi lồn'
-];
+// BAD_WORDS will be fetched from API
 
-function censorBadWords(text) {
+function censorBadWords(text, badWords) {
+  if (!badWords || !Array.isArray(badWords)) return text;
   let censored = text;
-  BAD_WORDS.forEach(word => {
-    const pattern = new RegExp(`\\b${word}\\b`, 'gi');
-    // Replace both original and accent-removed forms
+  badWords.forEach(word => {
+    if (!word) return;
+    const pattern = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
     censored = censored.replace(pattern, '****');
-    const patternNoAccent = new RegExp(`\\b${removeVietnameseTones(word)}\\b`, 'gi');
+    const patternNoAccent = new RegExp(`\\b${removeVietnameseTones(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
     censored = censored.replace(patternNoAccent, '****');
   });
   return censored;
@@ -36,6 +34,7 @@ function validateCommentInput(content) {
   return null;
 }
 
+
 const CommentSection = ({ sellProductId }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [comments, setComments] = useState([]);
@@ -47,9 +46,23 @@ const CommentSection = ({ sellProductId }) => {
   const [sortOrder, setSortOrder] = useState('latest');
   const isLoggedIn = Boolean(localStorage.getItem('token'));
 
+  const [badWords, setBadWords] = useState([]);
+
   const COMMENTS_PER_PAGE = 22;
   const [visibleCount, setVisibleCount] = useState(COMMENTS_PER_PAGE);
   const observerRef = useRef();
+  // Fetch bad words from API on mount
+  useEffect(() => {
+    const fetchBadWords = async () => {
+      const result = await getAllBadwords();
+      if (result && result.status && Array.isArray(result.data)) {
+        setBadWords(result.data.map(w => w.word || w));
+      } else if (Array.isArray(result)) {
+        setBadWords(result);
+      }
+    };
+    fetchBadWords();
+  }, []);
 
   // Live validation as user types
   const handleInputChange = (e) => {
@@ -284,7 +297,7 @@ const CommentSection = ({ sellProductId }) => {
                   <div className='comment-content-info'>
                     <div className="comment-author oxanium-bold">{comment.username}</div>
                     <div className="comment-content oxanium-regular">
-                      {censorBadWords(comment.content)}
+                      {censorBadWords(comment.content, badWords)}
                     </div>
                     <div className="comment-date oxanium-light">
                       {new Date(comment.updatedAt).toLocaleString()}

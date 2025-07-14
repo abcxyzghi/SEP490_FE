@@ -385,10 +385,25 @@ export default function ProductDetailpage() {
     return rarityColors[normalized] || '#A9A9A9'; // default to Common color
   };
 
-  // Handle product report submit
+  // Handle product report submit (limit 1 per day)
   const handleSubmitProductReport = async () => {
     if (!reportTitle || !reportContent) {
       alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
+      return;
+    }
+    // Prevent user from reporting their own product
+    if (user && product && user.user_id === product.userId) {
+      showModal('warning', 'Action Not Allowed', 'You cannot report your own product.');
+      setShowReportModal(false);
+      return;
+    }
+    // Limit: only 1 report per product per user per day
+    const reportKey = `lastProductReport_${user?.user_id}_${product?.id}`;
+    const lastReport = localStorage.getItem(reportKey);
+    const now = Date.now();
+    if (lastReport && now - parseInt(lastReport, 10) < 24 * 60 * 60 * 1000) {
+      showModal('warning', 'Limit Reached', 'You can only report this product once per day.');
+      setShowReportModal(false);
       return;
     }
     try {
@@ -400,6 +415,7 @@ export default function ProductDetailpage() {
         content: reportContent,
       });
       if (res?.success || res?.status) {
+        localStorage.setItem(reportKey, now.toString());
         alert('Gửi báo cáo thành công!');
         setShowReportModal(false);
         setReportTitle('');
@@ -415,10 +431,24 @@ export default function ProductDetailpage() {
     }
   };
 
-  // Handle user (seller) report submit (logic from Profilepage)
+  // Handle user (seller) report submit (limit 1 per day)
   const handleSubmitUserReport = async () => {
     if (!userReportTitle || !userReportContent) {
-      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
+      showModal('warning', 'Lack of information', 'Please fill in both title and content.');
+      return;
+    }
+    // Prevent user from reporting themselves
+    if (user && product && user.user_id === product.userId) {
+      setShowUserReportModal(false);
+      return showModal('warning', 'Action Not Allowed', 'You cannot report yourself.');
+    }
+    // Limit: only 1 report per seller per user per day
+    const reportKey = `lastUserReport_${user?.user_id}_${product?.userId}`;
+    const lastReport = localStorage.getItem(reportKey);
+    const now = Date.now();
+    if (lastReport && now - parseInt(lastReport, 10) < 24 * 60 * 60 * 1000) {
+      showModal('warning', 'Limit Reached', 'You can only report this user once per day.');
+      setShowUserReportModal(false);
       return;
     }
     try {
@@ -430,6 +460,7 @@ export default function ProductDetailpage() {
         content: userReportContent,
       });
       if (res?.success || res?.status) {
+        localStorage.setItem(reportKey, now.toString());
         alert('Gửi báo cáo thành công!');
         setShowUserReportModal(false);
         setUserReportTitle('');
@@ -540,7 +571,14 @@ export default function ProductDetailpage() {
             <div className="productdetailP-report-container oxanium-semibold">
               <button
                 className="productdetailP-report-btn"
-                onClick={() => setShowReportModal(true)}
+                onClick={() => {
+                  if (user && product && user.user_id === product.userId) {
+                    showModal('warning', 'Action Not Allowed', 'You cannot report your own product.');
+                  } else {
+                    setShowReportModal(true);
+                  }
+                }}
+                title={user && product && user.user_id === product.userId ? 'You cannot report your own product.' : ''}
               >
                 <img src={ReportIcon} alt="Report" className="productdetailP-report-icon" />
                 <span className="productdetailP-report-label">Report</span>
@@ -696,7 +734,14 @@ export default function ProductDetailpage() {
           <div className="productdetailP-seller-actions">
             <button
               className="productdetailP-seller-btn-outline oxanium-regular"
-              onClick={() => setShowUserReportModal(true)}
+              onClick={() => {
+                if (user && product && user.user_id === product.userId) {
+                  showModal('warning', 'Action Not Allowed', 'You cannot report yourself.');
+                } else {
+                  setShowUserReportModal(true);
+                }
+              }}
+              title={user && product && user.user_id === product.userId ? 'You cannot report yourself.' : ''}
             >
               <img src={ReportIcon} alt="Report" className="productdetailP-seller-rIcon" />
               Report

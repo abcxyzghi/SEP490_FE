@@ -44,3 +44,24 @@ export const createComment = async ({ sellProductId, content }) => {
     return null;
   }
 };
+
+
+let badwordsCache = null;
+let badwordsCacheTimestamp = null;
+const BADWORDS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+export const getAllBadwords = async () => {
+  const now = Date.now();
+  if (badwordsCache && badwordsCacheTimestamp && (now - badwordsCacheTimestamp < BADWORDS_CACHE_TTL)) {
+    return badwordsCache;
+  }
+  try {
+    const response = await api.get("https://mmb-be-dotnet.onrender.com/cs/api/Comment/get-all-badwords");
+    badwordsCache = response.data;
+    badwordsCacheTimestamp = now;
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching bad words");
+    return null;
+  }
+};
