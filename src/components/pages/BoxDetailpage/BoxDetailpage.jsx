@@ -33,6 +33,9 @@ export default function BoxDetailpage() {
     setModal({ open: true, type, title, message });
   };
 
+  const formatFullWithDots = (num) => {
+    return Number(num).toLocaleString('de-DE'); // Ex: 9.000.000
+  };
 
   // Fetch box details
   const fetchDetail = async () => {
@@ -116,23 +119,23 @@ export default function BoxDetailpage() {
         <div className="flex w-full gap-3 flex-col lg:flex-row pb-8">
           {/* Image skeleton */}
           <div className="boxdetailP-image-wrapper">
-            <div className="skeleton w-full h-90 rounded-lg bg-slate-300" />
+            <div className="skeleton w-full h-90 rounded-lg bg-gray-700/40" />
           </div>
           <div className="boxdetailP-info-content">
             {/* Title and price skeleton */}
             <div className="boxdetailP-info-wrapper mt-5 mb-10">
-              <div className="skeleton h-10 w-2/3 mb-4 rounded bg-slate-300" />
-              <div className="skeleton h-7 w-1/3 rounded bg-slate-300" />
+              <div className="skeleton h-10 w-2/3 mb-4 rounded bg-gray-700/40" />
+              <div className="skeleton h-7 w-1/3 rounded bg-gray-700/40" />
             </div>
             {/* Quantity and buy button skeleton */}
             <div className="boxdetailP-quantyNbuy-container">
               <div className="boxdetailP-quantity-measure">
-                <div className="skeleton h-10 w-10 rounded-r bg-slate-300" />
-                <div className="skeleton h-10 w-30 bg-slate-300" />
-                <div className="skeleton h-10 w-10 rounded-l bg-slate-300" />
+                <div className="skeleton h-10 w-10 rounded-r bg-gray-700/40" />
+                <div className="skeleton h-10 w-30 bg-gray-700/40" />
+                <div className="skeleton h-10 w-10 rounded-l bg-gray-700/40" />
               </div>
               <div className="boxdetailP-buyDropdown-container">
-                <div className="skeleton h-10 w-50 ml-6 rounded bg-slate-300" />
+                <div className="skeleton h-10 w-50 ml-6 rounded bg-gray-700/40" />
               </div>
             </div>
           </div>
@@ -140,10 +143,10 @@ export default function BoxDetailpage() {
         {/* Tabs skeleton */}
         <div className="tabs-switcher-section flex flex-col mt-8">
           <div className="flex gap-4 justify-center items-center mb-4 ">
-            <div className="skeleton h-10 w-32 rounded bg-slate-300" />
-            <div className="skeleton h-10 w-32 rounded bg-slate-300" />
+            <div className="skeleton h-10 w-32 rounded bg-gray-700/40" />
+            <div className="skeleton h-10 w-32 rounded bg-gray-700/40" />
           </div>
-          <div className="skeleton h-40 w-full rounded bg-slate-300" />
+          <div className="skeleton h-40 w-full rounded bg-gray-700/40" />
         </div>
       </div>
     );
@@ -225,7 +228,7 @@ export default function BoxDetailpage() {
           {/* Title + Price + Quantity + Buy button */}
           <div className="boxdetailP-info-wrapper mb-10">
             <h1 className="boxdetailP-box-title oleo-script-bold">{box.mysteryBoxName}</h1>
-            <p className="boxdetailP-box-prize oxanium-bold">{(box.mysteryBoxPrice / 1000).toFixed(3)} VND</p>
+            <p className="boxdetailP-box-prize oxanium-bold">{`${formatFullWithDots(box.mysteryBoxPrice)} VND`}</p>
 
             {/* Add calculated prize when qunatity goes up */}
 

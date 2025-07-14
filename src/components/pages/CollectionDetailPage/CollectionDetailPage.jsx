@@ -69,11 +69,11 @@ export default function CollectionDetailPage() {
             <div className="collection-detail-container">
                 {loading ? (
                     <div className="collection-detail-card flex flex-col md:flex-row gap-8 w-full max-w-5xl p-8 rounded-xl shadow-lg">
-                        <div className="skeleton w-64 h-80 rounded-xl bg-slate-300" />
+                        <div className="skeleton w-64 h-80 rounded-xl bg-gray-700/40" />
                         <div className="flex flex-col flex-1 gap-4">
-                            <div className="skeleton h-8 w-2/3 rounded bg-slate-300" />
-                            <div className="skeleton h-6 w-1/2 rounded bg-slate-300" />
-                            <div className="skeleton h-20 w-full rounded bg-slate-300" />
+                            <div className="skeleton h-8 w-2/3 rounded bg-gray-700/40" />
+                            <div className="skeleton h-6 w-1/2 rounded bg-gray-700/40" />
+                            <div className="skeleton h-20 w-full rounded bg-gray-700/40" />
                         </div>
                     </div>
                 ) : error ? (

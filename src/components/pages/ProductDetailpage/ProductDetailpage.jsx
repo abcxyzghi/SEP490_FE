@@ -206,7 +206,7 @@ export default function ProductDetailpage() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [quantity, setQuantity] = useState(1);
-  
+
   //=========================================================Dạ nhớ style cái cái report modal cho đẹp nha======================================
   // Product report modal state
   const [showReportModal, setShowReportModal] = useState(false);
@@ -224,9 +224,12 @@ export default function ProductDetailpage() {
     setQuantity(prev => (prev < product.quantity ? prev + 1 : prev)); // không tăng quá giới hạn stock
   };
 
-
   const decreaseQuantity = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
+  };
+
+  const formatFullWithDots = (num) => {
+    return Number(num).toLocaleString('de-DE'); // Ex: 9.000.000
   };
 
   const showModal = (type, title, message) => {
@@ -362,7 +365,7 @@ export default function ProductDetailpage() {
     } finally {
       setLoadingBtn(false);
     }
-  }; 
+  };
 
 
 
@@ -449,49 +452,44 @@ export default function ProductDetailpage() {
         <div className="flex w-full gap-3 flex-col lg:flex-row pb-8">
           {/* Image skeleton */}
           <div className="productdetailP-image-wrapper">
-            <div className="skeleton w-full h-90 rounded-lg bg-slate-300" />
+            <div className="skeleton w-full h-90 rounded-lg bg-gray-700/40" />
           </div>
           <div className="productdetailP-info-content">
             {/* Review bar skeleton and Product Report button */}
             <div className="productdetailP-header-info">
               <div className="productdetailP-boxReview-container oxanium-light">
-                <div className="skeleton h-5 w-full rounded bg-slate-300" />
+                <div className="skeleton h-5 w-full rounded bg-gray-700/40" />
               </div>
-              <div className="skeleton w-10 h-10 rounded-full"></div>
+              <div className="skeleton w-10 h-10 rounded-full bg-gray-700/40"></div>
             </div>
             {/* Title and price skeleton */}
             <div className="productdetailP-info-wrapper mt-5 mb-10">
-              <div className="skeleton h-10 w-2/3 mb-4 rounded bg-slate-300" />
-              <div className="skeleton h-7 w-1/3 rounded bg-slate-300" />
+              <div className="skeleton h-10 w-2/3 mb-4 rounded bg-gray-700/40" />
+              <div className="skeleton h-7 w-1/3 rounded bg-gray-700/40" />
             </div>
             {/* Quantity and buy button skeleton */}
             <div className="productdetailP-quantyNbuy-container">
               <div className="productdetailP-quantity-measure">
-                <div className="skeleton h-10 w-10 rounded-r bg-slate-300" />
-                <div className="skeleton h-10 w-30 bg-slate-300" />
-                <div className="skeleton h-10 w-10 rounded-l bg-slate-300" />
+                <div className="skeleton h-10 w-10 rounded-r bg-gray-700/40" />
+                <div className="skeleton h-10 w-30 bg-gray-700/40" />
+                <div className="skeleton h-10 w-10 rounded-l bg-gray-700/40" />
               </div>
               <div className="productdetailP-buyDropdown-container">
-                <div className="skeleton h-10 w-50 ml-6 rounded bg-slate-300" />
+                <div className="skeleton h-10 w-50 ml-6 rounded bg-gray-700/40" />
               </div>
             </div>
           </div>
         </div>
         {/* Seller profile skeleton */}
         <div className="productdetailP-seller-wrapper flex gap-2 flex-col lg:flex-row">
-          <div className="skeleton w-18 h-18 rounded-full"></div>
+          <div className="skeleton w-18 h-18 rounded-full bg-gray-700/40"></div>
           <div className="productdetailP-seller-info">
-            <div className="skeleton h-8 w-2/3 mb-4 rounded bg-slate-300" />
+            <div className="skeleton h-8 w-2/3 mb-4 rounded bg-gray-700/40" />
             <div className="productdetailP-seller-actions">
-              <div className="skeleton h-10 w-32 rounded bg-slate-300" />
-              <div className="skeleton h-10 w-32 rounded bg-slate-300" />
+              <div className="skeleton h-10 w-32 rounded bg-gray-700/40" />
+              <div className="skeleton h-10 w-32 rounded bg-gray-700/40" />
             </div>
           </div>
-        </div>
-        {/* Tabs skeleton */}
-        <div className="tabs-switcher-section flex flex-col gap-3 mt-8">
-          <div className="skeleton h-10 w-32 rounded bg-slate-300" />
-          <div className="skeleton h-40 w-full rounded bg-slate-300" />
         </div>
       </div>
     );
@@ -548,37 +546,37 @@ export default function ProductDetailpage() {
                 <span className="productdetailP-report-label">Report</span>
               </button>
             </div>
-      {/* Product Report Modal */}
-      {showReportModal && (
-        <div className="modal2-overlay">
-          <div className="modal2">
-            <h3>Gửi báo cáo sản phẩm</h3>
-            <input
-              type="text"
-              placeholder="Tiêu đề"
-              value={reportTitle}
-              onChange={e => setReportTitle(e.target.value)}
-            />
-            <textarea
-              placeholder="Nội dung"
-              value={reportContent}
-              onChange={e => setReportContent(e.target.value)}
-            />
-            <div className="modal2-actions">
-              <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
-                {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-              </button>
-              <button onClick={() => setShowReportModal(false)}>Hủy</button>
-            </div>
-          </div>
-        </div>
-      )}
+            {/* Product Report Modal */}
+            {showReportModal && (
+              <div className="modal2-overlay">
+                <div className="modal2">
+                  <h3>Gửi báo cáo sản phẩm</h3>
+                  <input
+                    type="text"
+                    placeholder="Tiêu đề"
+                    value={reportTitle}
+                    onChange={e => setReportTitle(e.target.value)}
+                  />
+                  <textarea
+                    placeholder="Nội dung"
+                    value={reportContent}
+                    onChange={e => setReportContent(e.target.value)}
+                  />
+                  <div className="modal2-actions">
+                    <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
+                      {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
+                    </button>
+                    <button onClick={() => setShowReportModal(false)}>Hủy</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Title + Price + Stock quantity*/}
           <div className="productdetailP-info-wrapper mb-4 sm:mb-7 lg:mb-10">
             <h1 className="productdetailP-box-title oleo-script-bold">{product.name}</h1>
-            <p className="productdetailP-box-prize oxanium-bold">{(product.price / 1000).toFixed(3)} VND</p>
+            <p className="productdetailP-box-prize oxanium-bold">{`${formatFullWithDots(product.price)} VND`}</p>
           </div>
 
           <div className="productdetailP-quantyNbuy-container">
@@ -710,38 +708,38 @@ export default function ProductDetailpage() {
               Message
             </button>
           </div>
-      {/* User Report Modal */}
-      {showUserReportModal && (
-        <div className="modal2-overlay">
-          <div className="modal2">
-            <h3>Gửi báo cáo người bán</h3>
-            <input
-              type="text"
-              placeholder="Tiêu đề"
-              value={userReportTitle}
-              onChange={e => setUserReportTitle(e.target.value)}
-            />
-            <textarea
-              placeholder="Nội dung"
-              value={userReportContent}
-              onChange={e => setUserReportContent(e.target.value)}
-            />
-            <div className="modal2-actions">
-              <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
-                {userReportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-              </button>
-              <button onClick={() => setShowUserReportModal(false)}>Hủy</button>
+
+          {/* User Report Modal */}
+          {showUserReportModal && (
+            <div className="modal2-overlay">
+              <div className="modal2">
+                <h3>Gửi báo cáo người bán</h3>
+                <input
+                  type="text"
+                  placeholder="Tiêu đề"
+                  value={userReportTitle}
+                  onChange={e => setUserReportTitle(e.target.value)}
+                />
+                <textarea
+                  placeholder="Nội dung"
+                  value={userReportContent}
+                  onChange={e => setUserReportContent(e.target.value)}
+                />
+                <div className="modal2-actions">
+                  <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
+                    {userReportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
+                  </button>
+                  <button onClick={() => setShowUserReportModal(false)}>Hủy</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
         </div>
       </div>
 
 
       {/* Comments */}
-      <div className="max-w-2xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4">Comments</h2>
+      <div className="mt-24">
         <CommentSection sellProductId={product.id} />
       </div>
 

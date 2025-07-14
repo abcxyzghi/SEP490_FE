@@ -1,0 +1,9 @@
+.MainP-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.MainP-content {
+  flex: 1; /* take remaining space */
+}

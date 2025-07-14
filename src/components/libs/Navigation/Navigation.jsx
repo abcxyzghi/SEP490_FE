@@ -184,7 +184,7 @@ export default function Navigation() {
                 </NavLink>
 
                 {/* Currency bar */}
-                <div className="nav-curency-container ml-2 tooltip tooltip-bottom tooltip-success"
+                <div className="nav-curency-container ml-2 tooltip tooltip-bottom tooltip-success z-2000"
                   data-tip={`${formatFullWithDots(user.wallet_amount)} VND`}
                   onClick={() => navigate(Pathname('PAYMENT_PAGE'))}
                 >
