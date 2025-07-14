@@ -3,6 +3,7 @@ import { React, useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
+import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import UserOnSale from '../../tabs/UserOnSale/UserOnSale';
 import UserBox from '../../tabs/UserBox/UserBox';
 import UserCollectionList from '../../tabs/UserCollectionList/UserCollectionList';
@@ -16,6 +17,8 @@ export default function Profilepage() {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
+
+  const [activeTab, setActiveTab] = useState('Mystery Boxes');
 
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportTitle, setReportTitle] = useState('');
@@ -136,33 +139,57 @@ export default function Profilepage() {
           Report
         </button>
       )}
-      <UserOnSale products={products} productsLoading={productsLoading} />
-      <UserBox />
-      <UserCollectionList refreshOnSaleProducts={fetchProducts} />
-      {showReportModal && (
-        <div className="modal2-overlay">
-          <div className="modal2">
-            <h3>Gửi báo cáo</h3>
-            <input
-              type="text"
-              placeholder="Tiêu đề"
-              value={reportTitle}
-              onChange={(e) => setReportTitle(e.target.value)}
-            />
-            <textarea
-              placeholder="Nội dung"
-              value={reportContent}
-              onChange={(e) => setReportContent(e.target.value)}
-            />
-            <div className="modal2-actions">
-              <button onClick={handleSubmitReport} disabled={reportSubmitting}>
-                {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-              </button>
-              <button onClick={() => setShowReportModal(false)}>Hủy</button>
+
+      {/* Tabs switcher */}
+      <div className='tabs-switcher-section'>
+        <SwitchTabs
+          tabs={[
+            {
+              label: 'Mystery Boxes',
+              content:
+                <UserBox />
+            },
+            {
+              label: 'Collections',
+              content:
+                <UserCollectionList refreshOnSaleProducts={fetchProducts} />
+            },
+            {
+              label: 'On Sale',
+              content:
+                <UserOnSale products={products} productsLoading={productsLoading} />
+            },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(label) => setActiveTab(label)}
+        />
+      </div>
+
+
+        {showReportModal && (
+          <div className="modal2-overlay">
+            <div className="modal2">
+              <h3>Gửi báo cáo</h3>
+              <input
+                type="text"
+                placeholder="Tiêu đề"
+                value={reportTitle}
+                onChange={(e) => setReportTitle(e.target.value)}
+              />
+              <textarea
+                placeholder="Nội dung"
+                value={reportContent}
+                onChange={(e) => setReportContent(e.target.value)}
+              />
+              <div className="modal2-actions">
+                <button onClick={handleSubmitReport} disabled={reportSubmitting}>
+                  {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
+                </button>
+                <button onClick={() => setShowReportModal(false)}>Hủy</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+      );
 }

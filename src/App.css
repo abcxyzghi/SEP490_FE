@@ -208,12 +208,21 @@
   --cocoa_brown-SVGcolor: invert(44%) sepia(32%) saturate(4893%) hue-rotate(11deg) brightness(96%) contrast(90%);
   --fire_engine_red-SVGcolor: invert(32%) sepia(98%) saturate(5175%) hue-rotate(344deg) brightness(78%) contrast(116%);
   --gradient-cyan_puprle: linear-gradient(0deg,
-            rgb(12, 248, 236) 0%,
-            rgba(197, 107, 240, 1) 100%);
+      rgb(12, 248, 236) 0%,
+      rgba(197, 107, 240, 1) 100%);
+  --gradient-cyan_puprleOnhover: linear-gradient(0deg,
+      rgba(12, 248, 236, 0.71) 0%,
+      rgba(198, 107, 240, 0.79) 100%);
+  --purpleGr-buyBtn: linear-gradient(0deg,
+      rgb(142, 12, 248) 0%,
+      rgba(197, 107, 240, 1) 100%);
+  --purpleGr-buyBtnOnhover: linear-gradient(0deg,
+      rgba(142, 12, 248, 0.652) 0%,
+      rgba(198, 107, 240, 0.695) 100%);
   --purpleBG-buyBtn: rgba(90, 3, 106, 0.9);
   --pinkBorder-buyBtn: #FF50F9;
   --darkPurpleBG-buyBtn: rgba(74, 2, 87, 0.9);
-            
+
   /* Card rarity color*/
   --common-color: #B0B0B0;
   --uncommon-color: #3FB950;
@@ -311,11 +320,12 @@ img,
 
 /* Smooth scrool animation */
 @keyframes appear {
-  from{
+  from {
     opacity: 0;
     scale: 0.4;
   }
-  to{
+
+  to {
     opacity: 1;
     scale: 1;
   }

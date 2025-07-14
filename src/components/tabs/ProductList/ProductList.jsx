@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import './ProductList.css';
 import { useNavigate } from 'react-router-dom';
-import { getAllProductsOnSale } from '../../../services/api.product';
+import { Pathname } from '../../../router/Pathname';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import AddToCart from '../../../assets/Icon_fill/Bag_fill.svg';
+import { getAllProductsOnSale } from '../../../services/api.product';
 import { addToCart } from '../../../services/api.cart';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from '../../../redux/features/cartSlice';
@@ -27,6 +28,14 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
+  };
+
+  // Format currency number from "9000000" to "9M"
+  const formatShortNumber = (num) => {
+    if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return num.toString();
   };
 
   useEffect(() => {
@@ -63,10 +72,10 @@ export default function ProductList({ searchText, selectedSort, ascending, price
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
         {[...Array(PAGE_SIZE)].map((_, index) => (
           <div key={index} className="flex justify-center w-full flex-col gap-4">
-            <div className="skeleton h-42 w-full bg-slate-300"></div>
-            <div className="skeleton h-4 w-28 bg-slate-300"></div>
-            <div className="skeleton h-4 w-full bg-slate-300"></div>
-            <div className="skeleton h-4 w-full bg-slate-300"></div>
+            <div className="skeleton h-42 w-full bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-28 bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-full bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-full bg-gray-700/40"></div>
           </div>
         ))}
       </div>
@@ -206,9 +215,10 @@ return (
                       {item.name}
                     </div>
                     <div className='productList-sub-info'>
-                      <div className="productList-card-price oxanium-bold">{(item.price / 1000).toFixed(3)} VND</div>
-                      <div className="productList-card-sellerName oxanium-bold" >
-                        {/* Add On-click to seller profile */}
+                      <div className="productList-card-price oxanium-bold">{formatShortNumber(item.price)} VND</div>
+                      <div className="productList-card-sellerName oxanium-bold" 
+                      onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}
+                      >
                         {truncate(item.username, 10)}
                       </div>
                     </div>

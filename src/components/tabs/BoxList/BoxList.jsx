@@ -28,6 +28,14 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
     setModal({ open: true, type, title, message });
   };
 
+  // Format currency number from "9000000" to "9M"
+  const formatShortNumber = (num) => {
+    if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return num.toString();
+  };
+
   useEffect(() => {
     const fetchBoxes = async () => {
       try {
@@ -61,10 +69,10 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
         {[...Array(PAGE_SIZE)].map((_, index) => (
           <div key={index} className="flex justify-center w-full flex-col gap-4">
-            <div className="skeleton h-42 w-full bg-slate-300"></div>
-            <div className="skeleton h-4 w-28 bg-slate-300"></div>
-            <div className="skeleton h-4 w-full bg-slate-300"></div>
-            <div className="skeleton h-4 w-full bg-slate-300"></div>
+            <div className="skeleton h-42 w-full bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-28 bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-full bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-full bg-gray-700/40"></div>
           </div>
         ))}
       </div>
@@ -192,7 +200,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                         {item.mysteryBoxName}
                         {/* {truncate(item.mysteryBoxName, 30)} */}
                       </div>
-                      <div className="boxList-card-price oxanium-bold">{(item.mysteryBoxPrice / 1000).toFixed(3)} VND</div>
+                      <div className="boxList-card-price oxanium-bold">{formatShortNumber(item.mysteryBoxPrice)} VND</div>
                       <div className="boxList-card-actions">
                         <button
                           className="boxList-view-button"
