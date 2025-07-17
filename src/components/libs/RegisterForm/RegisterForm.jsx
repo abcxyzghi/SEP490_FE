@@ -54,22 +54,26 @@ export default function RegisterForm() {
         const { userName, email, password, confirmPassword, accepted } = form;
 
         if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+            setIsLoading(false);
             return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
         }
 
         if (!validateUsername(userName)) {
+            setIsLoading(false);
             return setSnackbar({
                 open: true,
-                message: 'Username must be between 3 - 15 characters long. Only letters, numbers, and underscores are allowed.',
+                message: 'Username must be between 3 - 15 characters long. Only letters (Eng charaters), numbers, and underscores are allowed.',
                 severity: 'warning'
             });
         }
 
         if (!validateEmail(email)) {
+            setIsLoading(false);
             return setSnackbar({ open: true, message: 'Invalid Email format.', severity: 'warning' });
         }
 
         if (!validatePassword(password)) {
+            setIsLoading(false);
             return setSnackbar({
                 open: true,
                 message: 'Password must be between 8 - 15 characters long, include at least an uppercase, lowercase, number, and special character.',
@@ -78,10 +82,12 @@ export default function RegisterForm() {
         }
 
         if (password !== confirmPassword) {
+            setIsLoading(false);
             return setSnackbar({ open: true, message: 'Passwords do not match!', severity: 'error' });
         }
 
         if (!accepted) {
+            setIsLoading(false);
             return setSnackbar({ open: true, message: 'You must agree to all policies.', severity: 'warning' });
         }
 
@@ -95,6 +101,8 @@ export default function RegisterForm() {
             const apiError = err.response?.data;
             if (apiError && apiError.error === 'registered email') {
                 setSnackbar({ open: true, message: apiError.error, severity: 'error' });
+            } else if (apiError && apiError.error === '400: username already exist') {
+                setSnackbar({ open: true, message: 'Username already exists.', severity: 'error' });
             } else {
                 toast.error(apiError || 'Registration failed');
             }
