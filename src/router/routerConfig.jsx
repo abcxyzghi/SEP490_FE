@@ -22,7 +22,7 @@ import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboa
 import UserManagement from "../components/adminPages/UserManagement/UserManagement";
 import SystemManagement from "../components/adminPages/SystemManagement/SystemManagement";
 import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
-
+import Exchangepage from "../components/pages/Exchangepage/Exchangepage";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -47,6 +47,7 @@ export const privateRoutes = [
     { path: PATH_NAME.CART_PAGE, element: <Cartpage />, role: ['user'] },
     { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
     { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
+    { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
 ];
 
 export const moderatorRoutes = [

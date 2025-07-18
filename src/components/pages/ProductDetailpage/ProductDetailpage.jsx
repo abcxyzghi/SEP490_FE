@@ -662,7 +662,15 @@ export default function ProductDetailpage() {
                   </li>
                   <li
                     className={`productdetailP-dropdown-item oxanium-regular ${loadingBtn ? 'disabled' : ''}`}
-                  // Exchange handle here
+                    onClick={() => {
+                      setIsOpen(false);
+                      // Prevent user from exchanging their own product
+                      if (user && product && user.user_id === product.userId) {
+                        showModal('warning', 'Action Not Allowed', 'You cannot exchange your own product.');
+                        return;
+                      }
+                      navigate(`/exchangepage/${product.id}`);
+                    }}
                   >
                     Exchange
                   </li>

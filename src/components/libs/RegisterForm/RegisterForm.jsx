@@ -93,7 +93,9 @@ export default function RegisterForm() {
         } catch (err) {
 
             const apiError = err.response?.data;
-            if (apiError && apiError.error === 'registered email') {
+            if (apiError && apiError.error === 'Email aready in use !') {
+                setSnackbar({ open: true, message: apiError.error, severity: 'error' });
+            } else if (apiError && apiError.error === '400: username already exist !') {
                 setSnackbar({ open: true, message: apiError.error, severity: 'error' });
             } else {
                 toast.error(apiError || 'Registration failed');

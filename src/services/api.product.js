@@ -91,11 +91,7 @@ export const buyProductOnSale = async ({ sellProductId, quantity }) => {
       error: "Unexpected error occurred.",
       errorCode: 500,
     };
-
-    // ✅ vẫn hiển thị toast
-    toast.error(backendError.error || "Error buying product on sale");
-
-    // ✅ trả về lỗi cho component xử lý tiếp
+    toast.error(backendError.error || "Error buying product on sale");    
     return backendError;
   }
 };
