@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
+import OtpDialog from '../OtpDialog/OtpDialog';
 import ForgotPasswordDialog from '../ForgotPasswordDialog/ForgotPasswordDialog';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
@@ -9,17 +10,13 @@ import MuiAlert from '@mui/material/Alert';
 import { confirmOtpApi, loginApi, sendVerifyEmailApi } from '../../../services/api.auth';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../../redux/features/authSlice';
+
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 export default function LoginForm() {
-  // Form validation func
-  const [form, setForm] = useState({
-    userName: '',
-    password: '',
-  });
-
+  const [form, setForm] = useState({ userName: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
   const [openForgotDialog, setOpenForgotDialog] = useState(false);
@@ -30,6 +27,7 @@ export default function LoginForm() {
   const [otp, setOtp] = useState('');
   const [emailToVerify, setEmailToVerify] = useState('');
   const [showOtpSection, setShowOtpSection] = useState(false);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
@@ -37,141 +35,115 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (isLoading) return; // Prevent spam
+    if (isLoading) return;
+
     setIsLoading(true);
     setError('');
+
     const { userName, password } = form;
     if (!userName.trim() || !password.trim()) {
       setIsLoading(false);
       return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
     }
+
     try {
       const data = await loginApi(userName, password);
-      if (data && data.access_token && data.is_email_verification) {
+      if (data?.access_token && data?.is_email_verification) {
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('refreshToken', data.refresh_token);
         dispatch(setToken(data.access_token));
         setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
         navigate("/");
-      } else if (data && data.is_email_verification === false) {
-        setEmailToVerify(data.email); // lưu lại email để verify
-        setShowOtpSection(true); // hiển thị ô nhập OTP
-        await sendVerifyEmailApi(data.email); // gửi lại email xác minh
+      } else if (data?.is_email_verification === false) {
+        setEmailToVerify(data.email);
         setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'warning' });
-      } else if (data && data.success === false && data.error_code === 403) {
+        setShowOtpSection(true); // Mở dialog OTP
+        await sendVerifyEmailApi(data.email);
+      } else if (data?.success === false && data?.error_code === 403) {
         setSnackbar({ open: true, message: data.error || 'Incorrect username or password!', severity: 'error' });
       } else {
         setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
       }
     } catch (error) {
       console.error('API call error:', error);
-
       const responseData = error?.response?.data;
       if (responseData?.error_code === 403) {
-
         setSnackbar({
           open: true,
-          message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts. Please try again later.',
-          severity: 'error'
+          message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts.',
+          severity: 'error',
         });
       } else if (responseData?.error_code === 404) {
         setSnackbar({
           open: true,
-          message: responseData.error || 'Login Failed ! Incorrect username or password!',
-          severity: 'error'
+          message: responseData.error || 'Login Failed! Incorrect username or password!',
+          severity: 'error',
         });
       } else {
         setSnackbar({
           open: true,
           message: 'Login failed. Please check your credentials.',
-          severity: 'error'
+          severity: 'error',
         });
       }
-
-
     } finally {
       setIsLoading(false);
-
     }
   };
 
-  // // Logout function
-  // const handleLogout = () => {
-  //     localStorage.removeItem('access_token');
-  //     localStorage.removeItem('user');
-  //     window.location.reload();
-  // };
-  const handleVerifyEmail = async () => {
-    if (!otp.trim()) {
-      return setSnackbar({ open: true, message: 'Please enter the OTP.', severity: 'error' });
-    }
+  const handleVerifyEmail = async (code) => {
+  if (!code || code.length !== 6) {
+    return setSnackbar({ open: true, message: 'Please enter the 6-digit OTP.', severity: 'error' });
+  }
 
-    try {
-      const res = await confirmOtpApi(otp, emailToVerify);
-      const result = res.data;
-      if (result.success) {
-        setSnackbar({ open: true, message: 'Email verified successfully! Please login again.', severity: 'success' });
-        setShowOtpSection(false);
-        setEmailToVerify('');
-        setOtp('');
-        navigate("/login"); // Chuyển về trang login
-      } else {
-        setSnackbar({ open: true, message: res.message || 'Invalid verification code.', severity: 'error' });
-      }
-    } catch (err) {
-      console.error('Verify email error:', err);
-      setSnackbar({ open: true, message: 'Verification failed. Please try again.', severity: 'error' });
+  try {
+    const res = await confirmOtpApi(code, emailToVerify);
+    const result = res.data;
+
+    if (result.success) {
+      setSnackbar({ open: true, message: 'Email verified successfully! Please login again.', severity: 'success' });
+      setShowOtpSection(false); // đóng OTP section nếu có
+      setEmailToVerify('');
+      navigate('/login');
+    } else {
+      setSnackbar({ open: true, message: res.message || 'Invalid verification code.', severity: 'error' });
     }
-  };
+  } catch (err) {
+    console.error('Verify email error:', err);
+    setSnackbar({ open: true, message: 'Verification failed. Please try again.', severity: 'error' });
+  }
+};
+
   return (
     <div className="login-container">
       <h2 className="login-title oleo-script-bold">Welcome back to Manga Mystery Box</h2>
 
-      {/* 👉 Nếu đã login và cần xác thực email, chỉ hiện OTP */}
-      {showOtpSection ? (
-        <div className="login-form-otp">
+      <form className="login-form" onSubmit={handleLogin}>
+        <div className="login-form-control">
           <input
+            name="userName"
             type="text"
-            placeholder="Enter verification code (OTP)"
+            placeholder="User Name or Email"
             className="login-input input-bordered h-12 oxanium-regular"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
+            value={form.userName}
+            onChange={handleChange}
           />
-          <button
-            onClick={handleVerifyEmail}
-            className="login-btn mt-2"
-          >
-            Verify Email
-          </button>
         </div>
-      ) : (
-        <form className="login-form" onSubmit={handleLogin}>
-          {/* Username and Password inputs */}
-          <div className="login-form-control">
-            <input
-              name="userName"
-              type="text"
-              placeholder="User Name or Email"
-              className="login-input input-bordered h-12 oxanium-regular"
-              value={form.userName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="login-form-control login-password-wrapper">
-            <input
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              className="login-input input-bordered h-12 oxanium-regular"
-              value={form.password}
-              onChange={handleChange}
-            />
-            <IconButton className="login-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small">
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </div>
+        <div className="login-form-control login-password-wrapper">
+          <input
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            className="login-input input-bordered h-12 oxanium-regular"
+            value={form.password}
+            onChange={handleChange}
+          />
+          <IconButton className="login-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small">
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </div>
 
-          {/* Forgot password */}
+        {/* Forgot password */}
           <span
             className="login-modal-link oxanium-light"
             onClick={() => setOpenForgotDialog(true)}
@@ -179,32 +151,23 @@ export default function LoginForm() {
             Forgot password?
           </span>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`login-btn oleo-script-regular
-              backdrop-blur-lg border border-white/10 bg-gradient-to-tr from-black/60 to-black/40 shadow-lg hover:shadow-2xl hover:shadow-white/20 hover:scale-100  active:scale-95 active:rotate-0 transition-all duration-300 ease-out cursor-pointer hover:border-white/30 hover:bg-gradient-to-tr hover:from-white/10 hover:to-black/40 group relative overflow-hidden
-              ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-          >
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
-            ></div>
-            {isLoading ? (
-              <span className="loading loading-bars loading-md"></span>
-            ) : (
-              'Login'
-            )}
-          </button>
-        </form>
-      )}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`login-btn oleo-script-regular transition-all duration-300 ease-out ${
+            isLoading ? 'opacity-70 cursor-not-allowed' : ''
+          }`}
+        >
+          {isLoading ? <span className="loading loading-bars loading-md"></span> : 'Login'}
+        </button>
+      </form>
 
-      {/* Error */}
+         {/* Error */}
       {error && (
         <div style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</div>
       )}
 
-      {/* Snackbar */}
+        {/* Snackbar */}
       <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
@@ -216,7 +179,17 @@ export default function LoginForm() {
         open={openForgotDialog}
         onClose={() => setOpenForgotDialog(false)}
       />
+
+
+      {/* OTP Dialog */}
+      <OtpDialog
+        open={showOtpSection}
+        onClose={() => setShowOtpSection(false)}
+        email={emailToVerify}
+        onVerify={handleVerifyEmail}
+        // otp={otp}
+        // setOtp={setOtp}
+      />
     </div>
   );
-
 }

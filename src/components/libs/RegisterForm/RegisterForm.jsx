@@ -103,8 +103,6 @@ export default function RegisterForm() {
                 setSnackbar({ open: true, message: apiError.error, severity: 'error' });
             } else if (apiError && apiError.error === '400: username already exist !') {
                 setSnackbar({ open: true, message: apiError.error, severity: 'error' });
-            } else if (apiError && apiError.error === '400: username already exist') {
-                setSnackbar({ open: true, message: 'Username already exists.', severity: 'error' });
             } else {
                 toast.error(apiError || 'Registration failed');
             }
