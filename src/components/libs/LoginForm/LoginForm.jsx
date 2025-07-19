@@ -114,7 +114,7 @@ export default function LoginForm() {
         setShowOtpSection(false);
         setEmailToVerify('');
         setOtp('');
-        navigate("/");
+        navigate("/login"); // Chuyển về trang login
       } else {
         setSnackbar({ open: true, message: res.message || 'Invalid verification code.', severity: 'error' });
       }
