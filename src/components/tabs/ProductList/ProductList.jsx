@@ -162,7 +162,9 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
     showModal('default', 'Success', 'Successfully added to cart!');
   } catch (error) {
-    showModal('error', 'Error', 'Failed to add to cart.');
+    const errorMessage =
+      error?.response?.data?.error || 'Failed to add to cart.';
+    showModal('error', 'Error', errorMessage);
     console.error(error);
   } finally {
     setLoadingBtnId(null);
