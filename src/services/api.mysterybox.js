@@ -35,8 +35,13 @@ export const buyMysteryBox = async ({ mangaBoxId, quantity }) => {
       }
     );
     return response.data;
-  } catch (error) {
-    toast.error(error.response?.data?.error || "Error buying mystery box");
-    return null;
+  }  catch (error) {
+    const backendError = error.response?.data || {
+      status: false,
+      error: "Unexpected error occurred.",
+      errorCode: 500,
+    };
+    toast.error(backendError.error || "Error buying product on sale");
+    return backendError;
   }
 }
