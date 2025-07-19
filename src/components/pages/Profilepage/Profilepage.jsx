@@ -2,6 +2,7 @@
 import { React, useEffect, useState, useCallback } from 'react';
 import './Profilepage.css';
 import { Snackbar, Alert } from '@mui/material';
+import { Modal } from 'antd';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
@@ -21,7 +22,8 @@ import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
 
 export default function Profilepage() {
   const { id } = useParams();
-  const currentUserId = useSelector(state => state.auth.user?.user_id);
+  const user = useSelector(state => state.auth.user);
+  const currentUserId = user?.user_id;
   const [copySuccess, setCopySuccess] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,13 @@ export default function Profilepage() {
   const [activeTab, setActiveTab] = useState('Mystery Boxes');
 
   const [showReportModal, setShowReportModal] = useState(false);
+  // Show warning modal for unauthorized actions
+  const showModal = (type, title, content) => {
+    Modal[type]({
+      title,
+      content,
+    });
+  };
   const [reportTitle, setReportTitle] = useState('');
   const [reportContent, setReportContent] = useState('');
   const [reportSubmitting, setReportSubmitting] = useState(false);
@@ -252,7 +261,9 @@ export default function Profilepage() {
               {isMyProfile ? '' : (
                 <button className="profilepage-btn-report oxanium-semibold"
                   onClick={() => {
-                    console.log("Open modal");
+                    if (!user || user.role !== 'user') {
+                      return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+                    }
                     setShowReportModal(true);
                   }}
                 >
