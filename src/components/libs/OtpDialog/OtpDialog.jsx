@@ -125,7 +125,15 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
                         </div>
 
                         <span className='otpDialog-subtitle oxanium-regular'>
-                            We’ve sent a code to <strong style={{ color: 'var(--secondary-1)' }}>{email}</strong>
+                            We’ve sent a code to{' '}
+                            <a
+                                href="https://mail.google.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: 'var(--secondary-1)', fontWeight: 'bold', cursor: 'pointer' }}
+                            >
+                                {email}
+                            </a>
                         </span>
                     </div>
 

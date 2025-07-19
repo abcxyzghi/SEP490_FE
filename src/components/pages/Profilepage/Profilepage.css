@@ -1,19 +1,204 @@
+/*  --------------------------==================== Head profile section ====================-------------------------- */
+.profilepage-banner {
+  width: 100%;
+  height: 15rem;
+
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.profilepage-wrapper {
+  position: relative;
+  max-width: 100%;
+  background-color: rgba(92, 92, 92, 0.1);
+  margin: 0 auto;
+}
+
+.profilepage-avatar-container {
+  width: 14rem;
+  height: 14rem;
+  border: 8px solid var(--dark-1);
+  border-radius: 20px;
+  /* half of height to overlap */
+  margin: -6rem 4.5rem;
+  overflow: hidden;
+  background: var(--light-5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+.profilepage-info {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  /* offset from banner + padding */
+  padding: 0rem 3.5rem 5.5rem;
+  border-bottom: 1px solid #444;
+}
+
+.profilepage-left {
+  margin: -1.6rem 0 0 16rem;
+}
+
+.profilepage-nameJoin {
+  margin-bottom: 20px;
+}
+
+.profilepage-username {
+  font-size: 1.85rem;
+  color: var(--light-1);
+}
+
+.profilepage-joinTime {
+  margin-top: -3px;
+  font-size: 16px;
+  color: var(--primary-6);
+}
+
+/* Buttons */
+.profilepage-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.profilepage-btn-follow,
+.profilepage-btn-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  padding: 0.25rem 1rem;
+  color: var(--light-1);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, scale 0.3s ease;
+}
+
+.profilepage-btn-follow {
+  border: 2px solid #0000;
+  background:
+    linear-gradient(var(--dark-1-o90), var(--dark-1-o90)) padding-box,
+    linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+.profilepage-btn-message {
+  background: var(--gradient-light);
+}
+
+.profilepage-btn-follow:hover {
+  border: 2px solid #0000;
+  background:
+    linear-gradient(var(--dark-2-o90), var(--dark-2-o90)) padding-box,
+    linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+.profilepage-btn-message:hover {
+  background: var(--gradient-dark);
+}
+
+
+.profilepage-follow-icon,
+.profilepage-message-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  filter: var(--lightSVG-1);
+}
+
+.profilepage-right-action {
+  display: flex;
+  gap: 0.9rem;
+  margin-top: -1.2rem;
+  margin-left: auto;
+}
+
+.profilepage-btn-report,
+.profilepage-btn-copy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  font-size: 0.97rem;
+  border-width: 1px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.profilepage-btn-report {
+  color: var(--cocoa_brown-color);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9px;
+}
+
+.profilepage-btn-copy {
+  color: var(--light-2);
+  padding: 0.35rem 1.2rem;
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profilepage-report-icon,
+.profilepage-copyLink-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.profilepage-report-icon {
+  filter: var(--cocoa_brown-SVGcolor);
+}
+
+.profilepage-copyLink-icon {
+  filter: var(--lightSVG-1);
+}
+
+.profilepage-btn-report:hover {
+  color: var(--fire_engine_red-color);
+  background-color: rgba(255, 223, 223, 0.8);
+  border: 1px solid red;
+}
+
+.profilepage-btn-report:hover .profilepage-report-icon {
+  filter: var(--fire_engine_red-SVGcolor);
+}
+
+.profilepage-btn-copy:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.profilepage-btn-follow:active,
+.profilepage-btn-message:active,
+.profilepage-btn-report:active,
+.profilepage-btn-copy:active {
+  transform: scale(0.99);
+}
+
+
+/*  --------------------------==================== Report modal ====================-------------------------- */
 .modal2-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Làm mờ nền */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Làm mờ nền */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9000;
-  
+
 }
 
 .modal2 {
-  position: relative; /* ✅ thêm dòng này */
+  position: relative;
+  /* ✅ thêm dòng này */
   background: #fff;
   padding: 20px;
   border-radius: 8px;
@@ -55,4 +240,79 @@
 
 .modal2-actions button:last-child {
   background-color: #bdc3c7;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 950px */
+@media (max-width: 950px) {
+  .profilepage-avatar-container {
+    width: 13rem;
+    height: 13rem;
+  }
+
+  .profilepage-left {
+    margin: -1.4rem 0 0 17.5rem;
+  }
+
+  .profilepage-info {
+    padding: 0 0.8rem 2rem;
+  }
+
+  .profilepage-right-action {
+    margin-top: -1rem;
+  }
+}
+
+/* For screen width ≤ 767px */
+@media (max-width: 767px) {
+  .profilepage-banner {
+    height: 12rem;
+  }
+
+  .profilepage-img {
+    display: flex;
+    justify-content: center;
+  }
+
+  .profilepage-avatar-container {
+    width: 10rem;
+    height: 10rem;
+    margin: -5rem auto;
+  }
+
+  .profilepage-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profilepage-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5rem 0 0;
+    text-align: center;
+  }
+
+  .profilepage-right-action {
+    margin-left: 0;
+  }
+}
+
+/* For screen width ≤ 345px */
+@media (max-width: 345px) {
+  .profilepage-buttons,
+  .profilepage-right-action {
+    flex-direction: column;
+    font-size: 12px;
+  }
+
+  .profilepage-btn-report,
+  .profilepage-btn-copy {
+    font-size: 12px;
+  }
 }

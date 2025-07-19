@@ -16,7 +16,7 @@ export default function Shoppage() {
   const [searchText, setSearchText] = useState('');
   const [priceRange, setPriceRange] = useState(500);
   const [selectedRarities, setSelectedRarities] = useState([]);
-  const [selectedSort, setSelectedSort] = useState('Release date');
+  const [selectedSort, setSelectedSort] = useState('Date');
   const [ascending, setAscending] = useState(true);
 
   useEffect(() => {

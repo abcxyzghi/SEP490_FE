@@ -169,6 +169,10 @@
     color: var(--light-4);
 }
 
+.otpDialog-subtitle:hover a{
+    text-decoration: underline;
+}
+
 .otpDialog-header-icon {
     width: 1.5rem;
     height: 1.5rem;
@@ -205,6 +209,7 @@
     color: var(--light-3);
     padding: 6px 16px;
     border-radius: 12px;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 

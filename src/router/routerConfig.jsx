@@ -11,6 +11,7 @@ import BoxDetailpage from "../components/pages/BoxDetailpage/BoxDetailpage";
 import CollectionDetailPage from "../components/pages/CollectionDetailPage/CollectionDetailPage";
 import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDetailpage";
 import Settingpage from "../components/pages/Settingpage/Settingpage";
+import Notificationpage from "../components/pages/Notificationpage/Notificationpage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
 import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
@@ -47,7 +48,11 @@ export const privateRoutes = [
     { path: PATH_NAME.CART_PAGE, element: <Cartpage />, role: ['user'] },
     { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
     { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
+
+    { path: PATH_NAME.NOTIFICATION_PAGE, element: <Notificationpage />, role: ['user'] },
+
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
+
 ];
 
 export const moderatorRoutes = [

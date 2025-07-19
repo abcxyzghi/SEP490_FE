@@ -4,7 +4,6 @@ import SearchBar from '../../libs/SearchFilterSort/SearchBar';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import AuctionRoomList from '../../tabs/AuctionRoomList/AuctionRoomList';
 import MyAuction from '../../tabs/MyAuction/MyAuction';
-import AuctionHistoryList from '../../tabs/AuctionHistoryList/AuctionHistoryList';
 
 export default function Auctionpage() {
   const [activeTab, setActiveTab] = useState('Auction Rooms');
@@ -31,11 +30,6 @@ export default function Auctionpage() {
               label: 'My Auction',
               content:
                 <MyAuction />
-            },
-            {
-              label: 'Auction History',
-              content:
-                <AuctionHistoryList />
             },
           ]}
           activeTab={activeTab}

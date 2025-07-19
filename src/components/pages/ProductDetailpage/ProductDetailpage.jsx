@@ -388,7 +388,7 @@ export default function ProductDetailpage() {
   // Handle product report submit (limit 1 per day)
   const handleSubmitProductReport = async () => {
     if (!reportTitle || !reportContent) {
-      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
+      showModal('warning', 'Missing Fields', 'Please fill in both the title and content.');
       return;
     }
     // Prevent user from reporting their own product
@@ -416,16 +416,16 @@ export default function ProductDetailpage() {
       });
       if (res?.success || res?.status) {
         localStorage.setItem(reportKey, now.toString());
-        alert('Gửi báo cáo thành công!');
+        showModal('default', 'Report Submitted', 'Your report has been successfully sent.');
         setShowReportModal(false);
         setReportTitle('');
         setReportContent('');
       } else {
-        alert('Gửi không thành công (response không hợp lệ)');
+        showModal('error', 'Failed to Submit', 'The report could not be submitted (invalid response).');
       }
     } catch (err) {
       console.error('Report error:', err);
-      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+      showModal('error', 'Submission Error', 'Something went wrong. Please try again later.');
     } finally {
       setReportSubmitting(false);
     }
@@ -461,16 +461,16 @@ export default function ProductDetailpage() {
       });
       if (res?.success || res?.status) {
         localStorage.setItem(reportKey, now.toString());
-        alert('Gửi báo cáo thành công!');
+        showModal('default', 'Success', 'Report submitted successfully!');
         setShowUserReportModal(false);
         setUserReportTitle('');
         setUserReportContent('');
       } else {
-        alert('Gửi không thành công (response không hợp lệ)');
+        showModal('error', 'Error', 'Failed to submit report.');
       }
     } catch (err) {
       console.error('Report error:', err);
-      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+      showModal('error', 'Error', 'An error occurred. Please try again.');
     } finally {
       setUserReportSubmitting(false);
     }

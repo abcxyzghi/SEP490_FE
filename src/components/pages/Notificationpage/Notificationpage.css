@@ -1,0 +1,12 @@
+.notificationPage-container {
+    overflow-x: hidden;
+    margin-top: 50px;
+}
+
+.notificationPage-searchFilterSort-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    margin: 20px auto;
+}

@@ -111,7 +111,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
         valA = a.name.toLowerCase();
         valB = b.name.toLowerCase();
         break;
-      case 'Release date':
+      case 'Date':
       default:
         valA = new Date(a.createdAt || 0);
         valB = new Date(b.createdAt || 0);
@@ -162,7 +162,9 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
     showModal('default', 'Success', 'Successfully added to cart!');
   } catch (error) {
-    showModal('error', 'Error', 'Failed to add to cart.');
+    const errorMessage =
+      error?.response?.data?.error || 'Failed to add to cart.';
+    showModal('error', 'Error', errorMessage);
     console.error(error);
   } finally {
     setLoadingBtnId(null);
