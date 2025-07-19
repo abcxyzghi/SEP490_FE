@@ -6,7 +6,7 @@ import SortUp from '../../../assets/Icon_fill/Sort_up.svg';
 export default function SortDropdown({ selectedSort, onSortSelect, ascending, toggleOrder }) {
     const [isOpen, setIsOpen] = useState(false);
     const [tooltipText, setTooltipText] = useState(ascending ? 'ascending' : 'descending');
-    const sortOptions = ['Release date', 'Name', 'Price'];
+    const sortOptions = ['Date', 'Name', 'Price'];
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 

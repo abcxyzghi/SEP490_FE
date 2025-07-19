@@ -103,7 +103,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
         valA = a.mysteryBoxName.toLowerCase();
         valB = b.mysteryBoxName.toLowerCase();
         break;
-      case 'Release date':
+      case 'Date':
       default:
         // Use a fallback value of 0 for undefined releaseDate
         valA = new Date(a.createdAt || 0);

@@ -111,7 +111,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
         valA = a.name.toLowerCase();
         valB = b.name.toLowerCase();
         break;
-      case 'Release date':
+      case 'Date':
       default:
         valA = new Date(a.createdAt || 0);
         valB = new Date(b.createdAt || 0);

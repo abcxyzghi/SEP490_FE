@@ -8,6 +8,7 @@ import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } 
 import { format } from 'date-fns';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import UserOnSale from '../../tabs/UserOnSale/UserOnSale';
+import UserAchievements from '../../tabs/UserAchievements/UserAchievements';
 import UserBox from '../../tabs/UserBox/UserBox';
 import UserCollectionList from '../../tabs/UserCollectionList/UserCollectionList';
 // import assets
@@ -100,6 +101,33 @@ export default function Profilepage() {
 
   const isMyProfile = currentUserId && (id === currentUserId || !id);
 
+  // Construct the tabs array based on isMyProfile
+  const tabs = isMyProfile
+    ? [
+      {
+        label: 'Mystery Boxes',
+        content: <UserBox />,
+      },
+      {
+        label: 'Collections',
+        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
+      },
+      {
+        label: 'On Sale',
+        content: <UserOnSale products={products} productsLoading={productsLoading} />,
+      },
+    ]
+    : [
+      {
+        label: 'Achievements',
+        content: <UserAchievements />,
+      },
+      {
+        label: 'On Sale',
+        content: <UserOnSale products={products} productsLoading={productsLoading} />,
+      },
+    ];
+
   // change createDate format to month year  
   const joinedDate = format(new Date(profile.createDate), 'MMMM yyyy');
 
@@ -115,7 +143,7 @@ export default function Profilepage() {
       });
   };
 
-
+  // Function to submit Report form
   const handleSubmitReport = async () => {
     if (!reportTitle || !reportContent) {
       alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
@@ -155,7 +183,6 @@ export default function Profilepage() {
 
   return (
     <div>
-      {/* <h2>{isMyProfile ? 'My Profile' : `User Profile: ${profile.username || id}`}</h2> */}
       {/* Head profile */}
       <div className="w-full">
         {/* Top banner */}
@@ -193,23 +220,46 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
-                <button className="profilepage-btn-follow oxanium-semibold">
-                  <img src={FollowIcon} alt="Follow" className="profilepage-follow-icon" />
-                  Follow
-                </button>
-                <button className="profilepage-btn-message oxanium-semibold">
-                  <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
-                  Message
-                </button>
+                {isMyProfile ?
+                  (
+                    <button className="profilepage-btn-follow oxanium-semibold"
+                    // Edit profile navigate handling here
+                    >
+                      <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
+                      Edit profile
+                    </button>
+                  ) : (
+                    <>
+                      <button className="profilepage-btn-follow oxanium-semibold"
+                      // Follow api handling here
+                      >
+                        <img src={FollowIcon} alt="Follow" className="profilepage-follow-icon" />
+                        Follow
+                      </button>
+                      <button className="profilepage-btn-message oxanium-semibold"
+                      // Chat room navigate handling here
+                      >
+                        <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
+                        Message
+                      </button>
+                    </>
+                  )}
               </div>
             </div>
 
             {/* Right extra buttons */}
             <div className="profilepage-right-action">
-              <button className="profilepage-btn-report oxanium-semibold">
-                <img src={ReportIcon} alt="Report" className="profilepage-report-icon" />
-                Report
-              </button>
+              {isMyProfile ? '' : (
+                <button className="profilepage-btn-report oxanium-semibold"
+                  onClick={() => {
+                    console.log("Open modal");
+                    setShowReportModal(true);
+                  }}
+                >
+                  <img src={ReportIcon} alt="Report" className="profilepage-report-icon" />
+                  Report
+                </button>
+              )}
               <button className="profilepage-btn-copy oxanium-semibold" onClick={handleCopyProfileLink}>
                 <img src={CopyLinkIcon} alt="Copy" className="profilepage-copyLink-icon" />
                 Copy profile link
@@ -220,49 +270,18 @@ export default function Profilepage() {
       </div>
 
 
-      <p><strong>Username:</strong> {profile.username}</p>
-      <button onClick={() => alert('Copy link feature coming soon!')}>Copy link</button>
-      {/* Add more fields as needed */}
-
-      {/* Report modal */}
-      {!isMyProfile && (
-        <button
-          onClick={() => {
-            console.log("Open modal");
-            setShowReportModal(true);
-          }}
-          style={{ color: 'white', backgroundColor: '#c0392b', padding: '6px 12px', borderRadius: 4 }}
-        >
-          Report
-        </button>
-      )}
 
       {/* Tabs switcher */}
       <div className='tabs-switcher-section'>
         <SwitchTabs
-          tabs={[
-            {
-              label: 'Mystery Boxes',
-              content:
-                <UserBox />
-            },
-            {
-              label: 'Collections',
-              content:
-                <UserCollectionList refreshOnSaleProducts={fetchProducts} />
-            },
-            {
-              label: 'On Sale',
-              content:
-                <UserOnSale products={products} productsLoading={productsLoading} />
-            },
-          ]}
+          tabs={tabs}
           activeTab={activeTab}
           onTabChange={(label) => setActiveTab(label)}
         />
       </div>
 
 
+      {/* Report modal */}
       {showReportModal && (
         <div className="modal2-overlay">
           <div className="modal2">
@@ -288,6 +307,8 @@ export default function Profilepage() {
         </div>
       )}
 
+
+      {/* Success copy profile link snackbar */}
       <Snackbar
         open={copySuccess}
         autoHideDuration={3000}
