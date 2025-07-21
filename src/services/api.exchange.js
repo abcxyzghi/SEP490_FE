@@ -57,16 +57,16 @@ export const exchangeProduct = async (payload) => {
 };
 
 export const ExchangeAccept = async (id) => {
-  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/sender/accept/${id}`);
+  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/Exchange/sender/accept/${id}`);
   return response.data;
 };
 
 export const ExchangeReject = async (id) => {
-  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/sender/reject/${id}`);
+  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/Exchange/reject/${id}`);
   return response.data;
 };
 
 export const ExchangeCancel = async (id) => {
-  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/recipient/cancel/${id}`);
+  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/Exchange/recipient/cancel/${id}`);
   return response.data;
 };
