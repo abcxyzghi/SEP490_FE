@@ -133,8 +133,11 @@ export default function Profilepage() {
 
       {/* Tabs switcher skeleton */}
       <div className="tabs-switcher-section flex flex-col gap-3">
+        {/*Show 3 skeleton tabs if viewing own profile, else 2 */}
         <div className="flex justify-center gap-4">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(
+            (id === currentUserId || !id) && currentUserId ? 3 : 2
+          )].map((_, i) => (
             <div key={i} className="skeleton h-10 w-28 bg-gray-700/20 rounded" />
           ))}
         </div>

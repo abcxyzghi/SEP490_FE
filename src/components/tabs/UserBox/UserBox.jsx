@@ -76,7 +76,7 @@ export default function UserBox() {
   }
 
   if (error) {
-    return <div className="text-red-500 text-center">{error}</div>;
+    return <div className="text-red-500 text-center mt-6">{error}</div>;
   }
 
   const visibleBoxes = boxes.slice(0, visibleCount);
@@ -124,7 +124,7 @@ export default function UserBox() {
                       <div className="userBox-card-title oxanium-bold">
                         {item.boxTitle}
                       </div>
-                      <div className="userBox-card-quantity oxanium-bold">quantity: {item.quantity}</div>
+                      <div className="userBox-card-quantity oxanium-bold">Qty: {item.quantity}</div>
                       <div className="userBox-card-actions">
                         <button
                           className="userBox-view-button"
@@ -154,7 +154,7 @@ export default function UserBox() {
       </div>
 
       {boxes.length === 0 && (
-        <div className="userBox-no-boxes-message">No boxes to display yet.</div>
+        <div className="text-center text-gray-400 mt-6">No boxes to display yet.</div>
       )}
 
       {isEnd ? (

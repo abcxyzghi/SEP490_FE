@@ -21,7 +21,7 @@
 
 
 
-/* Main container (not include 'Load more' button)*/
+/*  --------------------------==================== Main container (not include 'Load more' button) ====================-------------------------- */
 .userBox-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -112,7 +112,7 @@
     cursor: pointer;
 }
 
-/* Contain inside the bottom slide */
+/*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
 .userBox-card-title {
     text-align: left;
     font-size: 18px;
@@ -132,10 +132,10 @@
 
 
 .userBox-card-quantity {
+    /* margin-top: 4px; */
     color: var(--primary-2);
-    margin-top: 4px;
-    font-size: 16px;
-    text-align: left;
+    font-size: 12px;
+    text-align: right;
 }
 
 
@@ -147,7 +147,7 @@
     margin-top: 12px;
 }
 
-/* View Detail btn */
+/*  --------------------------==================== View Detail btn ====================--------------------------  */
 .userBox-view-button {
     border-radius: 10px;
     padding: 3px 15px;
@@ -178,7 +178,7 @@
         linear-gradient(#DC0FFF, #FFD721) border-box;
 }
 
-/* Open btn */
+/*  --------------------------==================== Open btn ====================--------------------------  */
 .userBox-open-button {
     position: relative;
     flex: 1;
@@ -223,7 +223,7 @@
     -webkit-text-fill-color: transparent;
 }
 
-/*  Load More Button */
+/*   --------------------------==================== Load More Button ====================--------------------------  */
 .userBox-loadmore-button {
     margin: 40px auto 0 auto;
     padding: 4px 20px;

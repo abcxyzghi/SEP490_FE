@@ -1,4 +1,4 @@
-.productList-card-list-container {
+.userOnSale-card-list-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,7 +14,7 @@
   /* IE and Edge */
 }
 
-.productList-card-list-container::-webkit-scrollbar {
+.userOnSale-card-list-container::-webkit-scrollbar {
   display: none;
   /* Chrome, Safari, Opera */
 }
@@ -22,7 +22,7 @@
 
 
 /*  --------------------------==================== Main container (not include 'Load more' button) ====================-------------------------- */
-.productList-card-grid {
+.userOnSale-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   /* justify-content: left; */
@@ -32,7 +32,7 @@
 }
 
 
-.productList-card-item {
+.userOnSale-card-item {
   background-color: var(--dark-5);
   border-radius: 12px 12px 0 0;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
@@ -45,7 +45,7 @@
 }
 
 /* Card Item Hover Effect */
-.productList-card-item:hover {
+.userOnSale-card-item:hover {
   /* Must be 4-char alpha-hex make gradient border work */
   border: 2px solid #0000;
   background:
@@ -54,7 +54,7 @@
 }
 
 /* Card Item Expanded State */
-.productList-card-item--expanded {
+.userOnSale-card-item--expanded {
   /* Must be 4-char alpha-hex make gradient border work */
   border: 2px solid #0000;
   background:
@@ -64,7 +64,7 @@
 
 
 /* The product duplicate image use for background */
-.productList-card-background {
+.userOnSale-card-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -76,14 +76,14 @@
   z-index: 0;
 }
 
-.productList-card-background img {
+.userOnSale-card-background img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 /* The product image use for display */
-.productList-card-image {
+.userOnSale-card-image {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -93,7 +93,7 @@
 }
 
 /* Info slide container bottom -> up */
-.productList-card-overlay {
+.userOnSale-card-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -107,7 +107,7 @@
 }
 
 /* Toggle Arrow */
-.productList-card-toggle {
+.userOnSale-card-toggle {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -115,7 +115,7 @@
 }
 
 /*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
-.productList-card-title {
+.userOnSale-card-title {
   text-align: left;
   font-size: 18px;
   color: var(--dark-4);
@@ -132,7 +132,7 @@
   /* allow wrapping */
 }
 
-.productList-sub-info {
+.userOnSale-sub-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -140,34 +140,30 @@
 }
 
 
-.productList-card-price {
+.userOnSale-card-price {
   color: var(--primary-2);
   font-size: 16px;
   text-align: left;
 }
 
-.productList-card-sellerName {
+.userOnSale-card-quantity {
   color: var(--dark-3);
   font-size: 12px;
   text-align: right;
-  cursor: pointer;
-  transition: text-decoration 6s ease;
-}
-
-.productList-card-sellerName:hover {
-  text-decoration: underline;
 }
 
 
 /* 'View Detail' and 'Add to cart' buttons */
-.productList-card-actions {
+.userOnSale-card-actions {
   display: flex;
+  gap: 6px;
   justify-content: space-between;
   margin-top: 12px;
 }
 
 /*  --------------------------==================== View Detail btn ====================--------------------------  */
-.productList-view-button {
+.userOnSale-view-button {
+  flex: 1;
   border-radius: 10px;
   padding: 3px 15px;
   cursor: pointer;
@@ -178,7 +174,7 @@
     linear-gradient(#DC0FFF, #FFD721) border-box;
 }
 
-.productList-view-button-text {
+.userOnSale-view-button-text {
   font-size: 16px;
   background: linear-gradient(#DC0FFF, #FFD721);
   background-clip: text;
@@ -190,15 +186,15 @@
   -webkit-text-fill-color: transparent;
 }
 
-.productList-view-button:hover {
+.userOnSale-view-button:hover {
   border: 2px solid #0000;
   background:
     linear-gradient(var(--light-1-o90), var(--light-1-o90)) padding-box,
     linear-gradient(#DC0FFF, #FFD721) border-box;
 }
 
-/*  --------------------------==================== Cart btn ====================--------------------------  */
-.productList-cart-button {
+/*  --------------------------==================== Cart button ====================--------------------------  */
+.userOnSale-cart-button {
   position: relative;
   padding: 6px 12px;
 
@@ -213,7 +209,7 @@
   overflow: hidden;
 }
 
-.productList-cart-button::before {
+.userOnSale-cart-button::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -224,19 +220,109 @@
   mask-composite: exclude;
 }
 
-.productList-cart-button:hover {
+.userOnSale-cart-button:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.productList-cart-icon {
+.userOnSale-cart-icon {
   width: 16px;
   height: 16px;
   filter: var(--darkSVG-3);
 }
 
+/* --------------------------==================== More dropdown button ====================-------------------------- */
+.userOnSale-dropdown-container {
+  position: relative;
+  display: inline-block;
+  /* Vô hiệu kéo-thả */
+  -webkit-user-drag: none;
+  /* Vô hiệu bôi đen chọn văn bản */
+  user-select: none;
+}
+
+.userOnSale-more-button {
+  position: relative;
+  padding: 6px 12px;
+
+  border-radius: 12px;
+  font-size: 16px;
+  color: var(--dark-3);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-self: center;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.userOnSale-more-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: linear-gradient(#DC0FFF, #FFD721) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.userOnSale-more-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.userOnSale-more-icon {
+  width: 25px;
+  height: 25px;
+  filter: var(--lightSVG-1);
+}
+
+.userOnSale-dropdown-menu {
+  position: absolute;
+  top: 105%;
+  /* left: 0; */
+  /* right: 0; */
+  margin-left: auto;
+  margin-right: auto;
+  background: var(--light-2-o90);
+  padding: 4px 2px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 140px;
+  z-index: 10;
+  overflow: visible;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.userOnSale-dropdown-item {
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.userOnSale-dropdown-item:hover {
+  background-color: var(--light-2);
+  border-radius: 8px;
+  margin: 0 2px;
+  padding: 8px 10px;
+}
+
 
 /*   --------------------------==================== Load More Button ====================--------------------------  */
-.productList-loadmore-button {
+.userOnSale-loadmore-button {
   margin: 40px auto 0 auto;
   padding: 4px 20px;
   border: 1px solid var(--secondary-2);
@@ -248,12 +334,12 @@
   cursor: pointer;
 }
 
-.productList-loadmore-button:hover {
+.userOnSale-loadmore-button:hover {
   background-color: rgba(255, 196, 0, 0.1);
 }
 
 /* End of content */
-.productList-end-content {
+.userOnSale-end-content {
   margin-top: 40px;
   text-align: center;
   font-size: 16px;

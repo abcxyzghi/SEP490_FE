@@ -81,7 +81,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
 
   // Check for error after loading
   if (error) {
-    return <div className="text-red-500 text-center">{error}</div>;
+    return <div className="text-red-500 text-center mt-6">{error}</div>;
   }
 
   // Filter boxes based on search text, price range
