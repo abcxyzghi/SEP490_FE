@@ -36,7 +36,7 @@ const cartSlice = createSlice({
     }
   });
 },
-   clearCart: (state, action) => {
+  clearCart: (state, action) => {
   const typeToClear = action.payload?.type;
 
   if (typeToClear) {
