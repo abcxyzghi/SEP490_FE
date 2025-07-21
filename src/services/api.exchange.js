@@ -55,3 +55,18 @@ export const exchangeProduct = async (payload) => {
     throw error;
   }
 };
+
+export const ExchangeAccept = async (id) => {
+  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/Exchange/sender/accept/${id}`);
+  return response.data;
+};
+
+export const ExchangeReject = async (id) => {
+  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/Exchange/reject/${id}`);
+  return response.data;
+};
+
+export const ExchangeCancel = async (id) => {
+  const response = await axios.post(`https://mmb-be-dotnet.onrender.com/cs/api/Exchange/recipient/cancel/${id}`);
+  return response.data;
+};
