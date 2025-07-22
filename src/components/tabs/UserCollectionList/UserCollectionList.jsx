@@ -59,6 +59,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       alert('Please enter all fields to sell.');
       return;
     }
+    // Validation: quantity must be > 0
+    if (sellForm.quantity <= 0) {
+      alert('Quantity must be greater than 0.');
+      return;
+    }
     // Validation: quantity must not exceed owned
     if (sellForm.quantity > (sellModalProduct?.quantity || 0)) {
       alert('Your quantity is not enough to sell.');
