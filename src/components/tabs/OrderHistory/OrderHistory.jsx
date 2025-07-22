@@ -21,6 +21,7 @@ export default function OrderHistory() {
           <thead>
             <tr>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Name</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Type</th>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Quantity</th>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Total Amount</th>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Transaction Code</th>
@@ -33,6 +34,7 @@ export default function OrderHistory() {
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>
                   {order.productName || order.boxName || 'N/A'}
                 </td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{order.type}</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{order.quantity}</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{order.totalAmount}</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{order.transactionCode}</td>
