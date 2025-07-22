@@ -1,6 +1,5 @@
 import { toast } from "react-toastify";
 import api from "../config/axios";
-import axios from "axios";
 
 export const getOrderHistory = async () => {
   try {
