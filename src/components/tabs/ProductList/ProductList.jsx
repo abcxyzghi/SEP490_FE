@@ -42,9 +42,10 @@ export default function ProductList({ searchText, selectedSort, ascending, price
     const fetchProducts = async () => {
       try {
         const result = await getAllProductsOnSale();
-        // console.log('API raw result:', result); // Debugg
         if (result && result.status) {
-          setProducts(result.data);
+          console.log(result.data)
+          const filteredProducts = result.data.filter(product => product.quantity >= 1);
+          setProducts(filteredProducts);
           setError(null);
         } else {
           setProducts([]);
@@ -59,6 +60,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
     fetchProducts();
   }, []);
+
 
 
   useEffect(() => {
@@ -144,149 +146,149 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
     // ❗️Prevent seller from adding own product to cart
     if (product.userId === user.user_id) {
-    return showModal('warning', 'Action Not Allowed', "You cannot add your own product to the cart.");
-  }
+      return showModal('warning', 'Action Not Allowed', "You cannot add your own product to the cart.");
+    }
 
-  setLoadingBtnId(productId);
-  try {
-    await addToCart({ sellProductId: productId });
+    setLoadingBtnId(productId);
+    try {
+      await addToCart({ sellProductId: productId });
 
-    dispatch(addItemToCart({
-      id: product.id,
-      type: 'product',
-      name: product.name,
-      price: product.price,
-      image: product.urlImage,
-      quantity: 1
-    }));
+      dispatch(addItemToCart({
+        id: product.id,
+        type: 'product',
+        name: product.name,
+        price: product.price,
+        image: product.urlImage,
+        quantity: 1
+      }));
 
-    showModal('default', 'Success', 'Successfully added to cart!');
-  } catch (error) {
-    const errorMessage =
-      error?.response?.data?.error || 'Failed to add to cart.';
-    showModal('error', 'Error', errorMessage);
-    console.error(error);
-  } finally {
-    setLoadingBtnId(null);
-  }
-};
+      showModal('default', 'Success', 'Successfully added to cart!');
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.error || 'Failed to add to cart.';
+      showModal('error', 'Error', errorMessage);
+      console.error(error);
+    } finally {
+      setLoadingBtnId(null);
+    }
+  };
 
 
-return (
-  <div className="productList-card-list-container">
-    {/* Product list main content */}
-    <div className="productList-card-grid">
-      {visibleProducts.map((item, index) => {
-        const isExpanded = expandedCardIndex === index;
-        return (
-          <div
-            className={`productList-card-item ${isExpanded ? 'productList-card-item--expanded' : ''}`}
-            key={index}
-            onMouseEnter={() => setExpandedCardIndex(index)}
-            onMouseLeave={() => setExpandedCardIndex(null)}
-          >
-            <div className="productList-card-background">
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
-            </div>
-            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.name} className="productList-card-image" />
+  return (
+    <div className="productList-card-list-container">
+      {/* Product list main content */}
+      <div className="productList-card-grid">
+        {visibleProducts.map((item, index) => {
+          const isExpanded = expandedCardIndex === index;
+          return (
             <div
-              className={`productList-card-overlay ${isExpanded ? 'productList-card-overlay--expanded' : ''}`}
-              onClick={() => setExpandedCardIndex(isExpanded ? null : index)}
-              style={{
-                transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                maxHeight: isExpanded ? '300px' : '60px',
-                opacity: isExpanded ? 1 : 0.85,
-                overflow: 'hidden',
-              }}
+              className={`productList-card-item ${isExpanded ? 'productList-card-item--expanded' : ''}`}
+              key={index}
+              onMouseEnter={() => setExpandedCardIndex(index)}
+              onMouseLeave={() => setExpandedCardIndex(null)}
             >
-              <div className="productList-card-toggle">
-                <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+              <div className="productList-card-background">
+                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
               </div>
+              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.name} className="productList-card-image" />
               <div
-                className="productList-card-slide-content"
+                className={`productList-card-overlay ${isExpanded ? 'productList-card-overlay--expanded' : ''}`}
+                onClick={() => setExpandedCardIndex(isExpanded ? null : index)}
                 style={{
-                  transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                  transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
-                  opacity: isExpanded ? 1 : 0,
-                  pointerEvents: isExpanded ? 'auto' : 'none',
+                  transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                  maxHeight: isExpanded ? '300px' : '60px',
+                  opacity: isExpanded ? 1 : 0.85,
+                  overflow: 'hidden',
                 }}
               >
-                {isExpanded && (
-                  <>
-                    <div className="productList-card-title oxanium-bold">
-                      {item.name}
-                    </div>
-                    <div className='productList-sub-info'>
-                      <div className="productList-card-price oxanium-bold">{formatShortNumber(item.price)} VND</div>
-                      <div className="productList-card-sellerName oxanium-bold" 
-                      onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}
-                      >
-                        {truncate(item.username, 10)}
+                <div className="productList-card-toggle">
+                  <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+                </div>
+                <div
+                  className="productList-card-slide-content"
+                  style={{
+                    transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                    transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
+                    opacity: isExpanded ? 1 : 0,
+                    pointerEvents: isExpanded ? 'auto' : 'none',
+                  }}
+                >
+                  {isExpanded && (
+                    <>
+                      <div className="productList-card-title oxanium-bold">
+                        {item.name}
                       </div>
-                    </div>
-                    <div className="productList-card-actions">
-                      <button
-                        className="productList-view-button"
-                        onClick={() => navigate(`/productdetailpage/${item.id}`)}
-                      >
-                        <span className="productList-view-button-text oleo-script-bold">View Detail</span>
-                      </button>
-                      <button
-                        className={`productList-cart-button oleo-script-bold ${loadingBtnId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
-                        disabled={loadingBtnId === item.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(item.id);
-                        }}
-                      >
-                        {loadingBtnId === item.id ? (
-                          <span className="loading loading-bars loading-md"></span>
-                        ) : (
-                          <>
-                            <img src={AddToCart} alt="Cart Icon" className='productList-cart-icon' />
-                            Cart
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </>
-                )}
+                      <div className='productList-sub-info'>
+                        <div className="productList-card-price oxanium-bold">{formatShortNumber(item.price)} VND</div>
+                        <div className="productList-card-sellerName oxanium-bold"
+                          onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}
+                        >
+                          {truncate(item.username, 10)}
+                        </div>
+                      </div>
+                      <div className="productList-card-actions">
+                        <button
+                          className="productList-view-button"
+                          onClick={() => navigate(`/productdetailpage/${item.id}`)}
+                        >
+                          <span className="productList-view-button-text oleo-script-bold">View Detail</span>
+                        </button>
+                        <button
+                          className={`productList-cart-button oleo-script-bold ${loadingBtnId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                          disabled={loadingBtnId === item.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(item.id);
+                          }}
+                        >
+                          {loadingBtnId === item.id ? (
+                            <span className="loading loading-bars loading-md"></span>
+                          ) : (
+                            <>
+                              <img src={AddToCart} alt="Cart Icon" className='productList-cart-icon' />
+                              Cart
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
-
-    {noDataFetched && (
-      <div className="text-center text-gray-400 mt-6">No products to display yet.</div>
-    )}
-
-    {noSearchResults && (
-      <div className="text-center text-gray-400 mt-6">No products found for your search.</div>
-    )}
-
-    {isEnd ? (
-      <div className="productList-end-content oxanium-semibold divider divider-warning">
-        End of content
+          );
+        })}
       </div>
-    ) : (
-      <button
-        className="productList-loadmore-button oxanium-semibold"
-        onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, 16, products.length))}
-      >
-        Load more
-      </button>
-    )}
 
-    {/* Message Modal */}
-    <MessageModal
-      open={modal.open}
-      onClose={() => setModal(prev => ({ ...prev, open: false }))}
-      type={modal.type}
-      title={modal.title}
-      message={modal.message}
-    />
-  </div>
-);
+      {noDataFetched && (
+        <div className="text-center text-gray-400 mt-6">No products to display yet.</div>
+      )}
+
+      {noSearchResults && (
+        <div className="text-center text-gray-400 mt-6">No products found for your search.</div>
+      )}
+
+      {isEnd ? (
+        <div className="productList-end-content oxanium-semibold divider divider-warning">
+          End of content
+        </div>
+      ) : (
+        <button
+          className="productList-loadmore-button oxanium-semibold"
+          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, 16, products.length))}
+        >
+          Load more
+        </button>
+      )}
+
+      {/* Message Modal */}
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
+    </div>
+  );
 }

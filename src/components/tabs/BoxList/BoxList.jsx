@@ -41,6 +41,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
       try {
         const result = await getAllMysteryBoxes();
         if (result && result.status) {
+          console.log(result.data)
           setBoxes(result.data);
           setError(null);
         } else {
@@ -209,7 +210,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                           <span className="boxList-view-button-text oleo-script-bold">View Detail</span>
                         </button>
                         <button
-                          className={`boxList-cart-button oleo-script-bold ${loadingBtnId === item.id  ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                          className={`boxList-cart-button oleo-script-bold ${loadingBtnId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
                           disabled={loadingBtnId === item.id}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -257,7 +258,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
       )}
 
       {/* Message Modal */}
-       <MessageModal
+      <MessageModal
         open={modal.open}
         onClose={() => setModal(prev => ({ ...prev, open: false }))}
         type={modal.type}

@@ -526,8 +526,19 @@ export default function ProductDetailpage() {
     );
   }
 
+
   if (!product) {
     return <div className="text-center mt-10 text-red-500">Product not found or error loading data.</div>;
+  }
+
+  // Prevent viewing if isSell is false
+  if (product && product.isSell === false) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="text-2xl font-bold text-red-600 mb-4">This product is not available for viewing.</div>
+        <div className="text-gray-500">The seller has removed this product from sale.</div>
+      </div>
+    );
   }
 
   return (
