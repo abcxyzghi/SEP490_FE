@@ -25,8 +25,7 @@
 .userOnSale-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  /* justify-content: left; */
-  /* justify-items: start; */
+  justify-items: center; /* This centers all items in their grid cells */
   gap: 36px;
   width: 100%;
 }
@@ -276,34 +275,6 @@
   filter: var(--lightSVG-1);
 }
 
-.userOnSale-dropdown-menu {
-  position: absolute;
-  top: 105%;
-  /* left: 0; */
-  /* right: 0; */
-  margin-left: auto;
-  margin-right: auto;
-  background: var(--light-2-o90);
-  padding: 4px 2px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 140px;
-  z-index: 10;
-  overflow: visible;
-  animation: fadeIn 0.2s;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 .userOnSale-dropdown-item {
   padding: 8px 12px;

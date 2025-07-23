@@ -1,0 +1,116 @@
+.sellModal-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.sellModal-box {
+  position: relative;
+  background: rgba(18, 18, 18, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px 24px;
+  width: 90%;
+  max-width: 420px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.sellModal-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+
+.sellModal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.sellModal-header {
+  margin-bottom: 20px;
+}
+
+.sellModal-title {
+  font-size: 18px;
+  text-align: center;
+  color: var(--secondary-2);
+  margin-bottom: 4px;
+}
+
+.sellModal-subtitle {
+  font-size: 22px;
+  text-align: center;
+  color: var(--light-1);
+}
+
+.sellModal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sellModal-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+  display: block;
+  color: var(--light-2);
+}
+
+.sellModal-input {
+  background: #1a1a1a;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 12px;
+  border-radius: 6px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.sellModal-submitBtn {
+  background-color: var(--primary-1);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.sellModal-submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sellModal-result {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.sellModal-result.success {
+  color: #4ade80; /* green-400 */
+}
+
+.sellModal-result.error {
+  color: #f87171; /* red-400 */
+}
+
+.sellModal-code {
+  margin-bottom: 6px;
+  font-weight: 500;
+}

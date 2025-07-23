@@ -20,10 +20,9 @@ export default function UserOnSale({ products, productsLoading }) {
   const [loadingBtnId, setLoadingBtnId] = useState(null);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const buttonRef = useRef();
-
+  
   const navigate = useNavigate();
-  const menuRef = useRef(null);
+  const buttonRef = useRef();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
