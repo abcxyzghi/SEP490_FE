@@ -114,6 +114,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     if (!sellForm.quantity || !sellForm.description.trim() || !sellForm.price) {
       return showModal('warning', 'Required Action', "Please enter all fields to sell.");
     }
+    // Validation: quantity must be > 0
+    if (sellForm.quantity <= 0) {
+      alert('Quantity must be greater than 0.');
+      return;
+    }
     // Validation: quantity must not exceed owned
     if (sellForm.quantity > (sellModalProduct?.quantity || 0)) {
       return showModal('warning', 'Imbalance stock', "This collection does not have enough quantity to sell.");

@@ -2,6 +2,8 @@
 import { React, useEffect, useState, useCallback } from 'react';
 import './Profilepage.css';
 import { Snackbar, Alert } from '@mui/material';
+// import { Modal } from 'antd';
+import MessageModal from '../../libs/MessageModal/MessageModal';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
@@ -21,21 +23,26 @@ import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
 
 export default function Profilepage() {
   const { id } = useParams();
-  const currentUserId = useSelector(state => state.auth.user?.user_id);
+  const user = useSelector(state => state.auth.user);
+  const currentUserId = user?.user_id;
   const [copySuccess, setCopySuccess] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
-
+  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [activeTab, setActiveTab] = useState('Mystery Boxes');
 
   const [showReportModal, setShowReportModal] = useState(false);
+  // Show warning modal for unauthorized actions using MessageModal
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
   const [reportTitle, setReportTitle] = useState('');
   const [reportContent, setReportContent] = useState('');
   const [reportSubmitting, setReportSubmitting] = useState(false);
-
+  
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -68,6 +75,7 @@ export default function Profilepage() {
       fetchProfile();
     }
   }, [id, currentUserId]);
+  
 
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
@@ -300,7 +308,10 @@ export default function Profilepage() {
               {isMyProfile ? '' : (
                 <button className="profilepage-btn-report oxanium-semibold"
                   onClick={() => {
-                    console.log("Open modal");
+                    if (!user || user.role !== 'user') {
+                      showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+                      return;
+                    }
                     setShowReportModal(true);
                   }}
                 >
@@ -367,7 +378,14 @@ export default function Profilepage() {
           Profile link copied to clipboard!
         </Alert>
       </Snackbar>
-
+      {/* Message Modal */}
+            <MessageModal
+              open={modal.open}
+              onClose={() => setModal(prev => ({ ...prev, open: false }))}
+              type={modal.type}
+              title={modal.title}
+              message={modal.message}
+            />
     </div>
   );
 }

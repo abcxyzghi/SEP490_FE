@@ -1,6 +1,7 @@
 import { toast } from "react-toastify"
 import api from "../config/axios"
 import { apiWithFallback } from "../config/axios";
+import axios from "axios";
 // export const getProduct = async () => {
 //    try{
 //     const response = await api.get("product")
@@ -63,7 +64,12 @@ export const getAllProductsOnSale = async () => {
 
 export const getProductOnSaleDetail = async (id) => {
   try {
-    const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/SellProduct/get-product-on-sale/${id}`);
+    const token = localStorage.getItem("token");
+    const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/SellProduct/get-product-on-sale/${id}`,  {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching product detail");
@@ -111,12 +117,46 @@ export const getCollectionDetail = async (id) => {
 export const createRatingOnly = async ({ sellProductId, rating }) => {
   try {
     const response = await api.post(
-      'https://mmb-be-dotnet.onrender.com/api/Comment/create-rating-only',
+      'https://mmb-be-dotnet.onrender.com/cs/api/Comment/create-rating-only',
       { sellProductId, rating }
     );
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || 'Error creating rating');
+    return null;
+  }
+};
+
+export const TurnOnOffProductOnSale = async (id) => {
+   const token = localStorage.getItem("token");
+  const response = await axios.put(
+    `https://mmb-be-dotnet.onrender.com/cs/api/SellProduct/turn-on/off-sell-product?sellProductId=${id}`,
+    null,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+// Update sell product API call
+export const updateSellProduct = async ({ id, description, price, updatedAt }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await api.put(
+      "https://mmb-be-dotnet.onrender.com/cs/api/SellProduct/update-sell-product",
+      { id, description, price, updatedAt },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error updating sell product");
     return null;
   }
 };

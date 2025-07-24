@@ -1,0 +1,55 @@
+.order-history-container{
+    color:white;
+}
+.modal-order-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(105, 91, 91, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-order {
+   background: black; 
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  z-index: 1001; /* Đảm bảo nó nổi trên lớp overlay */
+  position: relative; /* Có thể thêm nếu modal đang bị mất layout */
+}
+
+.modal-order textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  resize: vertical;
+}
+
+.modal-order-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.modal-order-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-order-actions button:first-child {
+  background-color: #ccc;
+}
+
+.modal-order-actions button:last-child {
+  background-color: #1890ff;
+  color: white;
+}

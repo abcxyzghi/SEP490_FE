@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserOnSale.css';
@@ -224,6 +222,7 @@ export default function UserOnSale({ products, productsLoading }) {
           Load more
         </button>
       )}
+
 
       {/* Message Modal */}
       <MessageModal

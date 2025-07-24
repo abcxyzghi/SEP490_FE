@@ -18,6 +18,7 @@ import CloseSubMenu from "../../../assets/Icon_line/Chevron_Left.svg";
 import { Pathname, PATH_NAME } from "../../../router/Pathname";
 import { setUser, logout } from "../../../redux/features/authSlice";
 import { fetchUserInfo } from "../../../services/api.auth";
+import { clearCart } from "../../../redux/features/cartSlice";
 
 export default function NavigationDropdownMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -85,7 +86,7 @@ export default function NavigationDropdownMenu() {
   const handleLogout = async () => {
     // Clear Redux memory state
     dispatch(logout());
-
+    dispatch(clearCart());
     // Clear localStorage/sessionStorage
     localStorage.clear();
     sessionStorage.clear();
