@@ -38,13 +38,33 @@ export const createComment = async ({ sellProductId, content }) => {
     );
     return response.data;
   } catch (error) {
-    toast.error(
-      error.response?.data?.error || error.message || "Error creating comment"
-    );
+    console.log(error)
+    toast.error(error.response?.data?.error || error.message || "Error creating comment");
     return null;
   }
 };
-
+export const createRate = async ({ sellProductId, rating }) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("You must be logged in to create a rating.");
+    }
+    const response = await api.post(
+      `https://mmb-be-dotnet.onrender.com/api/Comment/create-rating-only`,
+      { sellProductId, rating },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error)
+    toast.error(error.response?.data?.error || error.message || "Error creating rating");
+    return null;
+  }
+};
 
 let badwordsCache = null;
 let badwordsCacheTimestamp = null;
