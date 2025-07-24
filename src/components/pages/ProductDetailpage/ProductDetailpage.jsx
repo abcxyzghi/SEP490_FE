@@ -197,6 +197,7 @@ export default function ProductDetailpage() {
   const navigate = useNavigate();
   const user = useSelector(state => state.auth.user);
   const { id } = useParams();
+  const currentUserId = user?.user_id;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingBtn, setLoadingBtn] = useState(false);
@@ -531,15 +532,16 @@ export default function ProductDetailpage() {
     return <div className="text-center mt-10 text-red-500">Product not found or error loading data.</div>;
   }
 
-  // Prevent viewing if isSell is false
-  if (product && product.isSell === false) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="text-2xl font-bold text-red-600 mb-4">This product is not available for viewing.</div>
-        <div className="text-gray-500">The seller has removed this product from sale.</div>
-      </div>
-    );
-  }
+  const isOwner = currentUserId === product.userId;
+
+if (product && product.isSell === false && !isOwner) { 
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="text-2xl font-bold text-red-600 mb-4">This product is not available for viewing.</div>
+      <div className="text-gray-500">The seller has removed this product from sale.</div>
+    </div>
+  );
+}
 
   return (
     <div className="productdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
