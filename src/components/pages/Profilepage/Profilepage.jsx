@@ -171,7 +171,7 @@ export default function Profilepage() {
     ]
     : [
       {
-        label: 'Achievements',
+        label: 'Collections',
         content: <UserAchievements />,
       },
       {

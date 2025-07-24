@@ -282,6 +282,34 @@
     background: var(--dark-5);
     align-content: center;
     box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
+display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.productdetailP-quantity-input {
+    width: 48px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: var(--light-1);
+    font-size: 1.16rem;
+    font-family: 'Oxanium', sans-serif;
+    outline: none;
+    /* -moz-appearance: textfield; */
+}
+
+.productdetailP-quantity-text input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+}
+
+
+.productdetailP-quantity-input::-webkit-outer-spin-button,
+.productdetailP-quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 
@@ -556,7 +584,6 @@
 }
 
 .productdetailP-buyDropdown-container,
-.productdetailP-quantity-text,
 .productdetailP-stock-head,
 .productdetailP-product-stock {
     /* Vô hiệu kéo-thả */

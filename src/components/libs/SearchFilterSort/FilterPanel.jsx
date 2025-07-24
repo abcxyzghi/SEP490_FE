@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './FilterPanel.css';
+import * as Slider from '@radix-ui/react-slider';
 import FilterIcon from '../../../assets/Icon_fill/Filter_fill.svg';
 
 export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity = false }) {
@@ -8,10 +9,10 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
   const [activeRarities, setActiveRarities] = useState([]);
   const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
 
-  const handlePriceChange = (e) => {
-    const value = e.target.value;
-    setPrice(value);
-    onPriceChange(value);
+  const handlePriceChange = (value) => {
+    const val = value[0];
+    setPrice(val);
+    onPriceChange(val);
   };
 
   const handleRarityClick = (rarity) => {
@@ -61,14 +62,29 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
                   ? `Under ${price}.000 VND`
                   : "Any price"}
             </div>
-            <input
+            {/* ✅ Radix UI Slider */}
+            <Slider.Root
+              className="filter-slider-root"
+              defaultValue={[500]}
+              value={[price]}
+              onValueChange={handlePriceChange}
+              max={500}
+              min={0}
+              step={1}
+            >
+              <Slider.Track className="filter-slider-track">
+                <Slider.Range className="filter-slider-range" />
+              </Slider.Track>
+              <Slider.Thumb className="filter-slider-thumb" />
+            </Slider.Root>
+            {/* <input
               type="range"
               min="0"
               max="500"
               value={price}
               onChange={handlePriceChange}
               className="filter-price-range"
-            />
+            /> */}
           </div>
 
           {/* Only appear in "Collection Store" */}

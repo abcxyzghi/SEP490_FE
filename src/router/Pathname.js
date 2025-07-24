@@ -15,8 +15,8 @@ export const PATH_NAME = {
     PAYMENT_PAGE: "/paymentpage",
     CHECKOUT_PAGE: "/checkoutpage",
     CHAT_ROOM: "/chatroom/:id",
-
-    NOTIFICATION_PAGE: "/notification",
+    ACHIEVEMENT_PAGE: "/achievementpage",
+    NOTIFICATION_PAGE: "/notification", // fix it to Activity
     EXCHANGE_PAGE: "/exchangepage/:sellProductId",
 
     MODERATOR_DASHBOARD: "/moderatorDashboard",

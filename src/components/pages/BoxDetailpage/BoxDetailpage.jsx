@@ -249,7 +249,19 @@ export default function BoxDetailpage() {
               </div>
 
               <div className="boxdetailP-quantity-text oxanium-regular">
-                {quantity}
+                {/* {quantity} */}
+                <input
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={quantity}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value, 10);
+                    setQuantity(isNaN(value) || value < 1 ? 1 : value);
+                    // setQuantity(isNaN(value) || value < 1 ? 1 : Math.min(value, 99));   // Limit to max 99
+                  }}
+                  className="boxdetailP-quantity-input"
+                />
               </div>
 
               <div
@@ -331,8 +343,6 @@ export default function BoxDetailpage() {
           onTabChange={setActiveTab}
         />
       </div>
-
-      {/* Comment Section */}
 
     </div>
   )
