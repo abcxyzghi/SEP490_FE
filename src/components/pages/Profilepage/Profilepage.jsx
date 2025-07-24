@@ -104,8 +104,60 @@ export default function Profilepage() {
     }
   }, [id, currentUserId, fetchProducts]);
 
+  if (loading) return (
+    <div className="w-full">
+      {/* Banner skeleton */}
+      <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
 
-  if (!profile) return <div>No profile data found.</div>;
+      {/* Profile Info Skeleton */}
+      <div className="profilepage-wrapper">
+        <div className="profilepage-img avatar">
+          <div className="profilepage-avatar-container">
+            <div className="skeleton w-full h-full rounded bg-gray-700/40 backdrop-blur-sm" />
+          </div>
+        </div>
+
+        <div className="profilepage-info">
+          {/* Left skeleton info */}
+          <div className="profilepage-left space-y-4">
+            <div className="space-y-2">
+              <div className="skeleton h-6 w-40 bg-gray-600/40 rounded" />
+              <div className="skeleton h-4 w-24 bg-gray-600/30 rounded" />
+            </div>
+
+            <div className="flex gap-3">
+              <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+              <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+            </div>
+          </div>
+
+          {/* Right skeleton action */}
+          <div className="profilepage-right-action flex gap-3">
+            <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+            <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs switcher skeleton */}
+      <div className="tabs-switcher-section flex flex-col gap-3">
+        {/*Show 3 skeleton tabs if viewing own profile, else 2 */}
+        <div className="flex justify-center gap-4">
+          {[...Array(
+            (id === currentUserId || !id) && currentUserId ? 3 : 2
+          )].map((_, i) => (
+            <div key={i} className="skeleton h-10 w-28 bg-gray-700/20 rounded" />
+          ))}
+        </div>
+        <div className="skeleton h-60 w-[90%] rounded bg-gray-700/40" />
+
+      </div>
+    </div>
+  );
+
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+
+  if (!profile) return <div className="text-center mt-10 text-gray-400">No profile data found.</div>;
 
   const isMyProfile = currentUserId && (id === currentUserId || !id);
 
@@ -127,7 +179,7 @@ export default function Profilepage() {
     ]
     : [
       {
-        label: 'Achievements',
+        label: 'Collections',
         content: <UserAchievements />,
       },
       {
@@ -183,10 +235,6 @@ export default function Profilepage() {
     }
 
   };
-
-  if (loading) return <div>Loading...</div>;
-
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
 
   return (

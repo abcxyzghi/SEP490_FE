@@ -637,7 +637,22 @@ export default function ProductDetailpage() {
                   <img src={ReduceQuantity} alt="-" className="productdetailP-quantity-icon" />
                 </div>
                 <div className="productdetailP-quantity-text oxanium-regular">
-                  {quantity}
+                  {/* {quantity} */}
+                  <input
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={quantity}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value, 10);
+                      if (isNaN(value) || value < 1) {
+                        setQuantity(1);
+                      } else {
+                        setQuantity(Math.min(value, product.quantity)); // Clamp to stock limit
+                      }
+                    }}
+                    className="productdetailP-quantity-input"
+                  />
                 </div>
                 <div className="productdetailP-quantity-iconWrapper-right" onClick={increaseQuantity}
                   style={{ cursor: "pointer" }}>

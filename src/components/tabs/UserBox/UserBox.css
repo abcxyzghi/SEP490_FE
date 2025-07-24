@@ -1,0 +1,256 @@
+.userBox-card-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    width: 100%;
+    max-height: 500px;
+    overflow-y: auto;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+.userBox-card-list-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+
+
+/*  --------------------------==================== Main container (not include 'Load more' button) ====================-------------------------- */
+.userBox-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    justify-items: center; /* This centers all items in their grid cells */
+    gap: 36px;
+    width: 100%;
+}
+
+
+.userBox-card-item {
+    background-color: var(--dark-5);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    max-width: 220px;
+    width: 220px;
+    border: 2px solid var(--dark-2);
+    position: relative;
+    height: 270px;
+    transition: all 0.2s ease;
+}
+
+/* Card Item Hover Effect */
+.userBox-card-item:hover {
+    /* Must be 4-char alpha-hex make gradient border work */
+    border: 2px solid #0000;
+    background:
+        linear-gradient(var(--dark-5), var(--dark-5)) padding-box,
+        linear-gradient(#960BAF, #F8AC52) border-box;
+}
+
+/* Card Item Expanded State */
+.userBox-card-item--expanded {
+    /* Must be 4-char alpha-hex make gradient border work */
+    border: 2px solid #0000;
+    background:
+        linear-gradient(var(--dark-5), var(--dark-5)) padding-box,
+        linear-gradient(#960BAF, #F8AC52) border-box;
+}
+
+
+/* The product duplicate image use for background */
+.userBox-card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(8px);
+    opacity: 0.5;
+    scale: 1.1;
+    z-index: 0;
+}
+
+.userBox-card-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* The product image use for display */
+.userBox-card-image {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: auto;
+}
+
+/* Info slide container bottom -> up */
+.userBox-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 12px 12px 0 0;
+    padding: 12px;
+    transition: all 0.5s ease;
+    cursor: pointer;
+}
+
+/* Toggle Arrow */
+.userBox-card-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
+.userBox-card-title {
+    text-align: left;
+    font-size: 18px;
+    color: var(--dark-4);
+    margin-top: 10px;
+    /* Truncate text to 2 lines */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    /* max 2 lines */
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    /* allow wrapping */
+}
+
+
+.userBox-card-quantity {
+    /* margin-top: 4px; */
+    color: var(--primary-2);
+    font-size: 12px;
+    text-align: right;
+}
+
+
+/* 'View Detail' and 'Open' buttons */
+.userBox-card-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+/*  --------------------------==================== View Detail btn ====================--------------------------  */
+.userBox-view-button {
+    border-radius: 10px;
+    padding: 3px 15px;
+    cursor: pointer;
+    /* Must be 4-char alpha-hex make gradient border work */
+    border: 2px solid #0000;
+    background:
+        linear-gradient(var(--light-2-o90), var(--light-2-o90)) padding-box,
+        linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+.userBox-view-button-text {
+    font-size: 16px;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;
+    /* Standard property for compatibility */
+    -moz-background-clip: text;
+    /* Firefox */
+    -ms-background-clip: text;
+    /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+}
+
+.userBox-view-button:hover {
+    border: 2px solid #0000;
+    background:
+        linear-gradient(var(--light-1-o90), var(--light-1-o90)) padding-box,
+        linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+/*  --------------------------==================== Open btn ====================--------------------------  */
+.userBox-open-button {
+    position: relative;
+    flex: 1;
+    padding: 6px 12px;
+
+    border-radius: 12px;
+    font-size: 16px;
+    text-align: center;
+    color: var(--dark-3);
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.userBox-open-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background: linear-gradient(#DC0FFF, #FFD721) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+}
+
+.userBox-open-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.userBox-open-button-text {
+    font-size: 17.5px;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;
+    /* Standard property for compatibility */
+    -moz-background-clip: text;
+    /* Firefox */
+    -ms-background-clip: text;
+    /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+}
+
+/*   --------------------------==================== Load More Button ====================--------------------------  */
+.userBox-loadmore-button {
+    margin: 40px auto 0 auto;
+    padding: 4px 20px;
+    border: 1px solid var(--secondary-2);
+    border-radius: 10px;
+    background: transparent;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    color: var(--primary-2);
+    cursor: pointer;
+}
+
+.userBox-loadmore-button:hover {
+    background-color: rgba(255, 196, 0, 0.1);
+}
+
+/* End of content */
+.userBox-end-content {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--primary-3);
+    cursor: default;
+
+    -webkit-user-drag: none;
+    /* Disable drag functionality */
+    user-select: none;
+    /* Disable text selection */
+    -webkit-touch-callout: none;
+    /* Prevent text selection on iOS */
+}

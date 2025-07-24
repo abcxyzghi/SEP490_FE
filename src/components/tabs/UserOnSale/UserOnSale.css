@@ -1,0 +1,326 @@
+.userOnSale-card-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+  width: 100%;
+  max-height: 500px;
+  overflow-y: auto;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+.userOnSale-card-list-container::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+
+
+/*  --------------------------==================== Main container (not include 'Load more' button) ====================-------------------------- */
+.userOnSale-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  justify-items: center; /* This centers all items in their grid cells */
+  gap: 36px;
+  width: 100%;
+}
+
+
+.userOnSale-card-item {
+  background-color: var(--dark-5);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  max-width: 220px;
+  width: 220px;
+  border: 2px solid var(--dark-2);
+  position: relative;
+  height: 270px;
+  transition: all 0.2s ease;
+}
+
+/* Card Item Hover Effect */
+.userOnSale-card-item:hover {
+  /* Must be 4-char alpha-hex make gradient border work */
+  border: 2px solid #0000;
+  background:
+    linear-gradient(var(--dark-5), var(--dark-5)) padding-box,
+    linear-gradient(#960BAF, #F8AC52) border-box;
+}
+
+/* Card Item Expanded State */
+.userOnSale-card-item--expanded {
+  /* Must be 4-char alpha-hex make gradient border work */
+  border: 2px solid #0000;
+  background:
+    linear-gradient(var(--dark-5), var(--dark-5)) padding-box,
+    linear-gradient(#960BAF, #F8AC52) border-box;
+}
+
+
+/* The product duplicate image use for background */
+.userOnSale-card-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(8px);
+  opacity: 0.5;
+  scale: 0.9;
+  z-index: 0;
+}
+
+.userOnSale-card-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The product image use for display */
+.userOnSale-card-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75% !important;
+  height: auto;
+}
+
+/* Info slide container bottom -> up */
+.userOnSale-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 12px 12px 0 0;
+  padding: 12px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+/* Toggle Arrow */
+.userOnSale-card-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
+.userOnSale-card-title {
+  text-align: left;
+  font-size: 18px;
+  color: var(--dark-4);
+  margin-top: 10px;
+  /* Truncate text to 2 lines */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* max 2 lines */
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  /* allow wrapping */
+}
+
+.userOnSale-sub-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+
+.userOnSale-card-price {
+  color: var(--primary-2);
+  font-size: 16px;
+  text-align: left;
+}
+
+.userOnSale-card-quantity {
+  color: var(--dark-3);
+  font-size: 12px;
+  text-align: right;
+}
+
+
+/* 'View Detail' and 'Add to cart' buttons */
+.userOnSale-card-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+/*  --------------------------==================== View Detail btn ====================--------------------------  */
+.userOnSale-view-button {
+  flex: 1;
+  border-radius: 10px;
+  padding: 3px 15px;
+  cursor: pointer;
+  /* Must be 4-char alpha-hex make gradient border work */
+  border: 2px solid #0000;
+  background:
+    linear-gradient(var(--light-2-o90), var(--light-2-o90)) padding-box,
+    linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+.userOnSale-view-button-text {
+  font-size: 16px;
+  background: linear-gradient(#DC0FFF, #FFD721);
+  background-clip: text;
+  /* Standard property for compatibility */
+  -moz-background-clip: text;
+  /* Firefox */
+  -ms-background-clip: text;
+  /* Internet Explorer */
+  -webkit-text-fill-color: transparent;
+}
+
+.userOnSale-view-button:hover {
+  border: 2px solid #0000;
+  background:
+    linear-gradient(var(--light-1-o90), var(--light-1-o90)) padding-box,
+    linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+/*  --------------------------==================== Cart button ====================--------------------------  */
+.userOnSale-cart-button {
+  position: relative;
+  padding: 6px 12px;
+
+  border-radius: 12px;
+  font-size: 16px;
+  color: var(--dark-3);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-self: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.userOnSale-cart-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: linear-gradient(#DC0FFF, #FFD721) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.userOnSale-cart-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.userOnSale-cart-icon {
+  width: 16px;
+  height: 16px;
+  filter: var(--darkSVG-3);
+}
+
+/* --------------------------==================== More dropdown button ====================-------------------------- */
+.userOnSale-dropdown-container {
+  position: relative;
+  display: inline-block;
+  /* Vô hiệu kéo-thả */
+  -webkit-user-drag: none;
+  /* Vô hiệu bôi đen chọn văn bản */
+  user-select: none;
+}
+
+.userOnSale-more-button {
+  position: relative;
+  padding: 6px 12px;
+
+  border-radius: 12px;
+  font-size: 16px;
+  color: var(--dark-3);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-self: center;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.userOnSale-more-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: linear-gradient(#DC0FFF, #FFD721) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.userOnSale-more-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.userOnSale-more-icon {
+  width: 25px;
+  height: 25px;
+  filter: var(--lightSVG-1);
+}
+
+
+.userOnSale-dropdown-item {
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.userOnSale-dropdown-item:hover {
+  background-color: var(--light-2);
+  border-radius: 8px;
+  margin: 0 2px;
+  padding: 8px 10px;
+}
+
+
+/*   --------------------------==================== Load More Button ====================--------------------------  */
+.userOnSale-loadmore-button {
+  margin: 40px auto 0 auto;
+  padding: 4px 20px;
+  border: 1px solid var(--secondary-2);
+  border-radius: 10px;
+  background: transparent;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  color: var(--primary-2);
+  cursor: pointer;
+}
+
+.userOnSale-loadmore-button:hover {
+  background-color: rgba(255, 196, 0, 0.1);
+}
+
+/* End of content */
+.userOnSale-end-content {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--primary-3);
+  cursor: default;
+
+  -webkit-user-drag: none;
+  /* Disable drag functionality */
+  user-select: none;
+  /* Disable text selection */
+  -webkit-touch-callout: none;
+  /* Prevent text selection on iOS */
+}

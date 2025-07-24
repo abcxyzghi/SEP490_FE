@@ -21,12 +21,11 @@
 
 
 
-/* Main container (not include 'Load more' button)*/
+/*  --------------------------==================== Main container (not include 'Load more' button) ====================-------------------------- */
 .productList-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  /* justify-content: left; */
-  /* justify-items: start; */
+  justify-items: center; /* This centers all items in their grid cells */
   gap: 36px;
   width: 100%;
 }
@@ -114,7 +113,7 @@
   cursor: pointer;
 }
 
-/* Contain inside the bottom slide */
+/*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
 .productList-card-title {
   text-align: left;
   font-size: 18px;
@@ -166,7 +165,7 @@
   margin-top: 12px;
 }
 
-/* View Detail btn */
+/*  --------------------------==================== View Detail btn ====================--------------------------  */
 .productList-view-button {
   border-radius: 10px;
   padding: 3px 15px;
@@ -197,7 +196,7 @@
     linear-gradient(#DC0FFF, #FFD721) border-box;
 }
 
-/* Cart btn */
+/*  --------------------------==================== Cart btn ====================--------------------------  */
 .productList-cart-button {
   position: relative;
   padding: 6px 12px;
@@ -235,7 +234,7 @@
 }
 
 
-/*  Load More Button */
+/*   --------------------------==================== Load More Button ====================--------------------------  */
 .productList-loadmore-button {
   margin: 40px auto 0 auto;
   padding: 4px 20px;

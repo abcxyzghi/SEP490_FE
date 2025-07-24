@@ -1,0 +1,28 @@
+.dropdown-menu-container {
+    /* position: absolute;
+    top: 105%;
+    left: 0; */
+    /* right: 0; */
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--light-2-o90);
+    padding: 4px 2px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 140px;
+    z-index: 10;
+    overflow: visible;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

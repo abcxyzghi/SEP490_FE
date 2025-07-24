@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { persistor } from "../../../redux/store";
 import "./NavigationDropdownMenu.css";
@@ -9,6 +9,8 @@ import ArrowDropdown from "../../../assets/Icon_fill/Arrow_drop_down.svg";
 import SubArrow from "../../../assets/Icon_line/Chevron_Right.svg";
 import ChatIcon from "../../../assets/Icon_fill/comment_fill.svg";
 import BellIcon from "../../../assets/Icon_fill/Bell_fill.svg";
+import AchievementIcon from "../../../assets/Icon_fill/Flag_finish.svg";
+import ActivityIcon from "../../../assets/Icon_fill/Huge-icon.svg";
 import SettingIcon from "../../../assets/Icon_fill/Setting_fill.svg";
 import LogoutIcon from "../../../assets/Icon_fill/Sign_out_squre_fill.svg";
 import CloseSubMenu from "../../../assets/Icon_line/Chevron_Left.svg";
@@ -176,7 +178,7 @@ export default function NavigationDropdownMenu() {
                   alt="Submenu"
                 />
               </li>
-              <li
+              {/* <li
                 className="nav-sub-expand"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -196,8 +198,37 @@ export default function NavigationDropdownMenu() {
                   src={SubArrow}
                   alt="Submenu"
                 />
+              </li> */}
+              <li
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNavigate(Pathname("ACHIEVEMENT_PAGE"));
+                }}
+              >
+                <img
+                  className="nav-dropdown-item-icon"
+                  src={AchievementIcon}
+                  alt="Achievement"
+                />
+                <span className="oxanium-semibold">Achievements</span>
               </li>
+              <li
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // future change to activity page
+                  handleNavigate(Pathname("NOTIFICATION_PAGE"));
+                }}
+              >
+                <img
+                  className="nav-dropdown-item-icon"
+                  src={ActivityIcon}
+                  alt="Activity"
+                />
+                <span className="oxanium-semibold">Activity</span>
+              </li>
+
               <div className="nav-dropdown-divider" />
+
               <li
                 onClick={(e) => {
                   e.stopPropagation();
