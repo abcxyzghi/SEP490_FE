@@ -1,6 +1,7 @@
 import { toast } from "react-toastify"
 import api from "../config/axios"
 
+//this api using to get all of the mysterybox that have in the system for collector
 export const getAllMysteryBoxes = async () => {
    try {
     const response = await api.get("https://mmb-be-dotnet.onrender.com/api/MangaBox/get-all-mystery-box")
@@ -11,6 +12,7 @@ export const getAllMysteryBoxes = async () => {
    }
 }
 
+//this api using for getting the detial of the mysterybox 
 export const getMysteryBoxDetail = async (id) => {
   try {
     const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/MangaBox/get-mystery-box-detail/${id}`);

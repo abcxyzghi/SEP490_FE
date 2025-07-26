@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import api from "../config/axios";
 
+//this api is using to get the user order they have bought in the past
 export const getOrderHistory = async () => {
   try {
      const token = localStorage.getItem("token");
@@ -24,6 +25,7 @@ export const getOrderHistory = async () => {
   }
 };
 
+//this api allow collector to get all of the report that they have send to the system
 export const getReportofUser = async () => {
   try {
      const token = localStorage.getItem("token");
@@ -47,6 +49,7 @@ export const getReportofUser = async () => {
   }
 }; 
 
+//this api will get the transaction that user have made such as top up money or draw out money
 export const getTransaction = async () => {
   try {
      const token = localStorage.getItem("token");
