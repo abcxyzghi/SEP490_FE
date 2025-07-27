@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './UserBox.css';
 import { getAllBoxOfProfile, openUserBox } from '../../../services/api.user';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
+import GachaAnimation from '../../libs/GachaAnimation/GachaAnimation';
 
 const PAGE_SIZE = 8;
 
@@ -41,14 +42,32 @@ export default function UserBox() {
     setVisibleCount(PAGE_SIZE);
   }, []);
 
+  // const handleOpenBox = async (boxId) => {
+  //   setOpeningBoxId(boxId);
+  //   setOpenResult(null);
+  //   try {
+  //     const res = await openUserBox(boxId);
+  //     if (res.status) {
+  //       setOpenResult(res.data);
+  //       // Optionally, update box quantity in UI
+  //       setBoxes(prev => prev.map(box => box.id === boxId ? { ...box, quantity: box.quantity - 1 } : box));
+  //     } else {
+  //       setOpenResult({ error: 'Failed to open box' });
+  //     }
+  //   } catch {
+  //     setOpenResult({ error: 'Error opening box' });
+  //   }
+  //   setOpeningBoxId(null);
+  // };
+
+  // add condition when quantity is 0
   const handleOpenBox = async (boxId) => {
     setOpeningBoxId(boxId);
     setOpenResult(null);
     try {
       const res = await openUserBox(boxId);
       if (res.status) {
-        setOpenResult(res.data);
-        // Optionally, update box quantity in UI
+        setOpenResult({ ...res.data, boxId }); // Inject boxId
         setBoxes(prev => prev.map(box => box.id === boxId ? { ...box, quantity: box.quantity - 1 } : box));
       } else {
         setOpenResult({ error: 'Failed to open box' });
@@ -58,6 +77,7 @@ export default function UserBox() {
     }
     setOpeningBoxId(null);
   };
+
 
   // Skeleton loading
   if (loading) {
@@ -171,23 +191,16 @@ export default function UserBox() {
       )}
 
       {openResult && (
-        <div className="userBox-open-result" style={{ marginTop: 16 }}>
-          {openResult.error ? (
-            <span style={{ color: 'red' }}>{openResult.error}</span>
-          ) : (
-            <div>
-              <h4>Box Opened!</h4>
-              <div><strong>Product:</strong> {openResult.productName}</div>
-              <div><strong>Rarity:</strong> {openResult.rarity}</div>
-              <img
-                src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${openResult.urlImage}`}
-                alt={openResult.productName}
-                className="userBox-open-result-image"
-                style={{ maxWidth: 300, display: 'block', marginTop: 8 }}
-              />
-            </div>
-          )}
-        </div>
+        <GachaAnimation
+          result={openResult}
+          boxId={openResult.boxId}
+          boxImageUrl={
+            boxes.find(b => b.id === openResult.boxId)?.urlImage || ''
+          }
+          onViewDetail={() => handleViewDetail(openResult)}
+          onClose={() => setOpenResult(null)}
+          onOpenMore={(id) => handleOpenBox(id)}
+        />
       )}
     </div>
   );

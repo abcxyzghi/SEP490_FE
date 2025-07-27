@@ -1,0 +1,210 @@
+/* Overlay and background */
+.gacha-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 30px var(--rarity-glow, #fff);
+    z-index: 3000;
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        box-shadow: inset 0 0 30px var(--rarity-glow, #fff);
+    }
+
+    50% {
+        box-shadow: inset 0 0 40px var(--rarity-glow, #fff);
+    }
+}
+
+.overlay-pulse {
+    animation: glow-pulse 1.2s ease-in-out infinite;
+}
+
+.gacha-background-blur {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* --------------------------==================== Box image animation ====================-------------------------- */
+.gacha-box-image {
+    width: 380px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 24px;
+    z-index: 2;
+    border-radius: 1rem;
+    background: transparent;
+}
+
+.gacha-box-half {
+    width: 550px;
+    position: absolute;
+    top: 50;
+    z-index: 15;
+    /* Left half by default */
+    clip-path: inset(0 50% 0 0);
+}
+
+.gacha-box-left {
+    /* Left half */
+    clip-path: inset(0 50% 0 0);
+}
+
+.gacha-box-right {
+    /* Right half */
+    clip-path: inset(0 0 0 50%);
+}
+
+/* --------------------------==================== Card wrapper and card ====================-------------------------- */
+.gacha-card-wrapper {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 40px;
+    /* gap: 16px; */
+    z-index: 3;
+}
+
+.gacha-card {
+    /* width: 50%; */
+    flex: 1;
+    width: 800px;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Reserve height for image */
+    min-height: 400px;
+}
+
+.gacha-card-image {
+    width: 40%;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 56px var(--rarity-glow));
+}
+
+/* --------------------------==================== Card name and rarity ====================-------------------------- */
+.gacha-card-info {
+    /* position: absolute;
+    left: 0;
+    top: 10%; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* padding: 5px 90px 5px 40px; */
+    padding: 5px 40px;
+    clip-path: polygon(0 0, 100% 0%, 85% 100%, 0 100%);
+    /* border-top: 1px solid var(--dark-2-o50);
+    border-bottom: 1px solid var(--dark-2-o50);
+    background: linear-gradient(145deg, rgba(173, 173, 173, 0.1), rgba(0, 0, 0, 0.25)); */
+    text-align: center;
+}
+
+.gacha-card-rarity {
+    font-family: "Oxanium", sans-serif;
+    font-weight: 600;
+    font-size: 1.09rem;
+    text-shadow: 0 0 10px var(--rarity-glow);
+}
+
+.gacha-card-name {
+    font-family: "Oleo Script", sans-serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: var(--light-3);
+}
+
+/* --------------------------==================== Actions/buttons ====================-------------------------- */
+.gacha-actions {
+    display: flex;
+    margin-top: 26px;
+    justify-content: space-evenly;
+}
+
+.gacha-button {
+    padding: 8px 34px;
+    border-radius: 10px;
+    font-family: "Oxanium", sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3 ease-in-out;
+    font-size: 1.12rem;
+}
+
+.gacha-button:active {
+    transform: scale(0.99);
+}
+
+
+.gacha-button.confirm {
+    font-weight: 700;
+    border: 2px solid var(--light-3);
+    background: var(--dark-1-o90);
+    color: var(--light-2);
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.gacha-button.confirm:hover {
+    background-color: var(--dark-3-o50);
+}
+
+.gacha-button.open-more {
+    border: 1px solid var(--light-3);
+    color: var(--light-1-o90);
+}
+
+.gacha-button.open-more:hover .gacha-button-text {
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;
+    /* Standard property for compatibility */
+    -moz-background-clip: text;
+    /* Firefox */
+    -ms-background-clip: text;
+    /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+}
+
+.gacha-button.open-more:hover {
+    border: 2px solid #0000;
+    background:
+        linear-gradient(var(--light-1-o50), var(--light-3-o90)) padding-box,
+        linear-gradient(#DC0FFF, #FFD721) border-box;
+}
+
+
+/* --------------------------==================== Error overlay ====================-------------------------- */
+.gacha-error-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 4000;
+}
+
+.gacha-error-box {
+    background: #fff;
+    padding: 32px 24px;
+    border-radius: 16px;
+    box-shadow: 0 0 24px #0006;
+    text-align: center;
+    min-width: 280px;
+}
