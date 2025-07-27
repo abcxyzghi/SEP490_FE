@@ -585,6 +585,10 @@ if (product && product.isSell === false && !isOwner) {
               <button
                 className="productdetailP-report-btn"
                 onClick={() => {
+                   if (!user || user.role !== 'user') {
+                    showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+                    return;
+                  }
                   if (user && product && user.user_id === product.userId) {
                     showModal('warning', 'Action Not Allowed', 'You cannot report your own product.');
                   } else {
@@ -771,6 +775,10 @@ if (product && product.isSell === false && !isOwner) {
             <button
               className="productdetailP-seller-btn-outline oxanium-regular"
               onClick={() => {
+                if (!user || user.role !== 'user') {
+                  showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+                  return;
+                }
                 if (user && product && user.user_id === product.userId) {
                   showModal('warning', 'Action Not Allowed', 'You cannot report yourself.');
                 } else {
@@ -783,7 +791,13 @@ if (product && product.isSell === false && !isOwner) {
               Report
             </button>
             <button className="productdetailP-seller-btn-outfill oxanium-regular"
-            //  Api navigate to Chatroom here
+              onClick={() => {
+                if (!user || user.role !== 'user') {
+                  showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+                  return;
+                }
+                // Ở đây bạn có thể thêm logic mở chatroom nếu là user hợp lệ
+              }}
             >
               <img src={MessageIcon} alt="Message" className="productdetailP-seller-mIcon" />
               Message
