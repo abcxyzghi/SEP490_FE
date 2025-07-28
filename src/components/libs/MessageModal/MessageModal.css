@@ -2,7 +2,7 @@
 .messageDialog-container .MuiPaper-root.messageDialog-animated-shadow {
     position: relative;
     max-height: 100vh;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -129,8 +129,13 @@
 }
 
 .messageDialog-footer {
-    color: var(--light-2);
-    font-size: 0.9rem;
+    position: absolute;
+    bottom: -22%;
+    left: 0;
+    right: 0;
+
+    color: var(--light-1);
+    font-size: 1rem;
     text-align: center;
     margin-top: 14px;
     opacity: 0.8;

@@ -4,7 +4,7 @@ import './GachaAnimation.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 
-export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMore, boxId, boxImageUrl }) {
+export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMore, remainingQuantity, boxId, boxImageUrl }) {
     const [skipped, setSkipped] = useState(false);
     const [showCard, setShowCard] = useState(false);
     const [boxHasLanded, setBoxHasLanded] = useState(false);
@@ -218,9 +218,11 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                             <button onClick={onClose} className="gacha-button confirm">
                                 <span>Confirm</span>
                             </button>
-                            <button onClick={() => onOpenMore?.(boxId)} className="gacha-button open-more">
-                                <span className='gacha-button-text'>Open More</span>
-                            </button>
+                            {remainingQuantity > 0 && (
+                                <button onClick={() => onOpenMore?.(boxId)} className="gacha-button open-more">
+                                    <span className='gacha-button-text'>Open More</span>
+                                </button>
+                            )}
                         </div>
                     </motion.div>
                 )}

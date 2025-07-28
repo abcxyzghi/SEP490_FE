@@ -189,22 +189,119 @@
 }
 
 
-/* --------------------------==================== Error overlay ====================-------------------------- */
-.gacha-error-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 4000;
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+    .gacha-box-image {
+        width: 280px;
+        margin-bottom: 16px;
+    }
+
+    .gacha-box-half {
+        width: 450px;
+    }
+
+    .gacha-card-wrapper {
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .gacha-card {
+        width: 100%;
+        flex: 0;
+    }
+
+    .gacha-card-wrapper {
+        padding: 40px 18px;
+    }
+
+    .gacha-card-image {
+        width: 45%;
+        margin-top: 12px;
+        margin-bottom: 4px;
+    }
+
+    .gacha-card-info {
+        gap: 3px;
+    }
+
+    .gacha-card-name {
+        font-size: 1.4rem;
+    }
+
+    .gacha-card-rarity {
+        font-size: 0.95rem;
+    }
+
+    .gacha-actions {
+        gap: 16px;
+    }
+
+    .gacha-button {
+        font-size: 1rem;
+    }
 }
 
-.gacha-error-box {
-    background: #fff;
-    padding: 32px 24px;
-    border-radius: 16px;
-    box-shadow: 0 0 24px #0006;
-    text-align: center;
-    min-width: 280px;
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .gacha-box-image {
+        width: 220px;
+        margin-bottom: 14px;
+    }
+
+    .gacha-box-half {
+        width: 300px;
+    }
+
+    .gacha-card-wrapper {
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .gacha-card {
+        min-height: 320px;
+    }
+
+    .gacha-card-image {
+        width: 55%;
+    }
+
+    .gacha-card-name {
+        font-size: 1.2rem;
+    }
+
+    .gacha-card-rarity {
+        font-size: 0.85rem;
+    }
+
+    .gacha-button {
+        font-size: 0.95rem;
+        padding: 8px 16px;
+    }
+
+    .gacha-card-wrapper {
+        padding: 16px;
+    }
+}
+
+/* For screen width ≤ 327px */
+@media (max-width: 327px) {
+    .gacha-box-image {
+        width: 150px;
+        margin-bottom: 12px;
+    }
+
+    .gacha-box-half {
+        width: 260px;
+    }
+
+    .gacha-card {
+        flex: 0;
+        min-height: 260px;
+    }
 }
