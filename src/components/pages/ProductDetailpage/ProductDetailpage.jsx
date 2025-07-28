@@ -593,7 +593,7 @@ export default function ProductDetailpage() {
                   </p>
 
 
-                  {product.description.split('\n').length > 2 && (
+                  {(product.description.split('\n').length > 2|| product.description.length > 200) && (
                     <button
                       onClick={() => setShowFullDescription(!showFullDescription)}
                       style={{
