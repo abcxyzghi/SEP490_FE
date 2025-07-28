@@ -738,7 +738,8 @@ if (product && product.isSell === false && !isOwner) {
 
             {/* Description */}
             <div className="productdetailP-product-data oxanium-semibold text-sm leading-relaxed lg:text-base">
-              <p className="oxanium-regular productdetailP-pData-head">Description:</p> {product.description}
+                <p className="oxanium-regular productdetailP-pData-head">Description:</p> 
+                <p style={{ whiteSpace: 'pre-line' }}>{product.description}</p>
             </div>
           </div>
 
