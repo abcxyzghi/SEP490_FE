@@ -1,6 +1,6 @@
 import axios from "axios";
 
-
+//api using for add to cart
 export const addToCart = async ({ sellProductId, mangaBoxId, quantity = 1 }) => {
   try {
     const token = localStorage.getItem("token");
@@ -27,7 +27,7 @@ export const addToCart = async ({ sellProductId, mangaBoxId, quantity = 1 }) => 
   }
 };
 
-
+//api using for user can view their cart after they add product or mysterybox successfully
 export const viewCart = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -46,6 +46,7 @@ export const viewCart = async () => {
   }
 };
 
+//api using for user can remove product or mysterybox from their cart if they not wish to buy anymore
 export const removeFromCart = async ({ sellProductId, mangaBoxId }) => {
   try {
     const token = localStorage.getItem("token");
@@ -68,6 +69,7 @@ export const removeFromCart = async ({ sellProductId, mangaBoxId }) => {
   }
 };
 
+// api for clearing the cart product or box cart
 export const clearAllCart = async (type) => {
   try {
     const token = localStorage.getItem("token");
@@ -90,7 +92,7 @@ export const clearAllCart = async (type) => {
   }
 };
 
-
+//api using for update quantity of product or mysterybox in cart
 export const updateCartQuantity = async ({ Id, quantity }) => {
   try {
     const token = localStorage.getItem("token");

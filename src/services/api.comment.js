@@ -1,6 +1,7 @@
  import { toast } from "react-toastify";
 import api from "../config/axios";
 
+//get the comment by the product when ever user see
 export const getAllCommentsBySellProduct = async (sellProductId) => {
   try {
     const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/Comment/get-all-comment-by-sellproduct/${sellProductId}`);
@@ -11,6 +12,7 @@ export const getAllCommentsBySellProduct = async (sellProductId) => {
   }
 };
 
+//get the rating of an product
 export const getAllRatingsBySellProduct = async (sellProductId) => {
   try {
     const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/Comment/get-all-rating-by-sellproduct/${sellProductId}`);
@@ -21,6 +23,7 @@ export const getAllRatingsBySellProduct = async (sellProductId) => {
   }
 };
 
+//write an comment on an product
 export const createComment = async ({ sellProductId, content }) => {
   try {
     const token = localStorage.getItem("token");
@@ -43,6 +46,8 @@ export const createComment = async ({ sellProductId, content }) => {
     return null;
   }
 };
+
+//api help user can rate the product they have bought for the first time
 export const createRate = async ({ sellProductId, rating }) => {
   try {
     const token = localStorage.getItem("token");
@@ -66,6 +71,7 @@ export const createRate = async ({ sellProductId, rating }) => {
   }
 };
 
+//this api will get all the badwords then will be censor on the ui with looking like this '*****'
 let badwordsCache = null;
 let badwordsCacheTimestamp = null;
 const BADWORDS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes

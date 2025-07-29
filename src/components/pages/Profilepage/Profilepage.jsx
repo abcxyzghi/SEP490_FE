@@ -4,7 +4,7 @@ import './Profilepage.css';
 import { Snackbar, Alert } from '@mui/material';
 // import { Modal } from 'antd';
 import MessageModal from '../../libs/MessageModal/MessageModal';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
 import { format } from 'date-fns';
@@ -25,6 +25,7 @@ export default function Profilepage() {
   const { id } = useParams();
   const user = useSelector(state => state.auth.user);
   const currentUserId = user?.user_id;
+  const navigate = useNavigate();
   const [copySuccess, setCopySuccess] = useState(false);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -278,8 +279,9 @@ export default function Profilepage() {
               <div className="profilepage-buttons">
                 {isMyProfile ?
                   (
-                    <button className="profilepage-btn-follow oxanium-semibold"
-                    // Edit profile navigate handling here
+                    <button
+                      className="profilepage-btn-follow oxanium-semibold"
+                      onClick={() => navigate('/settingpage')}
                     >
                       <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
                       Edit profile
@@ -292,8 +294,20 @@ export default function Profilepage() {
                         <img src={FollowIcon} alt="Follow" className="profilepage-follow-icon" />
                         Follow
                       </button>
-                      <button className="profilepage-btn-message oxanium-semibold"
-                      // Chat room navigate handling here
+                      <button
+                        className="profilepage-btn-message oxanium-semibold"
+                        onClick={() => {
+                          // Điều hướng sang trang chat với id là id của profile đang xem
+                          if (!user || !user.user_id) {
+                            showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
+                            return;
+                          }
+                          if (!id) {
+                            showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
+                            return;
+                          }
+                          navigate(`/chatroom/${id}`);
+                        }}
                       >
                         <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
                         Message

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getOrderHistory } from '../../../services/api.order';
-import { createRate, getAllRatingsBySellProduct } from '../../../services/api.comment'; // đảm bảo import đúng
+import { createRate, getAllRatingsBySellProduct } from '../../../services/api.comment';
 import "../OrderHistory/OrderHistory.css";
 import { useSelector } from 'react-redux';
 

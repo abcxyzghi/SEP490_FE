@@ -49,6 +49,7 @@ import axios from "axios";
 //   }
 // }
 
+//api using for get all of product on sale
 export const getAllProductsOnSale = async () => {
   try {
     const response = await apiWithFallback({
@@ -62,6 +63,7 @@ export const getAllProductsOnSale = async () => {
   }
 }
 
+//api using for get product on sale detail
 export const getProductOnSaleDetail = async (id) => {
   try {
     const token = localStorage.getItem("token");
@@ -77,7 +79,7 @@ export const getProductOnSaleDetail = async (id) => {
   }
 }
 
-// Buy product on sale API call
+// This api is for Buy product on sale
 export const buyProductOnSale = async ({ sellProductId, quantity }) => {
   try {
     const token = localStorage.getItem("token");
@@ -102,7 +104,7 @@ export const buyProductOnSale = async ({ sellProductId, quantity }) => {
   }
 };
 
-
+//this api is using for get detail of an collection
 export const getCollectionDetail = async (id) => {
   try {
     const response = await api.get(`https://mmb-be-dotnet.onrender.com/api/Product/get-product/${id}`);
@@ -113,20 +115,21 @@ export const getCollectionDetail = async (id) => {
   }
 }
 
-// Create rating only API call
-export const createRatingOnly = async ({ sellProductId, rating }) => {
-  try {
-    const response = await api.post(
-      'https://mmb-be-dotnet.onrender.com/cs/api/Comment/create-rating-only',
-      { sellProductId, rating }
-    );
-    return response.data;
-  } catch (error) {
-    toast.error(error.response?.data?.error || 'Error creating rating');
-    return null;
-  }
-};
+// // Create rating only API call
+// export const createRatingOnly = async ({ sellProductId, rating }) => {
+//   try {
+//     const response = await api.post(
+//       'https://mmb-be-dotnet.onrender.com/cs/api/Comment/create-rating-only',
+//       { sellProductId, rating }
+//     );
+//     return response.data;
+//   } catch (error) {
+//     toast.error(error.response?.data?.error || 'Error creating rating');
+//     return null;
+//   }
+// };
 
+//this api using for changing the status of product for update
 export const TurnOnOffProductOnSale = async (id) => {
    const token = localStorage.getItem("token");
   const response = await axios.put(
@@ -141,7 +144,7 @@ export const TurnOnOffProductOnSale = async (id) => {
   return response.data;
 };
 
-// Update sell product API call
+//This api is use for update the sell product after they have turn to isSale === false
 export const updateSellProduct = async ({ id, description, price, updatedAt }) => {
   try {
     const token = localStorage.getItem("token");
@@ -159,4 +162,4 @@ export const updateSellProduct = async ({ id, description, price, updatedAt }) =
     toast.error(error.response?.data?.error || "Error updating sell product");
     return null;
   }
-};
+}; 
