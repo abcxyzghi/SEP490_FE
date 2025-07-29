@@ -80,7 +80,7 @@ export const ChangePassword = async ({ userId, curentPassword, newPassword, conf
 //this api is using for updating user profile
 export const updateProfile = async (data, isFormData = false) => {
   try {
-    let config = {};
+    // let config = {};
     let body = data;
 
     if (!isFormData) {
@@ -97,7 +97,7 @@ export const updateProfile = async (data, isFormData = false) => {
     const response = await axios.post(
       'https://mmb-be-dotnet.onrender.com/cs/api/User/profile/update-profile',
       body,
-      config
+      // config
     );
 
    
@@ -118,7 +118,7 @@ export const updateProfile = async (data, isFormData = false) => {
   }
 };
 
-//this api is using for get your own profile
+//this api is using for get bank id
 export const getBankID= async () => {
   const response = await axios.get('https://api.vietqr.io/v2/banks');
   return response.data;

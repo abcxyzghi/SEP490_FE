@@ -279,8 +279,9 @@ export default function Profilepage() {
               <div className="profilepage-buttons">
                 {isMyProfile ?
                   (
-                    <button className="profilepage-btn-follow oxanium-semibold"
-                    // Edit profile navigate handling here
+                    <button
+                      className="profilepage-btn-follow oxanium-semibold"
+                      onClick={() => navigate('/settingpage')}
                     >
                       <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
                       Edit profile
