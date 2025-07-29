@@ -74,15 +74,21 @@
   flex-wrap: wrap;
 }
 
-.footer-links p {
+.footer-links .footer-link {
   font-size: 20px;
   color: hsl(0, 0%, 80%);
   margin: 12px 0 0 0;
   font-family: 'Oxanium', sans-serif;
+  text-decoration: none; /* prevent underline */
+  display: block;        /* mimic <p> spacing */
 }
 
-.footer-links p:first-child {
+.footer-links .footer-link:first-child {
   margin-top: 0;
+}
+
+.footer-links .footer-link:hover {
+  color: #fff; /* optional hover effect */
 }
 
 .footer-bottom {

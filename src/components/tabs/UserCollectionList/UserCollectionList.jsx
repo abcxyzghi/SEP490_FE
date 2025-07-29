@@ -468,33 +468,22 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                                     <img src={ThreeDots} alt="More Icon" className='userCollectionList-more-icon' />
                                   </button>
                                   <DropdownMenu anchorRef={buttonRef} isOpen={isDropdownOpen === idx} onClose={() => setIsDropdownOpen(null)}>
-                                    <div
-                                      className="userCollectionList-dropdown-item oxanium-regular"
-                                      onClick={() => {
-                                        // Add your API handling for Add to Favorite here
-                                        setIsDropdownOpen(null); // Close menu
-                                      }}
-                                    >
-                                      Add to Favorite
-                                    </div>
-                                    <div
-                                      className="userCollectionList-dropdown-item oxanium-regular"
-                                      onClick={() => {
-                                        openSellModal(prod);
-                                        setIsDropdownOpen(null); // Close menu
-                                      }}
-                                    >
-                                      Public to sell
-                                    </div>
-                                    <div
-                                      className="userCollectionList-dropdown-item oxanium-regular"
-                                      onClick={() => {
-                                        // Add your API handling for Host an auction here
-                                        setIsDropdownOpen(null); // Close menu
-                                      }}
-                                    >
-                                      Host an auction
-                                    </div>
+                                    {[
+                                      { text: "Add to Favorite", action: () => { } },
+                                      { text: "Public to sell", action: () => openSellModal(prod) },
+                                      { text: "Host an auction", action: () => { } },
+                                    ].map((item, i) => (
+                                      <div
+                                        key={i}
+                                        className="userCollectionList-dropdown-item oxanium-regular"
+                                        onClick={() => {
+                                          item.action();
+                                          setIsDropdownOpen(null);
+                                        }}
+                                      >
+                                        {item.text}
+                                      </div>
+                                    ))}
                                   </DropdownMenu>
                                 </div>
                               </div>

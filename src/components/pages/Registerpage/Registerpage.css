@@ -70,9 +70,10 @@
     margin-left: -10px;
 }
 
-.registerpage-headleft-bar:hover,
-.registerpage-headright-bar:hover {
+.registerpage-headleft-bar:hover{
+    transform: scale(0.98);
     background: var(--dark-2-o90);
+    z-index: -200;
 }
 
 /* Logo btn */
