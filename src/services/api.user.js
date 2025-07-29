@@ -55,13 +55,6 @@ export const createSellProduct = async ({ userProductId, quantity, description, 
 
 // this api is using for report seller and product
 export const createReport = async ({ sellProductId, sellerId, title, content }) => {
-  console.log("📤 createReport payload:", {
-    sellProductId,
-    sellerId,
-    title,
-    content
-  });
-
   const response = await axios.post('https://mmb-be-dotnet.onrender.com/cs/api/Report/create-report', {
     sellProductId,
     sellerId,
@@ -69,5 +62,64 @@ export const createReport = async ({ sellProductId, sellerId, title, content }) 
     content
   });
 
+  return response.data;
+}; 
+
+//this api is using for change password of an user
+export const ChangePassword = async ({ userId, curentPassword, newPassword, confirmPassword }) => {
+  const response = await axios.put('https://mmb-be-dotnet.onrender.com/cs/api/User/profile/change-password', {
+    userId,
+    curentPassword,
+    newPassword,
+    confirmPassword
+  });
+  return response.data;
+}; 
+
+
+//this api is using for updating user profile
+export const updateProfile = async (data, isFormData = false) => {
+  try {
+    let config = {};
+    let body = data;
+
+    if (!isFormData) {
+      body = {
+        urlImage: data.urlImage,
+        phoneNumber: data.phoneNumber,
+        accountBankName: data.accountBankName,
+        bankNumber: data.bankNumber,
+        bankid: data.bankid
+      };
+    }
+
+ 
+    const response = await axios.post(
+      'https://mmb-be-dotnet.onrender.com/cs/api/User/profile/update-profile',
+      body,
+      config
+    );
+
+   
+    return response;
+  } catch (error) {
+    // 👇 Log error
+    console.error('[updateProfile] Error:', error);
+
+    if (error.response) {
+      console.error('[updateProfile] Error Response:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    }
+
+    throw error;
+  }
+};
+
+//this api is using for get your own profile
+export const getBankID= async () => {
+  const response = await axios.get('https://api.vietqr.io/v2/banks');
   return response.data;
 };
