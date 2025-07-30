@@ -1,25 +1,21 @@
 import axios from "axios";
+import { apiWithFallback } from '../config/axios';
 
 //api using for add to cart
 export const addToCart = async ({ sellProductId, mangaBoxId, quantity = 1 }) => {
   try {
-    const token = localStorage.getItem("token");
-    // Only include non-empty params
     const params = {};
     if (sellProductId) params.SellProductId = sellProductId;
     if (mangaBoxId) params.MangaBoxId = mangaBoxId;
-    params.Quantity = quantity; // ✅ thêm dòng này
+    params.Quantity = quantity;
 
-    const response = await axios.post(
-      `https://mmb-be-dotnet.onrender.com/api/Cart/add-to-cart`,
-      null,
-      {
-        params,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiWithFallback({
+      method: "post",
+      url: "/api/Cart/add-to-cart",
+      params,
+      requiresAuth: true, // Cho phép interceptor gắn token tự động nếu dùng flag này
+    });
+
     return response.data;
   } catch (error) {
     console.error("Add to cart failed:", error);
@@ -30,15 +26,12 @@ export const addToCart = async ({ sellProductId, mangaBoxId, quantity = 1 }) => 
 //api using for user can view their cart after they add product or mysterybox successfully
 export const viewCart = async () => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get(
-      `https://mmb-be-dotnet.onrender.com/api/Cart/view-cart`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/Cart/view-cart",
+      requiresAuth: true, // Cho phép interceptor gắn token tự động
+    });
+
     return response.data;
   } catch (error) {
     console.error("View cart failed:", error);
@@ -49,19 +42,17 @@ export const viewCart = async () => {
 //api using for user can remove product or mysterybox from their cart if they not wish to buy anymore
 export const removeFromCart = async ({ sellProductId, mangaBoxId }) => {
   try {
-    const token = localStorage.getItem("token");
     const params = {};
     if (sellProductId) params.sellProductId = sellProductId;
     if (mangaBoxId) params.mangaBoxId = mangaBoxId;
-    const response = await axios.delete(
-      `https://mmb-be-dotnet.onrender.com/api/Cart/remove-from-cart`,
-      {
-        params,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+
+    const response = await apiWithFallback({
+      method: "delete",
+      url: "/api/Cart/remove-from-cart",
+      params,
+      requiresAuth: true, // Tự động gắn token từ interceptor
+    });
+
     return response.data;
   } catch (error) {
     console.error("Remove from cart failed:", error);
@@ -69,20 +60,15 @@ export const removeFromCart = async ({ sellProductId, mangaBoxId }) => {
   }
 };
 
+
 // api for clearing the cart product or box cart
 export const clearAllCart = async (type) => {
   try {
-    const token = localStorage.getItem("token");
-
-    // Tạo URL có hoặc không có query `type`
-    const url = type
-      ? `https://mmb-be-dotnet.onrender.com/api/Cart/clear-all-cart?type=${type}`
-      : `https://mmb-be-dotnet.onrender.com/api/Cart/clear-all-cart`;
-
-    const response = await axios.delete(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await apiWithFallback({
+      method: "delete",
+      url: "/api/Cart/clear-all-cart",
+      params: type ? { type } : {},
+      requiresAuth: true, // tự động gắn Bearer token
     });
 
     return response.data;
@@ -95,20 +81,13 @@ export const clearAllCart = async (type) => {
 //api using for update quantity of product or mysterybox in cart
 export const updateCartQuantity = async ({ Id, quantity }) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.put(
-      `https://mmb-be-dotnet.onrender.com/api/Cart/update-quantity`,
-      {
-        Id,
-        quantity,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await apiWithFallback({
+      method: "put",
+      url: "/api/Cart/update-quantity",
+      data: { Id, quantity },
+      requiresAuth: true, // Tự động gắn token
+    });
+
     return response.data;
   } catch (error) {
     console.error("Update cart quantity failed:", error);

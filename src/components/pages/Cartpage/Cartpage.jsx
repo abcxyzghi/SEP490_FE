@@ -73,7 +73,7 @@ export default function Cartpage() {
         // Refetch user info to update wallet amount
         const token = localStorage.getItem('token');
         if (token) {
-          const res = await fetchUserInfo(token);
+          const res = await fetchUserInfo();
           if (res.status && res.data) {
             dispatch(setUser(res.data));
           }
