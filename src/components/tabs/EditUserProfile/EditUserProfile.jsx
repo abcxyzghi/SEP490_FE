@@ -221,8 +221,8 @@ export default function EditUserProfile() {
 
       const res = await updateProfile(formData, true);
 
-      if (res.data?.data?.profileImage) {
-        dispatch(updateProfileImage(res.data.data.profileImage));
+      if (res.data?.profileImage) {
+        dispatch(updateProfileImage(res.data.profileImage));
       }
       console.log(res)
       setMessage(res.status ? 'Cập nhật thành công!' : 'Cập nhật thất bại!');
