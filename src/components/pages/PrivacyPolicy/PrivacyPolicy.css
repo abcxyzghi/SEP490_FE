@@ -1,0 +1,164 @@
+.privacyPolicy-title{
+    font-size: 3.2rem;
+    text-align: center;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;  /* Standard property for compatibility */
+    -moz-background-clip: text; /* Firefox */
+    -ms-background-clip: text; /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: -20px;
+}
+
+.privacyPolicy-content p:first-of-type {
+  text-align: center;
+  font-style: italic;
+  margin-top: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.privacyPolicy-content h1, .privacyPolicy-content h2, .privacyPolicy-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+  font-weight: bold;
+  background: var(--gradient-dark);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.privacyPolicy-content ol {
+  list-style-type: decimal; /* ensures 1., 2., 3. */
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  line-height: 1.6;
+}
+
+.privacyPolicy-content ul {
+  list-style-type: disc; /* ensures • bullets */
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  line-height: 1.6;
+}
+
+.privacyPolicy-content li {
+  margin-bottom: 0.4rem;
+}
+
+.privacyPolicy-content p {
+  font-size: 1rem;
+}
+
+.privacyPolicy-content p:has(> span.emoji) {
+  font-size: 1.2rem;
+}
+
+.privacyPolicy-content hr {
+  border: none;
+  border-top: 2px solid var(--light-3);
+  margin: 2rem 0;
+}
+
+.privacyPolicy-content a {
+  color: var(--primary-5);
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.privacyPolicy-content a:hover {
+  color: var(--secondary-6);
+}
+
+.privacyPolicy-content strong {
+  font-weight: 700;
+}
+
+.privacyPolicy-content em {
+  font-style: italic;
+}
+
+.privacyPolicy-content p:last-of-type {
+  text-align: center;
+  margin-top: 20px;
+}
+
+ 
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px (tablet view) */
+@media (max-width: 765px) {
+  .doc-frame {
+    width: 85%;              /* narrower container */
+    padding: 35px 25px;      /* less padding */
+  }
+
+  .corner {
+    width: 28px;
+    height: 28px;
+  }
+
+  .inner-corner {
+    width: 18px;
+    height: 18px;
+  }
+
+  .privacyPolicy-title {
+    font-size: 2.4rem;       /* shrink main title */
+    margin-bottom: -15px;
+  }
+
+  .privacyPolicy-content h1 { font-size: 2rem; }
+  .privacyPolicy-content h2 { font-size: 1.5rem; }
+  .privacyPolicy-content h3 { font-size: 1.2rem; }
+
+  .privacyPolicy-content p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .privacyPolicy-content ul,
+  .privacyPolicy-content ol {
+    margin-left: 1rem;
+    padding-left: 0.8rem;
+  }
+}
+
+/* For screen width ≤ 480px (mobile view) */
+@media (max-width: 480px) {
+  .doc-frame {
+    width: 92%;              /* nearly full width */
+    padding: 25px 18px;      /* tighter padding */
+    margin: 3rem auto;       /* less vertical space */
+  }
+
+  .corner {
+    width: 22px;
+    height: 22px;
+  }
+
+  .inner-corner {
+    width: 14px;
+    height: 14px;
+  }
+
+  .privacyPolicy-title {
+    font-size: 1.9rem;
+    margin-bottom: -10px;
+  }
+
+  .privacyPolicy-content h1 { font-size: 1.5rem; }
+  .privacyPolicy-content h2 { font-size: 1.25rem; }
+  .privacyPolicy-content h3 { font-size: 1rem; }
+
+  .privacyPolicy-content p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .privacyPolicy-content ul,
+  .privacyPolicy-content ol {
+    margin-left: 0.8rem;
+    padding-left: 0.6rem;
+  }
+}

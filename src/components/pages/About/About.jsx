@@ -22,7 +22,7 @@ export default function About() {
       {/* Main content */}
       <div class="about-content">
         <div class="about-title oleo-script-bold">About Us</div>
-        <div class="about-subtitle oxanium-regular">
+        <div class="about-subContent oxanium-regular">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}

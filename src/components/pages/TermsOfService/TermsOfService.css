@@ -1,0 +1,165 @@
+.termOfService-title{
+    font-size: 3.2rem;
+    text-align: center;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;  /* Standard property for compatibility */
+    -moz-background-clip: text; /* Firefox */
+    -ms-background-clip: text; /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: -20px;
+}
+
+.termOfService-content p:first-of-type {
+  text-align: center;
+  font-style: italic;
+  margin-top: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.termOfService-content h1, .termOfService-content h2, .termOfService-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+  font-weight: bold;
+  background: var(--gradient-dark);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.termOfService-content ol {
+  list-style-type: decimal; /* ensures 1., 2., 3. */
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  line-height: 1.6;
+}
+
+.termOfService-content ul {
+  list-style-type: disc; /* ensures • bullets */
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  line-height: 1.6;
+}
+
+.termOfService-content li {
+  margin-bottom: 0.4rem;
+}
+
+.termOfService-content p {
+  font-size: 1rem;
+}
+
+.termOfService-content p:has(> span.emoji) {
+  font-size: 1.2rem;
+}
+
+.termOfService-content hr {
+  border: none;
+  border-top: 2px solid var(--light-3);
+  margin: 2rem 0;
+}
+
+.termOfService-content a {
+  color: var(--primary-5);
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.termOfService-content a:hover {
+  color: var(--secondary-6);
+}
+
+.termOfService-content strong {
+  font-weight: 700;
+}
+
+.termOfService-content em {
+  font-style: italic;
+}
+
+.termOfService-content p:last-of-type {
+  margin-top: 20px;
+  text-align: right;
+  font-style: italic;
+}
+
+ 
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px (tablet view) */
+@media (max-width: 765px) {
+  .doc-frame {
+    width: 85%;              /* narrower container */
+    padding: 35px 25px;      /* less padding */
+  }
+
+  .corner {
+    width: 28px;
+    height: 28px;
+  }
+
+  .inner-corner {
+    width: 18px;
+    height: 18px;
+  }
+
+  .termOfService-title {
+    font-size: 2.4rem;       /* shrink main title */
+    margin-bottom: -15px;
+  }
+
+  .termOfService-content h1 { font-size: 2rem; }
+  .termOfService-content h2 { font-size: 1.5rem; }
+  .termOfService-content h3 { font-size: 1.2rem; }
+
+  .termOfService-content p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .termOfService-content ul,
+  .termOfService-content ol {
+    margin-left: 1rem;
+    padding-left: 0.8rem;
+  }
+}
+
+/* For screen width ≤ 480px (mobile view) */
+@media (max-width: 480px) {
+  .doc-frame {
+    width: 92%;              /* nearly full width */
+    padding: 25px 18px;      /* tighter padding */
+    margin: 3rem auto;       /* less vertical space */
+  }
+
+  .corner {
+    width: 22px;
+    height: 22px;
+  }
+
+  .inner-corner {
+    width: 14px;
+    height: 14px;
+  }
+
+  .termOfService-title {
+    font-size: 1.9rem;
+    margin-bottom: -10px;
+  }
+
+  .termOfService-content h1 { font-size: 1.5rem; }
+  .termOfService-content h2 { font-size: 1.25rem; }
+  .termOfService-content h3 { font-size: 1rem; }
+
+  .termOfService-content p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .termOfService-content ul,
+  .termOfService-content ol {
+    margin-left: 0.8rem;
+    padding-left: 0.6rem;
+  }
+}
