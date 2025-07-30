@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { updateProfile, getProfile, ChangePassword } from '../../../services/api.user';
+import { updateProfile, getProfile, ChangePassword, getBankID } from '../../../services/api.user';
 import { Pathname, PATH_NAME } from "../../../router/Pathname";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout, updateProfileImage } from '../../../redux/features/authSlice';
 import { clearCart } from '../../../redux/features/cartSlice';
+import { Input, Select } from "antd";
+const { Option } = Select;
+
 export default function EditUserProfile() {
+  const [bankList, setBankList] = useState([]);
   const navigate = useNavigate();
   // State cho form đổi mật khẩu
   const [passwordForm, setPasswordForm] = useState({
@@ -34,29 +38,54 @@ export default function EditUserProfile() {
     bankid: ''
   });
   // Lấy profile mới nhất khi vào trang và sau khi cập nhật
-  async function fetchProfile() {
-    try {
-      const res = await getProfile();
-      if (res?.data) {
-        setUser(res.data);
-        setForm(f => ({
-          ...f,
-          phoneNumber: res.data.phoneNumber || '',
-          accountBankName: res.data.accountBankName || '',
-          bankNumber: res.data.banknumber || '',
-          bankid: res.data.bankId || ''
-        }));
-      }
-    } catch {
-      setUser(reduxUser || {});
-    }
-  }
-
   useEffect(() => {
-    fetchProfile();
-    // eslint-disable-next-line
+    const fetchAll = async () => {
+      try {
+        const bankRes = await getBankID();
+        setBankList(bankRes.data);
+
+        const profileRes = await getProfile();
+        if (profileRes?.data) {
+          setUser(profileRes.data);
+          setForm(f => ({
+            ...f,
+            phoneNumber: profileRes.data.phoneNumber || '',
+            accountBankName: profileRes.data.accountBankName || '',
+            bankNumber: profileRes.data.banknumber || '',
+            bankid: profileRes.data.bankId || ''
+          }));
+        }
+      } catch (error) {
+        console.error("Lỗi khi fetch dữ liệu:", error);
+        setUser(reduxUser || {});
+      }
+    };
+
+    fetchAll();
   }, []);
 
+  const selectBankValue = useMemo(() => {
+    const bank = bankList.find((b) => String(b.id) === String(form.bankid));
+
+    return bank
+      ? {
+        value: bank.id,
+        label: (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img
+              src={bank.logo}
+              alt={bank.name}
+              width={20}
+              height={20}
+              style={{ objectFit: 'contain' }}
+            />
+            <span>{bank.short_name} -</span>
+            <span>{bank.name}</span>
+          </div>
+        ),
+      }
+      : undefined;
+  }, [bankList, form.bankid]);
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setPwMessage('');
@@ -120,9 +149,66 @@ export default function EditUserProfile() {
     // Navigate to login page (soft)
     navigate(PATH_NAME.LOGIN, { replace: true });
   };
+  async function fetchProfile() {
+    try {
+      const res = await getProfile();
+      if (res?.data) {
+        console.log(res?.data)
+        setUser(res.data);
+        setForm(f => ({
+          ...f,
+          phoneNumber: res.data.phoneNumber || '',
+          accountBankName: res.data.accountBankName || '',
+          bankNumber: res.data.banknumber || '',
+          bankid: res.data.bankId || ''
+        }));
+      }
+    } catch {
+      setUser(reduxUser || {});
+    }
+  }
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await getBankID();
 
+        setBankList(response.data);
+      } catch (error) {
+        console.error("Lỗi khi fetch bank list:", error);
+      }
+    };
+    fetchBanks();
+  }, []);
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate không cho phép rỗng tên tài khoản ngân hàng và số tài khoản nếu đã chọn bankid
+    if (form.bankid) {
+      if (!form.accountBankName.trim()) {
+        setMessage('Vui lòng nhập tên tài khoản ngân hàng.');
+        return;
+      }
+      if (!form.bankNumber.trim()) {
+        setMessage('Vui lòng nhập số tài khoản ngân hàng.');
+        return;
+      }
+    }
+
+    const confirm = window.confirm(
+      "⚠️ Lưu ý quan trọng:\n\n" +
+      "Thông tin tài khoản ngân hàng bạn cung cấp sẽ được dùng để Admin chuyển tiền cho bạn trong tương lai.\n\n" +
+      "- Nếu bạn nhập sai số tài khoản hoặc tên tài khoản (không trùng khớp), yêu cầu sẽ bị từ chối và huỷ ngay lập tức.\n" +
+      "- Bạn hoàn toàn chịu trách nhiệm với thông tin đã nhập. Nếu xảy ra sai sót trong quá trình chuyển tiền do bạn cung cấp sai, Admin sẽ không chịu trách nhiệm.\n\n" +
+      "Hãy đảm bảo rằng bạn đã kiểm tra thật kỹ thông tin trước khi lưu.\n\n" +
+      "Bạn có chắc chắn muốn cập nhật không?"
+    );
+
+    if (!confirm) return; // Người dùng chọn Cancel → không làm gì
+
     setLoading(true);
     setMessage('');
 
@@ -141,7 +227,7 @@ export default function EditUserProfile() {
       }
       setMessage(res.status === 200 || res.status === 204 ? 'Cập nhật thành công!' : 'Cập nhật thất bại!');
       if (res.status === 200 || res.status === 204) {
-        await fetchProfile(); // Load lại thông tin mới nhất
+        await fetchProfile();
       }
     } catch (err) {
       console.error('Error:', err);
@@ -150,6 +236,7 @@ export default function EditUserProfile() {
 
     setLoading(false);
   };
+
 
   return (
     <div style={{ color: 'white' }}>
@@ -183,33 +270,60 @@ export default function EditUserProfile() {
             placeholder="Nhập số điện thoại"
           />
         </div>
-        <div>
-          <label>Tên ngân hàng:</label>
-          <input
-            name="accountBankName"
-            value={form.accountBankName}
-            onChange={handleChange}
-            placeholder="Nhập tên ngân hàng"
-          />
-        </div>
-        <div>
-          <label>Số tài khoản:</label>
-          <input
-            name="bankNumber"
-            value={form.bankNumber}
-            onChange={handleChange}
-            placeholder="Nhập số tài khoản"
-          />
-        </div>
-        <div>
-          <label>Bank ID:</label>
-          <input
-            name="bankid"
-            value={form.bankid}
-            onChange={handleChange}
-            placeholder="Nhập Bank ID"
-          />
-        </div>
+          <Select
+          placeholder="Chọn ngân hàng"
+          optionFilterProp="children"
+          onChange={(value) => {
+            setForm((prev) => ({
+              ...prev,
+              bankid: value.value, // chỉ lưu bank.id
+            }));
+          }}
+
+          style={{ width: "100%", marginTop: 10 }}
+          labelInValue
+          value={selectBankValue}
+        >
+          {bankList.map((bank) => (
+            <Option key={bank.id} value={bank.id}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img src={bank.logo} alt={bank.name} width={24} height={24} style={{ objectFit: 'contain' }} />
+                <span>{bank.short_name} -</span>
+                <span>{bank.name}</span>  
+              </div>
+            </Option>
+          ))}
+        </Select>
+
+
+        {form.bankid && (
+          <>
+            <Input
+              placeholder="Tên tài khoản"
+              value={form.accountBankName}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                const cleanValue = value.replace(/[^a-zA-ZÀ-ỹ\s]/g, '');
+                setForm((prev) => ({ ...prev, accountBankName: cleanValue }));
+              }}
+              style={{ marginTop: 10 }}
+            />
+
+            <Input
+              placeholder="Số tài khoản"
+              value={form.bankNumber}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Chỉ cho phép số
+                const numericValue = value.replace(/\D/g, '');
+                setForm((prev) => ({ ...prev, bankNumber: numericValue }));
+              }}
+              style={{ marginTop: 10 }}
+            />
+
+          </>
+        )}
         <button type="submit" disabled={loading}>{loading ? 'Đang cập nhật...' : 'Cập nhật'}</button>
       </form>
       {message && <div style={{ marginTop: 10 }}>{message}</div>}

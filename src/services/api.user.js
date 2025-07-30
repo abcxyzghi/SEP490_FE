@@ -92,15 +92,18 @@ export const updateProfile = async (data, isFormData = false) => {
         bankid: data.bankid
       };
     }
-
- 
+  if (isFormData) {
+  console.log("[updateProfile] FormData Entries:");
+  for (let pair of body.entries()) {
+    console.log(`${pair[0]}: ${pair[1]}`);
+  }
+}
     const response = await axios.post(
       'https://mmb-be-dotnet.onrender.com/cs/api/User/profile/update-profile',
       body,
       // config
     );
 
-   
     return response;
   } catch (error) {
     // 👇 Log error
