@@ -79,8 +79,7 @@ export default function EditUserProfile() {
               height={20}
               style={{ objectFit: 'contain' }}
             />
-            <span>{bank.short_name} -</span>
-            <span>{bank.name}</span>
+            <span>{bank.short_name}-{bank.name}</span>
           </div>
         ),
       }
@@ -225,8 +224,9 @@ export default function EditUserProfile() {
       if (res.data?.data?.profileImage) {
         dispatch(updateProfileImage(res.data.data.profileImage));
       }
-      setMessage(res.status === 200 || res.status === 204 ? 'Cập nhật thành công!' : 'Cập nhật thất bại!');
-      if (res.status === 200 || res.status === 204) {
+      console.log(res)
+      setMessage(res.status ? 'Cập nhật thành công!' : 'Cập nhật thất bại!');
+      if (res.status) {
         await fetchProfile();
       }
     } catch (err) {
@@ -270,7 +270,7 @@ export default function EditUserProfile() {
             placeholder="Nhập số điện thoại"
           />
         </div>
-          <Select
+        <Select
           placeholder="Chọn ngân hàng"
           optionFilterProp="children"
           onChange={(value) => {
@@ -288,8 +288,7 @@ export default function EditUserProfile() {
             <Option key={bank.id} value={bank.id}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <img src={bank.logo} alt={bank.name} width={24} height={24} style={{ objectFit: 'contain' }} />
-                <span>{bank.short_name} -</span>
-                <span>{bank.name}</span>  
+                <span>{bank.short_name}-{bank.name}</span>
               </div>
             </Option>
           ))}

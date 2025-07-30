@@ -137,7 +137,7 @@ export default function ProductDetailpage() {
       if (result?.status) {
         const token = localStorage.getItem('token');
         if (token) {
-          const res = await fetchUserInfo(token);
+          const res = await fetchUserInfo();
           if (res.status && res.data) {
             dispatch(setUser(res.data));
           }
@@ -593,7 +593,7 @@ export default function ProductDetailpage() {
                   </p>
 
 
-                  {(product.description.split('\n').length > 2|| product.description.length > 200) && (
+                  {(product.description.split('\n').length > 2 || product.description.length > 200) && (
                     <button
                       onClick={() => setShowFullDescription(!showFullDescription)}
                       style={{

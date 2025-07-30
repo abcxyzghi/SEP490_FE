@@ -65,7 +65,7 @@ export default function Navigation() {
     }
 
     try {
-      const res = await fetchUserInfo(token);
+      const res = await fetchUserInfo();
       if (res.status) {
         dispatch(setUser(res.data));
         navigate(to);
@@ -85,7 +85,7 @@ export default function Navigation() {
     const token = localStorage.getItem('token');
     if (token && !user) {
       setLoadingUser(true);
-      fetchUserInfo(token)
+      fetchUserInfo()
         .then(res => {
           if (res.status && res.data) {
             dispatch(setUser(res.data));
@@ -113,7 +113,7 @@ export default function Navigation() {
       const interval = setInterval(async () => {
         try {
           const token = localStorage.getItem('token');
-          const res = await fetchUserInfo(token);
+          const res = await fetchUserInfo();
           if (res?.status && res.data) {
             const newAmount = res.data.wallet_amount;
             if (newAmount !== user.wallet_amount) {

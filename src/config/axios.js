@@ -1,13 +1,13 @@
 import axios from "axios";
 
-// 🌐 Lấy API URL từ biến môi trường
+// Lấy API URL từ biến môi trường
 const CS_API = import.meta.env.VITE_API_CS_KEY;
 const BACKUP_CS_API = import.meta.env.VITE_BACKUP_CS_KEY;
 
 const PY_API = import.meta.env.VITE_API_PY_KEY;
 const BACKUP_PY_API = import.meta.env.VITE_BACKUP_PY_KEY;
 
-// 🛠️ Tạo instance Axios cho từng API
+// Tạo instance Axios cho từng API
 const primaryAxios = axios.create({
   baseURL: CS_API,
   timeout: 5000,
@@ -28,24 +28,26 @@ const backupPythonAxios = axios.create({
   timeout: 5000,
 });
 
-// 🔐 Gắn token cho tất cả instance
-const attachToken = (instance) => {
-  instance.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-};
+// Gắn token cho tất cả instance
+// const attachToken = (instance) => {
+//   instance.interceptors.request.use(
+//     (config) => {
+//       const token = localStorage.getItem("token");
+//       if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//       }
+//       return config;
+//     },
+//     (error) => Promise.reject(error)
+//   );
+// };
 
-[primaryAxios, backupAxios, pythonAxios, backupPythonAxios].forEach(attachToken);
+// [primaryAxios, backupAxios, pythonAxios, backupPythonAxios].forEach(attachToken);
 
 attachInterceptorsTo(primaryAxios);
 attachInterceptorsTo(backupAxios);
+attachInterceptorsTo(pythonAxios);
+attachInterceptorsTo(backupPythonAxios);
 
 // 🔁 Interceptor xử lý refresh token cho .NET (C#)
 // primaryAxios.interceptors.response.use(
@@ -96,7 +98,7 @@ function attachInterceptorsTo(instance) {
           config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${token}`;
         } else {
-          console.warn(`[Auth] Thiếu token khi gọi ${config.url}`);
+          console.warn(`[Auth] Token missing — skipping Authorization header for: ${config.url}`);
         }
       }
       return config;
@@ -120,7 +122,6 @@ function attachInterceptorsTo(instance) {
           const refreshToken = localStorage.getItem("refreshToken");
           // const res = await pythonAxios.post(`/api/user/auth/refresh?token=${refreshToken}`);
 
-          // ✅ Sửa lại ở đây
           const res = await pythonApiWithFallback({
             method: "post",
             url: `/api/user/auth/refresh?token=${refreshToken}`,
@@ -151,7 +152,7 @@ function attachInterceptorsTo(instance) {
 }
 
 
-// 🧩 Fallback API cho C# backend
+// Fallback API cho C# backend
 const apiWithFallback = async (config) => {
   try {
     return await primaryAxios(config);
@@ -161,7 +162,7 @@ const apiWithFallback = async (config) => {
   }
 };
 
-// 🧩 Fallback API cho Python backend
+// Fallback API cho Python backend
 const pythonApiWithFallback = async (config) => {
   try {
     return await pythonAxios(config);
@@ -172,7 +173,7 @@ const pythonApiWithFallback = async (config) => {
 };
 
 export const api = pythonAxios;
-// ✅ Export các instance để dùng trực tiếp nếu cần
+// Export các instance để dùng trực tiếp nếu cần
 export default primaryAxios; // Dùng mặc định là C#
 export {
   pythonAxios,
