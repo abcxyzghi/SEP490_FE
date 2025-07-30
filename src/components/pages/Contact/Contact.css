@@ -253,7 +253,7 @@
 /* -----------------======================= QUERY WOKE =======================------------------------*/
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
 
-/* ==================== Responsive: Small Tablets (max-width: 500px) ==================== */
+/* For screen width ≤ 765px */
 @media (max-width: 765px) {
   .contactUs-title {
     font-size: 2rem;
@@ -296,7 +296,7 @@
   }
 }
 
-/* ==================== Responsive: Extra Small Mobile (max-width: 360px) ==================== */
+/* For screen width ≤ 360px */
 @media (max-width: 360px) {
   .contactUs-title {
     font-size: 1.6rem;
