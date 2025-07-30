@@ -86,6 +86,24 @@ attachInterceptorsTo(backupAxios);
 // );
 
 function attachInterceptorsTo(instance) {
+
+  instance.interceptors.request.use(
+    (config) => {
+      // Nếu config.requiresAuth === true thì tự động gắn token
+      if (config.requiresAuth) {
+        const token = localStorage.getItem("token");
+        if (token) {
+          config.headers = config.headers || {};
+          config.headers.Authorization = `Bearer ${token}`;
+        } else {
+          console.warn(`[Auth] Thiếu token khi gọi ${config.url}`);
+        }
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
   instance.interceptors.response.use(
     (response) => {
       if (response.status === 201) {
