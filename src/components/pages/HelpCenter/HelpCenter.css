@@ -1,0 +1,174 @@
+.helpCenter-container {
+    overflow-x: hidden;
+    padding: 2rem;
+    margin-top: 50px;
+}
+
+/* --------------------------==================== Help Canter Header ====================--------------------------   */
+.helpCenter-title {
+    font-size: 3.2rem;
+    line-height: 1.1;
+    text-align: center;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;  /* Standard property for compatibility */
+    -moz-background-clip: text; /* Firefox */
+    -ms-background-clip: text; /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px;
+}
+
+/* --------------------------==================== Search wrapper ====================--------------------------   */
+
+.helpCenter-search-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+}
+
+/* --------------------------==================== Help Card ====================--------------------------   */
+.helpCenter-card-list {
+    margin: 3rem auto;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.helpCenter-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: background 0.1s ease-in-out;
+}
+
+.helpCenter-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.helpCenter-card-icon {
+    width: 36px;
+    height: 36px;
+    filter: var(--lightSVG-5);
+    margin-right: 1rem;
+}
+
+.helpCenter-card-info {
+    flex: 1;
+}
+
+.helpCenter-card-title {
+    font-size: 1.8rem;
+    background: linear-gradient(to bottom,
+            #FFFFFF 0%,
+            #F1F1F1 30%,
+            #D1D1D1 67%,
+            #BDBDBD 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.25rem;
+}
+
+.helpCenter-card-subtitle {
+    font-size: 0.9rem;
+    color: var(--dark-1);
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 1280px (large desktop / laptop) */
+@media (max-width: 1280px) {
+  .helpCenter-title {
+    font-size: 2.8rem;
+  }
+
+  .helpCenter-card-list {
+    max-width: 700px;
+  }
+
+  .helpCenter-card-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* For screen width ≤ 1024px (tablet landscape / small laptop) */
+@media (max-width: 1024px) {
+  .helpCenter-title {
+    font-size: 2.5rem;
+  }
+
+  .helpCenter-card-list {
+    max-width: 600px;
+    gap: 0.8rem;
+  }
+
+  .helpCenter-card {
+    padding: 0.8rem;
+  }
+
+  .helpCenter-card-title {
+    font-size: 1.4rem;
+  }
+
+  .helpCenter-card-subtitle {
+    font-size: 0.85rem;
+  }
+}
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .helpCenter-title {
+    font-size: 2.2rem;
+  }
+
+  .helpCenter-card-list {
+    max-width: 90%;
+  }
+
+  .helpCenter-card {
+    padding: 0.75rem;
+  }
+
+  .helpCenter-card-title {
+    font-size: 1.2rem;
+  }
+
+  .helpCenter-card-subtitle {
+    font-size: 0.8rem;
+  }
+}
+
+/* For screen width ≤ 480px (mobile portrait) */
+@media (max-width: 480px) {
+  .helpCenter-title {
+    font-size: 1.8rem;
+  }
+
+  .helpCenter-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .helpCenter-card-icon {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .helpCenter-card-title {
+    font-size: 1rem;
+  }
+
+  .helpCenter-card-subtitle {
+    font-size: 0.75rem;
+  }
+}

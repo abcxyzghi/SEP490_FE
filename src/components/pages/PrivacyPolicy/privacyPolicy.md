@@ -9,12 +9,7 @@ At **Manga Mystery Box (MMB)**, we are committed to protecting your personal dat
 When you register or use MMB, we collect:  
 📌 **Identity Data:** Name, email address, phone number (optional).  
 📌 **Transaction Data:** Purchase history, payment methods.  
-📌 **Behavioral Data:** Cards collected, trades completed, auction activity.  
-
-### Automated Collection  
-We automatically gather:  
-🌐 **Device Data:** IP address, browser type, operating system.  
-🍪 **Cookies & Tracking:** Session tokens, preferences (see *Section 5*).  
+📌 **Behavioral Data:** Cards collected, trades completed, auction activity.   
 
 *Note:* We do not knowingly collect data from users under **16s**.  
 
@@ -35,9 +30,6 @@ Your information helps us:
 - Detect fraud (e.g., fake auctions).  
 - Prevent unauthorized access.  
 
-🔹 **Communicate**  
-- Send service updates (e.g., auction results).  
-- Marketing emails (opt-out available).  
 
 ---
 
@@ -45,8 +37,8 @@ Your information helps us:
 We **do not sell your data**. Limited sharing occurs only with:  
 
 🤝 **Essential Service Providers**  
-- Payment processors (Stripe, PayPal).  
-- Cloud hosting (AWS, Google Cloud).  
+- Payment processors (PayOS).  
+- Cloud hosting (Cloud).  
 
 ⚖️ **Legal Compliance**  
 - If required by law (e.g., court orders).  
@@ -63,23 +55,30 @@ You may:
 🗑️ **Delete** – Erase your account/data (*exclusions apply*).  
 🚫 **Opt-Out** – Unsubscribe from marketing.  
 
-**To exercise rights**, contact: privacy@mmb.com.  
+**To exercise rights**, contact: MMB@gmail.com.  
 *Response time:* **15 business days**.  
 
 ---
 
-## 5. Cookies & Tracking Technologies  
-We use:  
+## 5. Authentication & Session Management  
 
-🍪 **Necessary Cookies**  
-- Session management (e.g., login tokens).  
+### Token-Based System (No Cookies)  
 
-📊 **Analytics Cookies**  
-- Google Analytics (anonymous usage stats).  
+🔐 **JWT Tokens**  
+- **Stored in** your browser's memory.   
+- **Contains:**  
+  • Encrypted user ID.  
+  • Expiration timestamp.  
+  • No behavioral/tracking data.  
 
-### Control Options:  
-- Browser settings (disable cookies).  
-- MMB Privacy Dashboard (opt-out of non-essential tracking).  
+### Token Refresh Cycle  
+- **Active Sessions:** Token auto-refreshes periodically.  
+- **Logout:** Immediate token invalidation.   
+
+### What We **Never** Do:  
+🚫 **No Local Storage** – Tokens aren’t persisted to disk.  
+🚫 **No Tracking** – Zero analytics or behavior monitoring.  
+🚫 **No Cross-Site Data** – Tokens are domain-locked.  
 
 ---
 
@@ -93,16 +92,7 @@ We retain your data:
 
 ---
 
-## 7. International Transfers  
-Data may be transferred to/processed in:  
-🌍 **United States** (AWS servers).  
-🇪🇺 **EU** (GDPR-compliant partners).  
-
-*Safeguards:* Standard Contractual Clauses (SCCs).  
-
----
-
-## 8. Policy Updates  
+## 7. Policy Updates  
 We will:  
 📢 Notify users of **material changes** via email/platform alerts.  
 📅 Post archived versions [here](#).  
@@ -111,7 +101,7 @@ We will:
 
 ---
 
-## 9. Contact & Complaints  
+## 8. Contact & Complaints  
 **Questions?** Contact our Data Protection Officer:  
 📧 Email: MMB@gmail.com  
 📌 Address: 7 D. D1, Long Thanh My, Thu Duc, Ho Chi Minh  
