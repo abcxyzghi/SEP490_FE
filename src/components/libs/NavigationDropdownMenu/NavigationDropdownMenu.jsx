@@ -216,7 +216,7 @@ export default function NavigationDropdownMenu() {
                 onClick={(e) => {
                   e.stopPropagation();
                   // future change to activity page
-                  handleNavigate(Pathname("NOTIFICATION_PAGE"));
+                  handleNavigate(Pathname("ACTIVITIES_PAGE"));
                 }}
               >
                 <img
@@ -224,7 +224,7 @@ export default function NavigationDropdownMenu() {
                   src={ActivityIcon}
                   alt="Activity"
                 />
-                <span className="oxanium-semibold">Activity</span>
+                <span className="oxanium-semibold">Activities</span>
               </li>
 
               <div className="nav-dropdown-divider" />

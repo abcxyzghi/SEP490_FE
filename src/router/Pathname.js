@@ -22,15 +22,23 @@ export const PATH_NAME = {
     CHECKOUT_PAGE: "/checkoutpage",
     CHAT_ROOM: "/chatroom/:id",
     ACHIEVEMENT_PAGE: "/achievementpage",
-    NOTIFICATION_PAGE: "/notification", // fix it to Activity
+    ACTIVITIES_PAGE: "/activities",
     EXCHANGE_PAGE: "/exchangepage/:sellProductId",
 
     MODERATOR_DASHBOARD: "/moderatorDashboard",
+    MODERATOR_PROFILE: "/moderatorProfile",
+    MODERATOR_REPORT: "/moderatorReport",
+    MODERATOR_PRODUCT: "/moderatorProduct",
+    MODERATOR_MYSTERYBOX: "/moderatorMysteryBox",
+    MODERATOR_AUCTION: "/moderatorAuction",
     
     ADMIN_DASHBOARD: "/adminDashboard",
     ADMIN_USERMANGEMENT: "/adminUserManagement",
-    ADMIN_SYSTEMMANGEMENT: "/adminSystemManagement",
-    ADMIN_TRANSACTIONMANGEMENT: "/adminTransactionManagement",
+    ADMIN_MODERATORMANGEMENT: "/adminModeratorManagement",
+    ADMIN_SYSTEM: "/adminSystem",
+    ADMIN_CATEGORY: "/adminCategories",
+    ADMIN_ANALYTIC: "/adminAnalytics",
+    ADMIN_TRANSACTION: "/adminTransaction",
 };
 // domain sau dấu "/" nếu id là 123 thì nó là /123
 // "productdetailpage" chứa sản phẩm của ng bán; "collectiondetailpage" chứa sản phẩm dạng view
