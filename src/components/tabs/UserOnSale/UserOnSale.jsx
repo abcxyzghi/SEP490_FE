@@ -51,8 +51,13 @@ export default function UserOnSale({ products, productsLoading }) {
   // Khi props.products thay đổi, cập nhật vào state nội bộ để dễ dàng quản lý
   useEffect(() => {
     if (products) {
-      // Nếu là chủ trang, hiển thị tất cả. Nếu là khách, chỉ hiển thị sản phẩm đang bán.
-      const filtered = isOwner ? products : products.filter((product) => product.isSell);
+      // Nếu là chủ trang, hiển thị tất cả, nhưng ẩn sản phẩm nếu isSell = false và quantity = 0
+      let filtered;
+      if (isOwner) {
+        filtered = products.filter(product => !(product.isSell === false && product.quantity === 0));
+      } else {
+        filtered = products.filter(product => product.isSell);
+      }
       setProductList(filtered);
     }
   }, [products, isOwner]);
@@ -110,22 +115,27 @@ export default function UserOnSale({ products, productsLoading }) {
   };
 
   const handleSave = async () => {
-    if (!editedPrice || isNaN(editedPrice) || editedPrice <= 0) {
-        showModal('warning', 'Dữ liệu không hợp lệ', 'Vui lòng nhập giá sản phẩm hợp lệ.');
-        return;
+    const descLength = editedDescription.trim().length;
+    const priceNum = Number(editedPrice);
+    if (descLength < 10 || descLength > 300) {
+      showModal('warning', 'Mô tả không hợp lệ', 'Mô tả phải từ 10 đến 300 ký tự.');
+      return;
+    }
+    if (!priceNum || isNaN(priceNum) || priceNum < 1000 || priceNum > 100000000) {
+      showModal('warning', 'Giá không hợp lệ', 'Giá phải từ 1.000 đến 100.000.000.');
+      return;
     }
     try {
       await updateSellProduct({
         id: selectedProduct.id,
         description: editedDescription,
-        price: editedPrice,
+        price: priceNum,
         updatedAt: new Date().toISOString(),
       });
-       // Cập nhật lại sản phẩm trong danh sách cục bộ
-       setProductList(prevList =>
+      setProductList(prevList =>
         prevList.map(p =>
           p.id === selectedProduct.id
-            ? { ...p, price: editedPrice, description: editedDescription }
+            ? { ...p, price: priceNum, description: editedDescription }
             : p
         )
       );
@@ -316,19 +326,38 @@ export default function UserOnSale({ products, productsLoading }) {
                         <label className="block mb-2 text-sm font-medium">Description:</label>
                         <textarea
                             value={editedDescription}
-                            onChange={(e) => setEditedDescription(e.target.value)}
+                            onChange={(e) => {
+                              let val = e.target.value;
+                              if (val.length > 300) val = val.slice(0, 300);
+                              setEditedDescription(val);
+                            }}
                             rows={5}
+                            minLength={10}
+                            maxLength={300}
                             className="textarea textarea-bordered w-full bg-gray-700"
                         />
+                        <div style={{fontSize:'12px',color: editedDescription.trim().length < 10 || editedDescription.trim().length > 300 ? 'red' : '#aaa'}}>
+                          {`Description: ${editedDescription.trim().length}/300 characters. (Min: 10, Max: 300)`}
+                        </div>
                     </div>
                     <div className="mb-6">
                         <label className="block mb-2 text-sm font-medium">Price (VND):</label>
                         <input
                             type="number"
+                            min={1000}
+                            max={100000000}
                             value={editedPrice}
-                            onChange={(e) => setEditedPrice(e.target.value)}
+                            onChange={(e) => {
+                              let val = Number(e.target.value);
+                              if (val > 100000000) val = 100000000;
+                              if (val < 1000) val = 1000;
+                              setEditedPrice(val);
+                            }}
                             className="input input-bordered w-full bg-gray-700"
                         />
+                        <div style={{fontSize:'12px',color: Number(editedPrice) < 1000 || Number(editedPrice) > 100000000 ? 'red' : '#aaa'}}>
+                          {`Price must be between 1,000 and 100,000,000`}
+                        </div>
                     </div>
                     <div className="flex justify-end gap-4">
                         <button onClick={handleCloseModal} className="btn btn-ghost">Cancel</button>

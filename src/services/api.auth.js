@@ -1,12 +1,22 @@
 import axios from 'axios';
-import { api, pythonApiWithFallback } from '../config/axios';
+import { pythonApiWithFallback, apiWithFallback } from '../config/axios';
 
-export const fetchUserInfo = (token) =>
-  axios.get('https://mmb-be-dotnet.onrender.com/api/Auth/who-am-i', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then(res => res.data);
+//get user info from token to render on the navbar
+export const fetchUserInfo = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/Auth/who-am-i",
+      requiresAuth: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch user info failed:", error);
+    throw error;
+  }
+};
+
 
 // export const loginApi = async (userName, password) => {
 //   const params = new URLSearchParams();
@@ -23,6 +33,7 @@ export const fetchUserInfo = (token) =>
 //   return response.data;
 // };
 
+//login api using for user to login
 export const loginApi = async (userName, password) => {
   const params = new URLSearchParams();
   params.append('grant_type', 'password');
@@ -47,37 +58,100 @@ export const loginApi = async (userName, password) => {
   }
 };
 
+//register api help user login when they want to be an part of the system
 export const registerApi = async ({ userName, email, password }) => {
-  // Map userName to username for API
   const apiPayload = {
-    username: userName,
+    username: userName, // map lại đúng key theo backend
     email,
     password,
   };
-  return await api.post('/api/user/auth/register', apiPayload);
+
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: "/api/user/auth/register",
+      data: apiPayload,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Register failed:", error);
+    throw error;
+  }
 };
 
+//send verify email (đăng ký hoặc đổi email)
 export const sendVerifyEmailApi = async (email) => {
-  return await api.post(`/api/user/email/verify?email=${encodeURIComponent(email)}`, {});
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: `/api/user/email/verify?email=${encodeURIComponent(email)}`,
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Send verify email failed:", error);
+    throw error;
+  }
 };
 
+//confirm OTP code from email
 export const confirmOtpApi = async (code, email) => {
-  return await api.post(`/api/user/email/confirm?code=${encodeURIComponent(code)}&current_email=${encodeURIComponent(email)}`, {});
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: `/api/user/email/confirm?code=${encodeURIComponent(code)}&current_email=${encodeURIComponent(email)}`,
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Confirm OTP failed:", error);
+    throw error;
+  }
 };
 
+//send OTP for forgot password
 export const sendForgotPasswordOtpApi = async (email) => {
-  return await api.post(`/api/user/password-recovery/verify?email=${encodeURIComponent(email)}`, {});
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: `/api/user/password-recovery/verify?email=${encodeURIComponent(email)}`,
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Send forgot password OTP failed:", error);
+    throw error;
+  }
 };
 
+
+//api using for they confirm forgot password 
 export const confirmForgotPasswordApi = async ({ email, code, password }) => {
-  return await api.post('/api/user/password-recovery/confirm', {
-    email,
-    code,
-    password,
-  }, {
-    headers: {
-      'accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  });
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: "/api/user/password-recovery/confirm",
+      data: { email, code, password },
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Confirm forgot password failed:", error);
+    throw error;
+  }
 };

@@ -114,6 +114,15 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     if (!sellForm.quantity || !sellForm.description.trim() || !sellForm.price) {
       return showModal('warning', 'Required Action', "Please enter all fields to sell.");
     }
+    // Validation: description length 10-300 characters
+    const descLength = sellForm.description.trim().length;
+    if (descLength < 10 || descLength > 300) {
+      return showModal('warning', 'Description length', "Description must be between 10 and 300 characters.");
+    }
+    // Validation: price between 1000 and 100000000
+    if (sellForm.price < 1000 || sellForm.price > 100000000) {
+      return showModal('warning', 'Price out of range', "Price must be between 1,000 and 100,000,000.");
+    }
     // Validation: quantity must be > 0
     if (sellForm.quantity <= 0) {
       alert('Quantity must be greater than 0.');
@@ -505,6 +514,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                 setForm={setSellForm}
                 loading={sellLoading}
                 result={sellResult}
+                minDescLength={10}
+                maxDescLength={300}
+                minPrice={1000}
+                maxPrice={100000000}
+                multilineDescription={true}
               />
 
             </div>

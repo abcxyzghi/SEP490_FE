@@ -1,7 +1,11 @@
 import React from 'react'
-
-export default function Settingpage() {
-  return (
-    <div>Settingpage</div>
-  )
-}
+import EditUserProfile from '../../tabs/EditUserProfile/EditUserProfile'
+ 
+ export default function Settingpage() {
+   return (
+     <div>
+      <EditUserProfile/>
+      </div>
+   )
+ }
+ 

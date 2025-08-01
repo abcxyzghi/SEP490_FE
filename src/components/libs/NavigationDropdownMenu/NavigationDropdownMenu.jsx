@@ -35,7 +35,7 @@ export default function NavigationDropdownMenu() {
     if (isOpen && !user) {
       const token = localStorage.getItem("token");
       if (token) {
-        fetchUserInfo(token).then((res) => {
+        fetchUserInfo().then((res) => {
           if (res.status && res.data) {
             dispatch(setUser(res.data));
           }
