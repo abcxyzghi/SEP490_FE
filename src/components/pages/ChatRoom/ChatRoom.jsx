@@ -4,10 +4,6 @@ import { useParams } from 'react-router-dom';
 import { connectWebSocket, disconnectWebSocket, sendMessage } from '../../../config/socket';
 import { getUserInChat, getMessages, getUserById } from '../../../services/api.chat';
 
-function isValidDate(date) {
-  const d = new Date(date);
-  return date && !isNaN(d.getTime());
-}
 
 export default function ChatRoom({ otherUserId = '' }) {
   const [status, setStatus] = useState('Initializing...');
@@ -22,8 +18,20 @@ export default function ChatRoom({ otherUserId = '' }) {
   const user = useSelector(state => state.auth.user);
   const myId = user?.user_id;
   const token = localStorage.getItem('token');
-  const finalOtherUserId = otherUserId || useParams().otherUserId || useParams().id || '';
+  const params = useParams();
+  const finalOtherUserId = otherUserId || params.otherUserId || params.id || '';
 
+  function isValidDate(date) {
+  const d = new Date(date);
+  return date && !isNaN(d.getTime());
+  }
+  // Log chỉ khi mount lần đầu
+  useEffect(() => {
+    console.log("🔁 ChatRoom mounted");
+    console.log("📦 token:", token);
+    console.log("👤 myId:", myId);
+    console.log("👥 finalOtherUserId:", finalOtherUserId);
+  }, [token, myId, finalOtherUserId]);
   const handleSend = () => {
     if (!inputMsg.trim() || isSending) return;
     setIsSending(true);
