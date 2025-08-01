@@ -21,7 +21,7 @@
     "@supabase/supabase-js": "^2.50.0",
     "@tailwindcss/postcss": "^4.1.8",
     "@tailwindcss/vite": "^4.1.8",
-    "antd": "^5.25.2",
+    "antd": "^5.26.7",
     "axios": "^1.9.0",
     "daisyui": "^5.0.43",
     "date-fns": "^4.1.0",

@@ -10,6 +10,11 @@ export default function SellFormModal({
     setForm,
     loading,
     result,
+    minDescLength = 0,
+    maxDescLength = 10000,
+    minPrice = 1000,
+    maxPrice = 100000000,
+    multilineDescription = false,
 }) {
     if (!isOpen) return null;
 
@@ -48,15 +53,24 @@ export default function SellFormModal({
 
                         <div className="sellModal-field">
                             <label className='oxanium-regular'>Price:</label>
-                            <input
-                                type="number"
-                                min={1000}
-                                step={1000}
-                                value={form.price}
-                                onChange={(e) => setForm((f) => ({ ...f, price: Number(e.target.value) }))}
-                                className="sellModal-input"
-                                required
-                            />
+                        <input
+                            type="number"
+                            min={minPrice}
+                            max={maxPrice}
+                            step={1000}
+                            value={form.price}
+                            onChange={(e) => {
+                                let val = Number(e.target.value);
+                                if (val > maxPrice) val = maxPrice;
+                                if (val < minPrice) val = minPrice;
+                                setForm((f) => ({ ...f, price: val }));
+                            }}
+                            className="sellModal-input"
+                            required
+                        />
+                        <div style={{fontSize:'12px',color:'#888'}}>
+                            Price must be between {minPrice.toLocaleString()} and {maxPrice.toLocaleString()}
+                        </div>
                         </div>
                     </div>
 
@@ -64,10 +78,21 @@ export default function SellFormModal({
                         <label className='oxanium-regular'>Description:</label>
                         <textarea
                             type="text"
+                            minLength={minDescLength}
+                            maxLength={maxDescLength}
                             value={form.description}
-                            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                            onChange={(e) => {
+                                let val = e.target.value;
+                                if (val.length > maxDescLength) val = val.slice(0, maxDescLength);
+                                setForm((f) => ({ ...f, description: val }));
+                            }}
                             className="sellModal-input"
+                            rows={multilineDescription ? 4 : 1}
+                            style={multilineDescription ? {resize:'vertical'} : {}}
                         />
+                        <div style={{fontSize:'12px',color: form.description.length < minDescLength || form.description.length > maxDescLength ? 'red' : '#888'}}>
+                            {`Description: ${form.description.length}/${maxDescLength} characters. (Min: ${minDescLength}, Max: ${maxDescLength})`}
+                        </div>
                     </div>
 
                     <button type="submit" className="oxanium-bold sellModal-submitBtn" disabled={loading}>
