@@ -113,20 +113,20 @@ export default function ProductDetailpage() {
 
   // Handle instant pay
   const handlePayInstant = async () => {
-    // ❗️Prevent unsigned user commit action
+    // Prevent unsigned user commit action
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
-    // ❗️Prevent seller from buying their own product
+    // Prevent seller from buying their own product
     if (product.userId === user.user_id) {
       // return showModal('warning', 'Action Not Allowed', "You cannot purchase your own product.");
       return showModal('warning', 'Action Not Allowed', "Nuh uh, I don't think so >:)");
     }
-    // ❗️Prevent user cheating currency imbalance 
+    // Prevent user cheating currency imbalance 
     if (user.wallet_amount < product.price * quantity) {
       return showModal('warning', 'Currency Crunch', 'You do not have enough currency');
     }
-    // ❗️Prevent user from buying what more seller have in stock
+    // Prevent user from buying what more seller have in stock
     if (quantity > product.quantity) {
       return showModal('warning', 'Quantity Error', 'You cannot buy more than what is available in stock');
     }
@@ -362,9 +362,8 @@ export default function ProductDetailpage() {
     return <div className="text-center mt-10 text-red-500">Product not found or error loading data.</div>;
   }
 
-  const isOwner = currentUserId === product.userId;
-
-  if (product && product.isSell === false && !isOwner) {
+  // const isOwner = currentUserId === product.userId;
+  if (product && product.isSell === false && product.quantity === 0 ) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="text-2xl font-bold text-red-600 mb-4">This product is not available for viewing.</div>

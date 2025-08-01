@@ -1,54 +1,63 @@
-
 let socket = null;
 
-
-// Hàm mới nhận thêm myId và token
+// Hàm kết nối WebSocket
 export function connectWebSocket(conversationId, myId, token, onMessage, onOpen, onClose, onError) {
-  // Sử dụng URL mới của backend
-  const wsUrl = `wss://sep490-manga-mystery-box-pybe.onrender.com/websocket/chatbox/${conversationId}/${myId}?token=${token}`;
+  const wsUrl = `wss://api.mmb.io.vn/py/websocket/chatbox/${conversationId}/${myId}?token=${token}`;
   socket = new WebSocket(wsUrl);
-  console.log('WS URL:', `wss://sep490-manga-mystery-box-pybe.onrender.com/websocket/chatbox/${conversationId}/${myId}?token=${token}`);
+  console.log('🌐 WS URL:', wsUrl);
 
   socket.onopen = () => {
-    console.log('WebSocket Connection Status: CONNECTED');
-    console.log('Connection established for conversation:', conversationId);
+    console.log('✅ WebSocket CONNECTED for conversation:', conversationId);
     if (onOpen) onOpen();
   };
-
-
   socket.onmessage = (event) => {
     let data;
+
     try {
       data = JSON.parse(event.data);
-      console.log('WebSocket Received Message:', data);
-    } catch {
+      console.log('📩 WebSocket Received Parsed Message:', data);
+    } catch (e) {
+      console.warn('⚠️ WebSocket Received Raw (non-JSON) Message:', event.data);
       data = event.data;
-      console.log('WebSocket Received Raw Message:', data);
     }
-    if (onMessage) onMessage(data);
+
+    if (typeof data === 'object' && data !== null) {
+      if (!data.content) {
+        console.warn('⚠️ Message received but missing content field:', data);
+      }
+      if (onMessage) onMessage(data);
+    } else {
+      console.error('❌ Invalid message format (not object):', data);
+    }
   };
 
   socket.onclose = () => {
-    console.log('WebSocket Connection Status: CLOSED');
-    console.log('Connection closed for conversation:', conversationId);
+    console.log('🔌 WebSocket CLOSED for conversation:', conversationId);
     if (onClose) onClose();
   };
 
   socket.onerror = (error) => {
-    console.error('WebSocket Connection Status: ERROR');
-    console.error('WebSocket Error:', error);
+    console.error('🛑 WebSocket ERROR:', error);
     if (onError) onError(error);
   };
 }
 
+// Gửi tin nhắn
 export function sendMessage(message) {
   if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(message));
+    const isString = typeof message === 'string';
+    const payload = isString ? message : JSON.stringify(message);
+    socket.send(payload);
+    console.log('📤 Sent WebSocket Message:', payload);
+  } else {
+    console.warn('⚠️ WebSocket is not open. Message not sent.', message);
   }
 }
 
+// Ngắt kết nối
 export function disconnectWebSocket() {
   if (socket) {
+    console.log('🔌 Closing WebSocket connection...');
     socket.close();
     socket = null;
   }
