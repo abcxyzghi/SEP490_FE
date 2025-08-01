@@ -3,6 +3,16 @@ let socket = null;
 // Hàm kết nối WebSocket
 export function connectWebSocket(conversationId, myId, token, onMessage, onOpen, onClose, onError) {
   const wsUrl = `wss://api.mmb.io.vn/py/websocket/chatbox/${conversationId}/${myId}?token=${token}`;
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    console.warn('⚠️ WebSocket already connected, skipping reconnect.');
+    return;
+  }
+
+  // ✅ Nếu socket đang ở trạng thái CONNECTING hoặc CLOSING → đóng lại cho chắc
+  if (socket && socket.readyState !== WebSocket.CLOSED) {
+    console.warn('🔄 Closing existing WebSocket before reconnecting.');
+    socket.close();
+  }
   socket = new WebSocket(wsUrl);
   console.log('🌐 WS URL:', wsUrl);
 

@@ -36,13 +36,13 @@ export default function ChatRoom({ otherUserId = '' }) {
   };
 
   const receivedMessageIds = useRef(new Set());
-
+  const hasConnected = useRef(false);
   useEffect(() => {
     if (!token || !myId || !finalOtherUserId) {
       setStatus('Missing token or user ID');
       return;
     }
-
+    if (hasConnected.current) return;
     const setupConversation = async () => {
       try {
         setMyName(user?.username || 'Tôi');
@@ -87,7 +87,7 @@ export default function ChatRoom({ otherUserId = '' }) {
           const key = msg._id ? msg._id : `${msg.sender_id}-${msg.content}-${new Date(msg.created_at).getTime()}`;
           receivedMessageIds.current.add(key);
         });
-
+ 
         connectWebSocket(
           convId,
           myId,
@@ -110,6 +110,7 @@ export default function ChatRoom({ otherUserId = '' }) {
                   setIsSending(false);
                 }
               }
+              hasConnected.current = true;
             } catch (err) {
               console.error('❌ Lỗi parse message:', err);
             }
@@ -128,7 +129,10 @@ export default function ChatRoom({ otherUserId = '' }) {
     };
 
     setupConversation();
-    return () => disconnectWebSocket();
+    return () => {
+    disconnectWebSocket();
+    hasConnected.current = false; // 👈 reset lại để có thể kết nối lại nếu cần
+  };
   }, [finalOtherUserId, myId]);
 
   // Chỉ scroll xuống khi mình gửi tin nhắn (isMine)
