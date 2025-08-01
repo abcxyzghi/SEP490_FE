@@ -3,7 +3,6 @@ import { getOrderHistory } from '../../../services/api.order';
 import { createRate, getAllRatingsBySellProduct } from '../../../services/api.comment';
 import "../OrderHistory/OrderHistory.css";
 import { useSelector } from 'react-redux';
-import "../OrderHistory/OrderHistory.css";
 import Rating from '@mui/material/Rating';
 import Arrow_Right from "../../../assets/Icon_line/Arrow_Right_LG.svg";
 
