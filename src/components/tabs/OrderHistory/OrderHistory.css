@@ -1,55 +1,435 @@
-.order-history-container{
-    color:white;
+.order-history-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  padding: 30px;
+  color: var(--light-1);
+  width: 100%;
+  max-height: 500px;
+  overflow-y: auto;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.modal-order-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(105, 91, 91, 0.5);
+
+.order-history-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* --------------------------==================== Order History card list ====================--------------------------    */
+.order-history-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-history-card {
+  background: #1e1e1e; /* dark grey container */
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.08); /* subtle border */
+}
+
+.order-history-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.order-history-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.order-history-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.order-history-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f1f1f1;
+}
+
+.order-history-quantity,
+.order-history-date,
+.order-history-seller {
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.order-history-type {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.order-history-type-buy {
+  color: #ef5350; /* softer red for dark bg */
+}
+.order-history-type-sell {
+  color: #66bb6a; /* softer green for dark bg */
+}
+.order-history-type-box {
+  color: #ff7a21; /* orange highlight for Box*/
+}
+
+.order-history-amount-wrapper {
   display: flex;
   align-items: center;
+  gap: 0.25rem;
+}
+
+.order-history-amount {
+  margin-top: 2px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.order-history-arrow-wrapper-buy,
+.order-history-arrow-wrapper-box,
+.order-history-arrow-wrapper-sell{
+  padding: 3px;
+  border-radius: 100%;
+}
+.order-history-arrow-wrapper-buy{
+background-color: #ef5350;
+}
+.order-history-arrow-wrapper-box{
+  background-color: #ff7a21;
+}
+.order-history-arrow-wrapper-sell{
+  background-color: #66bb6a;
+}
+.order-history-arrow {
+  width: 16px;
+  height: 16px;
+  filter: invert(1); /* make arrow white-ish on dark bg */
+}
+
+.order-history-rate-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  background: linear-gradient(45deg, #FFD721, #DC0FFF); /* yellow → purple */
+  color: #1e1e1e;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+.order-history-rate-btn:hover {
+  opacity: 0.85;
+}
+
+.order-history-unavailable {
+  font-size: 0.55rem;
+  color: #888;
+}
+.order-history-rated {
+  font-size: 0.8rem;
+  color: var(--teal_blue-color);
+  font-weight: 500;
+}
+
+.order-history-expand {
+  margin-top: 0.5rem;
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(90deg, #FFD721, #DC0FFF);
+  border-image-slice: 1; /* gradient line for theme accent */
+  padding-top: 0.5rem;
+}
+.order-history-expand-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  font-size: 0.85rem;
+  color: #aaa; /* less vibrant than blue */
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.order-history-expand-btn:hover {
+  color: #fff; /* brighten a bit on hover */
+}
+.order-history-expand-content {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+/* --------------------------==================== Rating Modal ====================--------------------------    */
+/* Overlay */
+.rating-modal-order-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
   justify-content: center;
-  z-index: 1000;
+  align-items: center;
+  z-index: 50;
 }
 
-.modal-order {
-   background: black; 
-  padding: 24px;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 100%;
-  z-index: 1001; /* Đảm bảo nó nổi trên lớp overlay */
-  position: relative; /* Có thể thêm nếu modal đang bị mất layout */
+/* Modal Container */
+.rating-modal-container {
+  --white: hsl(0, 0%, 100%);
+  --black: hsl(240, 15%, 9%);
+  --paragraph: hsl(0, 0%, 83%);
+  --line: hsl(240, 9%, 17%);
+  --primary: hsl(266, 92%, 58%);
+
+  position: relative;
+  max-height: 100vh;
+  width: 90%;
+  max-width: 420px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+
+  padding: 20px 28px;
+  background-color: hsla(240, 15%, 9%, 1);
+  background-image: radial-gradient(at 88% 40%,
+      hsla(240, 15%, 9%, 1) 0px,
+      transparent 85%),
+    radial-gradient(at 49% 30%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 0% 64%, hsla(263, 93%, 56%, 1) 0px, transparent 85%),
+    radial-gradient(at 41% 94%, hsla(284, 100%, 84%, 1) 0px, transparent 85%),
+    radial-gradient(at 100% 99%, hsla(306, 100%, 57%, 1) 0px, transparent 85%);
+
+  border-radius: 1rem;
+  box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.25) inset;
 }
 
-.modal-order textarea {
-  width: 100%;
-  margin-top: 10px;
-  padding: 8px;
-  resize: vertical;
+.rating-modal-container .card__border {
+  overflow: hidden;
+  pointer-events: none;
+
+  position: absolute;
+  z-index: -10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  background-image: linear-gradient(0deg,
+      hsl(0, 0%, 100%) -50%,
+      hsl(0, 0%, 40%) 100%);
+
+  border-radius: 1rem;
 }
 
-.modal-order-actions {
+.rating-modal-container .card__border::before {
+  content: "";
+  pointer-events: none;
+
+  position: fixed;
+  z-index: 200;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%), rotate(0deg);
+  transform-origin: left;
+
+  width: 200%;
+  height: 10rem;
+  background-image: linear-gradient(0deg,
+      hsla(0, 0%, 100%, 0) 0%,
+      hsl(277, 95%, 60%) 40%,
+      hsl(277, 95%, 60%) 60%,
+      hsla(0, 0%, 40%, 0) 100%);
+
+  animation: rotate 8s linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modal content */
+.rating-modal-box {
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* Hide scrollbar visually but keep scroll functionality */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.rating-modal-box::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari */
+}
+
+/* Title & Subtitle */
+.rating-modal-order-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.rating-modal-order-subtitle {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin-bottom: 1.2rem;
+}
+
+/* Loading spinner container */
+.rating-modal-loading {
+  text-align: center;
+  padding: 20px;
+}
+
+/* Buttons */
+.rating-modal-order-actions {
+  margin-top: 1.5rem;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 1rem;
 }
 
-.modal-order-actions button {
-  padding: 6px 12px;
+.rating-modal-btn-cancel,
+.rating-modal-btn-submit {
+  padding: 0.5rem 1.2rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.rating-modal-btn-cancel {
+  background: var(--light-3-o50);
+  color: var(--light-3);
+  padding: 6px 16px;
+  border-radius: 12px;
   cursor: pointer;
 }
 
-.modal-order-actions button:first-child {
-  background-color: #ccc;
+.rating-modal-btn-cancel:hover {
+  background: var(--light-4-o50);
 }
 
-.modal-order-actions button:last-child {
-  background-color: #1890ff;
-  color: white;
+.rating-modal-btn-submit {
+  background-image: linear-gradient(0deg,
+      rgb(12, 248, 236) 0%,
+      rgba(197, 107, 240, 1) 100%);
+  border: 0;
+  box-shadow: inset 0 -2px 25px -4px var(--light-3);
+  color: var(--light-3);
+  padding: 6px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.rating-modal-btn-submit:hover {
+  background-image: linear-gradient(0deg,
+      rgba(12, 248, 236, 0.71) 0%,
+      rgba(198, 107, 240, 0.79) 100%);
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For tablets & small laptops ≤ 765px */
+@media (max-width: 765px) {
+  .order-history-card {
+    padding: 0.8rem;
+  }
+
+  .order-history-name {
+    font-size: 1.2rem;
+  }
+
+  .order-history-quantity,
+  .order-history-date,
+  .order-history-seller,
+  .order-history-type,
+  .order-history-expand-content {
+    font-size: 0.75rem;
+  }
+
+  .order-history-amount {
+    font-size: 0.9rem;
+  }
+
+  .order-history-arrow {
+    width: 14px;
+    height: 14px;
+  }
+
+  .order-history-rate-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+  }
+}
+
+/* For mobile ≤ 480px */
+@media (max-width: 480px) {
+  .order-history-card {
+    padding: 0.6rem;
+    border-radius: 10px;
+  }
+
+  .order-history-card-top {
+    flex-direction: column-reverse; /* stack left + right */
+    gap: 0.5rem;
+  }
+
+  .order-history-card-right {
+    align-items: flex-end; /* keep its own content to the right */
+    width: 100%;
+    gap: 0.4rem;
+}
+
+  .order-history-name {
+    font-size: 1rem;
+  }
+
+  .order-history-quantity,
+  .order-history-date,
+  .order-history-seller,
+  .order-history-type,
+  .order-history-expand-content {
+    font-size: 0.7rem;
+  }
+
+  .order-history-amount {
+    font-size: 0.85rem;
+  }
+
+  .order-history-arrow-wrapper-buy,
+  .order-history-arrow-wrapper-box,
+  .order-history-arrow-wrapper-sell{
+    padding: 2px;
+    border-radius: 100%;
+  }
+
+  .order-history-arrow {
+    width: 10px;
+    height: 10px;
+  }
+
+  .order-history-rate-btn {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .order-history-expand-btn {
+    font-size: 0.75rem;
+  }
 }

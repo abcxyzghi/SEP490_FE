@@ -25,7 +25,7 @@ export default function Loginpage() {
 
   return (
     <div class="loginpage-container">
-      <video autoPlay muted loop playsInline class="logister-background-video">
+      <video autoPlay muted loop playsInline className="logister-background-video">
         {/* logister-background-video share same css style with Registerpage.css */}
         <source src={lvaVid} type="video/mp4" />
       </video>

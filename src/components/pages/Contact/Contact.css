@@ -1,0 +1,332 @@
+  .contact-container {
+      margin: 2.6rem auto 4.2rem auto;
+      padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+  }
+
+  /* --------------------------==================== Header text ====================--------------------------  */
+  .contact-content {
+      text-align: center;
+      margin-bottom: 20px;
+  }
+
+  .contactUs-title {
+      font-size: 2.7rem;
+      line-height: 1.2;
+      background: linear-gradient(360deg, #DC0FFF, #FFD721);
+      background-clip: text;
+      /* Standard property for compatibility */
+      -moz-background-clip: text;
+      /* Firefox */
+      -ms-background-clip: text;
+      /* Internet Explorer */
+      -webkit-text-fill-color: transparent;
+  }
+
+  .contactUs-description {
+      font-size: 0.9rem;
+      color: var(--light-2-o80);
+  }
+
+  /* --------------------------==================== Suggestion board ====================--------------------------  */
+  .contact-issues-table {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 39rem;
+      min-width: 10rem;
+      padding: 1rem;
+      background-color: var(--dark-5-o90);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e0e0e0;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      /* box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); */
+  }
+
+  @media (max-width: 800px) {
+      .contact-issues-table {
+          /* Smaller height for tablets */
+          width: 30rem;
+      }
+  }
+
+  @media (max-width: 600px) {
+      .contact-issues-table {
+          /* Smaller height for tablets */
+          width: 25rem;
+      }
+  }
+
+  .contact-issues-table h4 {
+      margin-bottom: 0.7rem;
+      font-size: 1.2rem;
+      color: var(--light-2);
+      align-self: flex-start;
+  }
+
+  .contact-issues-grid {
+      display: flex;
+      /* Allow buttons to wrap to the next line */
+      flex-wrap: wrap;
+      gap: 10px;
+      /* Adjust height to fit 6 issues */
+      max-height: 150px;
+      width: 100%;
+      /* Enable vertical scrolling */
+      overflow-y: auto;
+      scrollbar-width: thin;
+  }
+
+  .contact-issues-grid::-webkit-scrollbar {
+      /* Width of the scrollbar for Webkit browsers */
+      width: 2px;
+  }
+
+  .contact-issues-grid::-webkit-scrollbar-thumb {
+      /* Scrollbar thumb color */
+      background-color: rgba(0, 0, 0, 0.3) !important;
+      border-radius: 4px;
+  }
+
+  .contact-issues-grid button {
+      padding: 0.2rem 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid #d0d0d0;
+      border-radius: 8px;
+      background-color: var(--dark-2-o50);
+      color: var(--light-3);
+      cursor: pointer;
+      transition: ease-in-out 0.2s ease-in-out;
+
+      /* Make buttons take 50% of the container width, minus gap */
+      width: calc(50% - 10px);
+      /* Ensure padding and border are included in the width */
+      box-sizing: border-box;
+  }
+
+  .contact-issue-icon {
+      height: 60%;
+      filter: var(--lightSVG-2);
+  }
+
+  .contact-issues-grid button:hover {
+      background-color: var(--light-2);
+      color: var(--dark-3);
+  }
+
+  .contact-issues-grid button:hover .contact-issue-icon {
+      filter: var(--darkSVG-2);
+  }
+
+  .contact-issues-grid button.active {
+      background-color: var(--dark-3-o50);
+      border: 2px solid var(--secondary-5);
+      transition: all 0.2s ease;
+
+  }
+
+  .contact-issues-grid button.active .issue-icon {
+      filter: invert(100%) brightness(100%);
+      transition: all 0.2s ease;
+  }
+
+  /* --------------------------==================== More detail textarea ====================--------------------------  */
+  .contact-issues-textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      background-color: var(--dark-1-o90);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--light-2-o50);
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+  }
+
+  .contact-issues-textarea label {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--light-4);
+  }
+
+  .textarea-box {
+      margin-top: 0.6rem;
+      /* Ensure it spans the full width of the parent */
+      width: 100%;
+      height: 3rem;
+      padding: 0.5rem;
+      color: var(--light-4);
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      resize: none;
+      /* Include padding in width calculation */
+      box-sizing: border-box;
+      /* Allows resizing only vertically */
+      resize: vertical;
+  }
+
+  .contact-table form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      /* max-width: 600px; */
+  }
+
+  /* --------------------------==================== Name & Email inputs ====================--------------------------  */
+  .asterisk {
+      color: red;
+  }
+
+  .contact-table form label {
+      font-size: 0.9rem;
+      color: var(--light-1-o80);
+      margin-bottom: 0.3rem;
+  }
+
+  .contact-table form input {
+      height: 2.5rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      color: var(--light-2-o80);
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+  }
+
+  .contact-table form button {
+      height: 2.5rem;
+      background: var(--gradient-light);
+      border: none;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+
+      /* Disable drag functionality */
+      -webkit-user-drag: none;
+      /* Disable text selection */
+      user-select: none;
+  }
+
+  .contact-table form button:hover {
+      background: linear-gradient(45deg, #DC0FFF, #FFD721);
+  }
+
+  .contact-table form button:active {
+      transform: scale(0.99);
+  }
+
+  .contactUs-title,
+  .contactUs-description,
+  .contact-issues-table h4,
+  .contact-issues-textarea label,
+  .contact-table form label {
+      /* Disable mouse interactions */
+      pointer-events: none;
+      /* Disable drag functionality */
+      -webkit-user-drag: none;
+      /* Disable text selection */
+      user-select: none;
+      /* Prevent text selection on iOS */
+      -webkit-touch-callout: none;
+  }
+
+  .contact-table input::placeholder,
+  .contact-table textarea::placeholder {
+      user-select: none;
+  }
+
+  .contact-table input,
+  .contact-table textarea {
+      -webkit-user-drag: none;
+      user-select: none;
+  }
+
+  
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 765px */
+@media (max-width: 765px) {
+  .contactUs-title {
+    font-size: 2rem;
+  }
+
+  .contactUs-description {
+    font-size: 0.8rem;
+  }
+
+  .contact-issues-table {
+    width: 22rem;
+    padding: 0.7rem;
+  }
+
+  .contact-issues-table h4 {
+    font-size: 1rem;
+  }
+
+  .contact-issues-grid {
+    gap: 8px;
+  }
+
+  .contact-issues-grid button {
+    width: 100%; /* Stack buttons full width */
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .contact-issue-icon {
+    height: 50%;
+  }
+
+  .textarea-box {
+    font-size: 0.85rem;
+  }
+
+  .contact-table form input,
+  .contact-table form button {
+    font-size: 0.85rem;
+  }
+}
+
+/* For screen width ≤ 360px */
+@media (max-width: 360px) {
+  .contactUs-title {
+    font-size: 1.6rem;
+  }
+
+  .contactUs-description {
+    font-size: 0.75rem;
+  }
+
+  .contact-issues-table {
+    width: 100%; /* Full width on very small screens */
+    padding: 0.5rem;
+  }
+
+  .contact-issues-grid {
+    flex-direction: column; /* Force column layout */
+    max-height: unset; /* No vertical scroll */
+  }
+
+  .contact-issues-grid button {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .textarea-box {
+    font-size: 0.8rem;
+  }
+
+  .contact-table form input,
+  .contact-table form button {
+    font-size: 0.8rem;
+  }
+}

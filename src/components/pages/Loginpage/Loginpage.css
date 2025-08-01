@@ -51,6 +51,13 @@
     margin-left: -10px;
 }
 
+.loginpage-headleft-bar:hover{
+    transform: scale(0.98);
+    background: var(--dark-2-o90);
+    z-index: -200;
+}
+
+/* Logo btn */
 .loginpage-logo {
     background: var(--primary-1-o90);
     border-radius: 50px;

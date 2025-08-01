@@ -3,6 +3,12 @@ import { PATH_NAME } from "./Pathname";
 import Registerpage from "../components/pages/Registerpage/Registerpage";
 import Loginpage from "../components/pages/Loginpage/Loginpage";
 import NotFoundpage from "../components/pages/NotFoundpage/NotFoundpage";
+import TermsOfService from "../components/pages/TermsOfService/TermsOfService";
+import PrivacyPolicy from "../components/pages/PrivacyPolicy/PrivacyPolicy";
+import CopyrightPolicy from "../components/pages/CopyrightPolicy/CopyrightPolicy";
+import Contact from "../components/pages/Contact/Contact";
+import HelpCenter from "../components/pages/HelpCenter/HelpCenter";
+import About from "../components/pages/About/About";
 import Homepage from "../components/pages/Homepage/Homepage";
 import Shoppage from "../components/pages/Shoppage/Shoppage";
 import Auctionpage from "../components/pages/Auctionpage/Auctionpage";
@@ -32,6 +38,12 @@ export const logisterRoutes = [
 ];
 
 export const publicRoutes = [
+    { path: PATH_NAME.TERM_OF_SERVICE, element: <TermsOfService /> },
+    { path: PATH_NAME.PRIVACY_POLICY, element: <PrivacyPolicy /> },
+    { path: PATH_NAME.COPYRIGHT_POLICY, element: <CopyrightPolicy /> },
+    { path: PATH_NAME.CONTACT, element: <Contact /> },
+    { path: PATH_NAME.HELPCENTER, element: <HelpCenter /> },
+    { path: PATH_NAME.ABOUT, element: <About /> },
     { path: PATH_NAME.HOMEPAGE, element: <Homepage /> },
     { path: PATH_NAME.SHOP_PAGE, element: <Shoppage /> },
     { path: PATH_NAME.AUNCTION_PAGE, element: <Auctionpage /> },

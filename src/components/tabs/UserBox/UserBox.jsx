@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './UserBox.css';
 import { getAllBoxOfProfile, openUserBox } from '../../../services/api.user';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
+import GachaAnimation from '../../libs/GachaAnimation/GachaAnimation';
 
 const PAGE_SIZE = 8;
 
@@ -47,8 +48,7 @@ export default function UserBox() {
     try {
       const res = await openUserBox(boxId);
       if (res.status) {
-        setOpenResult(res.data);
-        // Optionally, update box quantity in UI
+        setOpenResult({ ...res.data, boxId }); // Inject boxId
         setBoxes(prev => prev.map(box => box.id === boxId ? { ...box, quantity: box.quantity - 1 } : box));
       } else {
         setOpenResult({ error: 'Failed to open box' });
@@ -58,6 +58,7 @@ export default function UserBox() {
     }
     setOpeningBoxId(null);
   };
+
 
   // Skeleton loading
   if (loading) {
@@ -85,72 +86,74 @@ export default function UserBox() {
   return (
     <div className="userBox-card-list-container">
       <div className="userBox-card-grid">
-        {visibleBoxes.map((item, index) => {
-          const isExpanded = expandedCardIndex === index;
-          return (
-            <div
-              className={`userBox-card-item ${isExpanded ? 'userBox-card-item--expanded' : ''}`}
-              key={item.id}
-              onMouseEnter={() => setExpandedCardIndex(index)}
-              onMouseLeave={() => setExpandedCardIndex(null)}
-            >
-              <div className="userBox-card-background">
-                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.boxTitle} background`} />
-              </div>
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.boxTitle} className="userBox-card-image" />
+        {visibleBoxes
+          .filter(item => item.quantity > 0)
+          .map((item, index) => {
+            const isExpanded = expandedCardIndex === index;
+            return (
               <div
-                className={`userBox-card-overlay ${isExpanded ? 'userBox-card-overlay--expanded' : ''}`}
-                style={{
-                  transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                  maxHeight: isExpanded ? '300px' : '60px',
-                  opacity: isExpanded ? 1 : 0.85,
-                  overflow: 'hidden',
-                }}
+                className={`userBox-card-item ${isExpanded ? 'userBox-card-item--expanded' : ''}`}
+                key={item.id}
+                onMouseEnter={() => setExpandedCardIndex(index)}
+                onMouseLeave={() => setExpandedCardIndex(null)}
               >
-                <div className="userBox-card-toggle">
-                  <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+                <div className="userBox-card-background">
+                  <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.boxTitle} background`} />
                 </div>
+                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.boxTitle} className="userBox-card-image" />
                 <div
-                  className="userBox-card-slide-content"
+                  className={`userBox-card-overlay ${isExpanded ? 'userBox-card-overlay--expanded' : ''}`}
                   style={{
-                    transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                    transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
-                    opacity: isExpanded ? 1 : 0,
-                    pointerEvents: isExpanded ? 'auto' : 'none',
+                    transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                    maxHeight: isExpanded ? '300px' : '60px',
+                    opacity: isExpanded ? 1 : 0.85,
+                    overflow: 'hidden',
                   }}
                 >
-                  {isExpanded && (
-                    <>
-                      <div className="userBox-card-title oxanium-bold">
-                        {item.boxTitle}
-                      </div>
-                      <div className="userBox-card-quantity oxanium-bold">Qty: {item.quantity}</div>
-                      <div className="userBox-card-actions">
-                        <button
-                          className="userBox-view-button"
-                          onClick={() => navigate(`/boxdetailpage/${item.boxId}`)}
-                        >
-                          <span className="userBox-view-button-text oleo-script-bold">View Detail</span>
-                        </button>
-                        <button
-                          className={`userBox-open-button oleo-script-bold ${openingBoxId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
-                          disabled={item.quantity === 0 || openingBoxId === item.id}
-                          onClick={() => handleOpenBox(item.id)}
-                        >
-                          {openingBoxId === item.id ? (
-                            <span className="loading loading-bars loading-md"></span>
-                          ) : (
-                            <span className="userBox-open-button-text oleo-script-bold">Open</span>
-                          )}
-                        </button>
-                      </div>
-                    </>
-                  )}
+                  <div className="userBox-card-toggle">
+                    <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+                  </div>
+                  <div
+                    className="userBox-card-slide-content"
+                    style={{
+                      transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                      transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
+                      opacity: isExpanded ? 1 : 0,
+                      pointerEvents: isExpanded ? 'auto' : 'none',
+                    }}
+                  >
+                    {isExpanded && (
+                      <>
+                        <div className="userBox-card-title oxanium-bold">
+                          {item.boxTitle}
+                        </div>
+                        <div className="userBox-card-quantity oxanium-bold">Qty: {item.quantity}</div>
+                        <div className="userBox-card-actions">
+                          <button
+                            className="userBox-view-button"
+                            onClick={() => navigate(`/boxdetailpage/${item.boxId}`)}
+                          >
+                            <span className="userBox-view-button-text oleo-script-bold">View Detail</span>
+                          </button>
+                          <button
+                            className={`userBox-open-button oleo-script-bold ${openingBoxId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                            disabled={item.quantity === 0 || openingBoxId === item.id}
+                            onClick={() => handleOpenBox(item.id)}
+                          >
+                            {openingBoxId === item.id ? (
+                              <span className="loading loading-bars loading-md"></span>
+                            ) : (
+                              <span className="userBox-open-button-text oleo-script-bold">Open</span>
+                            )}
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
 
       {boxes.length === 0 && (
@@ -171,23 +174,17 @@ export default function UserBox() {
       )}
 
       {openResult && (
-        <div className="userBox-open-result" style={{ marginTop: 16 }}>
-          {openResult.error ? (
-            <span style={{ color: 'red' }}>{openResult.error}</span>
-          ) : (
-            <div>
-              <h4>Box Opened!</h4>
-              <div><strong>Product:</strong> {openResult.productName}</div>
-              <div><strong>Rarity:</strong> {openResult.rarity}</div>
-              <img
-                src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${openResult.urlImage}`}
-                alt={openResult.productName}
-                className="userBox-open-result-image"
-                style={{ maxWidth: 300, display: 'block', marginTop: 8 }}
-              />
-            </div>
-          )}
-        </div>
+        <GachaAnimation
+          result={openResult}
+          boxId={openResult.boxId}
+          boxImageUrl={
+            boxes.find(b => b.id === openResult.boxId)?.urlImage || ''
+          }
+          onViewDetail={() => handleViewDetail(openResult)}
+          onClose={() => setOpenResult(null)}
+          onOpenMore={(id) => handleOpenBox(id)}
+          remainingQuantity={boxes.find(b => b.id === openResult.boxId)?.quantity || 0}
+        />
       )}
     </div>
   );
