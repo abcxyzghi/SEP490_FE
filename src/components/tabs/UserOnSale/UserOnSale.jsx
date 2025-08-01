@@ -51,8 +51,13 @@ export default function UserOnSale({ products, productsLoading }) {
   // Khi props.products thay đổi, cập nhật vào state nội bộ để dễ dàng quản lý
   useEffect(() => {
     if (products) {
-      // Nếu là chủ trang, hiển thị tất cả. Nếu là khách, chỉ hiển thị sản phẩm đang bán.
-      const filtered = isOwner ? products : products.filter((product) => product.isSell);
+      // Nếu là chủ trang, hiển thị tất cả, nhưng ẩn sản phẩm nếu isSell = false và quantity = 0
+      let filtered;
+      if (isOwner) {
+        filtered = products.filter(product => !(product.isSell === false && product.quantity === 0));
+      } else {
+        filtered = products.filter(product => product.isSell);
+      }
       setProductList(filtered);
     }
   }, [products, isOwner]);
