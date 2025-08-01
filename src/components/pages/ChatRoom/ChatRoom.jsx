@@ -16,6 +16,7 @@ export default function ChatRoom({ otherUserId = '' }) {
   const [inputMsg, setInputMsg] = useState('');
   const [myName, setMyName] = useState('');
   const [partnerName, setPartnerName] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const chatEndRef = useRef(null);
 
   const user = useSelector(state => state.auth.user);
@@ -24,9 +25,10 @@ export default function ChatRoom({ otherUserId = '' }) {
   const finalOtherUserId = otherUserId || useParams().otherUserId || useParams().id || '';
 
   const handleSend = () => {
-    if (!inputMsg.trim()) return;
+    if (!inputMsg.trim() || isSending) return;
+    setIsSending(true);
     sendMessage(inputMsg);
-    setInputMsg('');
+    // Không setMessages ở đây, chỉ cập nhật khi nhận từ websocket
   };
 
   const scrollToBottom = () => {
@@ -79,9 +81,10 @@ export default function ChatRoom({ otherUserId = '' }) {
           created_at: isValidDate(m.created_at) ? m.created_at : new Date().toISOString()
         }));
         setMessages(fixedMessages);
-
+        // Đánh dấu các tin nhắn lịch sử đã có để tránh duplicate khi nhận từ websocket
         fixedMessages.forEach(msg => {
-          const key = `${msg.sender_id}-${msg.content}-${new Date(msg.created_at).getTime()}`;
+          // Ưu tiên dùng _id nếu có, nếu không thì dùng key cũ
+          const key = msg._id ? msg._id : `${msg.sender_id}-${msg.content}-${new Date(msg.created_at).getTime()}`;
           receivedMessageIds.current.add(key);
         });
 
@@ -96,10 +99,16 @@ export default function ChatRoom({ otherUserId = '' }) {
                 ? parsed.created_at
                 : new Date().toISOString();
 
-              const key = `${parsed.sender_id}-${parsed.content}-${new Date(parsed.created_at).getTime()}`;
+              // Ưu tiên dùng _id nếu có, nếu không thì dùng key cũ
+              const key = parsed._id ? parsed._id : `${parsed.sender_id}-${parsed.content}-${new Date(parsed.created_at).getTime()}`;
               if (!receivedMessageIds.current.has(key)) {
                 receivedMessageIds.current.add(key);
                 setMessages(prev => [...prev, parsed]);
+                // Nếu là tin nhắn của mình vừa gửi thì clear input và cho phép gửi tiếp
+                if (parsed.sender_id === myId) {
+                  setInputMsg('');
+                  setIsSending(false);
+                }
               }
             } catch (err) {
               console.error('❌ Lỗi parse message:', err);
@@ -122,9 +131,17 @@ export default function ChatRoom({ otherUserId = '' }) {
     return () => disconnectWebSocket();
   }, [finalOtherUserId, myId]);
 
+  // Chỉ scroll xuống khi mình gửi tin nhắn (isMine)
+  const prevMessagesLength = useRef(0);
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (messages.length > prevMessagesLength.current) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg && lastMsg.sender_id === myId) {
+        scrollToBottom();
+      }
+    }
+    prevMessagesLength.current = messages.length;
+  }, [messages, myId]);
 
   return (
     <div className="w-full h-screen flex flex-col items-center bg-gray-100 p-4">
@@ -161,12 +178,14 @@ export default function ChatRoom({ otherUserId = '' }) {
           }}
           placeholder="Nhập tin nhắn..."
           className="flex-1 p-2 border border-gray-300 rounded-l"
+          disabled={isSending}
         />
         <button
           onClick={handleSend}
-          className="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700"
+          className={`bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 ${isSending ? 'opacity-60 cursor-not-allowed' : ''}`}
+          disabled={isSending}
         >
-          Gửi
+          {isSending ? 'Đang gửi...' : 'Gửi'}
         </button>
       </div>
     </div>
