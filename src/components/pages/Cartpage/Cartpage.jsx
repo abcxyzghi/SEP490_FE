@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { buyMysteryBox } from '../../../services/api.mysterybox';
-import { buyProductOnSale } from '../../../services/api.product';
+import { buyProductOnSale, getProductOnSaleDetail } from '../../../services/api.product';
 import { fetchUserInfo } from '../../../services/api.auth';
 import { setUser } from '../../../redux/features/authSlice';
 import { clearCart, removeItemFromCart } from '../../../redux/features/cartSlice';
-import { clearAllCart, removeFromCart } from '../../../services/api.cart';
+import { clearAllCart, removeFromCart, updateCartQuantity } from '../../../services/api.cart';
 import './Cartpage.css';
 import SearchBar from '../../libs/SearchFilterSort/SearchBar';
 import FilterPanel from '../../libs/SearchFilterSort/FilterPanel';
@@ -45,7 +45,7 @@ export default function Cartpage() {
       return showModal('warning', 'No Selection', 'Please select at least one item to buy.');
     }
 
-    setLoadingBtn(true); // start loading
+    setLoadingBtn(true);
     try {
       let boughtCount = 0;
       let isBoxTab = activeTab === 'Mystery Boxes';
@@ -64,7 +64,37 @@ export default function Cartpage() {
           if (result?.status) {
             boughtCount++;
           } else {
-            showModal('error', 'Purchase Failed', result?.error || `Failed to buy product: ${item.name}`);
+            // Nếu mua thất bại, fetch lại thông tin sản phẩm
+            const productDetail = await getProductOnSaleDetail(item.id);
+
+            if (productDetail?.status && productDetail.data) {
+              const availableQty = productDetail.data.quantity;
+
+              const confirmBuy = window.confirm(
+                `Hiện tại trong shop chỉ còn ${availableQty} sản phẩm. Bạn có muốn mua không?`
+              );
+
+              if (confirmBuy) {
+                console.log(" Update quantity:", availableQty);
+
+                await updateCartQuantity({ Id: item.id, quantity: availableQty });
+                dispatch({
+                  type: "cart/updateQuantity",
+                  payload: {
+                    id: item.id,
+                    type: "product",
+                    quantity: availableQty,
+                  },
+                });
+              } else {
+                console.log("🗑️ Clear cart");
+                await removeFromCart({ sellProductId: item.id });
+                dispatch(removeItemFromCart({ id: item.id, type: "product" }));
+              }
+
+            } else {
+              showModal('error', 'Purchase Failed', result?.error || `Failed to buy product: ${item.name}`);
+            }
           }
         }
       }
