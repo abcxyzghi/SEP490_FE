@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import {
   Accordion,
   AccordionSummary,
@@ -20,6 +21,7 @@ const rarityColors = {
 
 export default function BoxRatelity({ mysteryBoxDetail }) {
   const [expanded, setExpanded] = useState(false);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const navigate = useNavigate(); // INIT NAVIGATOR
 
   if (!mysteryBoxDetail || !mysteryBoxDetail.products) {
@@ -100,7 +102,8 @@ export default function BoxRatelity({ mysteryBoxDetail }) {
                 {grouped[rarity].map((product) => (
                   <div key={product.productId} className="box-ratelity-product-card">
                     <img
-                      src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`}
+                      src={buildImageUrl(product.urlImage, useBackupImg)} 
+                      onError={() => setUseBackupImg(true)}
                       alt={product.productName}
                       className="box-ratelity-product-image"
                     />

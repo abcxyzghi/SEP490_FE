@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './UserCollectionList.css';
 import { getAllCollectionOfProfile } from '../../../services/api.user';
 import { getAllProductOfUserCollection, createSellProduct } from '../../../services/api.user';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import ThreeDots from '../../../assets/Icon_fill/Meatballs_menu.svg';
 import MessageModal from '../../libs/MessageModal/MessageModal';
@@ -14,6 +15,7 @@ const PAGE_SIZE = 8;
 export default function UserCollectionList({ refreshOnSaleProducts }) {
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loadingBtnId, setLoadingBtnId] = useState(null);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -171,103 +173,6 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
 
   return (
-    // <div>
-    //   <h3>User Collections</h3>
-    //   {collections.length === 0 ? (
-    //     <div>No collections found.</div>
-    //   ) : (
-    //     <ul>
-    //       {collections.map(col => (
-    //         <li key={col.id}>
-    //           <strong>{col.collectionTopic}</strong> (Count: {col.count})
-    //           <button style={{ marginLeft: 8 }} onClick={() => handleShowProducts(col.id)}>
-    //             View Products
-    //           </button>
-    //         </li>
-    //       ))}
-    //     </ul>
-    //   )}
-
-    //   {showProducts && (
-    //     <div style={{ marginTop: 16 }}>
-    //       <button style={{ marginBottom: 8 }} onClick={() => { setShowProducts(false); setSelectedCollectionId(null); setProducts([]); }}>Close Products</button>
-    //       <h4>Products in Collection</h4>
-    //       {products.length === 0 ? (
-    //         <div>No products found in this collection.</div>
-    //       ) : (
-    //         <ul>
-    //           {products.map(prod => (
-    //             <li key={prod.userProductId} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-    //               <img
-    //                 src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${prod.urlImage}`}
-    //                 alt={prod.productName}
-    //                 style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, marginRight: 12 }}
-    //               />
-    //               <div style={{ flex: 1 }}>
-    //                 <div><b>{prod.productName}</b></div>
-    //                 <div>Quantity: <span style={{ fontWeight: 500 }}>{prod.quantity}</span></div>
-    //               </div>
-    //               <button style={{ marginLeft: 8 }} onClick={() => openSellModal(prod)}>
-    //                 Sell
-    //               </button>
-    //             </li>
-    //           ))}
-    //           {/* Sell Modal */}
-    //           {sellModalOpen && (
-    //             <div style={{
-    //               position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-    //               background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
-    //             }} onClick={() => setSellModalOpen(false)}>
-    //               <div style={{ background: '#fff', color: '#222', borderRadius: 12, padding: 32, minWidth: 320, maxWidth: 400, boxShadow: '0 4px 24px rgba(0,0,0,0.3)', position: 'relative' }} onClick={e => e.stopPropagation()}>
-    //                 <button style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', color: '#222', fontSize: 22, cursor: 'pointer' }} onClick={() => setSellModalOpen(false)}>&times;</button>
-    //                 <h4>Sell Product</h4>
-    //                 <div style={{ marginBottom: 12 }}><b>{sellModalProduct?.productName}</b></div>
-    //                 <form onSubmit={handleSellProduct}>
-    //                   <div style={{ marginBottom: 8 }}>
-
-    //                     <label>Quantity: </label>
-    //                     <input type="number" min={1} value={sellForm.quantity} onChange={e => setSellForm(f => ({ ...f, quantity: Number(e.target.value) }))} required style={{ width: 60 }} />
-    //                   </div>
-    //                   <div style={{ marginBottom: 8 }}>
-    //                     <label>Description: </label>
-    //                     <input type="text" value={sellForm.description} onChange={e => setSellForm(f => ({ ...f, description: e.target.value }))} required style={{ width: '90%' }} />
-    //                   </div>
-    //                   <div style={{ marginBottom: 8 }}>
-    //                     <label>Price: </label>
-    //                     <input type="number" min={1000} step={1000} value={sellForm.price} onChange={e => setSellForm(f => ({ ...f, price: Number(e.target.value) }))} required style={{ width: 100 }} />
-    //                   </div>
-    //                   <button type="submit" disabled={sellLoading} style={{ marginTop: 8 }}>
-    //                     {sellLoading ? 'Selling...' : 'Confirm Sell'}
-    //                   </button>
-    //                 </form>
-    //                 {sellResult && (
-    //                   <div style={{ marginTop: 8, color: sellResult.status ? 'green' : 'red' }}>
-    //                     {sellResult.status ? sellResult.data?.message : (sellResult.error || 'Failed to sell product.')}
-    //                     {sellResult.status && sellResult.data?.exchangeCode && (
-    //                       <div>Exchange Code: <b>{sellResult.data.exchangeCode}</b>
-    //                         <p>After you sell successful , we will deduct 5% of your profit</p>
-    //                       </div>
-    //                     )}
-    //                   </div>
-    //                 )}
-    //               </div>
-    //             </div>
-    //           )}
-    //         </ul>
-    //       )}
-    //       {sellResult && (
-    //         <div style={{ marginTop: 8, color: sellResult.status ? 'green' : 'red' }}>
-    //           {sellResult.status ? sellResult.data?.message : (sellResult.error || 'Failed to sell product.')}
-    //           {sellResult.status && sellResult.data?.exchangeCode && (
-    //             <div>Exchange Code: <b>{sellResult.data.exchangeCode}</b>
-    //               <p>After you sell successful , we will deduct 5% of your profit</p>
-    //             </div>
-    //           )}
-    //         </div>
-    //       )}
-    //     </div>
-    //   )}
-    // </div>
     <>
       {/* Breadcrumbs section */}
       <div className="breadcrumb oxanium-bold text-purple-600 mt-6 text-center">
@@ -310,12 +215,17 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                     onMouseLeave={() => setExpandedCardIndex(null)}
                   >
                     <div className="userCollectionList-card-background-preview">
-                      {col.image.length === 1 ? (
+                      {col.image.length === 0 ? (
+                        <div className="userCollectionList-card-background-none">
+                          <span>No preview image shown</span>
+                        </div>
+                      ) : col.image.length === 1 ? (
                         <div className="userCollectionList-card-background-single">
                           <img
-                            src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${col.image[0].urlImage}`}
+                            src={buildImageUrl(col.image[0].urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
                             alt={`${col.collectionTopic} background`}
-                            className="userCollectionList-card-background-img"
+                            className="userCollectionList-card-background-img-single"
                           />
                         </div>
                       ) : (
@@ -323,20 +233,24 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                           {col.image.map((img, index) => (
                             <img
                               key={img.id || index}
-                              src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${img.urlImage}`}
+                              src={buildImageUrl(img.urlImage, useBackupImg)}
+                              onError={() => setUseBackupImg(true)}
                               alt={`${col.collectionTopic} background-${index}`}
-                              className="userCollectionList-card-background-img"
+                              className="userCollectionList-card-background-img-group"
                             />
                           ))}
                         </div>
                       )}
                     </div>
 
-
-                    <div className={`userCollectionList-card-image-preview ${col.image.length === 1 ? "single" : "multi"}`}>
-                      {col.image.length === 1 ? (
+                    <div className={`userCollectionList-card-image-preview ${col.image.length === 0 ? "none" : col.image.length === 1 ? "single" : "multi"
+                      }`}>
+                      {col.image.length === 0 ? (
+                        <span className="userCollectionList-card-no-image oxanium-semibold">No preview image shown</span>
+                      ) : col.image.length === 1 ? (
                         <img
-                          src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${col.image[0].urlImage}`}
+                          src={buildImageUrl(col.image[0].urlImage, useBackupImg)}
+                          onError={() => setUseBackupImg(true)}
                           alt={`collection-0`}
                           className="userCollectionList-card-image-single"
                         />
@@ -344,7 +258,8 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                         col.image.map((img, i) => (
                           <img
                             key={img.id}
-                            src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${img.urlImage}`}
+                            src={buildImageUrl(img.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
                             alt={`collection-${i}`}
                             className="userCollectionList-card-image-multi"
                           />
@@ -416,7 +331,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       {showProducts && (
         <div className="userCollectionList-card-list-container">
           {visibleProducts.length === 0 ? (
-            <div className="text-gray-500 mt-2">No products found in this collection.</div>
+            <div className="text-gray-500 mt-2">This collection is empty.</div>
           ) : (
             <div className="userCollectionList-card-grid">
               {visibleProducts
@@ -431,9 +346,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                       onMouseLeave={() => setExpandedCardIndex(null)}
                     >
                       <div className="userCollectionList-card-background">
-                        <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${prod.urlImage}`} alt={`${prod.productName} background`} />
+                        <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${prod.productName} background`} />
                       </div>
-                      <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${prod.urlImage}`} alt={prod.productName} className="userCollectionList-card-image" />
+                      <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={prod.productName} className="userCollectionList-card-image" />
                       <div
                         className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
                         style={{

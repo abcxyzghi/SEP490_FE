@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCollectionDetail } from '../../../services/api.product';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import Tilt from 'react-parallax-tilt';
 import './CollectionDetailPage.css';
 import LeftArrow from '../../../assets/Icon_line/Arrow_Left_LG.svg'
@@ -19,6 +20,7 @@ const normalizeRarity = (rarity) =>
 export default function CollectionDetailPage() {
     const { id } = useParams();
     const [data, setData] = useState(null);
+    const [useBackupImg, setUseBackupImg] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -83,7 +85,7 @@ export default function CollectionDetailPage() {
                         {/* Image section on the left */}
                         <div className="collection-detail-image-wrapper" style={{ filter: glow }}>
                             <div className="collection-detail-image-bg">
-                                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${data.urlImage}`} alt={data.name} />
+                                <img src={buildImageUrl(data.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={data.name} />
                             </div>
                             <Tilt
                                 glareEnable={true}
@@ -99,7 +101,8 @@ export default function CollectionDetailPage() {
                             >
                                 <img
                                     className="collection-detail-main-image"
-                                    src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${data.urlImage}`}
+                                    src={buildImageUrl(data.urlImage, useBackupImg)} 
+                                    onError={() => setUseBackupImg(true)}
                                     alt={data.name}
                                 />
                             </Tilt>

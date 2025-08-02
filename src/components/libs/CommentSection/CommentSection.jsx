@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import "./CommentSection.css";
 import { getAllCommentsBySellProduct, createComment, getAllBadwords } from '../../../services/api.comment';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 
 // Utility to remove Vietnamese accents
@@ -38,6 +39,7 @@ function validateCommentInput(content) {
 const CommentSection = ({ sellProductId }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [comments, setComments] = useState([]);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null); // Separate fetch error
   const [inputError, setInputError] = useState(null); // Separate input error
@@ -285,9 +287,10 @@ const CommentSection = ({ sellProductId }) => {
                       <img
                         src={
                           comment.profileImage
-                            ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${comment.profileImage}`
+                            ? buildImageUrl(comment.profileImage, useBackupImg)
                             : ProfileHolder
                         }
+                        onError={() => setUseBackupImg(true)}
                         alt="Profile"
                         className="comment-er-avatar"
                       />

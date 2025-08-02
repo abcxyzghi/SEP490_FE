@@ -1,0 +1,223 @@
+.transaction-history-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  padding: 30px;
+  color: var(--light-1);
+  width: 100%;
+  height: 90vh;
+  max-height: 500px;
+  overflow-y: auto;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.transaction-history-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* --------------------------==================== No transaction in Transaction History  ====================--------------------------    */
+.transaction-empty {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #aaa;
+    
+  margin: auto;
+  padding: 2rem;
+  border: 1px dashed #444;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.8);
+}
+
+/* --------------------------==================== Order History card list ====================--------------------------    */
+.transaction-card-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  
+  width: 100%;         /* allow it to shrink/grow */
+  max-width: 800px;    /* cap the maximum width */
+  margin: 0 auto;      /* center on large screens */
+}
+
+.transaction-card {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.transaction-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.transaction-type {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f1f1f1;
+}
+
+.transaction-code,
+.transaction-date {
+  font-size: 0.8rem;
+  color: #bbb;
+}
+
+.transaction-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+/* Amount wrapper */
+.transaction-amount-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.transaction-amount {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.transaction-amount-in {
+  color: #43a047; /* green for Recharge */
+}
+
+.transaction-amount-out {
+  color: #e53935; /* red for Withdraw */
+}
+
+/* Arrow wrapper colors like OrderHistory */
+.transaction-arrow-wrapper-in {
+  padding: 3px;
+  border-radius: 100%;
+  background-color: #43a047; /* green for Recharge */
+}
+
+.transaction-arrow-wrapper-out {
+  padding: 3px;
+  border-radius: 100%;
+  background-color: #e53935; /* red for Withdraw */
+}
+
+.transaction-history-arrow {
+  width: 16px;
+  height: 16px;
+  filter: invert(1); /* make arrow white */
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.status-badge-pending {
+  background: #ff9800;
+  color: var(--light-2);
+}
+
+.status-badge-success {
+  background: #4caf50;
+  color: var(--light-2);
+}
+
+.status-badge-cancel {
+  background: #f44336;
+  color: var(--light-2);
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For tablets & small laptops ≤ 765px */
+@media (max-width: 765px) {
+  .transaction-card {
+    padding: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .transaction-type {
+    font-size: 1rem;
+  }
+
+  .transaction-code,
+  .transaction-date {
+    font-size: 0.75rem;
+  }
+
+  .transaction-amount {
+    font-size: 0.9rem;
+  }
+
+  .transaction-history-arrow {
+    width: 14px;
+    height: 14px;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Mobile ≤ 480px */
+@media (max-width: 480px) {
+  .transaction-card {
+    flex-direction: column-reverse; /* stack right below left */
+    align-items: flex-start;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+  }
+
+  .transaction-card-right {
+    align-items: flex-end; /* keep its own content to the right */
+    width: 100%;
+    gap: 0.4rem;
+  }
+
+  .transaction-type {
+    font-size: 0.9rem;
+  }
+
+  .transaction-code,
+  .transaction-date {
+    font-size: 0.7rem;
+  }
+
+  .transaction-amount {
+    font-size: 0.85rem;
+  }
+
+  .transaction-history-arrow {
+    width: 12px;
+    height: 12px;
+  }
+
+  .status-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 8px;
+  }
+}

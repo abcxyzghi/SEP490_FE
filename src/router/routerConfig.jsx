@@ -25,7 +25,13 @@ import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
 import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
 import Achievementpage from "../components/pages/Achievementpage/Achievementpage";
 import ChatRoom from "../components/pages/ChatRoom/ChatRoom";
+
 import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
+import ModProfile from "../components/moderatorPages/ModProfile/ModProfile";
+import ModReport from "../components/moderatorPages/ModReport/ModReport";
+import ModProduct from "../components/moderatorPages/ModProduct/ModProduct";
+import ModMysteryBox from "../components/moderatorPages/ModMysteryBox/ModMysteryBox";
+import ModAuction from "../components/moderatorPages/ModAuction/ModAuction";
 
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
 import UserManagement from "../components/adminPages/UserManagement/UserManagement";
@@ -65,8 +71,7 @@ export const privateRoutes = [
     { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
     { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
-    { path: PATH_NAME.NOTIFICATION_PAGE, element: <Notificationpage />, role: ['user'] },
-
+    { path: PATH_NAME.ACTIVITIES_PAGE, element: <Notificationpage />, role: ['user'] },
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
 
 ];

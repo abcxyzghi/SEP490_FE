@@ -28,6 +28,9 @@ const backupPythonAxios = axios.create({
   timeout: 5000,
 });
 
+export const IMAGE_BASE_URL = `${CS_API}/api/ImageProxy`;
+export const BACKUP_IMAGE_BASE_URL = `${BACKUP_CS_API}/api/ImageProxy`;
+
 // Gắn token cho tất cả instance
 // const attachToken = (instance) => {
 //   instance.interceptors.request.use(

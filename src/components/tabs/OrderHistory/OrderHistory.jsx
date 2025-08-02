@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getOrderHistory } from '../../../services/api.order';
 import { createRate, getAllRatingsBySellProduct } from '../../../services/api.comment';
-import "../OrderHistory/OrderHistory.css";
+import "./OrderHistory.css";
 import { useSelector } from 'react-redux';
-import "../OrderHistory/OrderHistory.css";
 import Rating from '@mui/material/Rating';
 import Arrow_Right from "../../../assets/Icon_line/Arrow_Right_LG.svg";
 
@@ -128,121 +127,133 @@ export default function OrderHistory() {
 
   return (
     <div className='order-history-container'>
-      {/* Order History card list */}
-      <div className="order-history-card-list">
-        {orders.map((order, idx) => {
-          const alreadyRated = ratedProductIds.includes(order.sellProductId);
-          const isAvailable = !unavailableProductIds.includes(order.sellProductId);
-          const isValidType = order.type !== "Box" && order.type !== "ProductSell";
+      {/* If no orders */}
+      {orders.length === 0 ? (
+        <div className="order-history-empty">
+          <p className="order-history-empty-text oleo-script-regular">
+            No orders yet.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Order History card list */}
+          <div className="order-history-card-list">
+            {orders.map((order, idx) => {
+              const alreadyRated = ratedProductIds.includes(order.sellProductId);
+              const isAvailable = !unavailableProductIds.includes(order.sellProductId);
+              const isValidType = order.type !== "Box" && order.type !== "ProductSell";
 
-          // Type + Money
-          let typeLabel = order.type;
-          let typeClass = "";
-          let typeClassIcon = "";
-          let moneySign = "";
+              // Type + Money
+              let typeLabel = order.type;
+              let typeClass = "";
+              let typeClassIcon = "";
+              let moneySign = "";
 
-          if (order.type === "ProductBuy") {
-            typeLabel = "Buy";
-            typeClass = "order-history-type-buy";
-            typeClassIcon = "order-history-arrow-wrapper-buy";
-            moneySign = "-";  // money out
-          } else if (order.type === "Box") {
-            typeLabel = "Box";
-            typeClass = "order-history-type-box";
-            typeClassIcon = "order-history-arrow-wrapper-box";
-            moneySign = "-"; // money out
-          } else if (order.type === "ProductSell") {
-            typeLabel = "Sell";
-            typeClass = "order-history-type-sell";
-            typeClassIcon = "order-history-arrow-wrapper-sell";;
-            moneySign = "+"; // money in
-          }
+              if (order.type === "ProductBuy") {
+                typeLabel = "Product purchased";
+                typeClass = "order-history-type-buy";
+                typeClassIcon = "order-history-arrow-wrapper-buy";
+                moneySign = "-";  // money out
+              } else if (order.type === "Box") {
+                typeLabel = "Mystery box purchased";
+                typeClass = "order-history-type-box";
+                typeClassIcon = "order-history-arrow-wrapper-box";
+                moneySign = "-"; // money out
+              } else if (order.type === "ProductSell") {
+                typeLabel = "Product sold";
+                typeClass = "order-history-type-sell";
+                typeClassIcon = "order-history-arrow-wrapper-sell";;
+                moneySign = "+"; // money in
+              }
 
-          const cardId = order.transactionCode || idx;
+              const cardId = order.transactionCode || idx;
 
-          return (
-            <div key={cardId} className="order-history-card">
-              {/* Top row */}
-              <div className="order-history-card-top">
-                {/* Left Section */}
-                <div className="order-history-card-left">
-                  <h3 className="order-history-name oleo-script-bold">
-                    {order.productName || order.boxName || "N/A"}
-                  </h3>
-                  <p className="order-history-quantity oxanium-regular">
-                    Qty: {order.quantity}
-                  </p>
-                  <p className="order-history-date oxanium-regular">
-                    Purchased At: {new Date(order.purchasedAt).toLocaleString()}
-                  </p>
-                </div>
+              return (
+                <div key={cardId} className="order-history-card">
+                  {/* Top row */}
+                  <div className="order-history-card-top">
+                    {/* Left Section */}
+                    <div className="order-history-card-left">
+                      <h3 className="order-history-name oleo-script-bold">
+                        {order.productName || order.boxName || "N/A"}
+                      </h3>
+                      <p className="order-history-quantity oxanium-regular">
+                        Qty: {order.quantity}
+                      </p>
+                      <p className="order-history-date oxanium-regular">
+                        Purchased At: {new Date(order.purchasedAt).toLocaleString()}
+                      </p>
+                    </div>
 
-                {/* Right Section */}
-                <div className="order-history-card-right">
-                  <div className="order-history-amount-wrapper">
-                    <span className={`order-history-amount ${typeClass} oxanium-semibold`}>
-                      {moneySign}
-                      {`${formatFullWithDots(order.totalAmount)} VND`}
-                    </span>
-                    <div className={`order-history-arrow-wrapper ${typeClassIcon}`}>
-                      <img
-                        src={Arrow_Right}
-                        alt="Arrow"
-                        className={`order-history-arrow ${order.type === "ProductSell" ? "-rotate-45" : "rotate-45"
-                          }`}
-                      />
+                    {/* Right Section */}
+                    <div className="order-history-card-right">
+                      <div className="order-history-amount-wrapper">
+                        <span className={`order-history-amount ${typeClass} oxanium-semibold`}>
+                          {moneySign}
+                          {`${formatFullWithDots(order.totalAmount)} VND`}
+                        </span>
+                        <div className={`order-history-arrow-wrapper ${typeClassIcon}`}>
+                          <img
+                            src={Arrow_Right}
+                            alt="Arrow"
+                            className={`order-history-arrow ${order.type === "ProductSell" ? "-rotate-45" : "rotate-45"
+                              }`}
+                          />
+                        </div>
+                      </div>
+
+                      {order.type !== "Box" && (
+                        <>
+                          {!isAvailable ? (
+                            <span className="order-history-unavailable oxanium-regular">
+                              Product has been removed or does not exist
+                            </span>
+                          ) : isValidType ? (
+                            !alreadyRated ? (
+                              <button
+                                className="order-history-rate-btn"
+                                onClick={() => handleRateClick(order.sellProductId)}
+                              >
+                                Rate Us
+                              </button>
+                            ) : (
+                              <span className="order-history-rated oxanium-regular">
+                                Already Rated
+                              </span>
+                            )
+                          ) : null}
+                        </>
+                      )}
                     </div>
                   </div>
 
-                  {order.type !== "Box" && (
-                    <>
-                      {!isAvailable ? (
-                        <span className="order-history-unavailable oxanium-regular">
-                          Product has been removed or does not exist
-                        </span>
-                      ) : isValidType ? (
-                        !alreadyRated ? (
-                          <button
-                            className="order-history-rate-btn"
-                            onClick={() => handleRateClick(order.sellProductId)}
-                          >
-                            Rate Us
-                          </button>
-                        ) : (
-                          <span className="order-history-rated oxanium-regular">
-                            Already Rated
-                          </span>
-                        )
-                      ) : null}
-                    </>
-                  )}
-                </div>
-              </div>
+                  {/* Expand / Collapse */}
+                  <div className="order-history-expand">
+                    <button
+                      className="order-history-expand-btn"
+                      onClick={() => toggleExpand(cardId)}
+                    >
+                      {expanded[cardId] ? "Hide details" : "More details"}
+                    </button>
 
-              {/* Expand / Collapse */}
-              <div className="order-history-expand">
-                <button
-                  className="order-history-expand-btn"
-                  onClick={() => toggleExpand(cardId)}
-                >
-                  {expanded[cardId] ? "Hide details" : "More details"}
-                </button>
-
-                {expanded[cardId] && (
-                  <div className="order-history-expand-content">
-                    <p className='oxanium-regular'>Type: <span className={`order-history-type ${typeClass} oxanium-semibold`}>{typeLabel}</span></p>
-                    {order.type !== "Box" && (
-                      <p className='oxanium-regular'>Seller: {order.sellerUsername}</p>
+                    {expanded[cardId] && (
+                      <div className="order-history-expand-content">
+                        <p className='oxanium-regular'>Type: <span className={`order-history-type ${typeClass} oxanium-semibold`}>{typeLabel}</span></p>
+                        {order.type !== "Box" && (
+                          <p className='oxanium-regular'>Seller: {order.sellerUsername}</p>
+                        )}
+                        <p className='oxanium-regular'>Transaction Code: {order.transactionCode}</p>
+                      </div>
                     )}
-                    <p className='oxanium-regular'>Transaction Code: {order.transactionCode}</p>
                   </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
 
+      {/* Rating Modal */}
       {isModalOpen && (
         <div className="rating-modal-order-overlay">
           <div className="rating-modal-container">

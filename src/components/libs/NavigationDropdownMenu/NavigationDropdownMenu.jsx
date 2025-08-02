@@ -19,8 +19,10 @@ import { Pathname, PATH_NAME } from "../../../router/Pathname";
 import { setUser, logout } from "../../../redux/features/authSlice";
 import { fetchUserInfo } from "../../../services/api.auth";
 import { clearCart } from "../../../redux/features/cartSlice";
+import { buildImageUrl } from '../../../services/api.imageproxy';
 
 export default function NavigationDropdownMenu() {
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [subMenu, setSubMenu] = useState(null); // 'chat' | 'notification' | null
   const [submenuExiting, setSubmenuExiting] = useState(false);
@@ -124,9 +126,10 @@ export default function NavigationDropdownMenu() {
           <img
             src={
               user.profile_image
-                ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${user.profile_image}`
+                ? buildImageUrl(user.profile_image, useBackupImg)
                 : ProfileHolder
             }
+            onError={() => setUseBackupImg(true)}
             alt="Profile"
           />
         </div>
@@ -149,9 +152,10 @@ export default function NavigationDropdownMenu() {
                   <img
                     src={
                       user.profile_image
-                        ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${user.profile_image}`
+                        ? buildImageUrl(user.profile_image, useBackupImg)
                         : ProfileHolder
                     }
+                    onError={() => setUseBackupImg(true)}
                     alt="avatar"
                   />
                 </div>
