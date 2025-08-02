@@ -66,14 +66,14 @@ export default function UserOnSale({ products, productsLoading }) {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
-  
+
   // Hàm định dạng số
   const formatShortNumber = (num) => {
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
     if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
     return num.toString();
   };
-  
+
   // --- Các hàm quản lý sản phẩm được thêm lại từ code cũ ---
   const handleToggleSell = async (product) => {
     if (!product.isSell && product.quantity <= 0) {
@@ -94,7 +94,7 @@ export default function UserOnSale({ products, productsLoading }) {
       console.error(error);
       showModal('error', 'Lỗi', 'Không thể cập nhật trạng thái bán của sản phẩm.');
     } finally {
-        setLoadingBtnId(null);
+      setLoadingBtnId(null);
     }
   };
 
@@ -105,8 +105,8 @@ export default function UserOnSale({ products, productsLoading }) {
       setEditedPrice(product.price);
       setEditedDescription(productWithDescription.data.description);
     } catch (error) {
-        console.error(error);
-        showModal('error', 'Lỗi', 'Không thể lấy thông tin chi tiết sản phẩm.');
+      console.error(error);
+      showModal('error', 'Lỗi', 'Không thể lấy thông tin chi tiết sản phẩm.');
     }
   };
 
@@ -117,63 +117,77 @@ export default function UserOnSale({ products, productsLoading }) {
   const handleSave = async () => {
     const descLength = editedDescription.trim().length;
     const priceNum = Number(editedPrice);
+
     if (descLength < 10 || descLength > 300) {
       showModal('warning', 'Mô tả không hợp lệ', 'Mô tả phải từ 10 đến 300 ký tự.');
       return;
     }
+
     if (!priceNum || isNaN(priceNum) || priceNum < 1000 || priceNum > 100000000) {
       showModal('warning', 'Giá không hợp lệ', 'Giá phải từ 1.000 đến 100.000.000.');
       return;
     }
+
     try {
+      // Gọi API cập nhật
       await updateSellProduct({
         id: selectedProduct.id,
         description: editedDescription,
         price: priceNum,
         updatedAt: new Date().toISOString(),
       });
-      setProductList(prevList =>
-        prevList.map(p =>
-          p.id === selectedProduct.id
-            ? { ...p, price: priceNum, description: editedDescription }
-            : p
+
+      // ✅ Thành công thì cập nhật sản phẩm trong danh sách
+      setProductList((prevList) =>
+        prevList.map((product) =>
+          product.id === selectedProduct.id
+            ? {
+              ...product,
+              description: editedDescription,
+              price: priceNum,
+              updatedAt: new Date().toISOString(),
+            }
+            : product
         )
       );
+
       showModal('default', 'Thành công', `Đã cập nhật sản phẩm: ${selectedProduct.name}`);
       handleCloseModal();
     } catch (error) {
-      console.error(error);
+      console.error('Lỗi khi update:', error);
       showModal('error', 'Lỗi', 'Lỗi khi lưu sản phẩm.');
     }
   };
+
+
 
   // --- Hàm thêm vào giỏ hàng được giữ lại ---
   const handleAddToCart = async (productId) => {
     // ... logic thêm vào giỏ hàng không đổi
     if (!user || user.role !== 'user') {
-        return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+      return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
     const product = products.find(p => p.id === productId);
     if (!product) return;
     if (product.userId === user.user_id) {
-        return showModal('warning', 'Action Not Allowed', "You cannot add your own product to the cart.");
+      return showModal('warning', 'Action Not Allowed', "You cannot add your own product to the cart.");
     }
     setLoadingBtnId(productId);
     try {
-        await addToCart({ sellProductId: productId });
-        if (product) {
-            dispatch(addItemToCart({
-                id: product.id, type: 'product', name: product.name,
-                price: product.price, image: product.urlImage, quantity: 1
-            }));
-        }
-        showModal('default', 'Success', 'Successfully added to cart!');
+      await addToCart({ sellProductId: productId });
+      if (product) {
+        dispatch(addItemToCart({
+          id: product.id, type: 'product', name: product.name,
+          price: product.price, image: product.urlImage, quantity: 1
+        }));
+      }
+      showModal('default', 'Success', 'Successfully added to cart!');
     } catch (error) {
-        const errorMessage = error?.response?.data?.error || 'Failed to add to cart.';
-        showModal('error', 'Error', errorMessage);
-        console.error(error);
+      const errorMessage = error?.response?.data?.error || 'Failed to add to cart.';
+      showModal('error', 'Error', errorMessage);
+      console.error(error);
     } finally {
-        setLoadingBtnId(null);
+      setLoadingBtnId(null);
     }
   };
 
@@ -212,24 +226,24 @@ export default function UserOnSale({ products, productsLoading }) {
               <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.name} className="userOnSale-card-image" />
               <div
                 className={`userOnSale-card-overlay ${isExpanded ? 'userOnSale-card-overlay--expanded' : ''}`}
-                 style={{
-                    transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                    maxHeight: isExpanded ? '300px' : '60px',
-                    opacity: isExpanded ? 1 : 0.85,
-                    overflow: 'hidden',
-                  }}              >
-                 {/* ... phần toggle và slide content không đổi */}
+                style={{
+                  transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                  maxHeight: isExpanded ? '300px' : '60px',
+                  opacity: isExpanded ? 1 : 0.85,
+                  overflow: 'hidden',
+                }}              >
+                {/* ... phần toggle và slide content không đổi */}
 
                 {/* --- Nội dung card được cập nhật --- */}
-               <div
-  className="userOnSale-card-slide-content"
-  style={{
-    transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-    transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
-    opacity: isExpanded ? 1 : 0,
-    pointerEvents: isExpanded ? 'auto' : 'none',
-  }}
->
+                <div
+                  className="userOnSale-card-slide-content"
+                  style={{
+                    transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                    transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
+                    opacity: isExpanded ? 1 : 0,
+                    pointerEvents: isExpanded ? 'auto' : 'none',
+                  }}
+                >
                   {isExpanded && (
                     <>
                       <div className="userOnSale-card-title oxanium-bold">{item.name}</div>
@@ -237,7 +251,7 @@ export default function UserOnSale({ products, productsLoading }) {
                         <div className="userOnSale-card-price oxanium-bold">{formatShortNumber(item.price)} VND</div>
                         <div className="userOnSale-card-quantity oxanium-bold">Qty: {item.quantity}</div>
                       </div>
-                       {/* Thêm trạng thái bán */}
+                      {/* Thêm trạng thái bán */}
                       <div className={`font-semibold text-sm mb-2 ${item.isSell ? 'text-green-400' : 'text-red-400'}`}>
                         {item.isSell ? 'Đang bán' : 'Ngừng bán'}
                       </div>
@@ -259,8 +273,8 @@ export default function UserOnSale({ products, productsLoading }) {
                               className={`userOnSale-cart-button oxanium-bold ${loadingBtnId === item.id ? 'opacity-70 cursor-not-allowed' : ''}`}
                               disabled={loadingBtnId === item.id}
                             >
-                              {loadingBtnId === item.id ? ( <span className="loading loading-bars loading-md text-white"></span> ) 
-                              : ( <img src={ThreeDots} alt="More Icon" className='userOnSale-more-icon' /> )}
+                              {loadingBtnId === item.id ? (<span className="loading loading-bars loading-md text-white"></span>)
+                                : (<img src={ThreeDots} alt="More Icon" className='userOnSale-more-icon' />)}
                             </button>
                             <DropdownMenu anchorRef={anchorRef} isOpen={isDropdownOpen} onClose={() => toggleDropdown(index)}>
                               <div
@@ -283,7 +297,7 @@ export default function UserOnSale({ products, productsLoading }) {
                             disabled={loadingBtnId === item.id || !item.isSell}
                             onClick={(e) => { e.stopPropagation(); handleAddToCart(item.id); }}
                           >
-                             {/* ... nút thêm vào giỏ hàng không đổi */}
+                            {/* ... nút thêm vào giỏ hàng không đổi */}
                           </button>
                         )}
                       </div>
@@ -295,77 +309,101 @@ export default function UserOnSale({ products, productsLoading }) {
           );
         })}
       </div>
-        {/* ... Load more và Message Modal không đổi */}
-       {isEnd ? (
+      {/* ... Load more và Message Modal không đổi */}
+      {isEnd ? (
         <div className="userOnSale-end-content oxanium-semibold divider divider-warning">
           End of content
         </div>
-        ) : (
+      ) : (
         <button
-            className="userOnSale-loadmore-button oxanium-semibold"
-            onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, products.length))}
+          className="userOnSale-loadmore-button oxanium-semibold"
+          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, products.length))}
         >
-            Load more
+          Load more
         </button>
-        )}
+      )}
 
-        <MessageModal
-            open={modal.open}
-            onClose={() => setModal(prev => ({ ...prev, open: false }))}
-            type={modal.type}
-            title={modal.title}
-            message={modal.message}
-        />
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
 
-        {/* --- Modal Cập nhật sản phẩm được thêm vào --- */}
-        {selectedProduct && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleCloseModal}>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md text-white" onClick={(e) => e.stopPropagation()}>
-                    <h3 className="text-xl font-bold mb-4">Update Product</h3>
-                    <div className="mb-4">
-                        <label className="block mb-2 text-sm font-medium">Description:</label>
-                        <textarea
-                            value={editedDescription}
-                            onChange={(e) => {
-                              let val = e.target.value;
-                              if (val.length > 300) val = val.slice(0, 300);
-                              setEditedDescription(val);
-                            }}
-                            rows={5}
-                            minLength={10}
-                            maxLength={300}
-                            className="textarea textarea-bordered w-full bg-gray-700"
-                        />
-                        <div style={{fontSize:'12px',color: editedDescription.trim().length < 10 || editedDescription.trim().length > 300 ? 'red' : '#aaa'}}>
-                          {`Description: ${editedDescription.trim().length}/300 characters. (Min: 10, Max: 300)`}
-                        </div>
-                    </div>
-                    <div className="mb-6">
-                        <label className="block mb-2 text-sm font-medium">Price (VND):</label>
-                        <input
-                            type="number"
-                            min={1000}
-                            max={100000000}
-                            value={editedPrice}
-                            onChange={(e) => {
-                              let val = Number(e.target.value);
-                              if (val > 100000000) val = 100000000;
-                              if (val < 1000) val = 1000;
-                              setEditedPrice(val);
-                            }}
-                            className="input input-bordered w-full bg-gray-700"
-                        />
-                        <div style={{fontSize:'12px',color: Number(editedPrice) < 1000 || Number(editedPrice) > 100000000 ? 'red' : '#aaa'}}>
-                          {`Price must be between 1,000 and 100,000,000`}
-                        </div>
-                    </div>
-                    <div className="flex justify-end gap-4">
-                        <button onClick={handleCloseModal} className="btn btn-ghost">Cancel</button>
-                        <button onClick={handleSave} className="btn btn-primary">Save Changes</button>
-                    </div>
-                </div>
+      {/* --- Modal Cập nhật sản phẩm được thêm vào --- */}
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onMouseDown={handleCloseModal} // Đổi từ onClick
+        >
+          <div
+            className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md text-white"
+            onMouseDown={(e) => e.stopPropagation()} // Ngăn modal đóng khi tương tác bên trong
+          >
+            <h3 className="text-xl font-bold mb-4">Update Product</h3>
+
+            <div className="mb-4">
+              <label className="block mb-2 text-sm font-medium">Description:</label>
+              <textarea
+                value={editedDescription}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  if (val.length > 300) val = val.slice(0, 300);
+                  setEditedDescription(val);
+                }}
+                rows={5}
+                minLength={10}
+                maxLength={300}
+                className="textarea textarea-bordered w-full bg-gray-700"
+              />
+              <div
+                style={{
+                  fontSize: '12px',
+                  color:
+                    editedDescription.trim().length < 10 || editedDescription.trim().length > 300
+                      ? 'red'
+                      : '#aaa',
+                }}
+              >
+                {`Description: ${editedDescription.trim().length}/300 characters. (Min: 10, Max: 300)`}
+              </div>
             </div>
-        )}
+
+            <div className="mb-6">
+              <label className="block mb-2 text-sm font-medium">Price (VND):</label>
+              <input
+                type="number"
+                value={editedPrice}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setEditedPrice(val === '' ? '' : val);
+                }}
+                className="input input-bordered w-full bg-gray-700"
+              />
+              <div
+                style={{
+                  fontSize: '12px',
+                  color:
+                    Number(editedPrice) < 1000 || Number(editedPrice) > 100000000 ? 'red' : '#aaa',
+                }}
+              >
+                {`Price must be between 1,000 and 100,000,000`}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <button onClick={handleCloseModal} className="btn btn-ghost">
+                Cancel
+              </button>
+              <button onClick={handleSave} className="btn btn-primary">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
