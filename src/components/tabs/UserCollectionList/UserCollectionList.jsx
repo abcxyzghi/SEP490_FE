@@ -102,7 +102,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   // Open sell modal
   const openSellModal = (product) => {
     setSellModalProduct(product);
-    setSellForm({ quantity: 1, description: '', price: 100000 });
+    setSellForm({ quantity: 1, description: '', price: '' });
     setSellModalOpen(true);
     setSellResult(null);
   };
@@ -111,8 +111,12 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const handleSellProduct = async (e) => {
     e.preventDefault();
     // Validation: all fields required
-    if (!sellForm.quantity || !sellForm.description.trim() || !sellForm.price) {
+    if (!sellForm.quantity || !sellForm.description.trim() || sellForm.price === "" || sellForm.price === null || isNaN(Number(sellForm.price))) {
       return showModal('warning', 'Required Action', "Please enter all fields to sell.");
+    }
+    // Validation: price must be positive and not zero
+    if (Number(sellForm.price) <= 0) {
+      return showModal('warning', 'Invalid Price', "Price must be greater than 0.");
     }
     // Validation: description length 10-300 characters
     const descLength = sellForm.description.trim().length;
@@ -120,7 +124,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       return showModal('warning', 'Description length', "Description must be between 10 and 300 characters.");
     }
     // Validation: price between 1000 and 100000000
-    if (sellForm.price < 1000 || sellForm.price > 100000000) {
+    if (Number(sellForm.price) < 1000 || Number(sellForm.price) > 100000000) {
       return showModal('warning', 'Price out of range', "Price must be between 1,000 and 100,000,000.");
     }
     // Validation: quantity must be > 0

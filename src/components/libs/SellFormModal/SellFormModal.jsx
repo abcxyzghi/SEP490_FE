@@ -55,15 +55,16 @@ export default function SellFormModal({
                             <label className='oxanium-regular'>Price:</label>
                         <input
                             type="number"
-                            min={minPrice}
-                            max={maxPrice}
-                            step={1000}
+                            min={0}
                             value={form.price}
                             onChange={(e) => {
-                                let val = Number(e.target.value);
-                                if (val > maxPrice) val = maxPrice;
-                                if (val < minPrice) val = minPrice;
-                                setForm((f) => ({ ...f, price: val }));
+                                let val = e.target.value;
+                                // Prevent negative input visually
+                                if (val === "" || Number(val) < 0) {
+                                    setForm((f) => ({ ...f, price: "" }));
+                                } else {
+                                    setForm((f) => ({ ...f, price: Number(val) }));
+                                }
                             }}
                             className="sellModal-input"
                             required

@@ -22,6 +22,8 @@ export default function ReportHistory() {
             <tr>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Title</th>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Content</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Reported User</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Reported Product</th>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Status</th>
               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Created At</th>
             </tr>
@@ -31,6 +33,8 @@ export default function ReportHistory() {
               <tr key={report.id || idx}>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.title}</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.content}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.sellerName || 'Unknown'}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.productName || 'Unknown'}</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.status ? 'Resolved' : 'Pending'}</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{new Date(report.createdAt).toLocaleString()}</td>
               </tr>
