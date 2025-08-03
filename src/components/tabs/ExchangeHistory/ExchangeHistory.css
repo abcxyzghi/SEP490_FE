@@ -1,0 +1,45 @@
+/* Nền overlay phủ toàn màn hình */
+.modal-feedback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* nền đen mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* đảm bảo nằm trên cùng */
+}
+
+/* Hộp modal */
+.modal-feedback {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
+  color: #000; /* ✅ chữ trong modal mặc định màu đen */
+}
+
+/* Tiêu đề modal */
+.modal-feedback h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: #000; /* ✅ đảm bảo tiêu đề cũng màu đen */
+}
+
+/* Thêm hiệu ứng xuất hiện */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
