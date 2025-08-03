@@ -30,51 +30,52 @@ export default function ExchangeHistory() {
   const [feedbackRating, setFeedbackRating] = useState(5); // default 5
   const [selectedExchangeId, setSelectedExchangeId] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [sentRes, receivedRes] = await Promise.all([
-          getBuyer(),
-          getReceive(),
-        ]);
+  // Đưa fetchData ra ngoài useEffect và bọc bằng useCallback để tránh warning
+  const fetchData = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [sentRes, receivedRes] = await Promise.all([
+        getBuyer(),
+        getReceive(),
+      ]);
 
-        const sentArray = Array.isArray(sentRes) ? sentRes : [sentRes];
-        setSent(sentArray);
-        setReceived(Array.isArray(receivedRes) ? receivedRes : [receivedRes]);
+      const sentArray = Array.isArray(sentRes) ? sentRes : [sentRes];
+      setSent(sentArray);
+      setReceived(Array.isArray(receivedRes) ? receivedRes : [receivedRes]);
 
-        const feedbackStatusMap = {};
+      const feedbackStatusMap = {};
 
-        const feedbackDetailTemp = {};
-        for (const item of sentArray) {
-          try {
-            const res = await getFeedbackOfSellProduct(item.itemReciveId);
-            const feedbackData = res?.data || [];
-            const myFeedback = feedbackData.find((fb) => fb.userId === myId);
-            feedbackStatusMap[String(item.id)] = !!myFeedback;
-            if (myFeedback) {
-              feedbackDetailTemp[String(item.id)] = myFeedback;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 500));
-          } catch (err) {
-            console.warn(`Lỗi khi fetch feedback cho item ${item.itemReciveId}`, err);
+      const feedbackDetailTemp = {};
+      for (const item of sentArray) {
+        try {
+          const res = await getFeedbackOfSellProduct(item.itemReciveId);
+          const feedbackData = res?.data || [];
+          const myFeedback = feedbackData.find((fb) => fb.userId === myId);
+          feedbackStatusMap[String(item.id)] = !!myFeedback;
+          if (myFeedback) {
+            feedbackDetailTemp[String(item.id)] = myFeedback;
           }
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        } catch (err) {
+          console.warn(`Lỗi khi fetch feedback cho item ${item.itemReciveId}`, err);
         }
-        setFeedbackMap(feedbackStatusMap);
-        setFeedbackDetailMap(feedbackDetailTemp);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to fetch exchange history');
-      } finally {
-        setLoading(false);
       }
-    };
+      setFeedbackMap(feedbackStatusMap);
+      setFeedbackDetailMap(feedbackDetailTemp);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to fetch exchange history');
+    } finally {
+      setLoading(false);
+    }
+  }, [myId]);
 
+  useEffect(() => {
     if (myId) {
       fetchData();
     }
-  }, [myId]);
+  }, [myId, fetchData]);
 
   console.log(feedbackMap)
   // Cancel request (for sent)
@@ -176,7 +177,7 @@ if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
 
       message.success("Feedback thành công");
       setIsModalOpen(false);
-    } catch (error) {
+    } catch {
       toast.error("Gửi feedback thất bại");
     }
   };
