@@ -89,6 +89,7 @@ export default function ReportHistory() {
           <p>No {selectedType} reports yet.</p>
         </div>
       ) : (
+
         <div className="report-history-card-list">
           {displayedReports.map((report, idx) => (
             <div key={report.id || idx} className="report-history-card">
@@ -127,6 +128,32 @@ export default function ReportHistory() {
             </div>
           ))}
         </div>
+
+//         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+//           <thead>
+//             <tr>
+//               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Title</th>
+//               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Content</th>
+//               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Reported User</th>
+//               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Reported Product</th>
+//               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Status</th>
+//               <th style={{ border: '1px solid #ccc', padding: '8px' }}>Created At</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {reports.map((report, idx) => (
+//               <tr key={report.id || idx}>
+//                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.title}</td>
+//                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.content}</td>
+//                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.sellerName || 'Unknown'}</td>
+//                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.productName || 'Unknown'}</td>
+//                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{report.status ? 'Resolved' : 'Pending'}</td>
+//                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{new Date(report.createdAt).toLocaleString()}</td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+
       )}
     </div>
   );
