@@ -7,12 +7,14 @@ import AddToCart from '../../../assets/Icon_fill/Bag_fill.svg';
 import { addToCart } from '../../../services/api.cart';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from '../../../redux/features/cartSlice'; // <-- Import addItemToCart
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 
 const PAGE_SIZE = 8;
 
 export default function BoxList({ searchText, selectedSort, ascending, priceRange }) {
   const [boxes, setBoxes] = useState([]);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
@@ -170,9 +172,9 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
               onMouseLeave={() => setExpandedCardIndex(null)}
             >
               <div className="boxList-card-background">
-                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
+                <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${item.name} background`} />
               </div>
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.mysteryBoxName} className="boxList-card-image" />
+              <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={item.mysteryBoxName} className="boxList-card-image" />
               <div
                 className={`boxList-card-overlay ${isExpanded ? 'boxList-card-overlay--expanded' : ''}`}
                 onClick={() => setExpandedCardIndex(isExpanded ? null : index)}

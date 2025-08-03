@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import './GachaAnimation.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 
 export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMore, remainingQuantity, boxId, boxImageUrl }) {
+    const [useBackupImg, setUseBackupImg] = useState(false);
     const [skipped, setSkipped] = useState(false);
     const [showCard, setShowCard] = useState(false);
     const [boxHasLanded, setBoxHasLanded] = useState(false);
@@ -112,7 +114,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                         <>
                             <motion.img
                                 key="box-left-skipped"
-                                src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${boxImageUrl}`}
+                                src={buildImageUrl(boxImageUrl, useBackupImg)} 
+                                onError={() => setUseBackupImg(true)}
                                 alt="Box Left Skipped"
                                 className="gacha-box-half gacha-box-left"
                                 initial={{ opacity: 0, x: 0, rotate: 0 }}
@@ -121,7 +124,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                             />
                             <motion.img
                                 key="box-right-skipped"
-                                src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${boxImageUrl}`}
+                                src={buildImageUrl(boxImageUrl, useBackupImg)} 
+                                onError={() => setUseBackupImg(true)}
                                 alt="Box Right Skipped"
                                 className="gacha-box-half gacha-box-right"
                                 initial={{ opacity: 0, x: 0, rotate: 0 }}
@@ -134,7 +138,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                             {!boxHasLanded && (
                                 <motion.img
                                     key="box-falling"
-                                    src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${boxImageUrl}`}
+                                    src={buildImageUrl(boxImageUrl, useBackupImg)} 
+                                    onError={() => setUseBackupImg(true)}
                                     alt="Box"
                                     className="gacha-box-image"
                                     initial={{ y: '-100vh', scale: 1 }}
@@ -154,7 +159,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                             {boxHasLanded && !boxHasTorn && (
                                 <motion.img
                                     key="box-still"
-                                    src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${boxImageUrl}`}
+                                    src={buildImageUrl(boxImageUrl, useBackupImg)} 
+                                    onError={() => setUseBackupImg(true)}
                                     alt="Box Static"
                                     className="gacha-box-image"
                                     initial={{ scale: 1 }}
@@ -167,7 +173,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                                 <>
                                     <motion.img
                                         key="box-left"
-                                        src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${boxImageUrl}`}
+                                        src={buildImageUrl(boxImageUrl, useBackupImg)} 
+                                        onError={() => setUseBackupImg(true)}
                                         alt="Box Left"
                                         className="gacha-box-half gacha-box-left"
                                         initial={{ opacity: 0, x: 0, rotate: 0 }}
@@ -176,7 +183,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                                     />
                                     <motion.img
                                         key="box-right"
-                                        src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${boxImageUrl}`}
+                                        src={buildImageUrl(boxImageUrl, useBackupImg)} 
+                                        onError={() => setUseBackupImg(true)}
                                         alt="Box Right"
                                         className="gacha-box-half gacha-box-right"
                                         initial={{ opacity: 0, x: 0, rotate: 0 }}
@@ -202,7 +210,8 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                         <div className={`gacha-card rarity-${result.rarity.toLowerCase()}`}
                         >
                             <img
-                                src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${result.urlImage}`}
+                                src={buildImageUrl(result.urlImage, useBackupImg)} 
+                                onError={() => setUseBackupImg(true)}
                                 alt={result.productName}
                                 className="gacha-card-image"
                             />

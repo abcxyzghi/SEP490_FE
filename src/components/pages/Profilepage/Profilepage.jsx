@@ -8,6 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
 import { format } from 'date-fns';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import UserOnSale from '../../tabs/UserOnSale/UserOnSale';
 import UserAchievements from '../../tabs/UserAchievements/UserAchievements';
@@ -28,6 +29,7 @@ export default function Profilepage() {
   const navigate = useNavigate();
   const [copySuccess, setCopySuccess] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
@@ -43,7 +45,7 @@ export default function Profilepage() {
   const [reportTitle, setReportTitle] = useState('');
   const [reportContent, setReportContent] = useState('');
   const [reportSubmitting, setReportSubmitting] = useState(false);
-  
+
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -76,7 +78,7 @@ export default function Profilepage() {
       fetchProfile();
     }
   }, [id, currentUserId]);
-  
+
 
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
@@ -258,9 +260,10 @@ export default function Profilepage() {
               <img
                 src={
                   profile.profileImage
-                    ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${profile.profileImage}`
+                    ? buildImageUrl(profile.profileImage, useBackupImg)
                     : ProfileHolder
                 }
+                onError={() => setUseBackupImg(true)}
                 alt="Profile"
                 className="profilepage-avatar"
               />
@@ -393,13 +396,13 @@ export default function Profilepage() {
         </Alert>
       </Snackbar>
       {/* Message Modal */}
-            <MessageModal
-              open={modal.open}
-              onClose={() => setModal(prev => ({ ...prev, open: false }))}
-              type={modal.type}
-              title={modal.title}
-              message={modal.message}
-            />
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
     </div>
   );
 }

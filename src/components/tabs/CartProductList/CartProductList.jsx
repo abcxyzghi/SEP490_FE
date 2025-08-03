@@ -3,6 +3,7 @@ import './CartProductList.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCartFromServer, clearCart, removeItemFromCart, updateQuantity } from '../../../redux/features/cartSlice';
 import { viewCart, clearAllCart, removeFromCart, updateCartQuantity } from '../../../services/api.cart';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 //import icons
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
@@ -12,6 +13,7 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart.items || []);
     const [loading, setLoading] = useState(true);
+    const [useBackupImg, setUseBackupImg] = useState(false);
     const [isClearing, setIsClearing] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
@@ -243,7 +245,8 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
                                     />
                                     <div className="cartpage-product-box">
                                         <img
-                                            src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.image}`}
+                                            src={buildImageUrl(item.image, useBackupImg)}
+                                            onError={() => setUseBackupImg(true)}
                                             alt="product"
                                             className="cartpage-product-image"
                                         />

@@ -20,16 +20,26 @@ import Settingpage from "../components/pages/Settingpage/Settingpage";
 import Notificationpage from "../components/pages/Notificationpage/Notificationpage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
+import Exchangepage from "../components/pages/Exchangepage/Exchangepage";
 import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
 import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
 import Achievementpage from "../components/pages/Achievementpage/Achievementpage";
 import ChatRoom from "../components/pages/ChatRoom/ChatRoom";
+
 import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
+import ModProfile from "../components/moderatorPages/ModProfile/ModProfile";
+import ModReport from "../components/moderatorPages/ModReport/ModReport";
+import ModProduct from "../components/moderatorPages/ModProduct/ModProduct";
+import ModMysteryBox from "../components/moderatorPages/ModMysteryBox/ModMysteryBox";
+import ModAuction from "../components/moderatorPages/ModAuction/ModAuction";
+
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
 import UserManagement from "../components/adminPages/UserManagement/UserManagement";
+import ModeratorManagement from "../components/adminPages/ModeratorManagement/ModeratorManagement";
 import SystemManagement from "../components/adminPages/SystemManagement/SystemManagement";
+import AdminCategories from "../components/adminPages/AdminCategories/AdminCategories";
+import AdminAnalytics from "../components/adminPages/AdminAnalytics/AdminAnalytics";
 import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
-import Exchangepage from "../components/pages/Exchangepage/Exchangepage";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -61,21 +71,27 @@ export const privateRoutes = [
     { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
     { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
-    { path: PATH_NAME.NOTIFICATION_PAGE, element: <Notificationpage />, role: ['user'] },
-    { path: PATH_NAME.CHAT_ROOM, element:<ChatRoom/>, role: ['user']},
+    { path: PATH_NAME.ACTIVITIES_PAGE, element: <Notificationpage />, role: ['user'] },
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
 
 ];
 
 export const moderatorRoutes = [
-    {path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard /> , role: ['moderator'] },
-   
+    {path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_REPORT, element: <ModReport /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction /> , role: ['mod'] },
 ];
 
 export const adminRoutes = [
     {path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard /> , role: ['admin'] },
     {path: PATH_NAME.ADMIN_USERMANGEMENT, element: <UserManagement /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_SYSTEMMANGEMENT, element: <SystemManagement /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_TRANSACTIONMANGEMENT, element: <TransactionManagement /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_MODERATORMANGEMENT, element: <ModeratorManagement /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_SYSTEM, element: <SystemManagement /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_CATEGORY, element: <AdminCategories /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_ANALYTIC, element: <AdminAnalytics /> , role: ['admin'] },
+    {path: PATH_NAME.ADMIN_TRANSACTION, element: <TransactionManagement /> , role: ['admin'] },
 ];
 

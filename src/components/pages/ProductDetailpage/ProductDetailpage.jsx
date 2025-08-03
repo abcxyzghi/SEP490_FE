@@ -11,6 +11,7 @@ import { addItemToCart } from '../../../redux/features/cartSlice';
 import { getAllRatingsBySellProduct } from '../../../services/api.comment';
 import { Pathname, PATH_NAME } from '../../../router/Pathname';
 import { createReport } from '../../../services/api.user';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import Rating from '@mui/material/Rating';
 import CommentSection from '../../libs/CommentSection/CommentSection';
 import MessageModal from '../../libs/MessageModal/MessageModal';
@@ -28,6 +29,7 @@ export default function ProductDetailpage() {
   const { id } = useParams();
   const currentUserId = user?.user_id;
   const [product, setProduct] = useState(null);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [ratings, setRatings] = useState([]);
@@ -363,7 +365,7 @@ export default function ProductDetailpage() {
   }
 
   // const isOwner = currentUserId === product.userId;
-  if (product && product.isSell === false && product.quantity === 0 ) {
+  if (product && product.isSell === false && product.quantity === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="text-2xl font-bold text-red-600 mb-4">This product is not available for viewing.</div>
@@ -379,10 +381,10 @@ export default function ProductDetailpage() {
         <div className="productdetailP-image-grandWrapper">
           <div className="productdetailP-image-wrapper">
             <div className="productdetailP-box-imgBG">
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={`${product.name} background`} />
+              <img src={buildImageUrl(product.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${product.name} background`} />
             </div>
             <div className="productdetailP-box-img-wrapper">
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.urlImage}`} alt={product.name}
+              <img src={buildImageUrl(product.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={product.name}
                 className="productdetailP-box-img" />
             </div>
           </div>
@@ -628,9 +630,10 @@ export default function ProductDetailpage() {
             <img
               src={
                 product.userProfileImage
-                  ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${product.userProfileImage}`
+                  ? buildImageUrl(product.userProfileImage, useBackupImg)
                   : ProfileHolder
               }
+              onError={() => setUseBackupImg(true)}
               alt="Profile"
               className="productdetailP-seller-avatar"
             />

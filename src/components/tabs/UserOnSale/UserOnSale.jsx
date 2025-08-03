@@ -11,6 +11,7 @@ import ThreeDots from '../../../assets/Icon_fill/Meatballs_menu.svg';
 // API services
 import { getProductOnSaleDetail, TurnOnOffProductOnSale, updateSellProduct } from '../../../services/api.product';
 import { addToCart } from '../../../services/api.cart';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 
 // Redux
 import { addItemToCart } from '../../../redux/features/cartSlice';
@@ -25,6 +26,7 @@ export default function UserOnSale({ products, productsLoading }) {
   // State từ code nâng cấp (UI và Customer)
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loadingBtnId, setLoadingBtnId] = useState(null);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [dropdownStates, setDropdownStates] = useState({});
@@ -221,9 +223,9 @@ export default function UserOnSale({ products, productsLoading }) {
             >
               {/* ... phần background và image không đổi */}
               <div className="userOnSale-card-background">
-                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
+                <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${item.name} background`} />
               </div>
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.name} className="userOnSale-card-image" />
+              <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={item.name} className="userOnSale-card-image" />
               <div
                 className={`userOnSale-card-overlay ${isExpanded ? 'userOnSale-card-overlay--expanded' : ''}`}
                 style={{

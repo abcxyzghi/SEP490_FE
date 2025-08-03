@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserBox.css';
 import { getAllBoxOfProfile, openUserBox } from '../../../services/api.user';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import GachaAnimation from '../../libs/GachaAnimation/GachaAnimation';
 
@@ -11,6 +12,7 @@ const PAGE_SIZE = 8;
 export default function UserBox() {
   const [boxes, setBoxes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [openingBoxId, setOpeningBoxId] = useState(null);
@@ -98,9 +100,9 @@ export default function UserBox() {
                 onMouseLeave={() => setExpandedCardIndex(null)}
               >
                 <div className="userBox-card-background">
-                  <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.boxTitle} background`} />
+                  <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${item.boxTitle} background`} />
                 </div>
-                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.boxTitle} className="userBox-card-image" />
+                <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={item.boxTitle} className="userBox-card-image" />
                 <div
                   className={`userBox-card-overlay ${isExpanded ? 'userBox-card-overlay--expanded' : ''}`}
                   style={{

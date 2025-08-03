@@ -7,6 +7,7 @@ import { fetchUserInfo } from '../../../services/api.auth';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../../../redux/features/authSlice';
 import { addItemToCart } from '../../../redux/features/cartSlice';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import BoxInformation from '../../tabs/BoxInformation/BoxInformation'
 import BoxRatelity from '../../tabs/BoxRatelity/BoxRatelity'
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
@@ -21,6 +22,7 @@ export default function BoxDetailpage() {
   const user = useSelector(state => state.auth.user);
   const { id } = useParams();
   const [box, setBox] = useState(null);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
@@ -51,23 +53,6 @@ export default function BoxDetailpage() {
   }, [id]);
 
   // Handle add to cart
-  // const handleAddToCart = async () => {
-  //   try {
-  //     await addToCart({ mangaBoxId: box.id });
-  //     dispatch(addItemToCart({
-  //       id: box.id,
-  //       type: 'box',
-  //       name: box.mysteryBoxName,
-  //       price: box.mysteryBoxPrice,
-  //       image: box.urlImage,
-  //       quantity: 1
-  //     }));
-  //     alert('✅ Added to cart!');
-  //   } catch (error) {
-  //     alert('❌ Failed to add to cart.');
-  //     console.error(error);
-  //   }
-  // };
   const handleAddToCart = async () => {
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
@@ -214,10 +199,10 @@ export default function BoxDetailpage() {
         <div className="boxdetailP-image-grandWrapper">
           <div className="boxdetailP-image-wrapper">
             <div className="boxdetailP-box-imgBG">
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={`${box.mysteryBoxName} background`} />
+              <img src={buildImageUrl(box.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${box.mysteryBoxName} background`} />
             </div>
 
-            <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${box.urlImage}`} alt={box.mysteryBoxName}
+            <img src={buildImageUrl(box.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={box.mysteryBoxName}
               className="boxdetailP-box-img" />
           </div>
         </div>

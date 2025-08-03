@@ -9,6 +9,7 @@ import { getAllProductsOnSale } from '../../../services/api.product';
 import { addToCart } from '../../../services/api.cart';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from '../../../redux/features/cartSlice';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 
 const PAGE_SIZE = 8;
@@ -17,6 +18,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingBtnId, setLoadingBtnId] = useState(null);
@@ -188,9 +190,9 @@ export default function ProductList({ searchText, selectedSort, ascending, price
               onMouseLeave={() => setExpandedCardIndex(null)}
             >
               <div className="productList-card-background">
-                <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={`${item.name} background`} />
+                <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${item.name} background`} />
               </div>
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${item.urlImage}`} alt={item.name} className="productList-card-image" />
+              <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={item.name} className="productList-card-image" />
               <div
                 className={`productList-card-overlay ${isExpanded ? 'productList-card-overlay--expanded' : ''}`}
                 onClick={() => setExpandedCardIndex(isExpanded ? null : index)}

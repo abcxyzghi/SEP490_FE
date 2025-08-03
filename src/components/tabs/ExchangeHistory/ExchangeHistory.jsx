@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getBuyer, getReceive, ExchangeAccept, ExchangeReject, ExchangeCancel } from '../../../services/api.exchange';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import { useSelector } from 'react-redux';
 import { createFeedback, getFeedbackOfSellProduct } from '../../../services/api.feedback';
 import { toast } from 'react-toastify';
@@ -8,6 +9,7 @@ import { message } from 'antd';
 export default function ExchangeHistory() {
   const [sent, setSent] = useState([]);
   const [received, setReceived] = useState([]);
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
   const user = useSelector(state => state.auth.user);
   const [feedbackMap, setFeedbackMap] = useState({});
@@ -192,14 +194,14 @@ if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
               {req.iamgeItemRecive && (
                 <div style={{ marginBottom: 8 }}>
                   <b>Goal:</b>
-                  <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${req.iamgeItemRecive}`} alt="item to receive" style={{ width: 60, height: 60, objectFit: 'cover', marginLeft: 8, borderRadius: 8, border: '1px solid #ccc' }} />
+                  <img src={buildImageUrl(req.iamgeItemRecive, useBackupImg)} onError={() => setUseBackupImg(true)} alt="item to receive" style={{ width: 60, height: 60, objectFit: 'cover', marginLeft: 8, borderRadius: 8, border: '1px solid #ccc' }} />
                 </div>
               )}
               <div><b>Products:</b>
                 <ul>
                   {req.products?.map((p) => (
                     <li key={p.productExchangeId}>
-                      <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${p.image}`} alt="product" style={{ width: 40, height: 40, objectFit: 'cover', marginRight: 8 }} />
+                      <img src={buildImageUrl(p.image, useBackupImg)} onError={() => setUseBackupImg(true)} alt="product" style={{ width: 40, height: 40, objectFit: 'cover', marginRight: 8 }} />
                       x{p.quantityProductExchange}
                     </li>
                   ))}
@@ -299,14 +301,14 @@ if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
               {req.iamgeItemRecive && (
                 <div style={{ marginBottom: 8 }}>
                   <b>Your product:</b>
-                  <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${req.iamgeItemRecive}`} alt="item to receive" style={{ width: 60, height: 60, objectFit: 'cover', marginLeft: 8, borderRadius: 8, border: '1px solid #ccc' }} />
+                  <img src={buildImageUrl(req.iamgeItemRecive, useBackupImg)} onError={() => setUseBackupImg(true)} alt="item to receive" style={{ width: 60, height: 60, objectFit: 'cover', marginLeft: 8, borderRadius: 8, border: '1px solid #ccc' }} />
                 </div>
               )}
               <div><b>Products:</b>
                 <ul>
                   {req.products?.map((p) => (
                     <li key={p.productExchangeId}>
-                      <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${p.image}`} alt="product" style={{ width: 40, height: 40, objectFit: 'cover', marginRight: 8 }} />
+                      <img src={buildImageUrl(p.image, useBackupImg)} onError={() => setUseBackupImg(true)} alt="product" style={{ width: 40, height: 40, objectFit: 'cover', marginRight: 8 }} />
                       x{p.quantityProductExchange}
                     </li>
                   ))}
