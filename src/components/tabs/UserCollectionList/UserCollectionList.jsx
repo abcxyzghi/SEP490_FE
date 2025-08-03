@@ -131,8 +131,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     }
     // Validation: quantity must be > 0
     if (sellForm.quantity <= 0) {
-      alert('Quantity must be greater than 0.');
-      return;
+     return showModal('warning', 'Invalid price input', "Quantity can't be lower than 0");
     }
     // Validation: quantity must not exceed owned
     if (sellForm.quantity > (sellModalProduct?.quantity || 0)) {
