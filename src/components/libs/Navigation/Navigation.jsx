@@ -10,6 +10,8 @@ import GrDLogo from '../../../assets/logoSVG/Logo-Grdient.svg';
 import HomeIcon from '../../../assets/Icon_fill/Home_fill.svg';
 import ShopIcon from '../../../assets/Icon_fill/Shop.svg';
 import AuctionIcon from '../../../assets/Icon_fill/Auction_fill.svg';
+import ContactIcon from '../../../assets/Icon_fill/Send_fill.svg';
+import HelpIcon from '../../../assets/Icon_fill/Question_fill.svg';
 import CartIcon from '../../../assets/Icon_fill/Bag_fill.svg';
 import ToDashboardIcon from '../../../assets/Icon_line/computer-dollar.svg';
 import PlusIcon from '../../../assets/Icon_line/add-01.svg';
@@ -54,6 +56,7 @@ export default function Navigation() {
     { label: 'Home', path: Pathname('HOMEPAGE'), icon: HomeIcon },
     { label: 'Shop', path: Pathname('SHOP_PAGE'), icon: ShopIcon },
     { label: 'Auction', path: Pathname('AUNCTION_PAGE'), icon: AuctionIcon },
+    { label: 'Contact', path: Pathname('CONTACT'), icon: ContactIcon },
   ];
 
   const handleSafeNavigate = async (to) => {
@@ -161,6 +164,19 @@ export default function Navigation() {
 
       {!isCollapsed && (
         <div className="nav-right">
+          {/* Help Center page Navigation */}
+          <NavLink to={Pathname('HELPCENTER')} className="nav-item">
+            {({ isActive }) => (
+              <div className={`nav-link-content ${isActive ? 'active' : ''}`}>
+                <div className="nav-icon-wrapper">
+                  <img src={HelpIcon} alt="Cart Icon" className="nav-icon" />
+                </div>
+                <span className="nav-label oxanium-bold">Help</span>
+                <div className="nav-underline" />
+              </div>
+            )}
+          </NavLink>
+
           {loadingUser ? (
             <div className="nav-right flex items-center gap-5">
               <div className="skeleton w-24 h-8 rounded-lg"></div>

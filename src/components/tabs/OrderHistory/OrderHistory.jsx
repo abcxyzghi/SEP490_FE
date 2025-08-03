@@ -4,6 +4,7 @@ import { createRate, getAllRatingsBySellProduct } from '../../../services/api.co
 import "./OrderHistory.css";
 import { useSelector } from 'react-redux';
 import Rating from '@mui/material/Rating';
+import MessageModal from '../../libs/MessageModal/MessageModal';
 import Arrow_Right from "../../../assets/Icon_line/Arrow_Right_LG.svg";
 
 export default function OrderHistory() {
@@ -16,6 +17,7 @@ export default function OrderHistory() {
   const [ratedProductIds, setRatedProductIds] = useState([]);
   const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
 
   const authRaw = useSelector(state => state.auth.user);
   const auth = typeof authRaw === 'string'
@@ -29,6 +31,10 @@ export default function OrderHistory() {
 
   const formatFullWithDots = (num) => {
     return Number(num).toLocaleString('de-DE'); // Ex: 9.000.000
+  };
+
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
   };
 
   // Đưa fetchAll ra ngoài để có thể gọi lại sau khi rate
@@ -81,7 +87,8 @@ export default function OrderHistory() {
     setIsLoading(true);
     const result = await createRate({ sellProductId: selectedProductId, rating: rating })
     if (result) {
-      alert("Thanks for your feedback!");
+      // alert("⭐ Thank you for your feedback! ⭐");
+      showModal('default', 'Feedback success', '⭐ Thank you for your feedback! ⭐');
       await fetchAll();
       setIsModalOpen(false);
     }

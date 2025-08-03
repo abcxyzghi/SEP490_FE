@@ -1,0 +1,224 @@
+.report-history-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  padding: 30px;
+  color: var(--light-1);
+  width: 100%;
+  height: 90vh;
+  max-height: 500px;
+  overflow-y: auto;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.report-history-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* --------------------------==================== No report in Report History  ====================--------------------------    */
+.report-history-empty {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #aaa;
+    
+  margin: auto;
+  padding: 2rem;
+  border: 1px dashed #444;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.8);
+}
+/* --------------------------==================== Toggle buttons ====================--------------------------  */
+.report-history-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.report-history-product-toggle-btn,
+.report-history-user-toggle-btn {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #2a2a2a;
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.report-history-product-toggle-btn {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.report-history-user-toggle-btn {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.report-history-product-toggle-btn:hover,
+.report-history-user-toggle-btn:hover {
+  background: #333;
+  color: var(--light-1);
+}
+
+.report-history-product-toggle-btn.active,
+.report-history-user-toggle-btn.active {
+  background: var(--purpleGr-buyBtn);
+  color: var(--light-1);
+}
+
+/* --------------------------==================== Report History card list ====================--------------------------    */
+.report-history-card-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.report-history-card {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Distinction by type */
+.report-history-card.product {
+  border-left: 4px solid #4a90e2; /* blue bar for product reports */
+}
+
+.report-history-card.user {
+  border-left: 4px solid #ff9800; /* orange bar for user reports */
+}
+
+.report-history-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.report-history-type {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f1f1f1;
+}
+
+.report-history-field {
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.report-history-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.report-history-date {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+/* Status badges (reuse TransactionHistory style) */
+.report-history-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.report-history-status-badge-pending {
+  background: #ff9800;
+  color: var(--light-2);
+}
+
+.report-history-status-badge-success {
+  background: #4caf50;
+  color: var(--light-2);
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For tablets & small laptops ≤ 765px */
+@media (max-width: 765px) {
+  .report-history-product-toggle-btn,
+  .report-history-user-toggle-btn {
+    font-size: 0.8rem;
+  }
+  
+  .report-history-card {
+    padding: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .report-history-type {
+    font-size: 1rem;
+  }
+
+  .report-history-field,
+  .report-history-date {
+    font-size: 0.75rem;
+  }
+
+  .report-history-status-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Mobile ≤ 480px */
+@media (max-width: 480px) {
+  .report-history-product-toggle-btn,
+  .report-history-user-toggle-btn {
+    font-size: 0.7rem;
+  }
+
+  .report-history-card {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+  }
+
+  .report-history-card-right {
+    align-items: flex-end;
+    width: 100%;
+    gap: 0.4rem;
+  }
+
+  .report-history-type {
+    font-size: 0.9rem;
+  }
+
+  .report-history-field,
+  .report-history-date {
+    font-size: 0.7rem;
+  }
+
+  .report-history-status-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 8px;
+  }
+}
