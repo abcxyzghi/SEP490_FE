@@ -73,7 +73,7 @@ export const privateRoutes = [
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
     { path: PATH_NAME.ACTIVITIES_PAGE, element: <Notificationpage />, role: ['user'] },
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
-    { path: PATH_NAME.CHAT_ROOM, element:<ChatRoom/>, role:['user']}
+    { path: PATH_NAME.CHAT_ROOM, element:<ChatRoom/>, role:['user']},
 
 ];
 
