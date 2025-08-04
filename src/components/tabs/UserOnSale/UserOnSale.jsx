@@ -49,20 +49,14 @@ export default function UserOnSale({ products, productsLoading }) {
   // Biến xác định người xem có phải chủ trang hay không
   const isOwner = currentUserId === profileId;
 
-  // --- useEffect từ code cũ để quản lý danh sách sản phẩm ---
-  // Khi props.products thay đổi, cập nhật vào state nội bộ để dễ dàng quản lý
+  // --- useEffect để quản lý danh sách sản phẩm, ẩn mọi sản phẩm có quantity = 0 ---
   useEffect(() => {
     if (products) {
-      // Nếu là chủ trang, hiển thị tất cả, nhưng ẩn sản phẩm nếu isSell = false và quantity = 0
-      let filtered;
-      if (isOwner) {
-        filtered = products.filter(product => !(product.isSell === false && product.quantity === 0));
-      } else {
-        filtered = products.filter(product => product.isSell);
-      }
+      // Ẩn tất cả sản phẩm có quantity = 0 cho cả owner và khách
+      const filtered = products.filter(product => product.quantity > 0);
       setProductList(filtered);
     }
-  }, [products, isOwner]);
+  }, [products]);
 
   // Hàm hiển thị modal thông báo
   const showModal = (type, title, message) => {
