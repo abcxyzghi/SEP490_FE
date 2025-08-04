@@ -40,7 +40,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
-    const [timer, setTimer] = useState(300); // 5 mins
+    const [timer, setTimer] = useState(600); // 10 mins
     const [resendTimer, setResendTimer] = useState(30);
     const [loadingResetPwd, setLoadingResetPwd] = useState(false);
     // const otpRefs = useRef([]);
@@ -148,7 +148,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
 
     const handleResend = async () => {
         setResendTimer(30);
-        setTimer(300);
+        setTimer(600);
         try {
             await sendForgotPasswordOtpApi(email);
             setSnackbar({ open: true, message: 'OTP resent to your email.', severity: 'success' });
@@ -163,7 +163,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
             await sendForgotPasswordOtpApi(email);
             setSnackbar({ open: true, message: 'OTP sent to your email.', severity: 'success' });
             setActiveStep(1);
-            setTimer(300); // reset timer for OTP
+            setTimer(600); // reset timer for OTP
             setResendTimer(30); // reset resend cooldown
         } catch (err) {
             setSnackbar({ open: true, message: err.response?.data || 'Failed to send OTP.', severity: 'error' });
@@ -438,9 +438,9 @@ export default function ForgotPasswordDialog({ open, onClose }) {
 
                 {/* Modal stepper buttons */}
                 <DialogActions>
-                    <div className='forgotPasswordDialog-Cancel-btn' onClick={onClose}>Cancel</div>
-                    {activeStep > 0 && <div className='forgotPasswordDialog-Back-btn' onClick={handleBack}>Back</div>}
-                    <div className='forgotPasswordDialog-Submit-btn' onClick={handleNext} disabled={loadingResetPwd}>
+                    <div className='forgotPasswordDialog-Cancel-btn oxanium-regular' onClick={onClose}>Cancel</div>
+                    {activeStep > 0 && <div className='forgotPasswordDialog-Back-btn oxanium-regular' onClick={handleBack}>Back</div>}
+                    <div className='forgotPasswordDialog-Submit-btn oxanium-bold' onClick={handleNext} disabled={loadingResetPwd}>
                         {loadingResetPwd ? 'Please wait...' : activeStep === 2 ? 'Reset Password' : 'Next'}
                     </div>
                 </DialogActions>

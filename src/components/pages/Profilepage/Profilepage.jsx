@@ -38,13 +38,14 @@ export default function Profilepage() {
   const [activeTab, setActiveTab] = useState('Mystery Boxes');
 
   const [showReportModal, setShowReportModal] = useState(false);
+  const [reportTitle, setReportTitle] = useState('');
+  const [reportContent, setReportContent] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  
   // Show warning modal for unauthorized actions using MessageModal
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
-  const [reportTitle, setReportTitle] = useState('');
-  const [reportContent, setReportContent] = useState('');
-  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -209,8 +210,7 @@ export default function Profilepage() {
   // Function to submit Report form
   const handleSubmitReport = async () => {
     if (!reportTitle || !reportContent) {
-      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
-      return;
+      return showModal('warning', 'Missing field', "Please fill in both Title and Content");;
     }
 
     try {
@@ -223,16 +223,16 @@ export default function Profilepage() {
       });
 
       if (res?.success || res?.status) {
-        alert('Gửi báo cáo thành công!');
+        showModal('default', 'Report sent', "The report has been sent to the higher-ups for processing.");
         setShowReportModal(false);
         setReportTitle('');
         setReportContent('');
       } else {
-        alert('Gửi không thành công (response không hợp lệ)');
+        return showModal('error', 'Error', "Report fail to sent. Invalid response");
       }
     } catch (err) {
       console.error("Report error:", err);
-      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+      return showModal('error', 'Error', "Something wrong! Please try again later.");
     } finally {
       setReportSubmitting(false);
     }
@@ -302,11 +302,11 @@ export default function Profilepage() {
                         onClick={() => {
                           // Điều hướng sang trang chat với id là id của profile đang xem
                           if (!user || !user.user_id) {
-                            showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
+                            showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
                             return;
                           }
                           if (!id) {
-                            showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
+                            showModal('warning', 'Error', "Can not find user. Please try again later.");
                             return;
                           }
                           navigate(`/chatroom/${id}`);
@@ -346,7 +346,6 @@ export default function Profilepage() {
       </div>
 
 
-
       {/* Tabs switcher */}
       <div className='tabs-switcher-section'>
         <SwitchTabs
@@ -359,25 +358,33 @@ export default function Profilepage() {
 
       {/* Report modal */}
       {showReportModal && (
-        <div className="modal2-overlay">
-          <div className="modal2">
-            <h3>Gửi báo cáo</h3>
-            <input
-              type="text"
-              placeholder="Tiêu đề"
-              value={reportTitle}
-              onChange={(e) => setReportTitle(e.target.value)}
-            />
-            <textarea
-              placeholder="Nội dung"
-              value={reportContent}
-              onChange={(e) => setReportContent(e.target.value)}
-            />
-            <div className="modal2-actions">
-              <button onClick={handleSubmitReport} disabled={reportSubmitting}>
-                {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-              </button>
-              <button onClick={() => setShowReportModal(false)}>Hủy</button>
+        <div className="report-modal-overlay">
+          <div className="report-modal-container">
+            <div className="report-modal-box">
+              <h3 className='report-modal-header oleo-script-bold'>Report this account</h3>
+              <input
+                type="text"
+                placeholder="Title"
+                className='oxanium-regular'
+                value={reportTitle}
+                onChange={(e) => setReportTitle(e.target.value)}
+              />
+              <textarea
+                placeholder="Content"
+                className='oxanium-regular'
+                value={reportContent}
+                onChange={(e) => setReportContent(e.target.value)}
+              />
+              <div className="report-modal-actions oxanium-bold">
+                <button onClick={() => setShowReportModal(false)}>Cancel</button>
+                <button onClick={handleSubmitReport} disabled={reportSubmitting}>
+                  {reportSubmitting ?
+                    <span className="loading loading-bars loading-md"></span>
+                    :
+                    'Submit report'
+                  }
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -395,6 +402,7 @@ export default function Profilepage() {
           Profile link copied to clipboard!
         </Alert>
       </Snackbar>
+
       {/* Message Modal */}
       <MessageModal
         open={modal.open}

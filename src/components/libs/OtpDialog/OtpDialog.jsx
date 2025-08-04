@@ -17,8 +17,8 @@ import { toast } from 'react-toastify';
 export default function OtpDialog({ open, email, onClose, onVerify, onResend }) {
     // OTP to store 6 digits
     const [otp, setOtp] = useState(new Array(6).fill(''));
-    // 5 minutes = 300 seconds
-    const [expirySeconds, setExpirySeconds] = useState(300);
+    // 10 minutes = 600 seconds
+    const [expirySeconds, setExpirySeconds] = useState(600);
     // 30 seconds resend cooldown
     const [resendSeconds, setResendSeconds] = useState(0);
 
@@ -99,7 +99,7 @@ export default function OtpDialog({ open, email, onClose, onVerify, onResend }) 
             toast.success('A new OTP has been sent to your email.');
             // 🔄 Reset both countdowns
             setResendSeconds(30);     // cooldown for resend
-            setExpirySeconds(300);    // reset 5 min OTP validity
+            setExpirySeconds(600);    // reset 10 min OTP validity
         } catch {
             toast.error('Failed to resend OTP.');
         }

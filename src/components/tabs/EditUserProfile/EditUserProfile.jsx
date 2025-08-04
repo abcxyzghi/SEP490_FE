@@ -1,15 +1,23 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import './EditUserProfile.css';
 import { useSelector } from 'react-redux';
 import { updateProfile, getProfile, ChangePassword, getBankID } from '../../../services/api.user';
+import { buildImageUrl } from '../../../services/api.imageproxy';
 import { Pathname, PATH_NAME } from "../../../router/Pathname";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout, updateProfileImage } from '../../../redux/features/authSlice';
 import { clearCart } from '../../../redux/features/cartSlice';
 import { Input, Select } from "antd";
+import MessageModal from '../../libs/MessageModal/MessageModal';
+import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
+// import icons
+import AddQuantity from "../../../assets/Icon_line/refresh-square-2.svg"; 
+
 const { Option } = Select;
 
 export default function EditUserProfile() {
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [bankList, setBankList] = useState([]);
   const navigate = useNavigate();
   // State cho form đổi mật khẩu
@@ -254,7 +262,8 @@ export default function EditUserProfile() {
             />
           ) : user?.profileImage ? (
             <img
-              src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${user.profileImage}`}
+              src={buildImageUrl(user.profileImage, useBackupImg)}
+              onError={() => setUseBackupImg(true)}
               alt="Current avatar"
               style={{ width: 120, height: 120, objectFit: 'cover', marginBottom: 10, borderRadius: 10 }}
             />

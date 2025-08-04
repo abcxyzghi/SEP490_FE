@@ -13,7 +13,7 @@ import AuctionIcon from '../../../assets/Icon_fill/Auction_fill.svg';
 import ContactIcon from '../../../assets/Icon_fill/Send_fill.svg';
 import HelpIcon from '../../../assets/Icon_fill/Question_fill.svg';
 import CartIcon from '../../../assets/Icon_fill/Bag_fill.svg';
-import ToDashboardIcon from '../../../assets/Icon_line/computer-dollar.svg';
+import ToDashboardIcon from '../../../assets/Icon_fill/home-hashtag.svg';
 import PlusIcon from '../../../assets/Icon_line/add-01.svg';
 import ProfileIcon from '../../../assets/Icon_line/User_cicrle.svg';
 
@@ -213,7 +213,7 @@ export default function Navigation() {
                 {/* Navigation dropdown menu */}
                 <NavigationDropdownMenu />
               </>
-            ) : user.role === 'moderator' ? (
+            ) : user.role === 'mod' ? (
               <NavLink to={Pathname('MODERATOR_DASHBOARD')} className="nav-item">
                 {({ isActive }) => (
                   <div className={`nav-link-content ${isActive ? 'active' : ''}`}>

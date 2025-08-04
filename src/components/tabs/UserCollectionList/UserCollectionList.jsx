@@ -18,6 +18,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [loadingBtnId, setLoadingBtnId] = useState(null);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  const [dropdownStates, setDropdownStates] = useState({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const [sellForm, setSellForm] = useState({ quantity: 1, description: '', price: 100000 });
 
   const navigate = useNavigate();
-  const buttonRef = useRef();
+  const anchorRefs = useRef([]);
 
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
@@ -99,6 +100,10 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     setShowProducts(true);
     setSellResult(null);
     await fetchProductsOfCollection(collectionId);
+  };
+
+    const toggleDropdown = (idx) => {
+    setDropdownStates(prev => ({ ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}), [idx]: !prev[idx] }));
   };
 
   // Open sell modal
@@ -342,12 +347,15 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                 .filter(prod => prod.quantity > 0)
                 .map((prod, idx) => {
                   const isExpanded = expandedCardIndex === idx;
+                  const isDropdownOpen = !!dropdownStates[idx];
+                  // Ensure anchorRefs.current[idx] exists
+                  if (!anchorRefs.current[idx]) anchorRefs.current[idx] = React.createRef();
                   return (
                     <div
                       key={prod.userProductId}
                       className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
                       onMouseEnter={() => setExpandedCardIndex(idx)}
-                      onMouseLeave={() => setExpandedCardIndex(null)}
+                      onMouseLeave={() => { setExpandedCardIndex(null); setDropdownStates({}); }}
                     >
                       <div className="userCollectionList-card-background">
                         <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${prod.productName} background`} />
@@ -385,28 +393,26 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                                 >
                                   <span className="userCollectionList-view-button-text oleo-script-bold">View Detail</span>
                                 </button>
-                                <div className="userCollectionList-dropdown-container"
-                                  onMouseEnter={() => setIsDropdownOpen(idx)}
-                                  onMouseLeave={() => setIsDropdownOpen(null)}
-                                >
+                                <div className="userCollectionList-dropdown-container">
                                   <button
-                                    ref={buttonRef}
+                                    ref={anchorRefs.current[idx]}
+                                    onClick={() => toggleDropdown(idx)}
                                     className="userCollectionList-more-button oxanium-bold"
                                   >
                                     <img src={ThreeDots} alt="More Icon" className='userCollectionList-more-icon' />
                                   </button>
-                                  <DropdownMenu anchorRef={buttonRef} isOpen={isDropdownOpen === idx} onClose={() => setIsDropdownOpen(null)}>
+                                  <DropdownMenu anchorRef={anchorRefs.current[idx]} isOpen={isDropdownOpen} onClose={() => toggleDropdown(idx)}>
                                     {[
                                       { text: "Add to Favorite", action: () => { } },
-                                      { text: "Public to sell", action: () => openSellModal(prod) },
-                                      { text: "Host an auction", action: () => { } },
+                                      { text: "Public to Sell", action: () => openSellModal(prod) },
+                                      { text: "Host an Auction", action: () => { } },
                                     ].map((item, i) => (
                                       <div
                                         key={i}
                                         className="userCollectionList-dropdown-item oxanium-regular"
                                         onClick={() => {
                                           item.action();
-                                          setIsDropdownOpen(null);
+                                          setDropdownStates({});
                                         }}
                                       >
                                         {item.text}

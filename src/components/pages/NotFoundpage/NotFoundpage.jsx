@@ -13,7 +13,7 @@ export default function NotFoundpage() {
   const handleGoBack = () => {
     if (role === 'admin') {
       navigate(PATH_NAME.ADMIN_DASHBOARD);
-    } else if (role === 'moderator') {
+    } else if (role === 'mod') {
       navigate(PATH_NAME.MODERATOR_DASHBOARD);
     } else {
       navigate(PATH_NAME.HOMEPAGE);
