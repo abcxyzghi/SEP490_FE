@@ -21,6 +21,8 @@ import FollowIcon from "../../../assets/Icon_line/User_add.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
+import { followUser, getFollowers, getFollowing } from '../../../services/api.subscription';
+import { Modal } from 'antd';
 
 export default function Profilepage() {
   const { id } = useParams();
@@ -28,6 +30,7 @@ export default function Profilepage() {
   const currentUserId = user?.user_id;
   const navigate = useNavigate();
   const [copySuccess, setCopySuccess] = useState(false);
+  const [followSuccess, setFollowSuccess] = useState(false);
   const [profile, setProfile] = useState(null);
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,16 +39,19 @@ export default function Profilepage() {
   const [productsLoading, setProductsLoading] = useState(true);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [activeTab, setActiveTab] = useState('Mystery Boxes');
-
+  const [hasFollowed, setHasFollowed] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   // Show warning modal for unauthorized actions using MessageModal
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const [reportTitle, setReportTitle] = useState('');
   const [reportContent, setReportContent] = useState('');
   const [reportSubmitting, setReportSubmitting] = useState(false);
-
+  const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -79,7 +85,34 @@ export default function Profilepage() {
     }
   }, [id, currentUserId]);
 
+  // Move fetchSocialData outside so it can be reused
+  const fetchSocialData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [followersRes, followingRes] = await Promise.all([
+        getFollowers(),
+        getFollowing(),
+      ]);
+      const followersData = followersRes.data || [];
+      const followingData = followingRes.data || [];
+      setFollowers(followersData);
+      setFollowing(followingData);
+      if (id && followingData.some((user) => user.userId === id)) {
+        setHasFollowed(true);
+      } else {
+        setHasFollowed(false);
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi fetch followers/following:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
+  useEffect(() => {
+    fetchSocialData();
+  }, [fetchSocialData]);
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
     setProductsLoading(true);
@@ -205,6 +238,17 @@ export default function Profilepage() {
         console.error("Failed to copy profile link:", err);
       });
   };
+  const handleFollow = async () => {
+    try {
+      await followUser(id);
+      console.log("Đã theo dõi!");
+      setFollowSuccess(true); // Show success snackbar
+      await fetchSocialData(); // Refetch to update follow state
+    } catch (error) {
+      console.error("Theo dõi thất bại!");
+      console.error(error);
+    }
+  };
 
   // Function to submit Report form
   const handleSubmitReport = async () => {
@@ -280,8 +324,8 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
-                {isMyProfile ?
-                  (
+                {isMyProfile ? (
+                  <>
                     <button
                       className="profilepage-btn-follow oxanium-semibold"
                       onClick={() => navigate('/settingpage')}
@@ -289,35 +333,104 @@ export default function Profilepage() {
                       <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
                       Edit profile
                     </button>
-                  ) : (
-                    <>
-                      <button className="profilepage-btn-follow oxanium-semibold"
-                      // Follow api handling here
+
+                    <button
+                      className="profilepage-btn-viewfollows oxanium-semibold"
+                      onClick={() => setIsFollowModalOpen(true)}
+                    >
+                      <img src="/icons/people.svg" alt="Follows" className="profilepage-follow-icon" />
+                      Followers / Following
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {!isLoading && (
+                      <button
+                        className="profilepage-btn-follow oxanium-semibold"
+                        onClick={hasFollowed ? undefined : handleFollow}
+                        disabled={hasFollowed}
                       >
                         <img src={FollowIcon} alt="Follow" className="profilepage-follow-icon" />
-                        Follow
+                        {hasFollowed ? "Following" : "Follow"}
                       </button>
-                      <button
-                        className="profilepage-btn-message oxanium-semibold"
-                        onClick={() => {
-                          // Điều hướng sang trang chat với id là id của profile đang xem
-                          if (!user || !user.user_id) {
-                            showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
-                            return;
-                          }
-                          if (!id) {
-                            showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
-                            return;
-                          }
-                          navigate(`/chatroom/${id}`);
-                        }}
-                      >
-                        <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
-                        Message
-                      </button>
-                    </>
-                  )}
+                    )}
+
+                    <button
+                      className="profilepage-btn-message oxanium-semibold"
+                      onClick={() => {
+                        if (!user || !user.user_id) {
+                          showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
+                          return;
+                        }
+                        if (!id) {
+                          showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
+                          return;
+                        }
+                        navigate(`/chatroom/${id}`);
+                      }}
+                    >
+                      <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
+                      Message
+                    </button>
+                  </>
+                )}
               </div>
+              <Modal
+                title="Followers & Following"
+                open={isFollowModalOpen}
+                onCancel={() => setIsFollowModalOpen(false)}
+                footer={null}
+              >
+                <div>
+                  <h4>Followers</h4>
+                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                    {followers.length > 0 ? (
+                      followers.map((follower) => (
+                        <li key={follower.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                          <img
+                            src={buildImageUrl(follower.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={follower.followerName}
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                              marginRight: 8,
+                              objectFit: "cover",
+                            }}
+                          />
+                          <span>{follower.followerName}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Chưa có ai theo dõi</li>
+                    )}
+                  </ul>
+
+                  <h4 style={{ marginTop: 16 }}>Following</h4>
+                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                    {following.length > 0 ? (
+                      following.map((followed) => (
+                        <li key={followed.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                          <img
+                            src={buildImageUrl(followed.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={followed.userName}
+                            style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
+                          />
+                          <span>{followed.userName}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Chưa theo dõi ai</li>
+                    )}
+                  </ul>
+                </div>
+              </Modal>
+
+
+
+
             </div>
 
             {/* Right extra buttons */}
@@ -393,6 +506,17 @@ export default function Profilepage() {
       >
         <Alert onClose={() => setCopySuccess(false)} severity="success" sx={{ width: '100%' }}>
           Profile link copied to clipboard!
+        </Alert>
+      </Snackbar>
+      {/* Success follow snackbar */}
+      <Snackbar
+        open={followSuccess}
+        autoHideDuration={3000}
+        onClose={() => setFollowSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={() => setFollowSuccess(false)} severity="success" sx={{ width: '100%' }}>
+          Đã theo dõi thành công!
         </Alert>
       </Snackbar>
       {/* Message Modal */}

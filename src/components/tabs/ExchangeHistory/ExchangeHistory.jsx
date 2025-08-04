@@ -13,7 +13,8 @@ export default function ExchangeHistory() {
   const [loading, setLoading] = useState(true);
   const user = useSelector(state => state.auth.user);
   const [feedbackMap, setFeedbackMap] = useState({});
-  const [feedbackDetailMap, setFeedbackDetailMap] = useState({}); // Lưu chi tiết feedback
+  const [feedbackDetailMap, setFeedbackDetailMap] = useState({});
+  const [receivedFeedbackMap, setReceivedFeedbackMap] = useState({});
   const myId = user?.user_id;
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null); // id for sent cancel
@@ -35,19 +36,20 @@ export default function ExchangeHistory() {
     setLoading(true);
     setError(null);
     try {
-      const [sentRes, receivedRes] = await Promise.all([
-        getBuyer(),
-        getReceive(),
-      ]);
+      const [sentRes, receivedRes] = await Promise.all([getBuyer(), getReceive()]);
 
       const sentArray = Array.isArray(sentRes) ? sentRes : [sentRes];
+      const receivedArray = Array.isArray(receivedRes) ? receivedRes : [receivedRes];
+
       setSent(sentArray);
-      setReceived(Array.isArray(receivedRes) ? receivedRes : [receivedRes]);
+      setReceived(receivedArray);
 
       const feedbackStatusMap = {};
-
       const feedbackDetailTemp = {};
+      const receivedFeedbackMap = {};
       for (const item of sentArray) {
+        if (item.status !== 4) continue;
+
         try {
           const res = await getFeedbackOfSellProduct(item.itemReciveId);
           const feedbackData = res?.data || [];
@@ -58,18 +60,36 @@ export default function ExchangeHistory() {
           }
           await new Promise((resolve) => setTimeout(resolve, 500));
         } catch (err) {
-          console.warn(`Lỗi khi fetch feedback cho item ${item.itemReciveId}`, err);
+          console.warn(`Lỗi khi fetch feedback cho sent item ${item.itemReciveId}`, err);
         }
       }
+
+
+      for (const item of receivedArray) {
+        if (item.status !== 4) continue;
+
+        try {
+          const res = await getFeedbackOfSellProduct(item.itemReciveId);
+          const feedbackData = res?.data || [];
+          receivedFeedbackMap[String(item.id)] = feedbackData;
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        } catch (err) {
+          console.warn(`Lỗi khi fetch feedback cho received item ${item.itemReciveId}`, err);
+        }
+      }
+
+
       setFeedbackMap(feedbackStatusMap);
       setFeedbackDetailMap(feedbackDetailTemp);
+      setReceivedFeedbackMap(receivedFeedbackMap);
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch exchange history');
+      setError("Failed to fetch exchange history");
     } finally {
       setLoading(false);
     }
   }, [myId]);
+
 
   useEffect(() => {
     if (myId) {
@@ -77,7 +97,6 @@ export default function ExchangeHistory() {
     }
   }, [myId, fetchData]);
 
-  console.log(feedbackMap)
   // Cancel request (for sent)
   const handleCancel = async (id) => {
     setActionLoading(id);
@@ -137,7 +156,7 @@ export default function ExchangeHistory() {
       setReceivedAction({ id: null, type: null });
     }
   };
-if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
+  if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
   const handleSubmitFeedback = async () => {
@@ -182,7 +201,7 @@ if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
     }
   };
 
-  console.log(sent)
+
   return (
     <div style={{ padding: 16, color: "white" }}>
       <h2>Exchange Requests You Sent</h2>
@@ -337,9 +356,20 @@ if (loading || !Object.keys(feedbackMap).length) return <div>Loading...</div>;
                   )}
                 </div>
               )}
-
-
-
+              {receivedFeedbackMap[String(req.id)]?.length > 0 && (
+                <div style={{ marginTop: 8 }}>
+                  <b>Feedbacks:</b>
+                  <ul>
+                    {receivedFeedbackMap[String(req.id)]?.map((fb, idx) => (
+                      <li key={idx} style={{ marginBottom: 4 }}>
+                        <div><b>User ID:</b> {fb.userId}</div>
+                        <div><b>Rating:</b> {fb.rating} ⭐</div>
+                        <div><b>Comment:</b> {fb.content}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </li>
           ))}
         </ul>
