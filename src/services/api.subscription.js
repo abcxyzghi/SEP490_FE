@@ -11,7 +11,7 @@ export const getFollowers = async () => {
 
     return response.data;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy feedback sản phẩm:", error);
+    console.error("❌ Lỗi khi lấy get follower:", error);
     throw error;
   }
 };
@@ -26,7 +26,7 @@ export const getFollowing = async () => {
 
     return response.data;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy feedback sản phẩm:", error);
+    console.error("❌ Lỗi khi theo dõi:", error);
     throw error;
   }
 };
@@ -42,6 +42,21 @@ export const followUser = async (userId) => {
     return response.data;
   } catch (error) {
     console.error("❌ Lỗi khi follow user:", error);
+    throw error;
+  }
+};
+export const unfollowUser = async (userId) => {
+  try {
+    const response = await apiWithFallback({
+      method: "delete",
+      url: "/cs/api/Subscription/subscription/unfollow",
+      params: { userId },
+      requiresAuth: true, 
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi unfollow user:", error);
     throw error;
   }
 };

@@ -21,7 +21,7 @@ import FollowIcon from "../../../assets/Icon_line/User_add.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
-import { followUser, getFollowers, getFollowing } from '../../../services/api.subscription';
+import { followUser, getFollowers, getFollowing, unfollowUser } from '../../../services/api.subscription';
 import { Modal } from 'antd';
 
 export default function Profilepage() {
@@ -95,6 +95,7 @@ export default function Profilepage() {
       ]);
       const followersData = followersRes.data || [];
       const followingData = followingRes.data || [];
+      console.log(followersData)
       setFollowers(followersData);
       setFollowing(followingData);
       if (id && followingData.some((user) => user.userId === id)) {
@@ -140,7 +141,7 @@ export default function Profilepage() {
     }
   }, [id, currentUserId, fetchProducts]);
 
-  if (loading) return (
+  if (loading || isLoading) return (
     <div className="w-full">
       {/* Banner skeleton */}
       <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
@@ -238,15 +239,21 @@ export default function Profilepage() {
         console.error("Failed to copy profile link:", err);
       });
   };
-  const handleFollow = async () => {
+
+  const handleFollowToggle = async () => {
     try {
-      await followUser(id);
-      console.log("Đã theo dõi!");
-      setFollowSuccess(true); // Show success snackbar
-      await fetchSocialData(); // Refetch to update follow state
+      if (hasFollowed) {
+        await unfollowUser(id);
+        console.log("Đã hủy theo dõi!");
+      } else {
+        await followUser(id);
+        console.log("Đã theo dõi!");
+        setFollowSuccess(true); // Show success snackbar nếu cần
+      }
+
+      await fetchSocialData(); // Cập nhật lại trạng thái theo dõi
     } catch (error) {
-      console.error("Theo dõi thất bại!");
-      console.error(error);
+      console.error("❌ Lỗi khi xử lý theo dõi / hủy theo dõi:", error);
     }
   };
 
@@ -344,17 +351,17 @@ export default function Profilepage() {
                   </>
                 ) : (
                   <>
-                    {!isLoading && (
-                      <button
-                        className="profilepage-btn-follow oxanium-semibold"
-                        onClick={hasFollowed ? undefined : handleFollow}
-                        disabled={hasFollowed}
-                      >
-                        <img src={FollowIcon} alt="Follow" className="profilepage-follow-icon" />
-                        {hasFollowed ? "Following" : "Follow"}
-                      </button>
-                    )}
-
+                    <button
+                      className="profilepage-btn-follow oxanium-semibold"
+                      onClick={handleFollowToggle}
+                    >
+                      <img
+                        src={FollowIcon}
+                        alt="Follow"
+                        className="profilepage-follow-icon"
+                      />
+                      {hasFollowed ? "Following" : "Follow"}
+                    </button>
                     <button
                       className="profilepage-btn-message oxanium-semibold"
                       onClick={() => {

@@ -288,7 +288,7 @@ export default function ExchangeHistory() {
                 </button>
               )}
 
-              {req.status === 4 && (
+              {/* {req.status === 4 && (
                 <button
                   onClick={() => handleShowFeedbacks(req.itemReciveId)}
                   style={{
@@ -302,7 +302,7 @@ export default function ExchangeHistory() {
                 >
                   View Feedbacks
                 </button>
-              )}
+              )} */}
 
               {req.status === 4 && !req.isFeedback && (
                 <button
