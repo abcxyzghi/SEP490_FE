@@ -251,22 +251,25 @@
 /* -----------------======================= QUERY WOKE =======================------------------------*/
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
 
-/* For screen width ≤ 880px */
-@media (max-width: 880px) {
+/* For screen width ≤ 1200px */
+@media (max-width: 1200px) {
   .nav-container {
     height: 120px;
   }
 
+  .nav-toggle {
+    transform: translate(-50%, 50%);
+  }
+}
+
+/* For screen width ≤ 880px */
+@media (max-width: 880px) {
   .nav-auth-btn {
     font-size: 0.9rem;
   }
 
   .nav-label {
     font-size: 1.1rem;
-  }
-
-  .nav-toggle {
-    transform: translate(-50%, 50%);
   }
 }
 
@@ -291,11 +294,27 @@
   }
 }
 
+/* For screen width ≤ 590px */
+@media (max-width: 590px) {
+  .nav-container {
+    height: 200px;
+  }
+
+  .nav-toggle {
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+  }
+}
+
 /* For screen width ≤ 480px */
 @media (max-width: 480px) {
   .nav-container {
-    height: 150px;
     padding: 0 2rem;
+  }
+
+  .nav-right {
+    justify-content: flex-end;
   }
 
   .nav-arrow-dropdown {
@@ -322,17 +341,25 @@
 /* For screen width ≤ 280px */
 @media (max-width: 280px) {
   .nav-container {
-    height: 240px;
+    height: 300px;
 
     padding: 10px 16px 10px 6px;
     flex-direction: column;
     justify-content: space-evenly;
   }
 
+  .nav-right {
+    justify-content: flex-start;
+  }
+
   .nav-toggle {
     top: 90%;
     left: 50%;
     transform: translate(-50%, 0%);
+  }
+
+  .nav-logo-inner {
+    padding: 3px 5px;
   }
 
 }

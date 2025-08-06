@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import './App.css';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { AnimatePresence, motion } from "framer-motion";
 import { publicRoutes, privateRoutes, moderatorRoutes, adminRoutes } from './router/routerConfig';
 import { PATH_NAME } from './router/Pathname';
@@ -40,7 +41,23 @@ const AnimatedRoute = ({ children }) => {
 function App() {
   // Improved: useSelector for both user and userRole
   const user = useSelector((state) => state.auth.user);
-  const userRole = user?.role;
+  const token = useSelector((state) => state.auth.token);
+
+  // 1️⃣ role from redux if available
+  let userRole = user?.role;
+
+  // 2️⃣ fallback: decode role from JWT if redux doesn’t have it
+  if (!userRole && token) {
+    try {
+      const decoded = jwtDecode(token);
+      userRole = decoded.role;
+    } catch (err) {
+      console.error("JWT decode failed:", err);
+    }
+  }
+
+  // console.log("Resolved role:", userRole);   // Debugg
+
 
   return (
     <AnimatedRoute>
@@ -120,9 +137,19 @@ function App() {
         <Route path={PATH_NAME.REGISTER} element={
           user ? <Navigate to={PATH_NAME.HOMEPAGE} replace /> : <Registerpage />
         } />
+
         <Route path={PATH_NAME.LOGIN} element={
-          user ? <Navigate to={PATH_NAME.HOMEPAGE} replace /> : <Loginpage />
+          userRole
+            ? <Navigate to={
+              userRole === 'admin'
+                ? PATH_NAME.ADMIN_DASHBOARD
+                : userRole === 'mod'
+                  ? PATH_NAME.MODERATOR_DASHBOARD
+                  : PATH_NAME.HOMEPAGE
+            } replace />
+            : <Loginpage />
         } />
+
         <Route path={PATH_NAME.NOTFOUND} element={<NotFoundpage />} />
       </Routes>
     </AnimatedRoute>

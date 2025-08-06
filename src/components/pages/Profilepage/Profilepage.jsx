@@ -2,7 +2,6 @@
 import { React, useEffect, useState, useCallback } from 'react';
 import './Profilepage.css';
 import { Snackbar, Alert } from '@mui/material';
-// import { Modal } from 'antd';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -21,6 +20,8 @@ import FollowIcon from "../../../assets/Icon_line/User_add.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
+import { followUser, getFollowers, getFollowing, unfollowUser } from '../../../services/api.subscription';
+import { Modal } from 'antd';
 
 export default function Profilepage() {
   const { id } = useParams();
@@ -28,6 +29,7 @@ export default function Profilepage() {
   const currentUserId = user?.user_id;
   const navigate = useNavigate();
   const [copySuccess, setCopySuccess] = useState(false);
+  const [followSuccess, setFollowSuccess] = useState(false);
   const [profile, setProfile] = useState(null);
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,16 +38,20 @@ export default function Profilepage() {
   const [productsLoading, setProductsLoading] = useState(true);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [activeTab, setActiveTab] = useState('Mystery Boxes');
-
+  const [hasFollowed, setHasFollowed] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   // Show warning modal for unauthorized actions using MessageModal
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const [reportTitle, setReportTitle] = useState('');
   const [reportContent, setReportContent] = useState('');
   const [reportSubmitting, setReportSubmitting] = useState(false);
-
+  const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -79,7 +85,35 @@ export default function Profilepage() {
     }
   }, [id, currentUserId]);
 
+  // Move fetchSocialData outside so it can be reused
+  const fetchSocialData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [followersRes, followingRes] = await Promise.all([
+        getFollowers(),
+        getFollowing(),
+      ]);
+      const followersData = followersRes.data || [];
+      const followingData = followingRes.data || [];
+      console.log(followersData)
+      setFollowers(followersData);
+      setFollowing(followingData);
+      if (id && followingData.some((user) => user.userId === id)) {
+        setHasFollowed(true);
+      } else {
+        setHasFollowed(false);
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi fetch followers/following:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
+  useEffect(() => {
+    fetchSocialData();
+  }, [fetchSocialData]);
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
     setProductsLoading(true);
@@ -107,7 +141,7 @@ export default function Profilepage() {
     }
   }, [id, currentUserId, fetchProducts]);
 
-  if (loading) return (
+  if (loading || isLoading) return (
     <div className="w-full">
       {/* Banner skeleton */}
       <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
@@ -206,11 +240,27 @@ export default function Profilepage() {
       });
   };
 
+  const handleFollowToggle = async () => {
+    try {
+      if (hasFollowed) {
+        await unfollowUser(id);
+        console.log("Đã hủy theo dõi!");
+      } else {
+        await followUser(id);
+        console.log("Đã theo dõi!");
+        setFollowSuccess(true); // Show success snackbar nếu cần
+      }
+
+      await fetchSocialData(); // Cập nhật lại trạng thái theo dõi
+    } catch (error) {
+      console.error("❌ Lỗi khi xử lý theo dõi / hủy theo dõi:", error);
+    }
+  };
+
   // Function to submit Report form
   const handleSubmitReport = async () => {
     if (!reportTitle || !reportContent) {
-      alert('Vui lòng điền đầy đủ tiêu đề và nội dung.');
-      return;
+      return showModal('warning', 'Missing field', "Please fill in both Title and Content");;
     }
 
     try {
@@ -223,21 +273,22 @@ export default function Profilepage() {
       });
 
       if (res?.success || res?.status) {
-        alert('Gửi báo cáo thành công!');
+        showModal('default', 'Report sent', "The report has been sent to the higher-ups for processing.");
         setShowReportModal(false);
         setReportTitle('');
         setReportContent('');
       } else {
-        alert('Gửi không thành công (response không hợp lệ)');
+        return showModal('error', 'Error', "Report fail to sent. Invalid response");
       }
     } catch (err) {
       console.error("Report error:", err);
-      alert('Không thể gửi báo cáo. Vui lòng thử lại.');
+      return showModal('error', 'Error', "Something wrong! Please try again later.");
     } finally {
       setReportSubmitting(false);
     }
 
   };
+
 
 
   return (
@@ -280,8 +331,8 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
-                {isMyProfile ?
-                  (
+                {isMyProfile ? (
+                  <>
                     <button
                       className="profilepage-btn-follow oxanium-semibold"
                       onClick={() => navigate('/settingpage')}
@@ -289,35 +340,103 @@ export default function Profilepage() {
                       <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
                       Edit profile
                     </button>
-                  ) : (
-                    <>
-                      <button className="profilepage-btn-follow oxanium-semibold"
-                      // Follow api handling here
-                      >
-                        <img src={FollowIcon} alt="Follow" className="profilepage-follow-icon" />
-                        Follow
-                      </button>
-                      <button
-                        className="profilepage-btn-message oxanium-semibold"
-                        onClick={() => {
-                          // Điều hướng sang trang chat với id là id của profile đang xem
-                          if (!user || !user.user_id) {
-                            showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
-                            return;
-                          }
-                          if (!id) {
-                            showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
-                            return;
-                          }
-                          navigate(`/chatroom/${id}`);
-                        }}
-                      >
-                        <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
-                        Message
-                      </button>
-                    </>
-                  )}
+
+                    <button
+                      className="profilepage-btn-viewfollows oxanium-semibold"
+                      onClick={() => setIsFollowModalOpen(true)}
+                    >
+                      Followers / Following
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="profilepage-btn-follow oxanium-semibold"
+                      onClick={handleFollowToggle}
+                    >
+                      <img
+                        src={FollowIcon}
+                        alt="Follow"
+                        className="profilepage-follow-icon"
+                      />
+                      {hasFollowed ? "Following" : "Follow"}
+                    </button>
+                    <button
+                      className="profilepage-btn-message oxanium-semibold"
+                      onClick={() => {
+                        if (!user || !user.user_id) {
+                          showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
+                          return;
+                        }
+                        if (!id) {
+                          showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
+                          return;
+                        }
+                        navigate(`/chatroom/${id}`);
+                      }}
+                    >
+                      <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
+                      Message
+                    </button>
+                  </>
+                )}
               </div>
+              <Modal
+                title="Followers & Following"
+                open={isFollowModalOpen}
+                onCancel={() => setIsFollowModalOpen(false)}
+                footer={null}
+              >
+                <div>
+                  <h4>Followers</h4>
+                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                    {followers.length > 0 ? (
+                      followers.map((follower) => (
+                        <li key={follower.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                          <img
+                            src={buildImageUrl(follower.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={follower.followerName}
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                              marginRight: 8,
+                              objectFit: "cover",
+                            }}
+                          />
+                          <span>{follower.followerName}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Chưa có ai theo dõi</li>
+                    )}
+                  </ul>
+
+                  <h4 style={{ marginTop: 16 }}>Following</h4>
+                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                    {following.length > 0 ? (
+                      following.map((followed) => (
+                        <li key={followed.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                          <img
+                            src={buildImageUrl(followed.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={followed.userName}
+                            style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
+                          />
+                          <span>{followed.userName}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Chưa theo dõi ai</li>
+                    )}
+                  </ul>
+                </div>
+              </Modal>
+
+
+
+
             </div>
 
             {/* Right extra buttons */}
@@ -359,25 +478,33 @@ export default function Profilepage() {
 
       {/* Report modal */}
       {showReportModal && (
-        <div className="modal2-overlay">
-          <div className="modal2">
-            <h3>Gửi báo cáo</h3>
-            <input
-              type="text"
-              placeholder="Tiêu đề"
-              value={reportTitle}
-              onChange={(e) => setReportTitle(e.target.value)}
-            />
-            <textarea
-              placeholder="Nội dung"
-              value={reportContent}
-              onChange={(e) => setReportContent(e.target.value)}
-            />
-            <div className="modal2-actions">
-              <button onClick={handleSubmitReport} disabled={reportSubmitting}>
-                {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-              </button>
-              <button onClick={() => setShowReportModal(false)}>Hủy</button>
+        <div className="report-modal-overlay">
+          <div className="report-modal-container">
+            <div className="report-modal-box">
+              <h3 className='report-modal-header oleo-script-bold'>Report this account</h3>
+              <input
+                type="text"
+                placeholder="Title"
+                className='oxanium-regular'
+                value={reportTitle}
+                onChange={(e) => setReportTitle(e.target.value)}
+              />
+              <textarea
+                placeholder="Content"
+                className='oxanium-regular'
+                value={reportContent}
+                onChange={(e) => setReportContent(e.target.value)}
+              />
+              <div className="report-modal-actions oxanium-bold">
+                <button onClick={() => setShowReportModal(false)}>Cancel</button>
+                <button onClick={handleSubmitReport} disabled={reportSubmitting}>
+                  {reportSubmitting ?
+                    <span className="loading loading-bars loading-md"></span>
+                    :
+                    'Submit report'
+                  }
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -395,6 +522,19 @@ export default function Profilepage() {
           Profile link copied to clipboard!
         </Alert>
       </Snackbar>
+
+      {/* Success follow snackbar */}
+      <Snackbar
+        open={followSuccess}
+        autoHideDuration={3000}
+        onClose={() => setFollowSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={() => setFollowSuccess(false)} severity="success" sx={{ width: '100%' }}>
+          Đã theo dõi thành công!
+        </Alert>
+      </Snackbar>
+
       {/* Message Modal */}
       <MessageModal
         open={modal.open}

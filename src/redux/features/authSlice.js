@@ -23,8 +23,13 @@ const authSlice = createSlice({
         state.user.profile_image = action.payload;
       }
     },
+     updateWallet: (state, action) => {
+      if (state.user) {
+        state.user.wallet_amount = action.payload;
+      }
+    },
   },
 });
 
-export const { setUser, setToken, logout,updateProfileImage } = authSlice.actions;
+export const { setUser, setToken, logout,updateProfileImage, updateWallet } = authSlice.actions;
 export default authSlice.reducer;
