@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { pythonApiWithFallback, apiWithFallback } from '../config/axios';
 
 //get user info from token to render on the navbar
