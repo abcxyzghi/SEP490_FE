@@ -1,6 +1,5 @@
 import { toast } from "react-toastify"
 import { apiWithFallback } from "../config/axios";
-import axios from "axios";
 // export const getProduct = async () => {
 //    try{
 //     const response = await api.get("product")
@@ -154,6 +153,45 @@ export const updateSellProduct = async ({ id, description, price, updatedAt }) =
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error updating sell product");
+    return null;
+  }
+};
+export const block_unblock_product = async (id) => {
+  try {
+    const response = await apiWithFallback({
+      method: "patch",
+      url: `/api/Product/block-unlock-product?id=${id}`,
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error blocking/unblocking product");
+    return null;
+  }
+};
+export const getAllProduct = async () => {
+try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/Product/get-product",
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
+  }
+};
+export const createProduct = async (product) => {
+  try {
+    const response = await apiWithFallback({
+      method: "post",
+      url: "/api/Product/create-new-product-for-system",
+      data: product,
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error creating product");
     return null;
   }
 };

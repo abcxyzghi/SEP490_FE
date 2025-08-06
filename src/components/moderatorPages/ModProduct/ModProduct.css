@@ -1,0 +1,314 @@
+/* Định dạng container cho bảng sản phẩm */
+.mod-product-container {
+  padding: 24px;
+  background: rgba(44, 44, 44, 0.5); /* xám đen với opacity 50% */
+  border-radius: 12px; /* tăng bo góc cho khung ngoài để khớp với khung bảng bên trong */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  /* Xóa border và border-image gradient ngoài cùng */
+  overflow: unset;
+}
+
+/* Tiêu đề bảng */
+.ant-table-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  
+}
+
+/* Header bảng */
+.ant-table-thead > tr > th {
+  background: #31323379;
+  font-weight: 500;
+  color: #222;
+  font-size: 1.15rem; /* Đặt lại cỡ chữ tiêu đề cột về mặc định lớn hơn */
+}
+
+/* Dòng bảng */
+.ant-table-tbody > tr > td {
+  font-size: 0.98rem;
+  color: #ffffff;
+  padding: 12px 8px;
+  background: rgba(20, 20, 20, 0.789); /* xám đen opacity 60% */
+}
+
+/* Ảnh sản phẩm */
+.ant-table-cell img {
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  object-fit: cover;
+  background: #363232;
+}
+
+/* Trạng thái Blocked */
+.ant-table-cell {
+  vertical-align: middle;
+}
+
+/* Hiệu ứng hover cho hàng */
+.ant-table-tbody > tr:hover > td {
+  background: rgba(54, 53, 53, 0.434); /*xám trắng opacity 40%*/
+  transition: background 0.2s;
+}
+
+/* Hiệu ứng hover cho chữ trong ô, ngoại trừ các ô có class rarity */
+.ant-table-tbody > tr:hover > td:not(.rarity-common):not(.rarity-uncommon):not(.rarity-rare):not(.rarity-epic):not(.rarity-legendary) {
+  color: #111;
+  transition: color 0.2s;
+}
+
+/* Responsive cho bảng */
+@media (max-width: 768px) {
+  .mod-product-container {
+    padding: 8px;
+  }
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    font-size: 0.92rem;
+    padding: 8px 4px;
+  }
+}
+
+/* Rarity color styles */
+/* Rarity Base Style */
+.rarity-common,
+.rarity-uncommon,
+.rarity-rare,
+.rarity-epic,
+.rarity-legendary {
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 4px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  position: relative;
+  color: white;
+}
+
+/* Common - subtle gray */
+.rarity-common {
+  background-color: #555;
+  box-shadow: 0 0 8px #888;
+}
+
+/* Uncommon - green glow */
+.rarity-uncommon {
+  background-color: #228b22;
+  box-shadow: 0 0 10px 2px #32cd32;
+}
+
+/* Rare - blue glow */
+.rarity-rare {
+  background-color: #1e90ff;
+  box-shadow: 0 0 12px 3px #00bfff;
+  animation: pulseBlue 2.5s infinite ease-in-out;
+}
+
+/* Epic - purple glow */
+.rarity-epic {
+  background-color: #8000ff;
+  box-shadow: 0 0 14px 3px #da70d6;
+  animation: pulsePurple 2.5s infinite ease-in-out;
+}
+
+/* Legendary - golden animated glow */
+.rarity-legendary {
+  background-color: #ff8c00;
+  box-shadow: 0 0 20px 5px #ffd700;
+  animation: pulseGold 3s infinite ease-in-out;
+}
+
+/* Glow Animations */
+@keyframes pulseBlue {
+  0%, 100% { box-shadow: 0 0 12px 3px #00bfff; }
+  50% { box-shadow: 0 0 18px 6px #1e90ff; }
+}
+
+@keyframes pulsePurple {
+  0%, 100% { box-shadow: 0 0 14px 3px #da70d6; }
+  50% { box-shadow: 0 0 20px 6px #ba55d3; }
+}
+
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 20px 5px #ffd700; }
+  50% { box-shadow: 0 0 28px 8px #ffcc00; }
+}
+
+
+/* Định dạng cho các cột riêng biệt */
+.ant-table-cell.name-cell {
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+}
+.ant-table-cell.productid-cell {
+  font-size: 0.95rem !important;
+  font-weight: 500;
+}
+.ant-table-cell.description-cell {
+  font-size: 0.92rem !important;
+  font-weight: 400;
+  color: #e0e0e0;
+}
+
+/* Căn giữa cho cột rarity */
+.ant-table-cell.rarity-common,
+.ant-table-cell.rarity-uncommon,
+.ant-table-cell.rarity-rare,
+.ant-table-cell.rarity-epic,
+.ant-table-cell.rarity-legendary {
+  text-align: center;
+}
+
+/* LED viền chạy bên trong bảng */
+/* Khung chính */
+/* .table-glow-wrapper {
+  position: relative;
+  border-radius: 12px;
+  padding: 2px; /* để ánh sáng không bị cắt */
+  /* z-index: 1; */
+/* } */ 
+
+/* .table-glow-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: linear-gradient(
+    270deg,
+    #43e97b,
+    #38f9d7,
+    #ff00cc,
+    #ffcc70,
+    #43e97b
+  );
+  background-size: 800% 800%;
+  animation: led-border-animation 6s linear infinite;
+  filter: blur(33px);
+  opacity: 0.44;
+  z-index: 0;
+  pointer-events: none;
+} */
+
+.ant-table-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1;
+  background: #000000; /* hoặc màu bảng hiện tại của bạn */
+}
+
+
+/* Nếu vẫn cần 1 lớp ::after để overlay hiệu ứng phía trên (không nên dùng trong trường hợp này), đặt z-index > 1 */
+
+/* @keyframes led-border-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+} */
+
+/* Block/Unblock button custom style */
+.mod-block-btn {
+  background: #ffb347 !important; /* cam */
+  color: #d60000 !important; /* đỏ */
+  border: none !important;
+  font-weight: 600;
+  box-shadow: 0 0 8px #ffb34788;
+  min-width: 90px;
+  border-radius: 8px;
+  transition: box-shadow 0.2s, filter 0.2s;
+}
+.mod-block-btn:hover {
+  filter: brightness(1.08) drop-shadow(0 0 6px #ffb347);
+}
+
+.mod-unblock-btn {
+  background: #4ade80 !important; /* xanh */
+  color: #222 !important; /* đen */
+  border: none !important;
+  font-weight: 600;
+  box-shadow: 0 0 8px #4ade8088;
+  min-width: 90px;
+  border-radius: 8px;
+  transition: box-shadow 0.2s, filter 0.2s;
+}
+.mod-unblock-btn:hover {
+  filter: brightness(1.08) drop-shadow(0 0 6px #4ade80);
+}
+
+/* CSS cho popup tạo sản phẩm mới */
+.mod-create-modal .ant-modal-content {
+  background: #23272f;
+  border-radius: 16px;
+  box-shadow: 0 0 24px #38f9d744;
+  color: #fff;
+}
+.mod-create-modal .ant-modal-header {
+  background: #23272f;
+  border-bottom: 1px solid #38f9d7;
+  border-radius: 16px 16px 0 0;
+}
+.mod-create-modal .ant-modal-title {
+  color: #38f9d7;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+}
+.mod-create-modal .ant-modal-close {
+  color: #fff;
+}
+.mod-create-modal .ant-form-item-label > label {
+  color: #38f9d7;
+  font-weight: 600;
+}
+.mod-create-modal .ant-input,
+.mod-create-modal .ant-select-selector,
+.mod-create-modal .ant-input-textarea {
+  background: #181a20 !important;
+  color: #fff !important;
+  border: 1px solid #38f9d7 !important;
+  border-radius: 8px;
+}
+.mod-create-modal .ant-input:focus,
+.mod-create-modal .ant-select-focused .ant-select-selector {
+  border-color: #ff00cc !important;
+  box-shadow: 0 0 0 2px #ff00cc44;
+}
+.mod-create-modal .ant-btn-primary {
+  background: linear-gradient(90deg,#38f9d7,#ff00cc);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+}
+.mod-create-modal .ant-btn-default {
+  background: #23272f;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Nút Tạo sản phẩm mới */
+.mod-create-btn {
+  background: transparent !important;
+  color: #38f9d7 !important; /* xanh lá metalic */
+  border: 2px solid #38f9d7 !important;
+  font-weight: 700;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.mod-create-btn:hover {
+  background: rgba(56, 249, 215, 0.3) !important; /* xanh lá với opacity 30% */
+  color: #38f9d7 !important;
+  border-color: #38f9d7 !important;
+}
+
+
+
+
+
+

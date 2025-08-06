@@ -80,6 +80,7 @@ export const privateRoutes = [
     { path: PATH_NAME.USER_SALE_REPORT, element: <UserSaleReport />, role: ['user'] },
     { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
     { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
+
 ];
 
 export const moderatorRoutes = [
