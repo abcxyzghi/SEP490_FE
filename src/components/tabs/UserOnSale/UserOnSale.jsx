@@ -73,7 +73,7 @@ export default function UserOnSale({ products, productsLoading }) {
   // --- Các hàm quản lý sản phẩm được thêm lại từ code cũ ---
   const handleToggleSell = async (product) => {
     if (!product.isSell && product.quantity <= 0) {
-      showModal("warning", "Hết hàng", "Sản phẩm đã hết hàng, không thể bật bán lại.");
+      showModal("warning", "Out of stock", "This product is out of stock and cannot be enabled for sale.");
       return;
     }
     setLoadingBtnId(product.id);
@@ -85,10 +85,10 @@ export default function UserOnSale({ products, productsLoading }) {
           p.id === product.id ? { ...p, isSell: !p.isSell } : p
         )
       );
-      showModal("default", "Thành công", `Đã ${product.isSell ? 'tắt' : 'bật'} bán sản phẩm.`);
+      showModal("default", "Stock added", `Product has been ${product.isSell ? 'disabled' : 'enabled'} for sale.`);
     } catch (error) {
       console.error(error);
-      showModal('error', 'Lỗi', 'Không thể cập nhật trạng thái bán của sản phẩm.');
+      showModal('error', 'Error', 'Unable to update the sale status of this product.');
     } finally {
       setLoadingBtnId(null);
     }
@@ -102,7 +102,7 @@ export default function UserOnSale({ products, productsLoading }) {
       setEditedDescription(productWithDescription.data.description);
     } catch (error) {
       console.error(error);
-      showModal('error', 'Lỗi', 'Không thể lấy thông tin chi tiết sản phẩm.');
+      showModal('error', 'Error', 'Failed to fetch product details.');
     }
   };
 
@@ -115,12 +115,12 @@ export default function UserOnSale({ products, productsLoading }) {
     const priceNum = Number(editedPrice);
 
     if (descLength < 10 || descLength > 300) {
-      showModal('warning', 'Mô tả không hợp lệ', 'Mô tả phải từ 10 đến 300 ký tự.');
+      showModal('warning', 'Invalid Description', 'Description must be between 10 and 300 characters.');
       return;
     }
 
     if (!priceNum || isNaN(priceNum) || priceNum < 1000 || priceNum > 100000000) {
-      showModal('warning', 'Giá không hợp lệ', 'Giá phải từ 1.000 đến 100.000.000.');
+      showModal('warning', 'Invalid Price Range', 'Price must be between 1,000 and 100,000,000.');
       return;
     }
 
@@ -133,7 +133,7 @@ export default function UserOnSale({ products, productsLoading }) {
         updatedAt: new Date().toISOString(),
       });
 
-      // ✅ Thành công thì cập nhật sản phẩm trong danh sách
+      // Thành công thì cập nhật sản phẩm trong danh sách
       setProductList((prevList) =>
         prevList.map((product) =>
           product.id === selectedProduct.id
@@ -147,11 +147,11 @@ export default function UserOnSale({ products, productsLoading }) {
         )
       );
 
-      showModal('default', 'Thành công', `Đã cập nhật sản phẩm: ${selectedProduct.name}`);
+      showModal('default', 'Update complete', `Product updated: ${selectedProduct.name}`);
       handleCloseModal();
     } catch (error) {
-      console.error('Lỗi khi update:', error);
-      showModal('error', 'Lỗi', 'Lỗi khi lưu sản phẩm.');
+      console.error('Update error:', error);
+      showModal('error', 'Error', 'Failed to save product changes.');
     }
   };
 
@@ -189,8 +189,20 @@ export default function UserOnSale({ products, productsLoading }) {
 
   // Logic hiển thị
   if (productsLoading) {
-    // ... skeleton loading không đổi
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
+        {[...Array(PAGE_SIZE)].map((_, index) => (
+          <div key={index} className="flex justify-center w-full flex-col gap-4">
+            <div className="skeleton h-42 w-full bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-28 bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-full bg-gray-700/40"></div>
+            <div className="skeleton h-4 w-full bg-gray-700/40"></div>
+          </div>
+        ))}
+      </div>
+    );
   }
+
   if (!productList || productList.length === 0) {
     return <div className="text-center text-gray-400 mt-6">No products on sale.</div>;
   }
@@ -229,7 +241,9 @@ export default function UserOnSale({ products, productsLoading }) {
                   overflow: 'hidden',
                 }}              >
                 {/* ... phần toggle và slide content không đổi */}
-
+                <div className="userOnSale-card-toggle">
+                  <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+                </div>
                 {/* --- Nội dung card được cập nhật --- */}
                 <div
                   className="userOnSale-card-slide-content"
@@ -248,9 +262,11 @@ export default function UserOnSale({ products, productsLoading }) {
                         <div className="userOnSale-card-quantity oxanium-bold">Qty: {item.quantity}</div>
                       </div>
                       {/* Thêm trạng thái bán */}
-                      <div className={`font-semibold text-sm mb-2 ${item.isSell ? 'text-green-400' : 'text-red-400'}`}>
-                        {item.isSell ? 'Đang bán' : 'Ngừng bán'}
-                      </div>
+                      {isOwnerOfItem ? (
+                        <div className={`oxanium-bold text-sm mb-2 ${item.isSell ? 'text-green-400' : 'text-red-400'}`}>
+                          {item.isSell ? 'On Sale' : 'Sale Halt'}
+                        </div>
+                      ) : ''}
 
                       <div className="userOnSale-card-actions">
                         <button
@@ -277,13 +293,13 @@ export default function UserOnSale({ products, productsLoading }) {
                                 className={`userOnSale-dropdown-item oxanium-regular ${(!item.isSell && item.quantity <= 0) ? 'disabled' : ''}`}
                                 onClick={() => handleToggleSell(item)}
                               >
-                                {item.isSell ? 'Tắt bán' : 'Bật bán'}
+                                {item.isSell ? 'Sale On' : 'Sale Off'}
                               </div>
                               <div
                                 className={`userOnSale-dropdown-item oxanium-regular ${item.isSell ? 'disabled' : ''}`}
                                 onClick={() => !item.isSell && handleOpenUpdate(item)}
                               >
-                                Cập nhật
+                                Update Sale Product
                               </div>
                             </DropdownMenu>
                           </div>
@@ -293,7 +309,14 @@ export default function UserOnSale({ products, productsLoading }) {
                             disabled={loadingBtnId === item.id || !item.isSell}
                             onClick={(e) => { e.stopPropagation(); handleAddToCart(item.id); }}
                           >
-                            {/* ... nút thêm vào giỏ hàng không đổi */}
+                            {loadingBtnId === item.id ? (
+                              <span className="loading loading-bars loading-md"></span>
+                            ) : (
+                              <>
+                                <img src={AddToCart} alt="Cart Icon" className='userOnSale-cart-icon' />
+                                Cart
+                              </>
+                            )}
                           </button>
                         )}
                       </div>
@@ -305,7 +328,8 @@ export default function UserOnSale({ products, productsLoading }) {
           );
         })}
       </div>
-      {/* ... Load more và Message Modal không đổi */}
+
+      {/* Load more */}
       {isEnd ? (
         <div className="userOnSale-end-content oxanium-semibold divider divider-warning">
           End of content
@@ -319,6 +343,7 @@ export default function UserOnSale({ products, productsLoading }) {
         </button>
       )}
 
+      {/* Message Modal */}
       <MessageModal
         open={modal.open}
         onClose={() => setModal(prev => ({ ...prev, open: false }))}
@@ -337,10 +362,10 @@ export default function UserOnSale({ products, productsLoading }) {
             className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md text-white"
             onMouseDown={(e) => e.stopPropagation()} // Ngăn modal đóng khi tương tác bên trong
           >
-            <h3 className="text-xl font-bold mb-4">Update Product</h3>
+            <h3 className="text-xl oxanium-bold mb-4">Update Product</h3>
 
             <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium">Description:</label>
+              <label className="block mb-2 text-sm oxanium-semibold">Description:</label>
               <textarea
                 value={editedDescription}
                 onChange={(e) => {
@@ -367,7 +392,7 @@ export default function UserOnSale({ products, productsLoading }) {
             </div>
 
             <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium">Price (VND):</label>
+              <label className="block mb-2 text-sm oxanium-semibold">Price (VND):</label>
               <input
                 type="number"
                 value={editedPrice}

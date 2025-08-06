@@ -1,5 +1,4 @@
-.AdminP-container,
-.ModeratorP-container {
+.AdminP-container {
     display: flex;
     /* height: 100; */
     /* width: 100vw; */
@@ -7,8 +6,7 @@
 
 }
 
-.AdminP-content,
-.ModeratorP-content {
+.AdminP-content {
     margin: 0.1rem 1.5rem;
     /* Take up remaining space after the sidebar */
     flex-grow: 1;

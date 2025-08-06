@@ -61,13 +61,13 @@
     display: flex;
     justify-content: flex-end;
     margin: -0.8rem 5px 0 0;
-    color: var(--rare-color);
+    color: #0051ff;
     font-size: 0.9rem;
     cursor: pointer;
 }
 
 .login-modal-link:hover{
-    color: var(--teal_blue-color);
+    color: #0011ff;
 }
 
 .login-btn {

@@ -27,6 +27,7 @@
     "date-fns": "^4.1.0",
     "firebase": "^11.8.1",
     "framer-motion": "^12.23.9",
+    "jwt-decode": "^4.0.0",
     "postcss": "^8.5.4",
     "radix-ui": "^1.4.2",
     "react": "^19.1.0",

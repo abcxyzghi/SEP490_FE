@@ -1,4 +1,4 @@
-.sellModal-container {
+.sellModal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
@@ -9,17 +9,46 @@
   z-index: 1000;
 }
 
-.sellModal-box {
+.sellModal-container {
+  --white: hsl(0, 0%, 100%);
+  --black: hsl(240, 15%, 9%);
+  --paragraph: hsl(0, 0%, 83%);
+  --line: hsl(240, 9%, 17%);
+  --primary: hsl(266, 92%, 58%);
+
   position: relative;
-  background: rgba(18, 18, 18, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 32px 24px;
+  max-height: 100vh;
   width: 90%;
-  max-width: 420px;
-  color: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  max-width: 570px;
   overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: var(--light-2);
+
+  padding: 20px 28px;
+  background-color: hsla(240, 15%, 9%, 1);
+  background-image: radial-gradient(at 88% 40%,
+      hsla(240, 15%, 9%, 1) 0px,
+      transparent 85%),
+    radial-gradient(at 49% 30%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 0% 64%, hsla(263, 93%, 56%, 1) 0px, transparent 85%),
+    radial-gradient(at 41% 94%, hsla(284, 100%, 84%, 1) 0px, transparent 85%),
+    radial-gradient(at 100% 99%, hsla(306, 100%, 57%, 1) 0px, transparent 85%);
+
+  border-radius: 1rem;
+  box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.25) inset;
+}
+
+.sellModal-box {
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* Hide scrollbar visually but keep scroll functionality */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .sellModal-border {
@@ -32,13 +61,17 @@
 
 .sellModal-close {
   position: absolute;
-  top: 16px;
+  top: 6px;
   right: 20px;
   background: transparent;
   border: none;
   color: #aaa;
-  font-size: 24px;
+  font-size: 1.8rem;
   cursor: pointer;
+}
+
+.sellModal-close:hover {
+  color: #eeeeee;
 }
 
 .sellModal-header {
@@ -46,14 +79,14 @@
 }
 
 .sellModal-title {
-  font-size: 18px;
+  font-size: 1rem;
   text-align: center;
   color: var(--secondary-2);
   margin-bottom: 4px;
 }
 
 .sellModal-subtitle {
-  font-size: 22px;
+  font-size: 1.7rem;
   text-align: center;
   color: var(--light-1);
 }
@@ -65,31 +98,33 @@
 }
 
 .sellModal-field label {
-  font-size: 14px;
+  font-size: 12px;
   margin-bottom: 4px;
-  display: block;
+  /* display: block; */
   color: var(--light-2);
 }
 
 .sellModal-input {
-  background: #1a1a1a;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 98%;
+  margin: 2px;
   padding: 10px 12px;
-  border-radius: 6px;
-  width: 100%;
-  font-size: 14px;
+  background: var(--dark-1-o50);
+  color: var(--light-2);
+  border-radius: 10px;
 }
 
 .sellModal-submitBtn {
-  background-color: var(--primary-1);
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  font-weight: bold;
+  background-image: var(--purpleGr-buyBtn);
+  border: 0;
+  box-shadow: inset 0 -2px 25px -4px var(--light-3);
+  border-radius: 12px;
+  color: var(--light-3);
+  padding: 8px 16px;
   cursor: pointer;
-  margin-top: 10px;
+}
+
+.sellModal-submitBtn:hover {
+  background-image: var(--purpleGr-buyBtnOnhover);
 }
 
 .sellModal-submitBtn:disabled {
@@ -103,14 +138,91 @@
 }
 
 .sellModal-result.success {
-  color: #4ade80; /* green-400 */
+  color: #4ade80;
+  /* green-400 */
 }
 
 .sellModal-result.error {
-  color: #f87171; /* red-400 */
+  color: #f87171;
+  /* red-400 */
 }
 
 .sellModal-code {
   margin-bottom: 6px;
   font-weight: 500;
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* Tablet & small laptop ≤ 765px */
+@media (max-width: 765px) {
+  .sellModal-container {
+    padding: 16px 20px;
+    border-radius: 0.8rem;
+  }
+
+  .sellModal-title {
+    font-size: 0.9rem;
+  }
+
+  .sellModal-subtitle {
+    font-size: 1.4rem;
+  }
+
+  .sellModal-input {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .sellModal-submitBtn {
+    padding: 7px 14px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile ≤ 480px */
+@media (max-width: 480px) {
+  .sellModal-container {
+    max-width: 370px;
+    padding: 14px 16px;
+    border-radius: 0.6rem;
+  }
+
+  .sellModal-close {
+    top: 4px;
+    right: 12px;
+    font-size: 1.4rem;
+  }
+
+  .sellModal-header {
+    margin-bottom: 10px;
+  }
+
+  .sellModal-title {
+    font-size: 0.8rem;
+  }
+
+  .sellModal-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .sellModal-form {
+    gap: 14px;
+  }
+
+  .sellModal-input {
+    padding: 7px 9px;
+    font-size: 0.85rem;
+  }
+
+  .sellModal-submitBtn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .sellModal-result {
+    font-size: 12px;
+  }
 }

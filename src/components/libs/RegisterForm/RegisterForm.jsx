@@ -9,6 +9,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import { registerApi, sendVerifyEmailApi, confirmOtpApi } from '../../../services/api.auth';
+import { PATH_NAME } from '../../../router/Pathname';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -247,9 +248,34 @@ export default function RegisterForm() {
                             checked={form.accepted}
                             onChange={handleChange} />
                         <span>
-                            &nbsp;I agree with MMB's <a href="https://example.com/terms" target="_blank" rel="noopener noreferrer" className="register-link">Terms of Service</a>,
-                            <a href="https://example.com/privacy" target="_blank" rel="noopener noreferrer" className="register-link"> Privacy Policy</a>, and default
-                            <a href="https://example.com/notifications" target="_blank" rel="noopener noreferrer" className="register-link"> Notification Settings</a>.
+                            &nbsp;I agree with MMB's{" "}
+                            <a
+                                href={PATH_NAME.TERM_OF_SERVICE}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="register-link"
+                            >
+                                Terms of Service
+                            </a>
+                            ,{" "}
+                            <a
+                                href={PATH_NAME.PRIVACY_POLICY}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="register-link"
+                            >
+                                Privacy Policy
+                            </a>
+                            , and {" "}
+                            <a
+                                href={PATH_NAME.COPYRIGHT_POLICY}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="register-link"
+                            >
+                                Copyright Policy
+                            </a>
+                            .
                         </span>
                     </label>
                 </div>
