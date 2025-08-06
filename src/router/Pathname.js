@@ -25,7 +25,7 @@ export const PATH_NAME = {
     ACTIVITIES_PAGE: "/activities",
     EXCHANGE_PAGE: "/exchangepage/:sellProductId",
     USER_SALE_REPORT:"/usersalereport",
-    SUCCESS_PAYMENT:"/succcess-payment",
+    SUCCESS_PAYMENT:"/success-payment",
     FAILURE_PAYMENT:"/failure-payment",
     
     MODERATOR_DASHBOARD: "/moderatorDashboard",
