@@ -1,0 +1,10 @@
+.ModeratorP-container{
+    display: flex;
+
+    /* background-color: aquamarine; */
+}
+
+.ModeratorP-content{
+    margin: 0.6rem 1.5rem;
+    flex-grow: 1; /* Take up remaining space after the sidebar */
+}

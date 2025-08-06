@@ -24,14 +24,14 @@ export default function Loginpage() {
   };
 
   return (
-    <div class="loginpage-container">
+    <div className="loginpage-container">
       <video autoPlay muted loop playsInline className="logister-background-video">
         {/* logister-background-video share same css style with Registerpage.css */}
         <source src={lvaVid} type="video/mp4" />
       </video>
 
       {/* Page switcher on the top */}
-      <div class="loginpage-header">
+      <div className="loginpage-header">
         <div className="loginpage-toggle">
           <div className="loginpage-headleft-bar" onClick={toggleNextPage}>
             <div className="loginpage-flip-container">
@@ -62,7 +62,7 @@ export default function Loginpage() {
       </div>
 
       {/* Login Form */}
-      <div class="loginpage-content flex items-center justify-center min-h-[calc(100vh-60px)]">
+      <div className="loginpage-content flex items-center justify-center min-h-[calc(100vh-60px)]">
         <LoginForm />
       </div>
 
