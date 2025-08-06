@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -9,104 +9,71 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
-const data = [
-  {
-    type: "byDay",
-    totalRevenue: 500000,
-    totalOrders: 20,
-    totalProductsSold: 50,
-  },
-  {
-    type: "byMonth",
-    totalRevenue: 15000000,
-    totalOrders: 120,
-    totalProductsSold: 300,
-  },
-  {
-    type: "byYear",
-    totalRevenue: 200000000,
-    totalOrders: 1800,
-    totalProductsSold: 4500,
-  },
-];
+import { getUserSale } from "../../../services/api.user";
 
 export default function UserSaleReport() {
-  return (
-    <div style={{ width: "100%", maxWidth: 900, margin: "0 auto" }}>
-      <h3 style={{ textAlign: "center", marginTop: 24 }}>📦 Đơn hàng & Sản phẩm</h3>
-      <div style={{ width: "100%", height: 300 }}>
-        <ResponsiveContainer>
-          <BarChart
-            data={data}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="type"
-              tickFormatter={(value) => {
-                switch (value) {
-                  case "byDay":
-                    return "By Day";
-                  case "byMonth":
-                    return "By Month";
-                  case "byYear":
-                    return "By Year";
-                  default:
-                    return value;
-                }
-              }}
-            />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="totalOrders" fill="#82ca9d" name="Total Orders" />
-            <Bar
-              dataKey="totalProductsSold"
-              fill="#ffc658"
-              name="Products Sold"
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+  const [byDay, setByDay] = useState([]);
+  const [byMonth, setByMonth] = useState([]);
+  const [byYear, setByYear] = useState([]);
 
-      <h3 style={{ textAlign: "center", marginTop: 48 }}>💰 Doanh thu</h3>
-      <div style={{ width: "100%", height: 300 }}>
-        <ResponsiveContainer>
-          <BarChart
-            data={data}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="type"
-              tickFormatter={(value) => {
-                switch (value) {
-                  case "byDay":
-                    return "By Day";
-                  case "byMonth":
-                    return "By Month";
-                  case "byYear":
-                    return "By Year";
-                  default:
-                    return value;
-                }
-              }}
-            />
-            <YAxis />
-            <Tooltip
-              formatter={(value) =>
-                new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(value)
-              }
-            />
-            <Legend />
-            <Bar dataKey="totalRevenue" fill="#8884d8" name="Total Revenue" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+  useEffect(() => {
+    const fetchUserSale = async () => {
+      try {
+        const res = await getUserSale();
+        const data = res.data;
+
+        // Chuẩn hóa dữ liệu nếu cần
+        const format = (arr) =>
+          arr.map((item) => ({
+            ...item,
+            name: item.time, // để hiện trên trục X
+          }));
+
+        setByDay(format(data.byDay));
+        setByMonth(format(data.byMonth));
+        setByYear(format(data.byYear));
+      } catch (err) {
+        console.error("Failed to fetch user sale report:", err);
+      }
+    };
+
+    fetchUserSale();
+  }, []);
+
+  const renderChart = (title, data, timeLabel) => (
+  <div style={{ width: "100%", height: 350, marginBottom: 40 }}>
+    <h3 style={{ textAlign: "center", marginBottom: 12 }}>{title}</h3>
+    <ResponsiveContainer>
+      <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" label={{ value: timeLabel, position: "insideBottom", offset: -5 }} />
+        <YAxis />
+        <Tooltip
+          formatter={(value, name) => {
+            if (name === "Doanh thu") {
+              return new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(value);
+            }
+            return value;
+          }}
+        />
+        <Legend />
+        {/* Thứ tự như bạn yêu cầu */}
+        <Bar dataKey="orders" fill="#82ca9d" name="Số đơn hàng" />
+        <Bar dataKey="productsSold" fill="#ffc658" name="Sản phẩm đã bán" />
+        <Bar dataKey="revenue" fill="#8884d8" name="Doanh thu" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
+
+  return (
+    <div style={{ width: "100%", maxWidth: 1000, margin: "0 auto", paddingTop: 24 }}>
+      {renderChart("📅 Thống kê theo ngày", byDay, "Ngày")}
+      {renderChart("🗓️ Thống kê theo tháng", byMonth, "Tháng")}
+      {renderChart("📈 Thống kê theo năm", byYear, "Năm")}
     </div>
   );
 }
