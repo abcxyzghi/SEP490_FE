@@ -8,11 +8,6 @@ export const createPayment = async (items) => {
       data: {
         items, 
       },
-      headers: {
-        "Content-Type": "application/json",
-        "mmb-dev-password": "toilaconchochihuahuacuamakima",
-        accept: "text/plain",
-      },
       requiresAuth: true, 
     });
 
