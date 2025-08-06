@@ -21,6 +21,8 @@ import FollowIcon from "../../../assets/Icon_line/User_add.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
+import { followUser, getFollowers, getFollowing, unfollowUser } from '../../../services/api.subscription';
+import { Modal } from 'antd';
 
 export default function Profilepage() {
   const { id } = useParams();
@@ -28,6 +30,7 @@ export default function Profilepage() {
   const currentUserId = user?.user_id;
   const navigate = useNavigate();
   const [copySuccess, setCopySuccess] = useState(false);
+  const [followSuccess, setFollowSuccess] = useState(false);
   const [profile, setProfile] = useState(null);
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,7 +39,7 @@ export default function Profilepage() {
   const [productsLoading, setProductsLoading] = useState(true);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [activeTab, setActiveTab] = useState('Mystery Boxes');
-
+  const [hasFollowed, setHasFollowed] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportTitle, setReportTitle] = useState('');
   const [reportContent, setReportContent] = useState('');
@@ -46,6 +49,14 @@ export default function Profilepage() {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [reportTitle, setReportTitle] = useState('');
+  const [reportContent, setReportContent] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -80,7 +91,35 @@ export default function Profilepage() {
     }
   }, [id, currentUserId]);
 
+  // Move fetchSocialData outside so it can be reused
+  const fetchSocialData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [followersRes, followingRes] = await Promise.all([
+        getFollowers(),
+        getFollowing(),
+      ]);
+      const followersData = followersRes.data || [];
+      const followingData = followingRes.data || [];
+      console.log(followersData)
+      setFollowers(followersData);
+      setFollowing(followingData);
+      if (id && followingData.some((user) => user.userId === id)) {
+        setHasFollowed(true);
+      } else {
+        setHasFollowed(false);
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi fetch followers/following:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
+  useEffect(() => {
+    fetchSocialData();
+  }, [fetchSocialData]);
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
     setProductsLoading(true);
@@ -108,7 +147,7 @@ export default function Profilepage() {
     }
   }, [id, currentUserId, fetchProducts]);
 
-  if (loading) return (
+  if (loading || isLoading) return (
     <div className="w-full">
       {/* Banner skeleton */}
       <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
@@ -207,6 +246,23 @@ export default function Profilepage() {
       });
   };
 
+  const handleFollowToggle = async () => {
+    try {
+      if (hasFollowed) {
+        await unfollowUser(id);
+        console.log("Đã hủy theo dõi!");
+      } else {
+        await followUser(id);
+        console.log("Đã theo dõi!");
+        setFollowSuccess(true); // Show success snackbar nếu cần
+      }
+
+      await fetchSocialData(); // Cập nhật lại trạng thái theo dõi
+    } catch (error) {
+      console.error("❌ Lỗi khi xử lý theo dõi / hủy theo dõi:", error);
+    }
+  };
+
   // Function to submit Report form
   const handleSubmitReport = async () => {
     if (!reportTitle || !reportContent) {
@@ -280,8 +336,8 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
-                {isMyProfile ?
-                  (
+                {isMyProfile ? (
+                  <>
                     <button
                       className="profilepage-btn-follow oxanium-semibold"
                       onClick={() => navigate('/settingpage')}
@@ -289,6 +345,7 @@ export default function Profilepage() {
                       <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
                       Edit profile
                     </button>
+
                   ) : (
                     <>
                       <button className="profilepage-btn-follow oxanium-semibold"
@@ -317,7 +374,106 @@ export default function Profilepage() {
                       </button>
                     </>
                   )}
+
+
+//                     <button
+//                       className="profilepage-btn-viewfollows oxanium-semibold"
+//                       onClick={() => setIsFollowModalOpen(true)}
+//                     >
+//                       <img src="/icons/people.svg" alt="Follows" className="profilepage-follow-icon" />
+//                       Followers / Following
+//                     </button>
+//                   </>
+//                 ) : (
+//                   <>
+//                     <button
+//                       className="profilepage-btn-follow oxanium-semibold"
+//                       onClick={handleFollowToggle}
+//                     >
+//                       <img
+//                         src={FollowIcon}
+//                         alt="Follow"
+//                         className="profilepage-follow-icon"
+//                       />
+//                       {hasFollowed ? "Following" : "Follow"}
+//                     </button>
+//                     <button
+//                       className="profilepage-btn-message oxanium-semibold"
+//                       onClick={() => {
+//                         if (!user || !user.user_id) {
+//                           showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
+//                           return;
+//                         }
+//                         if (!id) {
+//                           showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
+//                           return;
+//                         }
+//                         navigate(`/chatroom/${id}`);
+//                       }}
+//                     >
+//                       <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
+//                       Message
+//                     </button>
+//                   </>
+//                 )}
+
               </div>
+              <Modal
+                title="Followers & Following"
+                open={isFollowModalOpen}
+                onCancel={() => setIsFollowModalOpen(false)}
+                footer={null}
+              >
+                <div>
+                  <h4>Followers</h4>
+                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                    {followers.length > 0 ? (
+                      followers.map((follower) => (
+                        <li key={follower.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                          <img
+                            src={buildImageUrl(follower.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={follower.followerName}
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                              marginRight: 8,
+                              objectFit: "cover",
+                            }}
+                          />
+                          <span>{follower.followerName}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Chưa có ai theo dõi</li>
+                    )}
+                  </ul>
+
+                  <h4 style={{ marginTop: 16 }}>Following</h4>
+                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                    {following.length > 0 ? (
+                      following.map((followed) => (
+                        <li key={followed.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                          <img
+                            src={buildImageUrl(followed.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={followed.userName}
+                            style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
+                          />
+                          <span>{followed.userName}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Chưa theo dõi ai</li>
+                    )}
+                  </ul>
+                </div>
+              </Modal>
+
+
+
+
             </div>
 
             {/* Right extra buttons */}
@@ -400,6 +556,18 @@ export default function Profilepage() {
       >
         <Alert onClose={() => setCopySuccess(false)} severity="success" sx={{ width: '100%' }}>
           Profile link copied to clipboard!
+        </Alert>
+      </Snackbar>
+
+      {/* Success follow snackbar */}
+      <Snackbar
+        open={followSuccess}
+        autoHideDuration={3000}
+        onClose={() => setFollowSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={() => setFollowSuccess(false)} severity="success" sx={{ width: '100%' }}>
+          Đã theo dõi thành công!
         </Alert>
       </Snackbar>
 

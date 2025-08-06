@@ -1,4 +1,3 @@
-import axios from "../config/axios";
 import { apiWithFallback } from '../config/axios';
 
 //this api is using for get the request you send to other collector for exchange product

@@ -68,8 +68,8 @@ export default function Cartpage() {
             const productDetail = await getProductOnSaleDetail(item.id);
 
             if (productDetail?.status && productDetail.data) {
-              const availableQty = productDetail.data.quantity;
-
+              const availableQty = productDetail.data.quantity;              
+//===========================================note: có gì style lại cái alert, nhà nó nằm ở đây (style lại cho đẹp)========================================================================================
               const confirmBuy = window.confirm(
                 `Hiện tại trong shop chỉ còn ${availableQty} sản phẩm. Bạn có muốn mua không?`
               );
