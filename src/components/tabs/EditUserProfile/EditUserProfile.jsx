@@ -222,11 +222,18 @@ export default function EditUserProfile() {
         setMessage("Vui lòng nhập số tài khoản ngân hàng.");
         return;
       }
-      if (!/^0\d{9}$/.test(form.phoneNumber.trim())) {
-        setMessage(
-          "Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng số 0."
-        );
-        return;
+      if (form.phoneNumber.trim()) {
+        const phone = form.phoneNumber.trim();
+        if (!/^\d+$/.test(phone)) {
+          setMessage("Số điện thoại chỉ được chứa số.");
+          return;
+        }
+        if (!/^0\d{9}$/.test(phone)) {
+          setMessage(
+            "Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng số 0."
+          );
+          return;
+        }
       }
     }
 
@@ -327,7 +334,10 @@ export default function EditUserProfile() {
           <input
             name="phoneNumber"
             value={form.phoneNumber}
-            onChange={handleChange}
+            onChange={(e) => {
+              const onlyNumbers = e.target.value.replace(/\D/g, ""); // loại bỏ tất cả ký tự không phải số
+              setForm({ ...form, phoneNumber: onlyNumbers });
+            }}
             placeholder="Nhập số điện thoại"
           />
         </div>
