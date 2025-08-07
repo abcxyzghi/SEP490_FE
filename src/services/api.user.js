@@ -262,4 +262,19 @@ export const getAllCommentsOfSellProduct = async (userId, productName) => {
     console.error("Lỗi khi lấy comment của sản phẩm:", error);
     throw error;
   }
+} 
+
+export const getAverageRatingsOfSellProduct = async (productid) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: `/cs/api/Comment/get-rating-average-of-sell-product`,
+      params: { sellProductId: productid },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy comment của sản phẩm:", error);
+    throw error;
+  }
 }

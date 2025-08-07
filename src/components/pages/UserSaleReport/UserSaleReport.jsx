@@ -12,8 +12,12 @@ import {
   Line,
 } from "recharts";
 import "./UserSaleReport.css";
-import { getAllCommentsOfSellProduct, getUserSale } from "../../../services/api.user";
-import { useParams } from "react-router-dom";
+import {
+  getAllCommentsOfSellProduct,
+  getUserSale,
+  getAverageRatingsOfSellProduct,
+} from "../../../services/api.user";
+// import { useParams } from "react-router-dom";
 import { Modal } from "antd";
 import { useSelector } from "react-redux";
 import { buildImageUrl } from "../../../services/api.imageproxy";
@@ -24,11 +28,12 @@ export default function UserSaleReport() {
   const [byMonth, setByMonth] = useState([]);
   const [byYear, setByYear] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   const currentUserId = user?.user_id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [comments, setComments] = useState([]);
   const [selectedProductName, setSelectedProductName] = useState(null);
+  const [selectedProductRating, setSelectedProductRating] = useState(null);
   useEffect(() => {
     const fetchUserSale = async () => {
       try {
@@ -52,14 +57,27 @@ export default function UserSaleReport() {
 
     fetchUserSale();
   }, []);
-
-
   const handleShowComments = async (productName) => {
     try {
       setSelectedProductName(productName);
       const res = await getAllCommentsOfSellProduct(currentUserId, productName);
-      console.log(res.data)
       setComments(res.data);
+
+      // Tìm productId từ topProducts
+      const product = topProducts.find((p) => p.productName === productName);
+
+      if (product) {
+        try {
+          const ratingRes = await getAverageRatingsOfSellProduct(
+            product.productId
+          );
+          setSelectedProductRating(ratingRes.data);
+        } catch (err) {
+          console.error("Lỗi khi lấy rating:", err);
+          setSelectedProductRating(null);
+        }
+      }
+
       setIsModalOpen(true);
     } catch (err) {
       console.error("Lỗi khi lấy bình luận sản phẩm:", err);
@@ -69,9 +87,15 @@ export default function UserSaleReport() {
     <div className="chart-container bar-chart">
       <h3 className="chart-title">{title} - Đơn hàng & Sản phẩm</h3>
       <ResponsiveContainer>
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <BarChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" label={{ value: timeLabel, position: "insideBottom", offset: -5 }} />
+          <XAxis
+            dataKey="name"
+            label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+          />
           <YAxis />
           <Tooltip />
           <Legend />
@@ -82,19 +106,37 @@ export default function UserSaleReport() {
     </div>
   );
 
-
-
   const renderLineChart = (title, data, timeLabel) => (
     <div className="chart-container line-chart">
       <h3 className="chart-title">{title} - Doanh thu</h3>
       <ResponsiveContainer>
-        <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <LineChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" label={{ value: timeLabel, position: "insideBottom", offset: -5 }} />
+          <XAxis
+            dataKey="name"
+            label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+          />
           <YAxis />
-          <Tooltip formatter={(value) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value)} />
+          <Tooltip
+            formatter={(value) =>
+              new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(value)
+            }
+          />
           <Legend />
-          <Line type="monotone" dataKey="revenue" stroke="#8884d8" name="Doanh thu" strokeWidth={2} dot={{ r: 3 }} />
+          <Line
+            type="monotone"
+            dataKey="revenue"
+            stroke="#8884d8"
+            name="Doanh thu"
+            strokeWidth={2}
+            dot={{ r: 3 }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -130,9 +172,9 @@ export default function UserSaleReport() {
             formatter={(value, name) =>
               name === "Doanh thu"
                 ? new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(value)
+                    style: "currency",
+                    currency: "VND",
+                  }).format(value)
                 : value
             }
           />
@@ -224,12 +266,14 @@ export default function UserSaleReport() {
                   <h4>{product.productName}</h4>
                   <p>Số lượng bán: {product.totalSold}</p>
                   <p>Doanh thu: {product.totalRevenue}</p>
-                   <img
+                  <img
                     src={buildImageUrl(product.urlImage)}
                     alt={product.productName}
+                    style={{ maxWidth: "100%", height: "auto" }}
                   />
-
-                  <button onClick={() => handleShowComments(product.productName)}>
+                  <button
+                    onClick={() => handleShowComments(product.productName)}
+                  >
                     💬 Xem bình luận
                   </button>
                 </div>
@@ -239,9 +283,19 @@ export default function UserSaleReport() {
             <Modal
               open={isModalOpen}
               title={`Bình luận về sản phẩm: ${selectedProductName}`}
-              onCancel={() => setIsModalOpen(false)}
+              onCancel={() => {
+                setIsModalOpen(false);
+                setSelectedProductRating(null); // Reset rating khi đóng modal
+              }}
               footer={null}
             >
+              <div style={{ marginBottom: 10 }}>
+                ⭐ Đánh giá trung bình:{" "}
+                {selectedProductRating !== null
+                  ? selectedProductRating
+                  : "Đang tải..."}
+              </div>
+
               {comments.length === 0 ? (
                 <p>Không có bình luận nào.</p>
               ) : (
@@ -259,7 +313,6 @@ export default function UserSaleReport() {
                     >
                       <img
                         src={buildImageUrl(comment.profileImage)}
-
                         alt={comment.username}
                         style={{
                           width: 40,
@@ -281,16 +334,11 @@ export default function UserSaleReport() {
                     </li>
                   ))}
                 </ul>
-
               )}
             </Modal>
           </>
         )}
-
-
       </div>
-
     </>
   );
-
 }
