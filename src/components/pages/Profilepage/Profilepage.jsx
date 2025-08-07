@@ -5,7 +5,7 @@ import { Snackbar, Alert } from '@mui/material';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
+import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport, getRatingOfUser } from '../../../services/api.user';
 import { format } from 'date-fns';
 import { buildImageUrl } from '../../../services/api.imageproxy';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
@@ -44,6 +44,7 @@ export default function Profilepage() {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+  const [rating, setRating] = useState(null);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [reportTitle, setReportTitle] = useState('');
@@ -62,6 +63,8 @@ export default function Profilepage() {
         if (id && (!currentUserId || id !== currentUserId)) {
           res = await getOtherProfile(id);
         } else if (currentUserId) {
+
+
           res = await getProfile();
         } else {
           setError('You must be logged in to view your own profile.');
@@ -73,6 +76,8 @@ export default function Profilepage() {
         } else {
           setError('Profile not found');
         }
+        const data = await getRatingOfUser(id);
+        setRating(data.data);
       } catch {
         setError('Failed to load profile');
       } finally {
@@ -103,23 +108,23 @@ export default function Profilepage() {
 
       setFollowers(followersData);
       setFollowing(followingData);
-      console.log("this is id log",id);
-      console.log("this is following data",followingData)
-      console.log("this is follower date",followersData)
+      console.log("this is id log", id);
+      console.log("this is following data", followingData)
+      console.log("this is follower date", followersData)
 
       // Kiểm tra xem id hiện tại có đang follow ai không
       if (currentUserId && followersData.some((user) => user.followerId === currentUserId)) {
-  setHasFollowed(true);
-} else {
-  setHasFollowed(false);
-} 
+        setHasFollowed(true);
+      } else {
+        setHasFollowed(false);
+      }
 
     } catch (error) {
       console.error("❌ Lỗi khi fetch followers/following:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [id,currentUserId]);
+  }, [id, currentUserId]);
 
   useEffect(() => {
     fetchSocialData();
@@ -342,11 +347,15 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
+                <div style={{ color: "white" }}>
+                  <h3>⭐ Đánh giá của người dùng:</h3>
+                  <p>{rating}</p>
+                </div>
                 <button
-                      className="profilepage-btn-viewfollows oxanium-semibold"
-                      onClick={() => setIsFollowModalOpen(true)}
+                  className="profilepage-btn-viewfollows oxanium-semibold"
+                  onClick={() => setIsFollowModalOpen(true)}
                 >
-                      Followers / Following
+                  Followers / Following
                 </button>
                 {isMyProfile ? (
                   <>
