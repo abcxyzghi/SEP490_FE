@@ -4,7 +4,7 @@ export const fetchAuctionList = async () => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
-      url: "/api/auction/all",
+      url: "/api/auction/waiting",
       requiresAuth: true, 
     });
 
@@ -13,7 +13,21 @@ export const fetchAuctionList = async () => {
     console.error("Fetch auction list failed:", error);
     throw error;
   }
-};
+}; 
+export const fetchAuctionListStart = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/api/auction/waiting",
+      requiresAuth: true, 
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch auction list failed:", error);
+    throw error;
+  }
+}; 
 
 export const fetchMyAuctionList = async () => {
   try {
