@@ -17,7 +17,7 @@ export default function UserSaleReport() {
   const [byDay, setByDay] = useState([]);
   const [byMonth, setByMonth] = useState([]);
   const [byYear, setByYear] = useState([]);
-
+  const [topProducts, setTopProducts] = useState([]);
   useEffect(() => {
     const fetchUserSale = async () => {
       try {
@@ -33,6 +33,7 @@ export default function UserSaleReport() {
         setByDay(format(data.byDay));
         setByMonth(format(data.byMonth));
         setByYear(format(data.byYear));
+        setTopProducts(data.topProducts);
       } catch (err) {
         console.error("Failed to fetch user sale report:", err);
       }
@@ -57,7 +58,55 @@ export default function UserSaleReport() {
       </ResponsiveContainer>
     </div>
   );
-
+  const renderTopProductsChart = (data) => (
+  <div style={{ width: "100%", height: 400, marginBottom: 50 }}>
+    <h3 style={{ textAlign: "center", marginBottom: 12 }}>🔥 Top sản phẩm bán chạy</h3>
+    <ResponsiveContainer>
+      <BarChart
+        data={data}
+        margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="productName"
+          angle={-25}
+          textAnchor="end"
+          interval={0}
+          height={90}
+        />
+        <YAxis yAxisId="left" label={{ value: "Số lượng", angle: -90, position: "insideLeft" }} />
+        <YAxis
+          yAxisId="right"
+          orientation="right"
+          label={{ value: "Doanh thu (VND)", angle: 90, position: "insideRight" }}
+        />
+        <Tooltip
+          formatter={(value, name) =>
+            name === "Doanh thu"
+              ? new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(value)
+              : value
+          }
+        />
+        <Legend />
+        <Bar
+          yAxisId="left"
+          dataKey="totalSold"
+          fill="#82ca9d"
+          name="Số lượng đã bán"
+        />
+        <Bar
+          yAxisId="right"
+          dataKey="totalRevenue"
+          fill="#8884d8"
+          name="Doanh thu"
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
   const renderLineChart = (title, data, timeLabel) => (
     <div style={{ width: "100%", height: 300, marginBottom: 50 }}>
       <h3 style={{ textAlign: "center", marginBottom: 12 }}>{title} - Doanh thu</h3>
@@ -101,6 +150,8 @@ export default function UserSaleReport() {
       {/* Theo năm */}
       {renderBarChart("📈 Thống kê theo năm", byYear, "Năm")}
       {renderLineChart("📈 Thống kê theo năm", byYear, "Năm")}
+
+      {renderTopProductsChart(topProducts)}
     </div>
   );
 }
