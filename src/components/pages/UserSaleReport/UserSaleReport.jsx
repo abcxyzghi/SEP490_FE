@@ -11,9 +11,11 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import "./UserSaleReport.css";
 import { getUserSale } from "../../../services/api.user";
 
 export default function UserSaleReport() {
+  const [activeTab, setActiveTab] = useState("day");
   const [byDay, setByDay] = useState([]);
   const [byMonth, setByMonth] = useState([]);
   const [byYear, setByYear] = useState([]);
@@ -41,10 +43,11 @@ export default function UserSaleReport() {
 
     fetchUserSale();
   }, []);
+  
 
   const renderBarChart = (title, data, timeLabel) => (
-    <div style={{ width: "100%", height: 300, marginBottom: 30 }}>
-      <h3 style={{ textAlign: "center", marginBottom: 12 }}>{title} - Đơn hàng & Sản phẩm</h3>
+    <div className="chart-container bar-chart">
+      <h3 className="chart-title">{title} - Đơn hàng & Sản phẩm</h3>
       <ResponsiveContainer>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -58,13 +61,31 @@ export default function UserSaleReport() {
       </ResponsiveContainer>
     </div>
   );
+  
+
+
+  const renderLineChart = (title, data, timeLabel) => (
+    <div className="chart-container line-chart">
+      <h3 className="chart-title">{title} - Doanh thu</h3>
+      <ResponsiveContainer>
+        <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" label={{ value: timeLabel, position: "insideBottom", offset: -5 }} />
+          <YAxis />
+          <Tooltip formatter={(value) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value)} />
+          <Legend />
+          <Line type="monotone" dataKey="revenue" stroke="#8884d8" name="Doanh thu" strokeWidth={2} dot={{ r: 3 }} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
   const renderTopProductsChart = (data) => (
-  <div style={{ width: "100%", height: 400, marginBottom: 50 }}>
-    <h3 style={{ textAlign: "center", marginBottom: 12 }}>🔥 Top sản phẩm bán chạy</h3>
-    <ResponsiveContainer>
+  <div className="chart-container top-products-chart">
+    <h3 className="chart-title">🔥 Top sản phẩm bán chạy</h3>
+    <ResponsiveContainer width="100%" height={400}>
       <BarChart
         data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+        margin={{ top: 20, right: 30, left: 20, bottom: 90 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
@@ -72,13 +93,18 @@ export default function UserSaleReport() {
           angle={-25}
           textAnchor="end"
           interval={0}
-          height={90}
+          height={100}
         />
-        <YAxis yAxisId="left" label={{ value: "Số lượng", angle: -90, position: "insideLeft" }} />
+        <YAxis yAxisId="left" />
         <YAxis
           yAxisId="right"
           orientation="right"
-          label={{ value: "Doanh thu (VND)", angle: 90, position: "insideRight" }}
+          tickFormatter={(value) =>
+            new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(value)
+          }
         />
         <Tooltip
           formatter={(value, name) =>
@@ -107,51 +133,58 @@ export default function UserSaleReport() {
     </ResponsiveContainer>
   </div>
 );
-  const renderLineChart = (title, data, timeLabel) => (
-    <div style={{ width: "100%", height: 300, marginBottom: 50 }}>
-      <h3 style={{ textAlign: "center", marginBottom: 12 }}>{title} - Doanh thu</h3>
-      <ResponsiveContainer>
-        <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" label={{ value: timeLabel, position: "insideBottom", offset: -5 }} />
-          <YAxis />
-          <Tooltip
-            formatter={(value, name) => {
-              return new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(value);
-            }}
-          />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            stroke="#8884d8"
-            name="Doanh thu"
-            strokeWidth={2}
-            dot={{ r: 3 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
-
   return (
-    <div style={{ width: "100%", maxWidth: 1000, margin: "0 auto", paddingTop: 24, display: "flex", gap: "20px", flexDirection: "column" }}>
-      {/* Theo ngày */}
-      {renderBarChart("📅 Thống kê theo ngày", byDay, "Ngày")}
-      {renderLineChart("📅 Thống kê theo ngày", byDay, "Ngày")}
+    <div className="statistics-wrapper">
+      <div className="tab-buttons-chart">
+        <button
+          className={activeTab === "day" ? "active" : ""}
+          onClick={() => setActiveTab("day")}
+        >
+          📅 Ngày
+        </button>
+        <button
+          className={activeTab === "month" ? "active" : ""}
+          onClick={() => setActiveTab("month")}
+        >
+          🗓️ Tháng
+        </button>
+        <button
+          className={activeTab === "year" ? "active" : ""}
+          onClick={() => setActiveTab("year")}
+        >
+          📈 Năm
+        </button>
+        <button
+    className={activeTab === "top" ? "active" : ""}
+    onClick={() => setActiveTab("top")}
+  >
+    🔥 Top Sản Phẩm
+  </button>
+      </div>
 
-      {/* Theo tháng */}
-      {renderBarChart("🗓️ Thống kê theo tháng", byMonth, "Tháng")}
-      {renderLineChart("🗓️ Thống kê theo tháng", byMonth, "Tháng")}
+      {activeTab === "day" && (
+        <>
+          {renderBarChart("📅 Thống kê theo ngày", byDay)}
+          {renderLineChart("📅 Thống kê theo ngày", byDay)}
+        </>
+      )}
 
-      {/* Theo năm */}
-      {renderBarChart("📈 Thống kê theo năm", byYear, "Năm")}
-      {renderLineChart("📈 Thống kê theo năm", byYear, "Năm")}
+      {activeTab === "month" && (
+        <>
+          {renderBarChart("🗓️ Thống kê theo tháng", byMonth)}
+          {renderLineChart("🗓️ Thống kê theo tháng", byMonth)}
+        </>
+      )}
 
-      {renderTopProductsChart(topProducts)}
+      {activeTab === "year" && (
+        <>
+          {renderBarChart("📈 Thống kê theo năm", byYear)}
+          {renderLineChart("📈 Thống kê theo năm", byYear)}
+        </>
+      )}
+   
+      {activeTab === "top" && renderTopProductsChart(topProducts)}
     </div>
   );
+
 }
