@@ -51,7 +51,7 @@ export default function Profilepage() {
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -86,34 +86,45 @@ export default function Profilepage() {
   }, [id, currentUserId]);
 
   // Move fetchSocialData outside so it can be reused
+
   const fetchSocialData = useCallback(async () => {
     try {
       setIsLoading(true);
+
+      // Gọi API với tham số myUserId = id
       const [followersRes, followingRes] = await Promise.all([
-        getFollowers(),
-        getFollowing(),
+        getFollowers(id),
+        getFollowing(id),
       ]);
+
       const followersData = followersRes.data || [];
       const followingData = followingRes.data || [];
-      console.log(followersData)
+
+
       setFollowers(followersData);
       setFollowing(followingData);
-      if (id && followingData.some((user) => user.userId === id)) {
-        setHasFollowed(true);
-      } else {
-        setHasFollowed(false);
-      }
+      console.log("this is id log",id);
+      console.log("this is following data",followingData)
+      console.log("this is follower date",followersData)
+
+      // Kiểm tra xem id hiện tại có đang follow ai không
+      if (currentUserId && followersData.some((user) => user.followerId === currentUserId)) {
+  setHasFollowed(true);
+} else {
+  setHasFollowed(false);
+} 
+
     } catch (error) {
       console.error("❌ Lỗi khi fetch followers/following:", error);
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
-  }, [id]);
+  }, [id,currentUserId]);
 
   useEffect(() => {
     fetchSocialData();
   }, [fetchSocialData]);
+
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
     setProductsLoading(true);
@@ -331,6 +342,12 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
+                <button
+                      className="profilepage-btn-viewfollows oxanium-semibold"
+                      onClick={() => setIsFollowModalOpen(true)}
+                >
+                      Followers / Following
+                </button>
                 {isMyProfile ? (
                   <>
                     <button
@@ -339,13 +356,6 @@ export default function Profilepage() {
                     >
                       <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
                       Edit profile
-                    </button>
-
-                    <button
-                      className="profilepage-btn-viewfollows oxanium-semibold"
-                      onClick={() => setIsFollowModalOpen(true)}
-                    >
-                      Followers / Following
                     </button>
                   </>
                 ) : (
