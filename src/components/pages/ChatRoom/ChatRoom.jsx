@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import "./ChatRoom.css";
 import {
   connectWebSocket,
   disconnectWebSocket,
@@ -11,6 +12,9 @@ import {
   getUserById,
   getUserInChat,
 } from "../../../services/api.chat";
+import ChatList from "../../tabs/ChatList/ChatList";
+import ChatWindow from "../../tabs/ChatWindow/ChatWindow";
+import { getListChat, getOtherProfile } from "../../../services/api.user";
 
 export default function ChatRoom({ otherUserId = "" }) {
   const [status, setStatus] = useState("Initializing...");
@@ -92,8 +96,8 @@ export default function ChatRoom({ otherUserId = "" }) {
         const key = msg._id
           ? msg._id
           : `${msg.sender_id}-${msg.content}-${new Date(
-              msg.created_at
-            ).getTime()}`;
+            msg.created_at
+          ).getTime()}`;
         receivedMessageIds.current.add(key);
       });
     } catch (err) {
@@ -121,8 +125,8 @@ export default function ChatRoom({ otherUserId = "" }) {
             const key = parsed._id
               ? parsed._id
               : `${parsed.sender_id}-${parsed.content}-${new Date(
-                  parsed.created_at
-                ).getTime()}`;
+                parsed.created_at
+              ).getTime()}`;
             if (!receivedMessageIds.current.has(key)) {
               receivedMessageIds.current.add(key);
               setMessages((prev) => [...prev, parsed]);
@@ -193,58 +197,81 @@ export default function ChatRoom({ otherUserId = "" }) {
     }
     prevMessagesLength.current = messages.length;
   }, [messages, myId]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchUsersWithProfiles = async () => {
+      setLoading(true);
+      try {
+        const idsList = await getListChat(); // giả sử trả về mảng ['1', '2', '3']
+        // ids có thể là data.data tùy API trả về
+        const ids = idsList.data
+
+        if (!Array.isArray(ids)) {
+          console.error("Invalid data format from getListChat");
+          setUsers([]);
+          setLoading(false);
+          return;
+        }
+
+        // Gọi getOtherProfile cho từng id
+        const usersData = await Promise.all(
+          ids.map(async (id) => {
+            try {
+              const res = await getOtherProfile(id);
+              console.log(res)
+              if (res && res.status) {
+                return {
+                  id,
+                  name: res.data.username,
+                  avatar: res.data.profileImage,
+                };
+              } else {
+                return { id, name: "Unknown", avatar: null };
+              }
+            } catch (error) {
+              console.error(`Failed to get profile for id ${id}:`, error);
+              return { id, name: "Error", avatar: null };
+            }
+          })
+        );
+
+        setUsers(usersData);
+      } catch (error) {
+        console.error("Failed to fetch chat users:", error);
+        setUsers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsersWithProfiles();
+  }, []);
 
   return (
-    <div className="w-full h-screen flex flex-col items-center bg-gray-100 p-4">
-      <h2 className="text-lg font-semibold mb-2">Phòng Chat</h2>
-      <div className="text-sm text-gray-600 mb-3">{status}</div>
-
-      <div className="w-full max-w-xl flex-1 overflow-y-auto bg-white rounded shadow p-4 mb-4">
-        {messages.length === 0 && (
-          <p className="text-gray-400">Chưa có tin nhắn nào.</p>
+    <div className="chat-layout">
+      {/* ChatList bên trái */}
+      <div className="chat-list-container">
+        {loading ? (
+          <div className="loading">Loading...</div>
+        ) : (
+          <ChatList users={users} />
         )}
-        {messages.map((msg, idx) => {
-          const isMine = msg.sender_id === myId;
-          return (
-            <div
-              key={msg._id || idx}
-              className={`mb-3 p-2 rounded max-w-[70%] ${
-                isMine
-                  ? "bg-blue-500 text-white ml-auto text-right"
-                  : "bg-gray-200 text-black"
-              }`}
-            >
-              <p>{msg.content}</p>
-              <p className="text-xs text-gray-300 mt-1">
-                {new Date(msg.created_at).toLocaleTimeString()}
-              </p>
-            </div>
-          );
-        })}
-        <div ref={chatEndRef}></div>
       </div>
 
-      <div className="w-full max-w-xl flex">
-        <input
-          value={inputMsg}
-          onChange={(e) => setInputMsg(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSend();
-          }}
-          placeholder="Nhập tin nhắn..."
-          className="flex-1 p-2 border border-gray-300 rounded-l"
-          disabled={isSending}
+      {/* ChatWindow bên phải */}
+      <div className="chat-window-container">
+        <ChatWindow
+          messages={messages}
+          myId={myId}
+          inputMsg={inputMsg}
+          setInputMsg={setInputMsg}
+          handleSend={handleSend}
+          isSending={isSending}
+
         />
-        <button
-          onClick={handleSend}
-          className={`bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 ${
-            isSending ? "opacity-60 cursor-not-allowed" : ""
-          }`}
-          disabled={isSending}
-        >
-          {isSending ? "Đang gửi..." : "Gửi"}
-        </button>
       </div>
     </div>
   );
+
 }

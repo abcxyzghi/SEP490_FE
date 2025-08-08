@@ -1,4 +1,4 @@
-import axios from '../config/axios';
+import axios, { pythonApiWithFallback } from '../config/axios';
 import { apiWithFallback } from '../config/axios';
 
 const VIET_QR_API = "https://api.vietqr.io/v2/banks";
@@ -232,6 +232,20 @@ export const getUserSale = async () => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy báo cáo lợi nhuận:", error);
+    throw error;
+  }
+};
+
+export const getListChat = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/py/api/chatboxconservation/list",
+      requiresAuth: true, 
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi gọi getUserInChat:", error);
     throw error;
   }
 };
