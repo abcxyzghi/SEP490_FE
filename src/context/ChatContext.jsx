@@ -42,8 +42,9 @@ export const ChatProvider = ({ children }) => {
 
   const getChatIdFromUrl = useCallback(() => {
     const path = location.pathname;
-    const tempId = path.split(PATH_NAME.CHAT_ROOM.replace("/*", ""))[1] || undefined;
-    if (tempId) {
+    const prefix = PATH_NAME.CHAT_ROOM.replace("/*", "");
+    const tempId = path.startsWith(prefix) ? path.slice(prefix.length) : "";
+    if (tempId && tempId !== '*') {
       return tempId.replace("/", "");
     }
     return null;
