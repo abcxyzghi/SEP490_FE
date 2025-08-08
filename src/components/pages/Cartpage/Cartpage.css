@@ -13,6 +13,16 @@
 
 
 /* Main container inside tab (which used by both CartBoxList and CartProductList */
+.cartpage-card-grid-wrapper{
+  max-height: 700px;
+  overflow-y: auto;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
 .cartpage-card-grid {
   display: flex;
   justify-content: center;

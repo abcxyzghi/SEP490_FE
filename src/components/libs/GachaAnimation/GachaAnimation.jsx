@@ -207,7 +207,7 @@ export default function GachaAnimation({ result, onViewDetail, onClose, onOpenMo
                         animate={{ scale: [0, 1.5, 1], opacity: 1 }}
                         transition={{ duration: 0.8, ease: 'easeInOut' }}
                     >
-                        <div className={`gacha-card rarity-${result.rarity.toLowerCase()}`}
+                        <div className={`gacha-card gacha-rarity-${result.rarity.toLowerCase()}`}
                         >
                             <img
                                 src={buildImageUrl(result.urlImage, useBackupImg)} 

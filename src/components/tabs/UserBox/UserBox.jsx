@@ -83,7 +83,7 @@ export default function UserBox() {
   }
 
   const visibleBoxes = boxes.slice(0, visibleCount);
-  const isEnd = visibleCount >= boxes.length || visibleCount >= 16;
+  const isEnd = visibleCount >= boxes.length;
 
   return (
     <div className="userBox-card-list-container">
@@ -169,7 +169,7 @@ export default function UserBox() {
       ) : (
         <button
           className="userBox-loadmore-button oxanium-semibold"
-          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, 16, boxes.length))}
+          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, boxes.length))}
         >
           Load more
         </button>

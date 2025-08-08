@@ -28,22 +28,20 @@ export default function ConfirmModal({ open, onClose, onConfirm, title, message 
                 </div>
 
                 <DialogContent sx={{ textAlign: 'center', padding: 0 }}>
-                    <div className="messagconfirmDialogeDialog-message oxanium-regular">{message}</div>
+                    <div className="confirmDialog-message oxanium-regular">{message}</div>
                 </DialogContent>
 
-                <DialogActions sx={{ justifyContent: 'center', paddingBottom: '1.5rem' }}>
-                    <Button
+                <DialogActions sx={{ justifyContent: 'center', paddingTop: '1.5rem' }}>
+                    <button
                         onClick={onConfirm}
                         className="confirmDialog-button oxanium-bold"
-                        variant="contained"
-                        color="primary"
                     >
                         Confirm
-                    </Button>
+                    </button>
                 </DialogActions>
 
-                <div className="messageDialog-footer oxanium-regular">
-                    Click elsewhere to cancel
+                <div className="confirmDialog-footer oxanium-semibold">
+                    Click outside to cancel
                 </div>
             </div>
         </Dialog>

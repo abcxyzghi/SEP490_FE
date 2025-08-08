@@ -95,13 +95,13 @@ export default function Navigation() {
           }
         })
         .catch(err => {
-          if (err.response?.status === 401) {
-            localStorage.removeItem('token');
-            dispatch(setUser(null));
-            navigate(PATH_NAME.LOGIN);
-          } else {
+          // if (err.response?.status === 401) {
+          //   localStorage.removeItem('token');
+          //   dispatch(setUser(null));
+          //   navigate(PATH_NAME.LOGIN);
+          // } else {
             console.error('Lỗi fetch user info:', err);
-          }
+          // }
         })
         .finally(() => {
           setLoadingUser(false);

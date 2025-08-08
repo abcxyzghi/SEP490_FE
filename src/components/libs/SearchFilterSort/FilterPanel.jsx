@@ -95,7 +95,7 @@ export default function FilterPanel({ onPriceChange, onRaritySelect, showRarity 
                 {rarities.map((rarity) => (
                   <div
                     key={rarity}
-                    className={`filter-rarity-card ${rarity} ${activeRarities.includes(rarity) ? 'active' : ''}`}
+                    className={`filter-rarity-card ${rarity} ${activeRarities.includes(rarity) ? 'active' : ''} oxanium-regular`}
                     onClick={() => handleRarityClick(rarity)}
                   >
                     {rarity}

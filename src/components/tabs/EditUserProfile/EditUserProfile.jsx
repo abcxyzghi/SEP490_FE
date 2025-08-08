@@ -9,46 +9,75 @@ import { useDispatch } from 'react-redux';
 import { logout, updateProfileImage } from '../../../redux/features/authSlice';
 import { clearCart } from '../../../redux/features/cartSlice';
 import { Input, Select } from "antd";
+import { IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
-// import icons
-import AddQuantity from "../../../assets/Icon_line/refresh-square-2.svg"; 
+// import assets
+import ChangeProfileIcon from "../../../assets/Icon_line/refresh-square-2.svg";
+import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 
 const { Option } = Select;
 
 export default function EditUserProfile() {
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [bankList, setBankList] = useState([]);
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
+
+  const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', onConfirm: null });
+  const showConfirmModal = (title, message, onConfirm = null) => {
+    setConfirmModal({ open: true, title, message, onConfirm });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal(prev => ({ ...prev, open: false }));
+  };
+
+
   // State cho form đổi mật khẩu
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
-  const [pwMessage, setPwMessage] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
+
   // Xử lý đổi mật khẩu
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordForm({ ...passwordForm, [name]: value });
   };
+
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const reduxUser = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const [user, setUser] = useState(reduxUser || {});
   const [form, setForm] = useState({
+    username: '',
+    email: '',
     profileImage: null,
     phoneNumber: '',
     accountBankName: '',
     bankNumber: '',
     bankid: ''
   });
+
+  const [loadingProfileFetching, setLoadingProfileFetching] = useState(true);
+
   // Lấy profile mới nhất khi vào trang và sau khi cập nhật
   useEffect(() => {
     const fetchAll = async () => {
       try {
+        setLoadingProfileFetching(true); // Start loader
+
         const bankRes = await getBankID();
         setBankList(bankRes.data);
 
@@ -57,6 +86,8 @@ export default function EditUserProfile() {
           setUser(profileRes.data);
           setForm(f => ({
             ...f,
+            username: profileRes.data.username || '',
+            email: profileRes.data.email || '',
             phoneNumber: profileRes.data.phoneNumber || '',
             accountBankName: profileRes.data.accountBankName || '',
             bankNumber: profileRes.data.banknumber || '',
@@ -64,8 +95,10 @@ export default function EditUserProfile() {
           }));
         }
       } catch (error) {
-        console.error("Lỗi khi fetch dữ liệu:", error);
+        console.error("Error fetching data:", error);
         setUser(reduxUser || {});
+      } finally {
+        setLoadingProfileFetching(false); // Stop loader
       }
     };
 
@@ -83,8 +116,8 @@ export default function EditUserProfile() {
             <img
               src={bank.logo}
               alt={bank.name}
-              width={20}
-              height={20}
+              width={40}
+              height={40}
               style={{ objectFit: 'contain' }}
             />
             <span>{bank.short_name}-{bank.name}</span>
@@ -93,17 +126,39 @@ export default function EditUserProfile() {
       }
       : undefined;
   }, [bankList, form.bankid]);
-  const handlePasswordSubmit = async (e) => {
+
+
+  const confirmThenSubmit = (e) => {
     e.preventDefault();
-    setPwMessage('');
+
+    showConfirmModal(
+      'Change Confirm',
+      'You will be redirected to the login page for this action to proceed.',
+      async () => {
+        // onConfirm -> call the actual submit action
+        await handlePasswordSubmit();
+      }
+    );
+  };
+
+  // Handle submit new Password
+  const handlePasswordSubmit = async () => {
     setPwLoading(true);
+
     if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
-      setPwMessage('Vui lòng nhập đầy đủ thông tin.');
+      showModal('warning', 'Missing information', 'Please fill in all required fields.');
       setPwLoading(false);
       return;
     }
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPwMessage('Mật khẩu mới và xác nhận không khớp.');
+      showModal('warning', 'Password mismatch', 'New password and confirmation do not match.');
+      setPwLoading(false);
+      return;
+    }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
+    if (!passwordRegex.test(passwordForm.newPassword)) {
+      showModal('warning', 'Insecured password', 'Password must be between 8 - 15 characters long, include at least an uppercase, lowercase, number, and special character.');
       setPwLoading(false);
       return;
     }
@@ -114,19 +169,18 @@ export default function EditUserProfile() {
         confirmPassword: passwordForm.confirmPassword
       });
       if (res?.status) {
-        setPwMessage('Đổi mật khẩu thành công! Đang chuyển hướng đến trang đăng nhập...');
-
+        // success -> directly logout / redirect
         handleLogout();
       } else {
-
-        setPwMessage(res?.message || 'Đổi mật khẩu thất bại!');
+        showModal('error', 'Failed', res?.message || 'Password change failed!');
       }
     } catch (err) {
-      setPwMessage('Đổi mật khẩu thất bại!');
+      showModal('error', 'Failed', 'Password change failed!');
     }
     setPwLoading(false);
   };
 
+  // Handle submit new Profile Image
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'profileImage' && files && files[0]) {
@@ -135,8 +189,8 @@ export default function EditUserProfile() {
       setForm({ ...form, [name]: value });
     }
   };
-  const handleLogout = async () => {
 
+  const handleLogout = async () => {
     dispatch(logout());
     dispatch(clearCart());
 
@@ -156,6 +210,7 @@ export default function EditUserProfile() {
     // Navigate to login page (soft)
     navigate(PATH_NAME.LOGIN, { replace: true });
   };
+
   async function fetchProfile() {
     try {
       const res = await getProfile();
@@ -174,6 +229,7 @@ export default function EditUserProfile() {
       setUser(reduxUser || {});
     }
   }
+
   useEffect(() => {
     const fetchBanks = async () => {
       try {
@@ -190,189 +246,331 @@ export default function EditUserProfile() {
     fetchProfile();
     // eslint-disable-next-line
   }, []);
+
+
+  // Handle submit update profile info
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate không cho phép rỗng tên tài khoản ngân hàng và số tài khoản nếu đã chọn bankid
     if (form.bankid) {
       if (!form.accountBankName.trim()) {
-        setMessage('Vui lòng nhập tên tài khoản ngân hàng.');
+        showModal('warning', 'Missing information', 'Please enter bank account holder name.');
         return;
       }
       if (!form.bankNumber.trim()) {
-        setMessage('Vui lòng nhập số tài khoản ngân hàng.');
+        showModal('warning', 'Missing information', 'Please enter bank account number.');
         return;
       }
     }
 
-    const confirm = window.confirm(
-      "⚠️ Lưu ý quan trọng:\n\n" +
-      "Thông tin tài khoản ngân hàng bạn cung cấp sẽ được dùng để Admin chuyển tiền cho bạn trong tương lai.\n\n" +
-      "- Nếu bạn nhập sai số tài khoản hoặc tên tài khoản (không trùng khớp), yêu cầu sẽ bị từ chối và huỷ ngay lập tức.\n" +
-      "- Bạn hoàn toàn chịu trách nhiệm với thông tin đã nhập. Nếu xảy ra sai sót trong quá trình chuyển tiền do bạn cung cấp sai, Admin sẽ không chịu trách nhiệm.\n\n" +
-      "Hãy đảm bảo rằng bạn đã kiểm tra thật kỹ thông tin trước khi lưu.\n\n" +
-      "Bạn có chắc chắn muốn cập nhật không?"
-    );
-
-    if (!confirm) return; // Người dùng chọn Cancel → không làm gì
-
-    setLoading(true);
-    setMessage('');
-
-    try {
-      const formData = new FormData();
-      if (form.profileImage) formData.append('urlImage', form.profileImage);
-      formData.append('phoneNumber', form.phoneNumber);
-      formData.append('accountBankName', form.accountBankName);
-      formData.append('bankNumber', form.bankNumber);
-      formData.append('bankid', form.bankid);
-
-      const res = await updateProfile(formData, true);
-
-      if (res.data?.profileImage) {
-        dispatch(updateProfileImage(res.data.profileImage));
-      }
-      console.log(res)
-      setMessage(res.status ? 'Cập nhật thành công!' : 'Cập nhật thất bại!');
-      if (res.status) {
-        await fetchProfile();
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      setMessage('Có lỗi xảy ra!');
+    // Phone number validation (only if there's something in the input)
+    if (form.phoneNumber.trim() && !/^\d{10}$/.test(form.phoneNumber.trim())) {
+      showModal('warning', 'Invalid phone number', 'Phone number must contain exactly 10 digits.');
+      return;
     }
 
-    setLoading(false);
+    showConfirmModal(
+      "Important Notice",
+      "The bank account information you provide will be used by the Admin to transfer money to you in the future.\n\n" +
+      "Ensure your bank details are correct. Admin not liable for errors.\n" +
+      "Are you sure you want to update?",
+      async () => {
+        setLoading(true);
+        try {
+          const formData = new FormData();
+          if (form.profileImage) formData.append('urlImage', form.profileImage);
+          formData.append('phoneNumber', form.phoneNumber);
+          formData.append('accountBankName', form.accountBankName);
+          formData.append('bankNumber', form.bankNumber);
+          formData.append('bankid', form.bankid);
+
+          const res = await updateProfile(formData, true);
+
+          if (res.data?.profileImage) {
+            dispatch(updateProfileImage(res.data.profileImage));
+          }
+          showModal(
+            res.status ? 'default' : 'error',
+            res.status ? 'Success' : 'Failed',
+            res.status ? 'Profile updated successfully!' : 'Profile update failed!'
+          );
+          if (res.status) {
+            await fetchProfile();
+          }
+        } catch (err) {
+          showModal('error', 'Error', 'An error occurred!');
+        }
+        setLoading(false);
+      }
+    );
   };
 
+  // Daisy skeleton while fetching user data profile
+  if (loadingProfileFetching) {
+    return (
+      <div className="editUserProfile-container flex flex-col items-center justify-center min-h-screen gap-8">
+        {/* Title Skeleton */}
+        <h2 className="editUserProfile-title">
+          <div className="skeleton h-6 w-72 mb-4 bg-gray-700/40"></div>
+        </h2>
+
+        {/* Avatar + Info Skeleton */}
+        <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
+          {/* LEFT: Avatar Skeleton */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="skeleton w-50 h-50 rounded bg-gray-700/40"></div>
+            <div className="skeleton h-8 w-32 rounded bg-gray-700/40 mb-4"></div>
+          </div>
+
+          {/* RIGHT: Info Skeleton */}
+          <div className="flex flex-col gap-4">
+            <div className="skeleton h-10 w-64 md:w-96 lg:w-[40rem] rounded bg-gray-700/40"></div>
+            <div className="skeleton h-10 w-64 md:w-96 lg:w-[40rem] rounded bg-gray-700/40"></div>
+            <div className="skeleton h-10 w-64 md:w-96 lg:w-[40rem] rounded bg-gray-700/40"></div>
+            <div className="skeleton h-10 w-64 md:w-96 lg:w-[40rem] rounded bg-gray-700/40"></div>
+            <div className="skeleton h-10 w-64 md:w-96 lg:w-[40rem] rounded bg-gray-700/40"></div>
+          </div>
+        </div>
+
+        {/* Save Button Skeleton */}
+        <div className="skeleton h-10 w-40 rounded bg-gray-700/40"></div>
+
+        {/* Password Section Skeleton */}
+        <div className="editUserProfile-password-section flex flex-col items-center gap-4 mt-8">
+          <div className="skeleton h-6 w-64 mb-4 bg-gray-700/40"></div>
+          <div className="skeleton h-10 w-60 md:w-80 lg:w-90 rounded bg-gray-700/40"></div>
+          <div className="skeleton h-10 w-60 md:w-80 lg:w-90 rounded bg-gray-700/40"></div>
+          <div className="skeleton h-10 w-60 md:w-80 lg:w-90 rounded bg-gray-700/40"></div>
+          <div className="skeleton h-10 w-40 rounded mt-4 bg-gray-700/40"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ color: 'white' }}>
-      <h2>Cập nhật thông tin cá nhân</h2>
-      {/* Form cập nhật thông tin cá nhân */}
-      <form onSubmit={handleSubmit} style={{ maxWidth: 400 }} encType="multipart/form-data">
-        <div>
-          <label>Ảnh đại diện:</label>
-          <br />
-          {form.profileImage ? (
-            <img
-              src={URL.createObjectURL(form.profileImage)}
-              alt="Preview"
-              style={{ width: 120, height: 120, objectFit: 'cover', marginBottom: 10, borderRadius: 10 }}
-            />
-          ) : user?.profileImage ? (
-            <img
-              src={buildImageUrl(user.profileImage, useBackupImg)}
-              onError={() => setUseBackupImg(true)}
-              alt="Current avatar"
-              style={{ width: 120, height: 120, objectFit: 'cover', marginBottom: 10, borderRadius: 10 }}
-            />
-          ) : null}
-          <input type="file" name="profileImage" accept="image/*" onChange={handleChange} />
-        </div>
-        <div>
-          <label>Số điện thoại:</label>
-          <input
-            name="phoneNumber"
-            value={form.phoneNumber}
-            onChange={handleChange}
-            placeholder="Nhập số điện thoại"
+    <div className="editUserProfile-container">
+      <h2 className="editUserProfile-title oleo-script-bold">Update Personal Information</h2>
+
+      {/* Form: Profile + Phone + Bank */}
+      <form
+        onSubmit={handleSubmit}
+        className="editUserProfile-form"
+        encType="multipart/form-data"
+      >
+        {/* LEFT: Avatar */}
+        <div className="editUserProfile-avatar-section">
+          <img
+            src={
+              form.profileImage
+                ? URL.createObjectURL(form.profileImage)
+                : user?.profileImage
+                  ? buildImageUrl(user.profileImage, useBackupImg)
+                  : ProfileHolder
+            }
+            onError={() => setUseBackupImg(true)}
+            alt="Profile Preview"
+            className="editUserProfile-avatar"
           />
-        </div>
-        <Select
-          placeholder="Chọn ngân hàng"
-          optionFilterProp="children"
-          onChange={(value) => {
-            setForm((prev) => ({
-              ...prev,
-              bankid: value.value, // chỉ lưu bank.id
-            }));
-          }}
-
-          style={{ width: "100%", marginTop: 10 }}
-          labelInValue
-          value={selectBankValue}
-        >
-          {bankList.map((bank) => (
-            <Option key={bank.id} value={bank.id}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <img src={bank.logo} alt={bank.name} width={24} height={24} style={{ objectFit: 'contain' }} />
-                <span>{bank.short_name}-{bank.name}</span>
-              </div>
-            </Option>
-          ))}
-        </Select>
-
-
-        {form.bankid && (
-          <>
-            <Input
-              placeholder="Tên tài khoản"
-              value={form.accountBankName}
-              onChange={(e) => {
-                const value = e.target.value;
-
-                const cleanValue = value.replace(/[^a-zA-ZÀ-ỹ\s]/g, '');
-                setForm((prev) => ({ ...prev, accountBankName: cleanValue }));
-              }}
-              style={{ marginTop: 10 }}
-            />
-
-            <Input
-              placeholder="Số tài khoản"
-              value={form.bankNumber}
-              onChange={(e) => {
-                const value = e.target.value;
-                // Chỉ cho phép số
-                const numericValue = value.replace(/\D/g, '');
-                setForm((prev) => ({ ...prev, bankNumber: numericValue }));
-              }}
-              style={{ marginTop: 10 }}
-            />
-
-          </>
-        )}
-        <button type="submit" disabled={loading}>{loading ? 'Đang cập nhật...' : 'Cập nhật'}</button>
-      </form>
-      {message && <div style={{ marginTop: 10 }}>{message}</div>}
-
-      <div style={{ marginTop: 40 }}>
-        <h2>Đổi mật khẩu:</h2>
-        <form onSubmit={handlePasswordSubmit} style={{ maxWidth: 400 }}>
-          <div>
-            <label>Mật khẩu hiện tại:</label>
+          <label className="editUserProfile-change-profile-btn oxanium-regular">
+            <img src={ChangeProfileIcon} alt="Change" className="editUserProfile-change-profile-icon" />
+            <span>Change Avatar</span>
             <input
-              type="password"
+              type="file"
+              name="profileImage"
+              accept="image/*"
+              onChange={handleChange}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        {/* RIGHT: Contact + Bank */}
+        <div className="editUserProfile-info-section">
+          <div className="editUserProfile-field">
+            <label>Username (Cannot be updated):</label>
+            <input
+              name="username"
+              className='cursor-not-allowed'
+              value={form.username}
+              readOnly
+              disabled
+            />
+          </div>
+
+          <div className="editUserProfile-field">
+            <label>Email (Cannot be updated):</label>
+            <input
+              name="email"
+              className='cursor-not-allowed'
+              value={form.email}
+              readOnly
+              disabled
+            />
+          </div>
+          <div className="editUserProfile-field">
+            <label>Phone Number:</label>
+            <input
+              name="phoneNumber"
+              value={form.phoneNumber}
+              onChange={handleChange}
+              placeholder="Enter phone number"
+            />
+          </div>
+
+          <div>
+            <label className='oxanium-semibold text-[0.9rem]'>Bank account:</label>
+            <Select
+              className="editUserProfile-select"
+              placeholder="Select bank"
+              optionFilterProp="children"
+              onChange={(value) => {
+                setForm((prev) => ({
+                  ...prev,
+                  bankid: value.value,
+                }));
+              }}
+              style={{ width: "100%", marginTop: "3px" }}
+              labelInValue
+              value={selectBankValue}
+            >
+              {bankList.map((bank) => (
+                <Option key={bank.id} value={bank.id}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <img
+                      src={bank.logo}
+                      alt={bank.name}
+                      width={40}
+                      height={40}
+                      style={{ objectFit: "contain" }}
+                    />
+                    <span>
+                      {bank.short_name} - {bank.name}
+                    </span>
+                  </div>
+                </Option>
+              ))}
+            </Select>
+
+            {form.bankid && (
+              <>
+                <Input
+                  className="editUserProfile-input oxanium-regular"
+                  placeholder="Account holder name"
+                  value={form.accountBankName}
+                  onChange={(e) => {
+                    const cleanValue = e.target.value.replace(
+                      /[^a-zA-ZÀ-ỹ\s]/g,
+                      ""
+                    );
+                    setForm((prev) => ({
+                      ...prev,
+                      accountBankName: cleanValue,
+                    }));
+                  }}
+                  style={{ marginTop: 20 }}
+                />
+
+                <Input
+                  className="editUserProfile-input oxanium-regular"
+                  placeholder="Account number"
+                  value={form.bankNumber}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/\D/g, "");
+                    setForm((prev) => ({ ...prev, bankNumber: numericValue }));
+                  }}
+                  style={{ marginTop: 10 }}
+                />
+              </>
+            )}
+
+          </div>
+        </div>
+
+        {/* Save button */}
+        <div className="editUserProfile-btn-container oxanium-semibold">
+          <button type="submit" disabled={loading}>
+            {loading ? <span className="loading loading-bars loading-md"></span> : "Save Changes"}
+          </button>
+        </div>
+      </form>
+
+      {/* Password section */}
+      <div className="editUserProfile-password-section">
+        <h2 className="editUserProfile-title oleo-script-bold">Change Password</h2>
+        <form
+          onSubmit={confirmThenSubmit}
+          className="editUserProfile-password-form"
+        >
+          <div className="editUserProfile-field">
+            <label>Current Password:</label>
+            <input
+              type={showCurrentPass ? 'text' : 'password'}
               name="currentPassword"
               value={passwordForm.currentPassword}
               onChange={handlePasswordChange}
-              placeholder="Nhập mật khẩu hiện tại"
+              placeholder="Enter current password"
             />
+            <IconButton className="editUserProfile-toggle-icon" sx={{ color: 'var(--light-2)' }} onClick={() => setShowCurrentPass(!showCurrentPass)} size="small">
+              {showCurrentPass ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
           </div>
-          <div>
-            <label>Mật khẩu mới:</label>
+          <div className="editUserProfile-field">
+            <label>New Password:</label>
             <input
-              type="password"
+              type={showNewPass ? 'text' : 'password'}
               name="newPassword"
               value={passwordForm.newPassword}
               onChange={handlePasswordChange}
-              placeholder="Nhập mật khẩu mới"
+              placeholder="Enter new password"
             />
+            <IconButton className="editUserProfile-toggle-icon" sx={{ color: 'var(--light-2)' }} onClick={() => setShowNewPass(!showNewPass)} size="small">
+              {showNewPass ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
           </div>
-          <div>
-            <label>Xác nhận mật khẩu mới:</label>
+          <div className="editUserProfile-field">
+            <label>Confirm New Password:</label>
             <input
-              type="password"
+              type={showConfirmPass ? 'text' : 'password'}
               name="confirmPassword"
               value={passwordForm.confirmPassword}
               onChange={handlePasswordChange}
-              placeholder="Xác nhận mật khẩu mới"
+              placeholder="Confirm new password"
             />
+            <IconButton className="editUserProfile-toggle-icon" sx={{ color: 'var(--light-2)' }} onClick={() => setShowConfirmPass(!showConfirmPass)} size="small">
+              {showConfirmPass ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
           </div>
-          <button type="submit" disabled={pwLoading}>{pwLoading ? 'Đang đổi...' : 'Đổi mật khẩu'}</button>
+          <div className="editUserProfile-btn-container oxanium-semibold !mt-10">
+            <button type="submit" disabled={pwLoading}>
+              {pwLoading ? <span className="loading loading-bars loading-md"></span> : "Update Password"}
+            </button>
+          </div>
         </form>
-        {pwMessage && <div style={{ marginTop: 10 }}>{pwMessage}</div>}
       </div>
+
+      {/* Message Modal */}
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        open={confirmModal.open}
+        onClose={closeConfirmModal}
+        onConfirm={() => {
+          if (confirmModal.onConfirm) confirmModal.onConfirm();
+          closeConfirmModal();
+        }}
+        title={confirmModal.title}
+        message={confirmModal.message}
+      />
+
     </div>
   );
 }
+

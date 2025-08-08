@@ -2,7 +2,7 @@
 .confirmDialog-container .MuiPaper-root.confirmDialog-animated-shadow {
     position: relative;
     max-height: 100vh;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -20,7 +20,7 @@
         radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
         radial-gradient(at 0% 64%, hsla(31, 100%, 50%, 1) 0px, transparent 85%),
         radial-gradient(at 41% 94%, hsla(50, 100%, 60%, 1) 0px, transparent 85%),
-        radial-gradient(at 100% 99%, hsla(40, 100%, 45%, 1) 0px, transparent 85%);    
+        radial-gradient(at 100% 99%, hsla(40, 100%, 45%, 1) 0px, transparent 85%);
 }
 
 
@@ -106,23 +106,39 @@
 }
 
 .confirmDialog-button {
-  background-color: #3b82f6;
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  text-transform: none;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
+    background-image: linear-gradient(0deg,
+            rgb(153, 101, 21) 0%,
+            /* brown */
+            rgb(255, 204, 0) 100%
+            /* yellow */
+        );
+    border: 0;
+    box-shadow: inset 0 -2px 25px -4px var(--light-3);
+    color: var(--light-3);
+    font-size: 1rem;
+    padding: 0.5rem 1.8rem;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 .confirmDialog-button:hover {
-  background-color: #2563eb;
+    background-image: linear-gradient(0deg,
+            rgb(139, 89, 14) 0%,
+            /* brown */
+            rgb(226, 181, 0) 100%
+            /* yellow */
+        );
 }
 
 
 .confirmDialog-footer {
-    color: var(--light-2);
-    font-size: 0.9rem;
+    position: absolute;
+    bottom: -35px;
+    left: 0;
+    right: 0;
+
+    color: var(--light-1);
+    font-size: 1rem;
     text-align: center;
     margin-top: 14px;
     opacity: 0.8;
@@ -178,6 +194,10 @@
 
     .confirmDialog-message {
         font-size: 0.85rem;
+    }
+
+    .confirmDialog-button {
+        font-size: 0.7rem;
     }
 
     .confirmDialog-footer {
