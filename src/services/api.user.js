@@ -248,4 +248,46 @@ export const getListChat = async () => {
     console.error("Lỗi khi gọi getUserInChat:", error);
     throw error;
   }
+};export const getRatingOfUser = async (userId) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: `/cs/api/Comment/get-rating-of-user`,
+      params: { userId },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(" Lỗi khi lấy rating của user:", error);
+    throw error;
+  }
 };
+export const getAllCommentsOfSellProduct = async (userId, productName) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: `/cs/api/Comment/get-all-comment-of-sellproduct`,
+      params: { userId, productName },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy comment của sản phẩm:", error);
+    throw error;
+  }
+} 
+
+export const getAverageRatingsOfSellProduct = async (productid) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: `/cs/api/Comment/get-rating-average-of-sell-product`,
+      params: { sellProductId: productid },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy comment của sản phẩm:", error);
+    throw error;
+  }
+}

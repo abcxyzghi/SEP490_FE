@@ -38,27 +38,31 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
     return num.toString();
   };
 
-  useEffect(() => {
-    const fetchBoxes = async () => {
-      try {
-        const result = await getAllMysteryBoxes();
-        if (result && result.status) {
-          console.log(result.data)
-          setBoxes(result.data);
-          setError(null);
-        } else {
-          setBoxes([]);
-          setError('Failed to load mystery boxes.');
-        }
-      } catch {
+ useEffect(() => {
+  const fetchBoxes = async () => {
+    try {
+      const result = await getAllMysteryBoxes();
+      if (result && result.status) {
+        // 👉 Filter chỉ lấy box có status === 1
+        console.log(result)
+        const activeBoxes = result.data.filter(box => box.status === 1);
+        setBoxes(activeBoxes);
+        console.log("test active boxes",activeBoxes )
+        setError(null);
+      } else {
         setBoxes([]);
         setError('Failed to load mystery boxes.');
       }
-      setLoading(false);
-    };
+    } catch {
+      setBoxes([]);
+      setError('Failed to load mystery boxes.');
+    }
+    setLoading(false);
+  };
 
-    fetchBoxes();
-  }, []);
+  fetchBoxes();
+}, []);
+
 
 
   useEffect(() => {
