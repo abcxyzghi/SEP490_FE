@@ -1,13 +1,23 @@
-import React from "react";
-import "./ChatList.css";
+import { useChatContext } from "../../../context/ChatContext";
 import { buildImageUrl } from "../../../services/api.imageproxy";
-import { useParams } from "react-router-dom";
+import "./ChatList.css";
 
-export default function ChatList({ users, selectedUser, onSelectUser }) {
-  const { id } = useParams();
-  if (!users || users.length === 0) {
-    return <div>No users found.</div>;
+export default function ChatList() {
+  const {
+    chatUsers,
+    selectedUserId,
+    directSelectChat,
+    loading
+  } = useChatContext();
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
   }
+
+  if (!chatUsers || chatUsers.length === 0) {
+    return <div className="empty-chat-list">No conversations found.</div>;
+  }
+
   return (
     <div className="chat-list">
       <div className="search-box">
@@ -21,13 +31,20 @@ export default function ChatList({ users, selectedUser, onSelectUser }) {
         </div>
       </div>
       <div className="chat-users">
-        {users.map((user) => (
+        {chatUsers.map((user) => (
           <div
             key={user.id}
-            className={`chat-user ${user.id.toString() === id ? "active" : ""}`}
-            onClick={() => onSelectUser(user)}
+            className={`chat-user ${user.id.toString() === selectedUserId ? "active" : ""}`}
+            onClick={() => directSelectChat(user.id)}
           >
-            <img src={buildImageUrl(user.avatar)} alt={user.name} />
+            <img
+              src={buildImageUrl(user.avatar)}
+              alt={user.name}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://via.placeholder.com/40";
+              }}
+            />
             <span>{user.name}</span>
           </div>
         ))}

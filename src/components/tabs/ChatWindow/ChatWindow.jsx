@@ -1,104 +1,120 @@
-import React, { useRef, useEffect, useState } from "react";
-import "./ChatWindow.css";
+import { useEffect, useRef } from "react";
+import { useChatContext } from "../../../context/ChatContext";
 import { buildImageUrl } from "../../../services/api.imageproxy";
-import { useParams } from "react-router-dom";
-import { getOtherProfile } from "../../../services/api.user";
+import "./ChatWindow.css";
 
-export default function ChatWindow({
-  messages,
-  myId,
-  inputMsg,
-  setInputMsg,
-  handleSend,
-  isSending,
-  selectedUser,
-}) {
-  const chatEndRef = useRef(null);
+export default function ChatWindow() {
+  const {
+    messages,
+    myId,
+    inputMsg,
+    setInputMsg,
+    handleSendMessage,
+    isSending,
+    partnerProfile,
+    chatEndRef,
+    loading,
+    status,
+    scrollToBottom
+  } = useChatContext();
+
+  const prevMessagesLength = useRef(0);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-  const { id } = useParams();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        if (!id) {
-          console.log('No user ID provided');
-          setLoading(false);
-          return;
-        }
-
-        const res = await getOtherProfile(id);
-
-        if (res && res.status) {
-
-          setProfile(res.data);
-        } else {
-          console.log('Profile not found');
-        }
-      } catch (error) {
-        console.log('Failed to load profile:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchProfile();
+    if (messages.length > prevMessagesLength.current) {
+      scrollToBottom();
     }
-  }, [id]);
+    prevMessagesLength.current = messages.length;
+  }, [messages, scrollToBottom]);
+
+  if (loading) {
+    return <div className="chat-window-loading">Loading conversations...</div>;
+  }
+
+  if (!partnerProfile) {
+    return (
+      <div className="chat-window-empty">
+        <p>Select a conversation to start chatting</p>
+      </div>
+    );
+  }
+
   return (
     <div className="chat-window">
-      {profile && (
-        <div className="chat-header">
-          <img src={buildImageUrl(profile.profileImage)} alt="" className="avatar" />
-          <span>{profile.username}</span>
-        </div>
-      )}
+      <div className="chat-header">
+        <img
+          src={buildImageUrl(partnerProfile.profileImage)}
+          alt=""
+          className="avatar"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://via.placeholder.com/40";
+          }}
+        />
+        <span>{partnerProfile.username}</span>
+        {status && <div className="chat-status">{status}</div>}
+      </div>
 
-
-      <div className="chat-messages">
-        {messages.map((msg, idx) => {
-          const isMine = msg.sender_id === myId;
-          return (
-            <div
-              key={idx}
-              className={`message-row ${isMine ? "mine" : "theirs"}`}
-            >
-              {!isMine && (
-                <img src={buildImageUrl(profile.profileImage)} alt="" className="avatar" />
-              )}
-              <div className="message-bubble">
-                <p>{msg.content}</p>
-                <span className="time">
-                  {new Date(msg.created_at).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
+      <div className="chat-messages" onClick={() => document.querySelector('.chat-input input')?.focus()}>
+        {messages.length === 0 ? (
+          <div className="no-messages">No messages yet. Start a conversation!</div>
+        ) : (
+          messages.map((msg, idx) => {
+            const isMine = msg.sender_id === myId;
+            return (
+              <div
+                key={msg._id || idx}
+                className={`message-row ${isMine ? "mine" : "theirs"}`}
+              >
+                {!isMine && partnerProfile && (
+                  <img
+                    src={buildImageUrl(partnerProfile.profileImage)}
+                    alt=""
+                    className="avatar"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/40";
+                    }}
+                  />
+                )}
+                <div className="message-bubble">
+                  <p>{msg.content}</p>
+                  <span className="time">
+                    {new Date(msg.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "numeric",
+                      month: "short"
+                    })}
+                  </span>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
         <div ref={chatEndRef}></div>
       </div>
+
       <div className="chat-input-container">
         <div className="chat-input">
           <input
             value={inputMsg}
             onChange={(e) => setInputMsg(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleSend();
+              if (e.key === "Enter" && !e.shiftKey && !isSending) {
+                e.preventDefault();
+                handleSendMessage();
+              }
             }}
-            placeholder="Message"
-            disabled={isSending}
+            placeholder="Type a message..."
+            disabled={isSending || !partnerProfile}
           />
         </div>
-        <button onClick={handleSend} disabled={isSending}>
-          ✈
+        <button
+          onClick={handleSendMessage}
+          disabled={isSending || !inputMsg.trim() || !partnerProfile}
+        >
+          {isSending ? "..." : "✈"}
         </button>
       </div>
     </div>
