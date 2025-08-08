@@ -128,46 +128,38 @@ export default function EditUserProfile() {
   }, [bankList, form.bankid]);
 
 
-  const confirmThenSubmit = (e) => {
-    e.preventDefault();
-
-    showConfirmModal(
-      'Change Confirm',
-      'You will be redirected to the login page for this action to proceed.',
-      async () => {
-        // onConfirm -> call the actual submit action
-        await handlePasswordSubmit();
-      }
-    );
-  };
-
-  // Handle submit new Password
-  const handlePasswordSubmit = async () => {
-    setPwLoading(true);
-
+  // Validate only (returns true if valid, shows modal on error)
+  const validatePasswordForm = () => {
     if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
       showModal('warning', 'Missing information', 'Please fill in all required fields.');
-      setPwLoading(false);
-      return;
+      return false;
     }
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       showModal('warning', 'Password mismatch', 'New password and confirmation do not match.');
-      setPwLoading(false);
-      return;
+      return false;
     }
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
     if (!passwordRegex.test(passwordForm.newPassword)) {
-      showModal('warning', 'Insecured password', 'Password must be between 8 - 15 characters long, include at least an uppercase, lowercase, number, and special character.');
-      setPwLoading(false);
-      return;
+      showModal(
+        'warning',
+        'Insecure password',
+        'Password must be 8-15 characters, include uppercase, lowercase, number, and special character.'
+      );
+      return false;
     }
+    return true;
+  };
+
+  // The API call (performs change). No event handling here.
+  const performPasswordChange = async () => {
+    setPwLoading(true);
     try {
       const res = await ChangePassword({
         curentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
         confirmPassword: passwordForm.confirmPassword
       });
+
       if (res?.status) {
         // success -> directly logout / redirect
         handleLogout();
@@ -175,10 +167,28 @@ export default function EditUserProfile() {
         showModal('error', 'Failed', res?.message || 'Password change failed!');
       }
     } catch (err) {
+      console.error(err);
       showModal('error', 'Failed', 'Password change failed!');
     }
     setPwLoading(false);
   };
+
+  // Form submit: validate first, then show confirm modal which will call performPasswordChange
+  const confirmThenSubmit = (e) => {
+    e.preventDefault();
+
+    if (!validatePasswordForm()) return; // stop here if invalid
+
+    showConfirmModal(
+      'Change Confirm',
+      'You will be redirected to the login page for this action to proceed.',
+      async () => {
+        // onConfirm -> call the actual API action
+        await performPasswordChange();
+      }
+    );
+  };
+
 
   // Handle submit new Profile Image
   const handleChange = (e) => {
