@@ -4,7 +4,7 @@ export const fetchAuctionList = async () => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
-      url: "/api/auction/waiting",
+      url: "/api/auction/all",
       requiresAuth: true, 
     });
 
