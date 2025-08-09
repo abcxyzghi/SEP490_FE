@@ -5,12 +5,15 @@ export default function AuctionRoomList() {
   const [auctionList, setAuctionList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState("started"); // default: đang diễn ra
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError("");
       try {
-        const result = await fetchAuctionList();
-        setAuctionList(result.data); // result.data là mảng 1 chiều
+        const result = await fetchAuctionList(statusFilter);
+        setAuctionList(result);
       } catch (err) {
         setError("Đã xảy ra lỗi khi tải danh sách phòng đấu giá.");
         console.error(err);
@@ -18,9 +21,8 @@ export default function AuctionRoomList() {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, []);
+  }, [statusFilter]);
 
   if (loading) return <div>Đang tải danh sách phòng đấu giá...</div>;
   if (error) return <div>{error}</div>;
@@ -29,6 +31,18 @@ export default function AuctionRoomList() {
   return (
     <div>
       <h2>Danh sách phòng đấu giá</h2>
+
+      {/* Chọn filter */}
+      <select
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+        style={{ marginBottom: "10px" }}
+      >
+        <option value="default">Tất cả</option>
+        <option value="started">Đang diễn ra</option>
+        <option value="waiting">Sắp diễn ra</option>
+      </select>
+
       <ul>
         {auctionList.map((auction) => (
           <li key={auction._id}>
@@ -44,7 +58,6 @@ export default function AuctionRoomList() {
   );
 }
 
-// Hàm chuyển đổi trạng thái
 function getStatusLabel(status) {
   switch (status) {
     case 0:
