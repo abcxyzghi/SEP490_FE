@@ -1,19 +1,18 @@
 import { pythonApiWithFallback } from "../config/axios";
 
-export const fetchAuctionList = async () => {
+export const fetchAuctionList = async (filter = "started") => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
-      url: "/api/auction/all",
-      requiresAuth: true, 
+      url: `/api/auction/all?filter=${filter}`,
+      requiresAuth: true,
     });
-
-    return response.data;
+    return response.data; // mảng 1 chiều
   } catch (error) {
-    console.error("Fetch auction list failed:", error);
+    console.error(`Fetch auction list failed (filter=${filter}):`, error);
     throw error;
   }
-}; 
+};
 export const fetchAuctionListStart = async () => {
   try {
     const response = await pythonApiWithFallback({
