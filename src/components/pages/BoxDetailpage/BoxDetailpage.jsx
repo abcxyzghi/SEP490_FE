@@ -97,7 +97,9 @@ export default function BoxDetailpage() {
   const decreaseQuantity = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
   };
-
+  if (!box || box.status !== 1) {
+  return <div className="text-center mt-10 text-red-500">Box not found or unavailable.</div>;
+  }
   if (loading) {
     return (
       <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-16">

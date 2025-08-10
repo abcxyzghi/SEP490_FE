@@ -1,13 +1,18 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import './EditUserProfile.css';
-import { useSelector } from 'react-redux';
-import { updateProfile, getProfile, ChangePassword, getBankID } from '../../../services/api.user';
-import { buildImageUrl } from '../../../services/api.imageproxy';
+import React, { useState, useEffect, useMemo } from "react";
+import "./EditUserProfile.css";
+import { useSelector } from "react-redux";
+import {
+  updateProfile,
+  getProfile,
+  ChangePassword,
+  getBankID,
+} from "../../../services/api.user";
+import { buildImageUrl } from "../../../services/api.imageproxy";
 import { Pathname, PATH_NAME } from "../../../router/Pathname";
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout, updateProfileImage } from '../../../redux/features/authSlice';
-import { clearCart } from '../../../redux/features/cartSlice';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout, updateProfileImage } from "../../../redux/features/authSlice";
+import { clearCart } from "../../../redux/features/cartSlice";
 import { Input, Select } from "antd";
 import { IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -44,10 +49,11 @@ export default function EditUserProfile() {
 
   // State cho form đổi mật khẩu
   const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
+
   const [pwLoading, setPwLoading] = useState(false);
 
   // Xử lý đổi mật khẩu
@@ -64,10 +70,10 @@ export default function EditUserProfile() {
     username: '',
     email: '',
     profileImage: null,
-    phoneNumber: '',
-    accountBankName: '',
-    bankNumber: '',
-    bankid: ''
+    phoneNumber: "",
+    accountBankName: "",
+    bankNumber: "",
+    bankid: "",
   });
 
   const [loadingProfileFetching, setLoadingProfileFetching] = useState(true);
@@ -84,8 +90,8 @@ export default function EditUserProfile() {
         const profileRes = await getProfile();
         if (profileRes?.data) {
           setUser(profileRes.data);
-          setForm(f => ({
-            ...f,
+          setForm((f) => ({
+            ...f,         
             username: profileRes.data.username || '',
             email: profileRes.data.email || '',
             phoneNumber: profileRes.data.phoneNumber || '',
@@ -157,9 +163,8 @@ export default function EditUserProfile() {
       const res = await ChangePassword({
         curentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
-        confirmPassword: passwordForm.confirmPassword
+        confirmPassword: passwordForm.confirmPassword,
       });
-
       if (res?.status) {
         // success -> directly logout / redirect
         handleLogout();
@@ -193,7 +198,7 @@ export default function EditUserProfile() {
   // Handle submit new Profile Image
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'profileImage' && files && files[0]) {
+    if (name === "profileImage" && files && files[0]) {
       setForm({ ...form, profileImage: files[0] });
     } else {
       setForm({ ...form, [name]: value });
@@ -207,11 +212,10 @@ export default function EditUserProfile() {
     localStorage.clear();
     sessionStorage.clear();
 
-
-    if ('caches' in window) {
+    if ("caches" in window) {
       try {
         const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map(name => caches.delete(name)));
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
       } catch (e) {
         // Ignore cache errors
       }
@@ -225,14 +229,14 @@ export default function EditUserProfile() {
     try {
       const res = await getProfile();
       if (res?.data) {
-        console.log(res?.data)
+        console.log(res?.data);
         setUser(res.data);
-        setForm(f => ({
+        setForm((f) => ({
           ...f,
-          phoneNumber: res.data.phoneNumber || '',
-          accountBankName: res.data.accountBankName || '',
-          bankNumber: res.data.banknumber || '',
-          bankid: res.data.bankId || ''
+          phoneNumber: res.data.phoneNumber || "",
+          accountBankName: res.data.accountBankName || "",
+          bankNumber: res.data.banknumber || "",
+          bankid: res.data.bankId || "",
         }));
       }
     } catch {
@@ -271,6 +275,19 @@ export default function EditUserProfile() {
       if (!form.bankNumber.trim()) {
         showModal('warning', 'Missing information', 'Please enter bank account number.');
         return;
+      }
+      if (form.phoneNumber.trim()) {
+        const phone = form.phoneNumber.trim();
+        if (!/^\d+$/.test(phone)) {
+          setMessage("Số điện thoại chỉ được chứa số.");
+          return;
+        }
+        if (!/^0\d{9}$/.test(phone)) {
+          setMessage(
+            "Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng số 0."
+          );
+          return;
+        }
       }
     }
 

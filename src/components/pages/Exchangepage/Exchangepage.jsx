@@ -21,7 +21,6 @@ export default function Exchangepage() {
   const [loadingUserProducts, setLoadingUserProducts] = useState(true);
   const [isExchanging, setIsExchanging] = useState(false);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
-
   const [selectedCards, setSelectedCards] = useState([]);
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
@@ -111,6 +110,7 @@ export default function Exchangepage() {
     selectedCollectionId === 'all'
       ? allUserProducts
       : allUserProducts.filter(
+
         (p) => p.collectionId === selectedCollectionId
       );
 
@@ -191,6 +191,7 @@ export default function Exchangepage() {
         }))
       };
       const res = await exchangeProduct(payload);
+
       showModal('default', 'Exchange sent', 'Your exchange request has been sent successfully! What you should do next is wait.');
     } catch (err) {
       showModal('error', 'Oops!', 'Something went wrong in exchange process. Please try again later.');
@@ -200,6 +201,7 @@ export default function Exchangepage() {
   };
 
   return (
+
     <div className="exchangepage-container">
       {/* Title */}
       <div className="exchangepage-header">
@@ -362,6 +364,7 @@ export default function Exchangepage() {
           </div>
         </div>
       </div>
+
 
       {/* Message Modal */}
       <MessageModal
