@@ -1,0 +1,612 @@
+:root {
+  --primary: #38f9d7;
+  --accent: #ff00cc;
+  --bg-dark: #181a20;
+  --text-light: #fff;
+}
+
+.mod-mysterybox-container {
+  background: rgba(44, 44, 44, 0.5);
+  color: var(--text-light);
+}
+
+
+.mod-mysterybox-title {
+  font-size: 1.8rem; /* Tăng kích thước chữ */
+  font-weight: 700; /* Tăng độ đậm */
+  color: #ffffff; /* Đổi màu chữ thành trắng */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Thêm hiệu ứng bóng chữ */
+}
+
+.mod-mysterybox-loading,
+.mod-mysterybox-empty {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #888;
+  margin-top: 40px;
+}
+
+.mod-mysterybox-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+.mod-mysterybox-card {
+  background: rgba(20, 20, 20, 0.789); /* Dark gray with 60% opacity */
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 300px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.mod-mysterybox-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mod-mysterybox-card-img-wrap {
+  width: 100%;
+  height: 180px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.mod-mysterybox-card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 0 0 12px 12px;
+  filter: brightness(1.2); /* Tăng độ sáng */
+  transition: transform 0.3s ease, filter 0.3s ease; /* Hiệu ứng hover */
+}
+
+.mod-mysterybox-card-img:hover {
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+  filter: brightness(1.4); /* Tăng độ sáng khi hover */
+}
+
+.mod-mysterybox-card-content {
+  padding: 16px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mod-mysterybox-card-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  cursor: pointer;
+}
+.mod-mysterybox-card-name:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(44, 44, 44, 0.9); /* Dark background for tooltip */
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.mod-mysterybox-card-desc {
+  font-size: 1rem;
+  color: #ccc;
+  margin-bottom: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mod-mysterybox-card-info {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.mod-mysterybox-card-label {
+  font-weight: bold;
+  color: #aaa;
+}
+.mod-mysterybox-card-value {
+  color: #fff;
+}
+.mod-mysterybox-add-product {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #15ba8e83;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.mod-mysterybox-add-product:hover {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #15ba8e;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.mod-mysterybox-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+/* Styling for the View Detail button */
+.mod-mysterybox-view-detail {
+  margin: 12px;
+  padding: 12px 24px; /* Match Create New Box button */
+  background: transparent;
+  color: #38f9d7; /* Metallic green */
+  border: 2px solid #38f9d7;
+  font-weight: 700;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  font-size: 1rem; /* Match font size */
+  cursor: pointer;
+}
+
+.mod-mysterybox-view-detail:hover {
+  background: rgba(56, 249, 215, 0.3); /* Green with 30% opacity */
+  color: #38f9d7;
+  border-color: #38f9d7;
+}
+
+.mod-mysterybox-view-detail:active {
+  background-color: #187bcd; /* Even darker blue */
+  transform: translateY(0);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the popup modal content */
+.ant-modal {
+  animation: fadeInModal 0.3s ease-out;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.mod-mysterybox-detail-container {
+  padding: 16px;
+  background: rgba(44, 44, 44, 0.9);
+  border-radius: 12px;
+  color: #fff;
+}
+
+.mod-mysterybox-detail-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mod-mysterybox-detail-description {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+.mod-mysterybox-detail-price,
+.mod-mysterybox-detail-created {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.mod-mysterybox-detail-products-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 12px;
+  color: #ffcc00;
+}
+
+.mod-mysterybox-detail-products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.mod-mysterybox-product {
+  background: rgba(20, 20, 20, 0.8);
+  border-radius: 8px;
+  padding: 12px;
+  width: 150px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mod-mysterybox-product-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.mod-mysterybox-product-info {
+  font-size: 0.9rem;
+}
+
+.mod-mysterybox-product-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.mod-mysterybox-product-chance {
+  color: #aaa;
+}
+
+/* Rarity-based styling */
+.rarity-common {
+  border: 2px solid #555;
+}
+
+.rarity-uncommon {
+  border: 2px solid #228b22;
+}
+
+.rarity-rare {
+  border: 2px solid #1e90ff;
+}
+
+.rarity-epic {
+  border: 2px solid #8000ff;
+}
+
+.rarity-legendary {
+  border: 2px solid #ff8c00;
+}
+
+/* Adjust the popup width and make it scrollable for long content */
+.ant-modal {
+  max-width: 900px;
+  width: 90%;
+}
+
+.ant-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Center-align the modal title */
+.ant-modal-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Styling for the Create New Mystery Box button */
+.mod-mysterybox-create-button {
+  display: block; /* Make the button a block element */
+  margin: 0 auto 24px auto; /* Center-align and add spacing below */
+  text-align: center; /* Ensure text is centered */
+  background: transparent;
+  color: #38f9d7; /* Metallic green */
+  border: 2px solid #38f9d7;
+  font-weight: 700;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  padding: 12px 24px; /* Increase padding for a larger button */
+  font-size: 1.1rem; /* Slightly larger font size */
+}
+.mod-mysterybox-create-button:hover {
+  background: rgba(56, 249, 215, 0.3); /* Green with 30% opacity */
+  color: #38f9d7;
+  border-color: #38f9d7;
+}
+
+/* Styling for the Create New Mystery Box modal */
+/* === Add Product Modal Styling === */
+.mod-mysterybox-create-modal .ant-modal-content {
+  background: #181a20;
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 24px #38f9d744;
+}
+.mod-mysterybox-detail-modal .ant-modal-content {
+  background: #181a20;
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 24px #38f9d744;
+}
+.mod-mysterybox-create-modal .ant-modal-header {
+  background: #23272f;
+  border-bottom: 1px solid #38f9d7;
+  border-radius: 16px 16px 0 0;
+}
+.mod-mysterybox-detail-modal .ant-modal-header {
+  background: #23272f;
+  border-bottom: 1px solid #38f9d7;
+  border-radius: 16px 16px 0 0;
+}
+.mod-mysterybox-create-modal .ant-modal-title {
+  color: #38f9d7;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+}
+.mod-mysterybox-detail-modal .ant-modal-title {
+  color: #38f9d7;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+}
+.mod-mysterybox-create-modal .ant-modal-close {
+  color: #fff;
+}
+
+/* Form Fields */
+.mod-mysterybox-create-modal .ant-form-item-label > label {
+  color: #38f9d7;
+  font-weight: 600;
+}
+
+.mod-mysterybox-create-modal .ant-input,
+.mod-mysterybox-create-modal .ant-input-textarea,
+.mod-mysterybox-create-modal .ant-select-selector {
+  background: #181a20 !important;
+  color: #fff !important;
+  border: 1px solid #38f9d7 !important;
+  border-radius: 8px;
+}
+
+.mod-mysterybox-create-modal .ant-input:focus,
+.mod-mysterybox-create-modal .ant-input-textarea:focus,
+.mod-mysterybox-create-modal .ant-select-focused .ant-select-selector {
+  border-color: #ff00cc !important;
+  box-shadow: 0 0 0 2px #ff00cc44;
+}
+
+/* Buttons */
+.mod-mysterybox-create-modal .ant-btn-primary {
+  background: linear-gradient(90deg, #38f9d7, #ff00cc);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+}
+
+.mod-mysterybox-create-modal .ant-btn-default {
+  background: #23272f;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Form layout inside modal */
+.mod-mysterybox-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px;
+  background: #23272f;
+  border-radius: 12px;
+}
+
+.mod-mysterybox-create-form input,
+.mod-mysterybox-create-form textarea {
+  padding: 15px;
+  font-size: 1rem;
+  border: 1px solid #38f9d7;
+  border-radius: 8px;
+  background: #181a20;
+  color: #ffffff;
+}
+
+.mod-mysterybox-create-form input:focus,
+.mod-mysterybox-create-form textarea:focus {
+  outline: none;
+  border-color: #ff00cc;
+  box-shadow: 0 0 0 2px #ff00cc44;
+}
+.mod-mysterybox-create-modal input[type='checkbox'] {
+  accent-color: #38f9d7;
+}
+
+.mod-mysterybox-create-modal .ant-form-item,
+.mod-mysterybox-create-modal p,
+.mod-mysterybox-create-modal label {
+  color: #fff !important;
+}
+.mod-mysterybox-create-form input[type="file"] {
+  padding: 10px;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.mod-mysterybox-create-form textarea {
+  resize: none;
+  height: 100px;
+}
+
+/* Styling for the image preview in the Create New Mystery Box form */
+.mod-mysterybox-create-form .image-preview {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #181a20;
+  border: 1px solid #38f9d7;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 300px;
+  max-width: 150px;
+  overflow: hidden;
+}
+.mod-mysterybox-create-form .image-preview img {
+  max-width: 50%;
+  max-height: 50%;
+  object-fit: contain;
+}
+.mod-mysterybox-create-modal img {
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
+  padding: 4px;
+  background: #23272f;
+}
+.mod-mysterybox-add-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+.add-product-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1a1a1a; /* optional: nền tối */
+  padding: 15px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+}
+.add-product-image {
+  max-width: 90%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  width: 200px; /* Hoặc 80px nếu muốn nhỏ hơn */
+}
+
+.add-product-info {
+  width: 100%;
+  text-align: center;
+}
+
+.add-product-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.add-product-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.add-product-info input[type="number"] {
+  width: 80px;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+@keyframes modalFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rarity-ratio-inputs {
+  background-color: #1e1e1e;
+  padding: 16px;
+  border-radius: 12px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #e0e0e0;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.rarity-ratio-inputs p {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.rarity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+}
+
+/* Styling for each rarity */
+.rarity-row label {
+  flex: 1;
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.rarity-row input {
+  flex: 1;
+  padding: 6px 10px;
+  background-color: #111;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+/* Optional – color code per rarity */
+.rarity-row:nth-child(2) label { color: #bbbbbb; }     /* Common */
+.rarity-row:nth-child(3) label { color: #4caf50; }     /* Uncommon */
+.rarity-row:nth-child(4) label { color: #2196f3; }     /* Rare */
+.rarity-row:nth-child(5) label { color: #9c27b0; }     /* Epic */
+.rarity-row:nth-child(6) label { color: #ff9800; }     /* Legendary */
+
+.rarity-row.common label { color: #bbbbbb; }
+.rarity-row.uncommon label { color: #4caf50; }
+.rarity-row.rare label { color: #2196f3; }
+.rarity-row.epic label { color: #9c27b0; }
+.rarity-row.legendary label { color: #ff9800; }
+.apply-button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.apply-button:hover {
+  background-color: #40a9ff;
+}

@@ -41,8 +41,10 @@ import SystemManagement from "../components/adminPages/SystemManagement/SystemMa
 import AdminCategories from "../components/adminPages/AdminCategories/AdminCategories";
 import AdminAnalytics from "../components/adminPages/AdminAnalytics/AdminAnalytics";
 import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
+import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
 import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
 import FailurePage from "../components/pages/FailurePage/FailurePage";
+
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -84,12 +86,13 @@ export const privateRoutes = [
 ];
 
 export const moderatorRoutes = [
-    { path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_REPORT, element: <ModReport />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction />, role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_REPORT, element: <ModReport /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection /> ,role: ['mod'] },
 ];
 
 export const adminRoutes = [

@@ -1,0 +1,174 @@
+body {
+  background-color: #0f111a;
+  margin: 0;
+}
+
+/* Base container */
+.mod-collection-container {
+  padding: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f111a; /* Darker background */
+  min-height: 100vh;
+  color: #f1f5f9;
+}
+
+/* Header */
+.mod-collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.mod-collection-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #f1f5f9;
+}
+
+.create-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-button:hover {
+  background-color: #2563eb;
+}
+
+/* Card Grid */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* Card */
+.collection-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 16px;
+  color: #111827;
+}
+
+.collection-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.system {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.user {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5); /* Tối hơn một chút */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup {
+  background-color: #1f2937; /* Gray-800 */
+  padding: 24px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  color: #f9fafb; /* Gray-50 */
+  animation: fadeIn 0.25s ease;
+}
+
+.popup h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #f9fafb;
+}
+
+.popup input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #374151; /* Gray-700 */
+  background-color: #111827; /* Gray-900 */
+  color: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  outline: none;
+}
+
+.popup input:focus {
+  border-color: #3b82f6; /* Blue-500 */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancel-button {
+  background-color: #374151; /* Gray-700 */
+  color: #f1f5f9;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #4b5563; /* Gray-600 */
+}
+
+.create-button.popup-create {
+  background-color: #3b82f6;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.create-button.popup-create:hover {
+  background-color: #2563eb;
+}
+
+/* Optional smooth appearance */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
