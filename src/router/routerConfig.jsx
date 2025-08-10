@@ -40,6 +40,7 @@ import SystemManagement from "../components/adminPages/SystemManagement/SystemMa
 import AdminCategories from "../components/adminPages/AdminCategories/AdminCategories";
 import AdminAnalytics from "../components/adminPages/AdminAnalytics/AdminAnalytics";
 import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
+import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -84,6 +85,7 @@ export const moderatorRoutes = [
     {path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct /> , role: ['mod'] },
     {path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox /> , role: ['mod'] },
     {path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection /> ,role: ['mod'] },
 ];
 
 export const adminRoutes = [
