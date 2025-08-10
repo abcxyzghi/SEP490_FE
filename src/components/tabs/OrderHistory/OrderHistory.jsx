@@ -295,11 +295,11 @@ export default function OrderHistory() {
                 </div>
 
                 <div className="rating-modal-order-actions">
-                  <button className="rating-modal-btn-cancel" onClick={() => setIsModalOpen(false)}>
+                  <button className="rating-modal-btn-cancel oxanium-regular" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </button>
                   <button
-                    className="rating-modal-btn-submit"
+                    className="rating-modal-btn-submit oxanium-bold"
                     onClick={handleSaveRating}
                     disabled={isLoading}
                   >
@@ -315,6 +315,15 @@ export default function OrderHistory() {
           </div>
         </div>
       )}
+
+      {/* Message Modal */}
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
 
     </div>
   );

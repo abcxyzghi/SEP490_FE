@@ -25,6 +25,7 @@ import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
 import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
 import Achievementpage from "../components/pages/Achievementpage/Achievementpage";
 import ChatRoom from "../components/pages/ChatRoom/ChatRoom";
+import UserSaleReport from "../components/pages/UserSaleReport/UserSaleReport";
 
 import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
 import ModProfile from "../components/moderatorPages/ModProfile/ModProfile";
@@ -41,6 +42,9 @@ import AdminCategories from "../components/adminPages/AdminCategories/AdminCateg
 import AdminAnalytics from "../components/adminPages/AdminAnalytics/AdminAnalytics";
 import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
 import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
+import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
+import FailurePage from "../components/pages/FailurePage/FailurePage";
+
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -59,7 +63,7 @@ export const publicRoutes = [
     { path: PATH_NAME.SHOP_PAGE, element: <Shoppage /> },
     { path: PATH_NAME.AUNCTION_PAGE, element: <Auctionpage /> },
     { path: PATH_NAME.BOXDETAIL_PAGE, element: <BoxDetailpage /> },
-    { path: PATH_NAME.COLLECTIONDETAIL_PAGE, element: <CollectionDetailPage /> },    
+    { path: PATH_NAME.COLLECTIONDETAIL_PAGE, element: <CollectionDetailPage /> },
     { path: PATH_NAME.PRODUCTDETAIL_PAGE, element: <ProductDetailpage /> },
     { path: PATH_NAME.PROFILE, element: <Profilepage /> },
 ];
@@ -74,7 +78,10 @@ export const privateRoutes = [
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
     { path: PATH_NAME.ACTIVITIES_PAGE, element: <Notificationpage />, role: ['user'] },
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
-    { path: PATH_NAME.CHAT_ROOM, element:<ChatRoom/>, role:['user']},
+    { path: PATH_NAME.CHAT_ROOM, element: <ChatRoom />, role: ['user'] },
+    { path: PATH_NAME.USER_SALE_REPORT, element: <UserSaleReport />, role: ['user'] },
+    { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
+    { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
 
 ];
 
@@ -89,12 +96,12 @@ export const moderatorRoutes = [
 ];
 
 export const adminRoutes = [
-    {path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_USERMANGEMENT, element: <UserManagement /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_MODERATORMANGEMENT, element: <ModeratorManagement /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_SYSTEM, element: <SystemManagement /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_CATEGORY, element: <AdminCategories /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_ANALYTIC, element: <AdminAnalytics /> , role: ['admin'] },
-    {path: PATH_NAME.ADMIN_TRANSACTION, element: <TransactionManagement /> , role: ['admin'] },
+    { path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_USERMANGEMENT, element: <UserManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_MODERATORMANGEMENT, element: <ModeratorManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_SYSTEM, element: <SystemManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_CATEGORY, element: <AdminCategories />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_ANALYTIC, element: <AdminAnalytics />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_TRANSACTION, element: <TransactionManagement />, role: ['admin'] },
 ];
 

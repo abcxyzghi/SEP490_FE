@@ -40,7 +40,6 @@ export default function ProductDetailpage() {
   const [quantity, setQuantity] = useState(1);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  //=========================================================Dạ nhớ style cái cái report modal cho đẹp nha======================================
   // Product report modal state
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportTitle, setReportTitle] = useState('');
@@ -432,27 +431,34 @@ export default function ProductDetailpage() {
                 <span className="productdetailP-report-label">Report</span>
               </button>
             </div>
-            {/* Product Report Modal */}
+
+            {/* Product Report Modal //  Reuse component style from Profilepage.css */}
             {showReportModal && (
-              <div className="modal2-overlay">
-                <div className="modal2">
-                  <h3>Gửi báo cáo sản phẩm</h3>
-                  <input
-                    type="text"
-                    placeholder="Tiêu đề"
-                    value={reportTitle}
-                    onChange={e => setReportTitle(e.target.value)}
-                  />
-                  <textarea
-                    placeholder="Nội dung"
-                    value={reportContent}
-                    onChange={e => setReportContent(e.target.value)}
-                  />
-                  <div className="modal2-actions">
-                    <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
-                      {reportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-                    </button>
-                    <button onClick={() => setShowReportModal(false)}>Hủy</button>
+              <div className="report-modal-overlay">
+                <div className="report-modal-container">
+                  <div className="report-modal-box">
+                    <h3 className='report-modal-header oleo-script-bold'>Report this product</h3>
+                    <input
+                      type="text"
+                      placeholder="Title"
+                      value={reportTitle}
+                      onChange={e => setReportTitle(e.target.value)}
+                    />
+                    <textarea
+                      placeholder="Content"
+                      value={reportContent}
+                      onChange={e => setReportContent(e.target.value)}
+                    />
+                    <div className="report-modal-actions oxanium-bold">
+                      <button onClick={() => setShowReportModal(false)}>Cancel</button>
+                      <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
+                        {reportSubmitting ?
+                          <span className="loading loading-bars loading-md"></span>
+                          :
+                          'Submit report'
+                        }
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -570,53 +576,23 @@ export default function ProductDetailpage() {
             {/* Description */}
             <div className="productdetailP-product-data oxanium-semibold text-sm leading-relaxed lg:text-base">
               <p className="oxanium-regular productdetailP-pData-head">Description:</p>
-              <div className="description-container">
-                <div
-                  style={{
-                    position: 'relative',
-                    backgroundColor: '#f8f9fa',
-                    padding: '15px',
-                    borderRadius: '8px',
-                    color: 'black',
-                    border: '1px solid #e9ecef'
-                  }}
-                >
-                  <p
-                    style={{
-                      whiteSpace: 'pre-line',
-                      lineHeight: '1.5',
-                      marginBottom: showFullDescription ? '15px' : '0',
-                      transition: 'all 0.3s ease'
-                    }}
-                    className={!showFullDescription ? 'clamp-4-lines' : ''}
-                  >
+              <div className="productdetailP-description-container">
+                <div className="productdetailP-description-box">
+                  <p className={`productdetailP-description-text ${!showFullDescription ? "productdetailP-clamp-4-lines" : ""}`}>
                     {product.description}
                   </p>
 
-
-                  {(product.description.split('\n').length > 2 || product.description.length > 200) && (
+                  {(product.description.split("\n").length > 2 || product.description.length > 200) && (
                     <button
                       onClick={() => setShowFullDescription(!showFullDescription)}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        padding: '8px',
-                        marginTop: '10px',
-                        backgroundColor: showFullDescription ? '#e9ecef' : '#007bff',
-                        color: showFullDescription ? '#212529' : 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s ease'
-                      }}
-                      className="oxanium-regular hover:opacity-90"
+                      className={`productdetailP-description-toggle-btn ${showFullDescription ? "less" : "more"}`}
                     >
-                      {showFullDescription ? 'Show Less' : 'Read More'}
+                      {showFullDescription ? "Show Less" : "Read More"}
                     </button>
                   )}
                 </div>
-
               </div>
+
             </div>
           </div>
 
@@ -683,27 +659,35 @@ export default function ProductDetailpage() {
             </button>
           </div>
 
-          {/* User Report Modal */}
+          {/* User Report Modal //  Reuse component style from Profilepage.css */}
           {showUserReportModal && (
-            <div className="modal2-overlay">
-              <div className="modal2">
-                <h3>Gửi báo cáo người bán</h3>
-                <input
-                  type="text"
-                  placeholder="Tiêu đề"
-                  value={userReportTitle}
-                  onChange={e => setUserReportTitle(e.target.value)}
-                />
-                <textarea
-                  placeholder="Nội dung"
-                  value={userReportContent}
-                  onChange={e => setUserReportContent(e.target.value)}
-                />
-                <div className="modal2-actions">
-                  <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
-                    {userReportSubmitting ? 'Đang gửi...' : 'Gửi báo cáo'}
-                  </button>
-                  <button onClick={() => setShowUserReportModal(false)}>Hủy</button>
+            <div className="report-modal-overlay">
+              <div className="report-modal-container">
+                <div className="report-modal-box">
+                  <h3 className='report-modal-header oleo-script-bold'>Report this account</h3>
+                  <input
+                    type="text"
+                    placeholder="Title"
+                    className='oxanium-regular'
+                    value={userReportTitle}
+                    onChange={e => setUserReportTitle(e.target.value)}
+                  />
+                  <textarea
+                    placeholder="Content"
+                    className='oxanium-regular'
+                    value={userReportContent}
+                    onChange={e => setUserReportContent(e.target.value)}
+                  />
+                  <div className="report-modal-actions oxanium-bold">
+                    <button onClick={() => setShowUserReportModal(false)}>Cancel</button>
+                    <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
+                      {userReportSubmitting ?
+                        <span className="loading loading-bars loading-md"></span>
+                        :
+                        'Submit report'
+                      }
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

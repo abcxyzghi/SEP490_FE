@@ -8,8 +8,10 @@ import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { confirmOtpApi, loginApi, sendVerifyEmailApi } from '../../../services/api.auth';
+import { PATH_NAME } from '../../../router/Pathname';
 import { useDispatch } from 'react-redux';
-import { setToken } from '../../../redux/features/authSlice';
+import { setToken, setUser } from '../../../redux/features/authSlice';
+import { jwtDecode } from "jwt-decode";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -51,9 +53,24 @@ export default function LoginForm() {
       if (data?.access_token && data?.is_email_verification) {
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('refreshToken', data.refresh_token);
+
+        // decode token for role
+        const decoded = jwtDecode(data.access_token);
+        const role = decoded.role;   // decode to get "role" inside token payload
+        // console.log(role)  //debugg
+        
         dispatch(setToken(data.access_token));
         setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
-        navigate("/");
+
+        // role-based redirect
+        if (role === 'admin') {
+          navigate(PATH_NAME.ADMIN_DASHBOARD);
+        } else if (role === 'mod') {
+          navigate(PATH_NAME.MODERATOR_DASHBOARD);
+        } else {
+          navigate(PATH_NAME.HOMEPAGE);
+        }
+
       } else if (data?.is_email_verification === false) {
         setEmailToVerify(data.email);
         setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'warning' });
@@ -92,27 +109,27 @@ export default function LoginForm() {
   };
 
   const handleVerifyEmail = async (code) => {
-  if (!code || code.length !== 6) {
-    return setSnackbar({ open: true, message: 'Please enter the 6-digit OTP.', severity: 'error' });
-  }
-
-  try {
-    const res = await confirmOtpApi(code, emailToVerify);
-    const result = res.data;
-
-    if (result.success) {
-      setSnackbar({ open: true, message: 'Email verified successfully! Please login again.', severity: 'success' });
-      setShowOtpSection(false); // đóng OTP section nếu có
-      setEmailToVerify('');
-      navigate('/login');
-    } else {
-      setSnackbar({ open: true, message: res.message || 'Invalid verification code.', severity: 'error' });
+    if (!code || code.length !== 6) {
+      return setSnackbar({ open: true, message: 'Please enter the 6-digit OTP.', severity: 'error' });
     }
-  } catch (err) {
-    console.error('Verify email error:', err);
-    setSnackbar({ open: true, message: 'Verification failed. Please try again.', severity: 'error' });
-  }
-};
+
+    try {
+      const res = await confirmOtpApi(code, emailToVerify);
+      const result = res.data;
+
+      if (result.success) {
+        setSnackbar({ open: true, message: 'Email verified successfully! Please login again.', severity: 'success' });
+        setShowOtpSection(false); // đóng OTP section nếu có
+        setEmailToVerify('');
+        navigate('/login');
+      } else {
+        setSnackbar({ open: true, message: res.message || 'Invalid verification code.', severity: 'error' });
+      }
+    } catch (err) {
+      console.error('Verify email error:', err);
+      setSnackbar({ open: true, message: 'Verification failed. Please try again.', severity: 'error' });
+    }
+  };
 
   return (
     <div className="login-container">
@@ -144,30 +161,29 @@ export default function LoginForm() {
         </div>
 
         {/* Forgot password */}
-          <span
-            className="login-modal-link oxanium-light"
-            onClick={() => setOpenForgotDialog(true)}
-          >
-            Forgot password?
-          </span>
+        <span
+          className="login-modal-link oxanium-light"
+          onClick={() => setOpenForgotDialog(true)}
+        >
+          Forgot password?
+        </span>
 
         <button
           type="submit"
           disabled={isLoading}
-          className={`login-btn oleo-script-regular transition-all duration-300 ease-out ${
-            isLoading ? 'opacity-70 cursor-not-allowed' : ''
-          }`}
+          className={`login-btn oleo-script-regular transition-all duration-300 ease-out ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
         >
           {isLoading ? <span className="loading loading-bars loading-md"></span> : 'Login'}
         </button>
       </form>
 
-         {/* Error */}
+      {/* Error */}
       {error && (
         <div style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</div>
       )}
 
-        {/* Snackbar */}
+      {/* Snackbar */}
       <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
@@ -187,8 +203,8 @@ export default function LoginForm() {
         onClose={() => setShowOtpSection(false)}
         email={emailToVerify}
         onVerify={handleVerifyEmail}
-        // otp={otp}
-        // setOtp={setOtp}
+      // otp={otp}
+      // setOtp={setOtp}
       />
     </div>
   );

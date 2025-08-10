@@ -1,0 +1,190 @@
+/* Sidebar container */
+.mod-sidebar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 236px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 16px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    border: 4px solid #0000;
+    background:
+        linear-gradient(var(--light-1-o60), var(--light-1-o60)) padding-box,
+        linear-gradient(#DC0FFF, #FFD721) border-box;
+    transition: width 0.4s ease;
+}
+
+.mod-sidebar.collapsed {
+    width: 80px;
+}
+
+/*  --------------------------==================== Logo ====================--------------------------   */
+.mod-sidebar-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.6rem 1rem;
+}
+
+.mod-sidebar-full-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 240px;
+}
+
+.mod-sidebar-sole-logo {
+    display: none;
+    height: auto;
+    width: 40px;
+}
+
+.mod-sidebar.collapsed .mod-sidebar-full-logo {
+    display: none;
+}
+
+.mod-sidebar.collapsed .mod-sidebar-sole-logo {
+    display: block;
+}
+
+
+/*  --------------------------==================== Toggle button ====================--------------------------   */
+.mod-sidebar-toggle-btn {
+    position: absolute;
+    top: 50%;
+    /* Move it outside the sidebar to create the jut effect */
+    right: -20px;
+    transform: translateY(-50%);
+
+    width: 40px;
+    height: 35px;
+    padding: 4px;
+    /* background-color: var(--light-2); */
+    backdrop-filter: blur(8px);
+    /* Make it visually distinct */
+    border: 1px solid var(--light-2);
+    border-radius: 8px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    cursor: pointer;
+
+    -webkit-user-drag: none;
+    /* Vô hiệu kéo-thả */
+    user-select: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+}
+
+.mod-sidebar-toggle-btn:hover {
+    background-color: var(--light-2-o50);
+}
+
+.mod-sidebar-toggle-icon {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+}
+
+/*  --------------------------==================== Links container ====================--------------------------   */
+.mod-sidebar-links-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 10px;
+}
+
+/* Link styles */
+.mod-sidebar-link {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    text-decoration: none;
+    color: var(--dark-3);
+
+    /* so size stays stable */
+    border: 1px solid transparent;
+    border-radius: 16px;
+
+    -webkit-user-drag: none;
+    /* Vô hiệu kéo-thả */
+    user-select: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+}
+
+.mod-sidebar-link .mod-sidebar-icon {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.mod-sidebar-label-style {
+    font-size: 12px;
+    margin-top: 1px;
+}
+
+.mod-sidebar-bottom-links {
+    margin-bottom: 0.5rem;
+}
+
+
+.logoutBtn-style {
+    text-align: left;
+    /* Ensures label alignment */
+    width: 100%;
+    /* Matches the full width of other links */
+    border: none;
+    /* Removes button borders */
+    cursor: pointer;
+}
+
+
+/*  --------------------------==================== Hover effects ====================--------------------------   */
+.mod-sidebar-link:hover {
+    border-color: var(--light-2-o50);
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/*  --------------------------==================== Active link styles ====================--------------------------   */
+.mod-sidebar-link.active {
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--light-2-o50);
+    backdrop-filter: blur(8px);
+}
+
+/* Active link text */
+.mod-sidebar-link.active span {
+    color: var(--primary-2);
+}
+
+.mod-sidebar-link.active .mod-sidebar-icon {
+    transform: scale(1.05);
+    filter: var(--primarySVG-2);
+}
+
+
+/*  --------------------------==================== Collapsed state adjustments ====================--------------------------   */
+.mod-sidebar.collapsed .mod-sidebar-link {
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.mod-sidebar.collapsed .mod-sidebar-link span {
+    display: none;
+}
+
+.mod-sidebar.collapsed .mod-sidebar-link .icon {
+    margin-right: 0;
+}

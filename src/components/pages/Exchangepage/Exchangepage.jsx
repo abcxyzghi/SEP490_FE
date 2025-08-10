@@ -11,8 +11,11 @@ export default function Exchangepage() {
   const [error, setError] = useState(null);
   const [userProducts, setUserProducts] = useState([]);
   const [loadingUserProducts, setLoadingUserProducts] = useState(true);
+  const [collections, setCollections] = useState([]);
+  const [selectedCollectionId, setSelectedCollectionId] = useState(null);
   const user = useSelector(state => state.auth.user);
   const [selectedCards, setSelectedCards] = useState([]);
+  
   const handleCardClick = (card) => {
     const isSelected = selectedCards.find(c => c.id === card.id);
     if (isSelected) {
@@ -49,48 +52,55 @@ export default function Exchangepage() {
     fetchProduct();
   }, [sellProductId]);
 
-  // Lấy danh sách thẻ của user (userProduct)
+  // Lấy danh sách collection của user
+  useEffect(() => {
+    async function fetchCollections() {
+      try {
+        if (!user || !user.user_id) {
+          setCollections([]);
+          setSelectedCollectionId(null);
+          return;
+        }
+        const collectionRes = await getCollectionOfProfile();
+        const collectionsData = collectionRes?.data || [];
+        setCollections(collectionsData);
+        if (collectionsData.length > 0) {
+          setSelectedCollectionId(collectionsData[0].id);
+        }
+      } catch (err) {
+        setCollections([]);
+        setSelectedCollectionId(null);
+      }
+    }
+    fetchCollections();
+  }, [user]);
+
+  // Lấy danh sách thẻ của collection được chọn
   useEffect(() => {
     async function fetchUserProducts() {
       setLoadingUserProducts(true);
       try {
-        if (!user || !user.user_id) {
+        if (!selectedCollectionId) {
           setUserProducts([]);
           setLoadingUserProducts(false);
           return;
         }
-
-        const collectionRes = await getCollectionOfProfile();
-        const collections = collectionRes?.data;
-        if (Array.isArray(collections) && collections.length > 0) {
-          const firstCollection = collections[0];
-          const collectionId = firstCollection.id;
-          if (collectionId) {
-            const productRes = await getAllProductsOfCollection(collectionId);
-            const products = productRes?.data;
-
-            if (Array.isArray(products)) {
-              setUserProducts(products);
-            } else {
-              setUserProducts([]);
-            }
-          } else {
-            console.warn("❌ Không có collectionId");
-            setUserProducts([]);
-          }
+        const productRes = await getAllProductsOfCollection(selectedCollectionId);
+        const products = productRes?.data;
+        if (Array.isArray(products)) {
+          setUserProducts(products);
         } else {
           setUserProducts([]);
         }
       } catch (err) {
-
         setUserProducts([]);
       }
-
       setLoadingUserProducts(false);
     }
-
     fetchUserProducts();
-  }, [user]);
+    // Reset selectedCards khi đổi collection
+    setSelectedCards([]);
+  }, [selectedCollectionId]);
   if (loading) return <div>Loading product info...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   const handleExchange = async () => {
@@ -114,6 +124,23 @@ export default function Exchangepage() {
   return (
     <div className="max-w-xl mx-auto mt-8 p-4 border rounded text-white">
       <h2 className="text-2xl font-bold mb-4">Exchange for: {product?.name}</h2>
+
+      {/* Dropdown menu chọn collection */}
+      <div className="mb-4">
+        <label className="block mb-1 font-semibold">Choose your collection:</label>
+        <div className="relative inline-block w-full">
+          <select
+            className="block w-full text-black rounded px-2 py-1 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedCollectionId || ''}
+            onChange={e => setSelectedCollectionId(e.target.value)}
+          >
+            {collections.length === 0 && <option value="">No collections</option>}
+            {collections.map(col => (
+              <option key={col.id} value={col.id}>{col.collectionTopic}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       <div className="flex gap-4 mb-4">
         {/* Ảnh chính */}
@@ -181,9 +208,7 @@ export default function Exchangepage() {
   `}
               >
                 <img
-                  src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${card.
-                    urlImage
-                    }`}
+                  src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${card.urlImage}`}
                   alt={card.name}
                   className="w-20 h-20 object-cover rounded mb-2"
                 />

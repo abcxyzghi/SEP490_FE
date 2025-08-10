@@ -220,4 +220,18 @@ export const updateProfile = async (data, isFormData = false) => {
 export const getBankID = async () => {
   const response = await axios.get(VIET_QR_API);
   return response.data;
+}; 
+
+export const getUserSale = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/Report/get-sales-report-of-user",
+      requiresAuth: true, // interceptor sẽ tự gắn Bearer token
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy báo cáo lợi nhuận:", error);
+    throw error;
+  }
 };
