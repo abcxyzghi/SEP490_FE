@@ -75,18 +75,27 @@ export default function ModProduct() {
 
   const columns = [
     { title: 'Product ID', dataIndex: 'productId', key: 'productId', className: 'productid-cell' },
-    { title: 'Name', dataIndex: 'name', key: 'name', className: 'name-cell' },
-    { 
-      title: 'Image', 
-      dataIndex: 'urlImage', 
+    { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name), className: 'name-cell' },
+    {
+      title: 'Image',
+      dataIndex: 'urlImage',
       key: 'urlImage',
       render: url => {
-        const imgUrl = buildImageUrl(url,useBackupImg);
+        const imgUrl = buildImageUrl(url, useBackupImg);
         return <img src={imgUrl} onError={() => setUseBackupImg(true)} alt="product" style={{ width: 240 }} />
       }
     },
     { title: 'Description', dataIndex: 'description', key: 'description', className: 'description-cell' },
-    { title: 'Rarity', dataIndex: 'rarityName', key: 'rarityName',
+    {
+      title: 'Rarity', dataIndex: 'rarityName', key: 'rarityName', sorter: (a, b) => a.rarityName.localeCompare(b.rarityName),
+      filters: [
+        { text: 'Common', value: 'common' },
+        { text: 'Uncommon', value: 'uncommon' },
+        { text: 'Rare', value: 'rare' },
+        { text: 'Epic', value: 'epic' },
+        { text: 'Legendary', value: 'legendary' },
+      ],
+      onFilter: (value, record) => record.rarityName?.toLowerCase() === value,
       render: rarity => {
         const r = rarity?.toLowerCase();
         let className = 'rarity-common';
@@ -99,9 +108,9 @@ export default function ModProduct() {
         return <span className={className}>{rarityLabel}</span>;
       }
     },
-    { 
-      title: 'Blocked', 
-      dataIndex: 'is_Block', 
+    {
+      title: 'Blocked',
+      dataIndex: 'is_Block',
       key: 'is_Block',
       render: (val, record) => {
         const isBlocked = !!val;
@@ -125,9 +134,9 @@ export default function ModProduct() {
         <Button type="default" className="mod-create-btn" style={{ marginBottom: 16 }} onClick={() => setShowCreateModal(true)}>
           Create New Product
         </Button>
-        <Table 
-          dataSource={products} 
-          columns={columns} 
+        <Table
+          dataSource={products}
+          columns={columns}
           rowKey="productId"
         />
       </div>
@@ -146,7 +155,7 @@ export default function ModProduct() {
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            name="name" 
+            name="name"
             label="Product's Name"
             rules={[{ required: true, message: 'Please enter product name' }]} // 
           >
@@ -172,32 +181,32 @@ export default function ModProduct() {
           </Form.Item>
 
           <Form.Item
-            name="description" 
+            name="description"
             label="Description"
             rules={[{ required: true, message: 'Please enter descriptiondescription' }]}
           >
             <Input.TextArea allowClear autoComplete="off" rows={3} />
           </Form.Item>
 
-          <Form.Item name="CollectionId" label="Collection" rules={[{ required: true, message: 'Please must choose a collectioncollection' }]}> 
-            <Select allowClear options={collections.map(c => ({ value: c.id, label: c.topic }))} showSearch optionFilterProp="label" placeholder="Choose a collection" notFoundContent={collections.length === 0 ? 'There are no collections' : null} /> 
+          <Form.Item name="CollectionId" label="Collection" rules={[{ required: true, message: 'Please must choose a collectioncollection' }]}>
+            <Select allowClear options={collections.map(c => ({ value: c.id, label: c.topic }))} showSearch optionFilterProp="label" placeholder="Choose a collection" notFoundContent={collections.length === 0 ? 'There are no collections' : null} />
           </Form.Item>
           <Form.Item
-          name="UrlImage"
-          label="Product's Image"
-          valuePropName="fileList" // <-- quan trọng!
-          getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}
-          rules={[{ required: true, message: 'Choose Image' }]}
-        >
-          <Upload
-            maxCount={1}
-            accept="image/*"
-            beforeUpload={() => false}
-            listType="picture-card"
+            name="UrlImage"
+            label="Product's Image"
+            valuePropName="fileList" // <-- quan trọng!
+            getValueFromEvent={e => Array.isArray(e) ? e : e && e.fileList}
+            rules={[{ required: true, message: 'Choose Image' }]}
           >
-            <Button>Choose image</Button>
-          </Upload>
-        </Form.Item>
+            <Upload
+              maxCount={1}
+              accept="image/*"
+              beforeUpload={() => false}
+              listType="picture-card"
+            >
+              <Button>Choose image</Button>
+            </Upload>
+          </Form.Item>
         </Form>
       </Modal>
     </div>

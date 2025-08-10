@@ -79,7 +79,7 @@ export default function CollectionDetailPage() {
                         </div>
                     </div>
                 ) : error ? (
-                    <div className="text-error text-lg font-semibold">{error}</div>
+                    <div className="text-error text-lg oxanium-semibold">{error}</div>
                 ) : (
                     <div className="collection-detail-card flex flex-col md:flex-row ">
                         {/* Image section on the left */}

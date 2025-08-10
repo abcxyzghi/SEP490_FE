@@ -1,0 +1,306 @@
+.exchangepage-container {
+    margin-top: 70px;
+    padding: 0 40px 40px 40px;
+    color: var(--light-1);
+}
+
+/*  --------------------------==================== Header ====================--------------------------  */
+.exchangepage-header {
+    margin-bottom: 2.7rem;
+}
+
+.exchangepage-title {
+    text-align: center;
+    color: var(--light-5);
+    font-size: 1.9rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+
+.exchangepage-title span {
+    color: var(--light-1);
+}
+
+.exchangepage-seller {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--light-3);
+    cursor: pointer;
+}
+
+.exchangepage-seller span {
+    margin-left: 5px;
+}
+
+.exchangepage-seller span:hover {
+    color: var(--light-2);
+    text-decoration: underline;
+}
+
+.exchangepage-layout {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+/*  --------------------------==================== Left ====================--------------------------  */
+.exchangepage-left {
+    flex: 1;
+    top: 1rem;
+}
+
+/*  --------------------------==================== Right ====================--------------------------  */
+.exchangepage-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.exchangepage-selected-container {
+    min-height: 100px;
+    padding: 1rem;
+    background-color: var(--dark-4-o70);
+    backdrop-filter: blur(8px);
+    border-radius: 0.5rem;
+}
+
+.exchangepage-no-card {
+    /* Makes it span full row */
+    flex: 1 1 100%;
+    text-align: center;
+}
+
+
+.exchangepage-selected-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.exchangepage-selected-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.exchangepage-card-image {
+    min-width: 100px;
+    width: auto;
+    height: 150px;
+    padding: 5px;
+    object-fit: cover;
+    border-radius: 0.3rem;
+    border: 1px solid #444;
+}
+
+/*  --------------------------==================== Quantity card selected ====================--------------------------  */
+.exchangepage-quantity-wrapper {
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.exchangepage-quantity-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--dark-4);
+    border: none;
+    padding-bottom: 3px;
+    color: var(--light-1);
+    font-size: 1.2rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.exchangepage-quantity-btn:hover {
+    background-color: var(--dark-3-o60);
+}
+
+.exchangepage-quantity-input {
+    max-width: 50px;
+    text-align: center;
+    border: 1px solid var(--light-3);
+    background-color: transparent;
+    color: var(--light-1);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+/*  --------------------------==================== Confirm Exchange button ====================--------------------------  */
+.exchangepage-confirm-btn {
+    width: 70%;
+    margin: 1rem auto 2rem auto;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #6a00ff, #ffcc00);
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3 ease;
+}
+
+.exchangepage-confirm-btn:hover {
+    background: linear-gradient(135deg, #DC0FFF, #FFD721);
+}
+
+.exchangepage-confirm-btn:active {
+    transform: scale(0.99);
+}
+
+.exchangepage-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/*  --------------------------==================== Collection dropdown ====================--------------------------  */
+.exchangepage-collection label {
+    font-weight: 500;
+}
+
+.exchangepage-collection select {
+    width: 100%;
+    padding: 0.4rem;
+    color: var(--light-2);
+    background-color: rgba(255, 255, 255, 0.075);
+    border-radius: 0.3rem;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--dark-1);
+}
+
+.exchangepage-collection option {
+    background-color: var(--dark-5-o90);
+    backdrop-filter: blur(8px);
+}
+
+/*  --------------------------==================== Products grid ====================--------------------------  */
+.exchangepage-products-container {
+    background-color: var(--dark-5-o90);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.exchangepage-products-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.exchangepage-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--dark-4-o70);
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    align-content: center;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.exchangepage-card:hover {
+    background: linear-gradient(135deg, #6a00ff33, #ffcc0033);
+}
+
+.exchangepage-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.exchangepage-card.selected {
+    opacity: 0.6;
+    background: linear-gradient(135deg, #6a00ff33, #ffcc0033);
+    border: 2px solid #ffcc00;
+}
+
+.exchangepage-card-name {
+    font-weight: bold;
+    margin-top: 0.3rem;
+}
+
+.exchangepage-card-quantity {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 880px */
+@media (max-width: 880px) {
+    .exchangepage-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .exchangepage-left,
+  .exchangepage-right {
+    flex: unset;
+    width: 100%;
+  }
+
+  .exchangepage-card-image {
+    height: 120px; /* slightly smaller */
+  }
+
+  .exchangepage-products-list {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+/* For screen width ≤ 360px */
+@media (max-width: 360px) {
+    .exchangepage-container {
+    padding: 0 15px 20px 15px;
+    margin-top: 50px;
+  }
+
+  .exchangepage-title {
+    font-size: 1.5rem;
+  }
+
+  .exchangepage-seller {
+    font-size: 0.9rem;
+  }
+
+  .exchangepage-layout {
+    gap: 1rem;
+  }
+
+  .exchangepage-card-image {
+    height: 90px;
+  }
+
+  .exchangepage-products-list {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.7rem;
+  }
+
+  .exchangepage-confirm-btn {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.4rem;
+  }
+
+  .exchangepage-quantity-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+
+  .exchangepage-quantity-input {
+    max-width: 40px;
+  }
+}

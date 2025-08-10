@@ -171,136 +171,138 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
     }, [selectedItems, filteredBoxes, onSelectedItemsChange]);
 
     return (
-        <div className="cartpage-card-grid">
-            <div className="cartpage-left-section">
-                {/* Selecting & Clear */}
-                <div className="cartpage-select-all">
-                    <button
-                        className="cartpage-clear-button oleo-script-bold"
-                        onClick={handleClearAll}
-                        disabled={isClearing}
-                    >
-                        {isClearing ? (
-                            <span className="loader" style={{ fontSize: '12px' }}>⏳ Clearing...</span>
-                        ) : (
-                            'Clear'
-                        )}
-                    </button>
+        <div className="cartpage-card-grid-wrapper">
+            <div className="cartpage-card-grid">
+                <div className="cartpage-left-section">
+                    {/* Selecting & Clear */}
+                    <div className="cartpage-select-all">
+                        <button
+                            className="cartpage-clear-button oleo-script-bold"
+                            onClick={handleClearAll}
+                            disabled={isClearing}
+                        >
+                            {isClearing ? (
+                                <span className="loader" style={{ fontSize: '12px' }}>⏳ Clearing...</span>
+                            ) : (
+                                'Clear'
+                            )}
+                        </button>
 
-                    <div className='cartpage-select-all-checkbox-wrapper'>
-                        <input
-                            type="checkbox"
-                            id="cartpage-select-all-checkbox"
-                            className="custom-checkbox"
-                            checked={
-                                filteredBoxes.length > 0 &&
-                                selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length === filteredBoxes.length
-                            }
-                            onChange={handleSelectAll}
-                        />
-                        <label htmlFor="cartpage-select-all-checkbox" className="oxanium-regular">ALL</label>
+                        <div className='cartpage-select-all-checkbox-wrapper'>
+                            <input
+                                type="checkbox"
+                                id="cartpage-select-all-checkbox"
+                                className="custom-checkbox"
+                                checked={
+                                    filteredBoxes.length > 0 &&
+                                    selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length === filteredBoxes.length
+                                }
+                                onChange={handleSelectAll}
+                            />
+                            <label htmlFor="cartpage-select-all-checkbox" className="oxanium-regular">ALL</label>
+                        </div>
+
+                        {selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length > 0 && (
+                            <div className="oxanium-regular cartpage-select-numCheck">
+                                {selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length}
+                                {' / '}
+                                {filteredBoxes.length} Selected
+                            </div>
+                        )}
                     </div>
 
-                    {selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length > 0 && (
-                        <div className="oxanium-regular cartpage-select-numCheck">
-                            {selectedItems.filter(id => filteredBoxes.some(item => id === item.id + '-' + item.type)).length}
-                            {' / '}
-                            {filteredBoxes.length} Selected
-                        </div>
-                    )}
-                </div>
 
-
-                {/* Box List */}
-                <div className="cartpage-product-list">
-                    {loading
-                        ? Array.from({ length: 3 }).map((_, idx) => (
-                            <div className="cartpage-product-item" key={idx}>
-                                <div className="cartpage-product-wrapper">
-                                    <div className="cartpage-product-box">
-                                        <div className="skeleton w-20 h-20 rounded-lg bg-gray-700/40" />
-                                        <div className="cartpage-product-text">
-                                            <div className="skeleton h-4 w-32 mb-2 rounded bg-gray-700/40" />
-                                            <div className="skeleton h-4 w-20 rounded bg-gray-700/40" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="cartpage-quantity">
-                                    <div className="skeleton h-8 w-26 rounded bg-gray-700/40" />
-                                </div>
-                            </div>
-                        ))
-                        : filteredBoxes.map((item) => (
-                            <div className="cartpage-product-item" key={item.id + item.type}>
-                                <div className="cartpage-product-wrapper">
-                                    <input
-                                        type="checkbox"
-                                        className="cartpage-product-checkbox"
-                                        checked={selectedItems.includes(item.id + '-' + item.type)}
-                                        onChange={() => handleToggleItem(item)}
-                                    />
-                                    <div className="cartpage-product-box">
-                                        <img
-                                            src={buildImageUrl(item.image, useBackupImg)} 
-                                            onError={() => setUseBackupImg(true)}
-                                            alt="product"
-                                            className="cartpage-product-image"
-                                        />
-                                        <div className="cartpage-product-text">
-                                            <div className="cartpage-product-name">{item.name}</div>
-                                            <div className="cartpage-product-price">
-                                                {(item.price || 0).toLocaleString('vi-VN')} VND
+                    {/* Box List */}
+                    <div className="cartpage-product-list">
+                        {loading
+                            ? Array.from({ length: 3 }).map((_, idx) => (
+                                <div className="cartpage-product-item" key={idx}>
+                                    <div className="cartpage-product-wrapper">
+                                        <div className="cartpage-product-box">
+                                            <div className="skeleton w-20 h-20 rounded-lg bg-gray-700/40" />
+                                            <div className="cartpage-product-text">
+                                                <div className="skeleton h-4 w-32 mb-2 rounded bg-gray-700/40" />
+                                                <div className="skeleton h-4 w-20 rounded bg-gray-700/40" />
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="cartpage-quantity">
+                                        <div className="skeleton h-8 w-26 rounded bg-gray-700/40" />
+                                    </div>
                                 </div>
-                                <div className="cartpage-quantity">
-                                    <button
-                                        onClick={() => handleQuantityChange(item, (item.quantity || 1) - 1)}
-                                    >
-                                        <img src={ReduceQuantity} style={{ width: "20px", height: "20px" }} alt="-" />
-                                    </button>
-                                    <span className='oxanium-regular'>{item.quantity || 1}</span>
-                                    <button
-                                        onClick={() => handleQuantityChange(item, (item.quantity || 1) + 1)}
-                                    >
-                                        <img src={AddQuantity} style={{ width: "20px", height: "20px" }} alt="+" />
-                                    </button>
+                            ))
+                            : filteredBoxes.map((item) => (
+                                <div className="cartpage-product-item" key={item.id + item.type}>
+                                    <div className="cartpage-product-wrapper">
+                                        <input
+                                            type="checkbox"
+                                            className="cartpage-product-checkbox"
+                                            checked={selectedItems.includes(item.id + '-' + item.type)}
+                                            onChange={() => handleToggleItem(item)}
+                                        />
+                                        <div className="cartpage-product-box">
+                                            <img
+                                                src={buildImageUrl(item.image, useBackupImg)}
+                                                onError={() => setUseBackupImg(true)}
+                                                alt="product"
+                                                className="cartpage-product-image"
+                                            />
+                                            <div className="cartpage-product-text">
+                                                <div className="cartpage-product-name">{item.name}</div>
+                                                <div className="cartpage-product-price">
+                                                    {(item.price || 0).toLocaleString('vi-VN')} VND
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="cartpage-quantity">
+                                        <button
+                                            onClick={() => handleQuantityChange(item, (item.quantity || 1) - 1)}
+                                        >
+                                            <img src={ReduceQuantity} style={{ width: "20px", height: "20px" }} alt="-" />
+                                        </button>
+                                        <span className='oxanium-regular'>{item.quantity || 1}</span>
+                                        <button
+                                            onClick={() => handleQuantityChange(item, (item.quantity || 1) + 1)}
+                                        >
+                                            <img src={AddQuantity} style={{ width: "20px", height: "20px" }} alt="+" />
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                </div>
-            </div>
-
-            <div className="cartpage-summary">
-                <div className="cartpage-summary-price">
-                    <div className="cartpage-summary-title oxanium-light">Total Price</div>
-                    <div className="cartpage-summary-value oxanium-semibold">
-                        {loading ? (
-                            <div className="skeleton h-6 w-24 rounded bg-gray-700/40" />
-                        ) : (
-                            <>
-                                {totalPrice.toLocaleString('vi-VN')}<br />VND
-                            </>
-                        )}
+                            ))}
                     </div>
                 </div>
-                <div className="cartpage-summary-quantity">
-                    <div className="cartpage-summary-title oxanium-light">Total Quantity</div>
-                    <div className="cartpage-summary-value oxanium-semibold">
-                        {loading ? <div className="skeleton h-6 w-12 rounded bg-gray-700/40" /> : totalQuantity}
+
+                <div className="cartpage-summary">
+                    <div className="cartpage-summary-price">
+                        <div className="cartpage-summary-title oxanium-light">Total Price</div>
+                        <div className="cartpage-summary-value oxanium-semibold">
+                            {loading ? (
+                                <div className="skeleton h-6 w-24 rounded bg-gray-700/40" />
+                            ) : (
+                                <>
+                                    {totalPrice.toLocaleString('vi-VN')}<br />VND
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    <div className="cartpage-summary-quantity">
+                        <div className="cartpage-summary-title oxanium-light">Total Quantity</div>
+                        <div className="cartpage-summary-value oxanium-semibold">
+                            {loading ? <div className="skeleton h-6 w-12 rounded bg-gray-700/40" /> : totalQuantity}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Message Modal */}
-            <MessageModal
-                open={modal.open}
-                onClose={() => setModal(prev => ({ ...prev, open: false }))}
-                type={modal.type}
-                title={modal.title}
-                message={modal.message}
-            />
+                {/* Message Modal */}
+                <MessageModal
+                    open={modal.open}
+                    onClose={() => setModal(prev => ({ ...prev, open: false }))}
+                    type={modal.type}
+                    title={modal.title}
+                    message={modal.message}
+                />
+            </div>
         </div>
     );
 }
