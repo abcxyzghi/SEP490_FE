@@ -10,6 +10,7 @@ import './Cartpage.css';
 import SearchBar from '../../libs/SearchFilterSort/SearchBar';
 import FilterPanel from '../../libs/SearchFilterSort/FilterPanel';
 import MessageModal from '../../libs/MessageModal/MessageModal';
+import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import CartBoxList from '../../tabs/CartBoxList/CartBoxList';
 import CartProductList from '../../tabs/CartProductList/CartProductList';
@@ -28,6 +29,15 @@ export default function Cartpage() {
     setModal({ open: true, type, title, message });
   };
 
+  const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', onConfirm: null });
+  const showConfirmModal = (title, message, onConfirm = null) => {
+    setConfirmModal({ open: true, title, message, onConfirm });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal(prev => ({ ...prev, open: false }));
+  };
+
+
   useEffect(() => {
     if (activeTab !== 'Collection Store') {
       setSelectedRarities([]);
@@ -38,6 +48,21 @@ export default function Cartpage() {
     (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
     0
   );
+
+  // NEW: promise-based confirm helper so you can `await` user's choice
+  const showConfirmPromise = (title, message) => {
+    return new Promise((resolve) => {
+      setConfirmModal({
+        open: true,
+        title,
+        message,
+        // resolve(true) when user confirms
+        onConfirm: () => resolve(true),
+        // resolve(false) when user cancels or closes
+        onCancel: () => resolve(false)
+      });
+    });
+  };
 
   // Buy handler for Cartpage
   const handleBuyAllSelected = async () => {
@@ -68,15 +93,15 @@ export default function Cartpage() {
             const productDetail = await getProductOnSaleDetail(item.id);
 
             if (productDetail?.status && productDetail.data) {
-              const availableQty = productDetail.data.quantity;              
-//===========================================note: có gì style lại cái alert, nhà nó nằm ở đây (style lại cho đẹp)========================================================================================
-              const confirmBuy = window.confirm(
-                `Hiện tại trong shop chỉ còn ${availableQty} sản phẩm. Bạn có muốn mua không?`
+              const availableQty = productDetail.data.quantity;
+
+              const userWantsToBuy = await showConfirmPromise(
+                'Limited stock',
+                `Only ${availableQty} item(s) are currently available in the shop. Do you want to proceed with purchasing ${availableQty} item(s)?`
               );
 
-              if (confirmBuy) {
-                console.log(" Update quantity:", availableQty);
-
+              if (userWantsToBuy) {
+                // user confirmed -> update quantity then adjust redux/cart as before
                 await updateCartQuantity({ Id: item.id, quantity: availableQty });
                 dispatch({
                   type: "cart/updateQuantity",
@@ -87,7 +112,7 @@ export default function Cartpage() {
                   },
                 });
               } else {
-                console.log("🗑️ Clear cart");
+                // user canceled -> remove from cart
                 await removeFromCart({ sellProductId: item.id });
                 dispatch(removeItemFromCart({ id: item.id, type: "product" }));
               }
@@ -224,6 +249,22 @@ export default function Cartpage() {
         title={modal.title}
         message={modal.message}
       />
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        open={confirmModal.open}
+        onClose={() => {
+          if (confirmModal.onCancel) confirmModal.onCancel();
+          closeConfirmModal();
+        }}
+        onConfirm={() => {
+          if (confirmModal.onConfirm) confirmModal.onConfirm();
+          closeConfirmModal();
+        }}
+        title={confirmModal.title}
+        message={confirmModal.message}
+      />
+
     </>
   );
 }

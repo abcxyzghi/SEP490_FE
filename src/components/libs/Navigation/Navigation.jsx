@@ -59,28 +59,28 @@ export default function Navigation() {
     { label: 'Contact', path: Pathname('CONTACT'), icon: ContactIcon },
   ];
 
-  const handleSafeNavigate = async (to) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      dispatch(setUser(null));
-      navigate('/login');
-      return;
-    }
+  // const handleSafeNavigate = async (to) => {
+  //   const token = localStorage.getItem('token');
+  //   if (!token) {
+  //     dispatch(setUser(null));
+  //     navigate('/login');
+  //     return;
+  //   }
 
-    try {
-      const res = await fetchUserInfo();
-      if (res.status) {
-        dispatch(setUser(res.data));
-        navigate(to);
-      } else {
-        throw new Error('Unauthorized');
-      }
-    } catch (err) {
-      localStorage.removeItem('token');
-      dispatch(setUser(null));
-      navigate('/login');
-    }
-  };
+  //   try {
+  //     const res = await fetchUserInfo();
+  //     if (res.status) {
+  //       dispatch(setUser(res.data));
+  //       navigate(to);
+  //     } else {
+  //       throw new Error('Unauthorized');
+  //     }
+  //   } catch (err) {
+  //     localStorage.removeItem('token');
+  //     dispatch(setUser(null));
+  //     navigate('/login');
+  //   }
+  // };
 
 
   // Initial login / user fetch (one-time user init)
@@ -95,13 +95,13 @@ export default function Navigation() {
           }
         })
         .catch(err => {
-          // if (err.response?.status === 401) {
-          //   localStorage.removeItem('token');
-          //   dispatch(setUser(null));
-          //   navigate(PATH_NAME.LOGIN);
-          // } else {
+          if (err.response?.status === 401) {
+            localStorage.removeItem('token');
+            dispatch(setUser(null));
+            navigate(PATH_NAME.LOGIN);
+          } else {
             console.error('Lỗi fetch user info:', err);
-          // }
+          }
         })
         .finally(() => {
           setLoadingUser(false);
