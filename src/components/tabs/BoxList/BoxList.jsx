@@ -125,7 +125,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
 
   // Limit the number of visible boxes
   const visibleBoxes = sortedBoxes.slice(0, visibleCount);
-  const isEnd = visibleCount >= filteredBoxes.length || visibleCount >= 16;
+  const isEnd = visibleCount >= filteredBoxes.length;
   // If no data fetched, show a message
   const noDataFetched = boxes.length === 0;
   const noSearchResults = boxes.length > 0 && filteredBoxes.length === 0;
@@ -257,7 +257,7 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
       ) : (
         <button
           className="boxList-loadmore-button oxanium-semibold"
-          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, 16, boxes.length))}
+          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, filteredBoxes.length))}
         >
           Load more
         </button>

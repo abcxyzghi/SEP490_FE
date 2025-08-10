@@ -28,9 +28,9 @@
 /* Dòng bảng */
 .ant-table-tbody > tr > td {
   font-size: 0.98rem;
-  color: #ffffff;
+  color: #fff !important;
   padding: 12px 8px;
-  background: rgba(20, 20, 20, 0.789); /* xám đen opacity 60% */
+  background: rgba(20, 20, 20, 0.789) !important; /* xám đen opacity 60% */
 }
 
 /* Ảnh sản phẩm */
@@ -48,7 +48,8 @@
 
 /* Hiệu ứng hover cho hàng */
 .ant-table-tbody > tr:hover > td {
-  background: rgba(54, 53, 53, 0.434); /*xám trắng opacity 40%*/
+  background: rgba(87, 85, 85, 0.434) !important; /*xám trắng opacity 40%*/
+  color: #fff !important;
   transition: background 0.2s;
 }
 

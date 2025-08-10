@@ -128,7 +128,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
 
   // Limit the number of visible products
   const visibleProducts = sortedProducts.slice(0, visibleCount);
-  const isEnd = visibleCount >= filteredProducts.length || visibleCount >= 16;
+  const isEnd = visibleCount >= filteredProducts.length;
   const noDataFetched = products.length === 0;
   const noSearchResults = products.length > 0 && filteredProducts.length === 0;
 
@@ -222,12 +222,14 @@ export default function ProductList({ searchText, selectedSort, ascending, price
                       </div>
                       <div className='productList-sub-info'>
                         <div className="productList-card-price oxanium-bold">{formatShortNumber(item.price)} VND</div>
-                        <div className="productList-card-sellerName oxanium-bold"
-                          onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}
-                        >
-                          {truncate(item.username, 10)}
-                        </div>
+                        <div className="productList-card-quantity oxanium-bold">Qty: {item.quantity}</div>
                       </div>
+                      <div className="productList-card-sellerName oxanium-bold"
+                        onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}
+                      >
+                        {truncate(item.username, 10)}
+                      </div>
+
                       <div className="productList-card-actions">
                         <button
                           className="productList-view-button"
@@ -277,7 +279,7 @@ export default function ProductList({ searchText, selectedSort, ascending, price
       ) : (
         <button
           className="productList-loadmore-button oxanium-semibold"
-          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, 16, products.length))}
+          onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, filteredProducts.length))}
         >
           Load more
         </button>

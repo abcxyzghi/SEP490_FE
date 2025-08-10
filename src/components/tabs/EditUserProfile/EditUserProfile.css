@@ -1,0 +1,218 @@
+.editUserProfile-container {
+    max-width: 100%;
+    padding: 40px 60px;
+    margin: 0 auto;
+    color: var(--light-1);
+    box-shadow: inset 0 0 15px rgba(255, 165, 0, 0.2);
+}
+
+.editUserProfile-title {
+    font-size: 1.9rem;
+    text-align: center;
+    background: linear-gradient(360deg, #DC0FFF, #FFD721);
+    /* Standard property for compatibility */
+    background-clip: text;
+    /* Firefox */
+    -moz-background-clip: text;
+    /* Internet Explorer */
+    -ms-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+}
+
+/*  --------------------------==================== Personal Update Info ====================--------------------------  */
+.editUserProfile-form {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.editUserProfile-avatar-section {
+    flex: 0 0 270px;
+    text-align: center;
+}
+
+.editUserProfile-avatar {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 8px solid var(--dark-1);
+}
+
+/*  --------------------------==================== Change profile img btn ====================--------------------------  */
+.editUserProfile-change-profile-btn {
+    margin-top: 15px;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.editUserProfile-change-profile-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.editUserProfile-change-profile-btn .editUserProfile-change-profile-icon {
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
+.change-profile-btn input {
+    display: none;
+}
+
+/*  --------------------------==================== Form Update ====================--------------------------  */
+.editUserProfile-info-section {
+    /* flex: 1; */
+    min-width: 45%;
+    max-width: 650px;
+}
+
+.editUserProfile-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.editUserProfile-field label {
+    margin-bottom: 0.2rem;
+    font-size: 0.9rem;
+    font-family: "Oxanium", sans-serif;
+    font-weight: 500;
+}
+
+.editUserProfile-field input {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--dark-1-o50);
+    color: var(--light-2);
+    font-family: "Oxanium", sans-serif;
+    font-weight: 400;
+}
+
+/*   --------------------------==================== Antd bank section ====================--------------------------  */
+.editUserProfile-select .ant-select-selector {
+    padding: 19px 9px !important;
+    background-color: var(--dark-1-o50) !important;
+    color: #f0f0f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.2s ease;
+}
+
+.editUserProfile-select .ant-select-selection-placeholder {
+    color: #888 !important;
+}
+
+.editUserProfile-select .ant-select-arrow {
+    color: #ccc !important;
+}
+
+.editUserProfile-select:hover .ant-select-selector {
+    border-color: #666 !important;
+    background-color: var(--dark-2-o50) !important;
+}
+
+/* Dropdown menu dark mode */
+.ant-select-dropdown {
+    background-color: #1f1f1f !important;
+}
+
+.ant-select-item {
+    color: #f0f0f0 !important;
+}
+
+.ant-select-item-option-active {
+    background-color: #333 !important;
+}
+
+.ant-select-item-option-selected {
+    background-color: #444 !important;
+    color: #fff !important;
+}
+
+/* Input dark mode */
+.editUserProfile-input {
+    padding: 0.5rem;
+    background-color: var(--dark-1-o50) !important;
+    color: #f0f0f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.2s ease;
+}
+
+.editUserProfile-input::placeholder {
+    color: #888 !important;
+}
+
+.editUserProfile-input:hover {
+    border-color: #666 !important;
+    background-color: var(--dark-1-o50) !important;
+}
+
+.editUserProfile-input:focus {
+    border-color: #888 !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) !important;
+}
+
+
+/*  --------------------------==================== Update btn ====================--------------------------  */
+.editUserProfile-btn-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.editUserProfile-btn-container button {
+    background-color: var(--purpleBG-buyBtn);
+    font-size: 18px;
+    color: var(--light-1);
+    padding: 6px 26px;
+    border-radius: 6px;
+    border: 2px solid var(--pinkBorder-buyBtn);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.editUserProfile-btn-container button:hover {
+    background-color: var(--darkPurpleBG-buyBtn);
+}
+
+.editUserProfile-btn-container button:active {
+    transform: scale(0.99);
+
+}
+
+/*  --------------------------==================== Password section ====================--------------------------  */
+.editUserProfile-password-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 165, 0, 0.15);
+}
+
+.editUserProfile-password-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Toggle visibility icon */
+.editUserProfile-toggle-icon {
+    position: absolute !important;
+    right: 0.5rem;
+    top: 50%;
+    padding: 0 !important;
+    z-index: 2;
+    cursor: pointer;
+}

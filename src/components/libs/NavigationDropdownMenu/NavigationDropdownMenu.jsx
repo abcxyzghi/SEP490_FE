@@ -31,6 +31,10 @@ export default function NavigationDropdownMenu() {
   const location = useLocation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const [imgSrc, setImgSrc] = useState(
+    user.profile_image ? buildImageUrl(user.profile_image, useBackupImg) : ProfileHolder
+  );
+  const [errorImgCount, setErrorImgCount] = useState(0);
 
   // Fetch user info on open (if not already loaded)
   useEffect(() => {
@@ -45,6 +49,28 @@ export default function NavigationDropdownMenu() {
       }
     }
   }, [isOpen, user, dispatch]);
+
+  // Poll for profile image changes every 2 minutes (image-only silent refetch)
+  useEffect(() => {
+    if (user) {
+      const interval = setInterval(async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetchUserInfo();
+          if (res?.status && res.data) {
+            const newProfileImage = res.data.profile_image;
+            if (newProfileImage !== user.profile_image) {
+              dispatch(setUser({ ...user, profile_image: newProfileImage }));
+            }
+          }
+        } catch (err) {
+          console.error('Profile image refetch failed:', err);
+        }
+      }, 120000); // 2 minutes
+
+      return () => clearInterval(interval);
+    }
+  }, [user, dispatch]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -70,21 +96,6 @@ export default function NavigationDropdownMenu() {
     setSubMenu(null);
   };
 
-  // const handleLogout = () => {
-  //   persistor.pause(); // stop persisting
-  //   persistor.flush().then(() => {
-  //     persistor.purge(); // mark persisted state as gone
-  //     dispatch(logout()); // clear auth from Redux
-  //     localStorage.removeItem("persist:root"); // force-remove immediately
-  //     localStorage.clear(); // optional: clear everything else
-  //     sessionStorage.clear();
-  //     caches
-  //       .keys()
-  //       .then((names) => names.forEach((name) => caches.delete(name)));
-  //   });
-  //   // ✅ Reload cleanly to make sure Redux state is empty
-  //   window.location.href = Pathname("LOGIN"); // <- hard reload
-  // }; 
   const handleLogout = async () => {
     // Clear Redux memory state
     dispatch(logout());
@@ -124,12 +135,18 @@ export default function NavigationDropdownMenu() {
       >
         <div className="w-14 max-[480px]:w-10 rounded-full border-2 border-white relative nav-profile-img">
           <img
-            src={
-              user.profile_image
-                ? buildImageUrl(user.profile_image, useBackupImg)
-                : ProfileHolder
-            }
-            onError={() => setUseBackupImg(true)}
+            src={imgSrc}
+            onError={() => {
+              if (errorImgCount === 0 && user.profile_image) {
+                // First fail → try backup image
+                setUseBackupImg(true);
+                setImgSrc(buildImageUrl(user.profile_image, true));
+              } else {
+                // Second fail → fallback to placeholder
+                setImgSrc(ProfileHolder);
+              }
+              setErrorImgCount((prev) => prev + 1);
+            }}
             alt="Profile"
           />
         </div>

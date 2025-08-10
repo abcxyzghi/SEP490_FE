@@ -4,14 +4,26 @@ import SearchBar from '../../libs/SearchFilterSort/SearchBar';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import AuctionRoomList from '../../tabs/AuctionRoomList/AuctionRoomList';
 import MyAuction from '../../tabs/MyAuction/MyAuction';
+
+import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 import Guidebook from '../../libs/Guidebook/Guidebook';
 
 export default function Auctionpage() {
   const [activeTab, setActiveTab] = useState('Auction Rooms');
   const [searchText, setSearchText] = useState('');
-  const [open, setOpen] = useState(false);
 
-    const steps = [
+  const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
+
+  const handleConfirm = () => {
+    alert('Confirmed!');
+    setModalOpen(false);
+  };
+
+  const steps = [
     {
       step: 1,
       image: "https://ik.imagekit.io/vbvs3wes4/505765803_2159492884475338_5424204106079022562_n.jpg",
@@ -60,15 +72,31 @@ export default function Auctionpage() {
 
       {/* Guidebook */}
       <div className="p-10">
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        onClick={() => setOpen(true)}
-      >
-        Open Guidebook
-      </button>
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+          onClick={() => setOpen(true)}
+        >
+          Open Guidebook
+        </button>
 
-      <Guidebook isOpen={open} onClose={() => setOpen(false)} steps={steps} />
-    </div>
+        <Guidebook isOpen={open} onClose={() => setOpen(false)} steps={steps} />
+      </div>
+
+      {/* Confirm modal */}
+      <div style={{ padding: '2rem' }}>
+        <button className="bg-green-600 text-white px-4 py-2 rounded-l" onClick={handleOpenModal}>
+          Open Confirm Modal
+        </button>
+
+        <ConfirmModal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirm}
+          title="Are you sure?"
+          message="This action cannot be undone."
+        />
+      </div>
+
     </div>
   )
 }
