@@ -1,18 +1,24 @@
 /* eslint-disable no-unused-vars */
-import { React, useEffect, useState, useCallback } from 'react';
-import './Profilepage.css';
-import { Snackbar, Alert } from '@mui/material';
-import MessageModal from '../../libs/MessageModal/MessageModal';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport } from '../../../services/api.user';
-import { format } from 'date-fns';
-import { buildImageUrl } from '../../../services/api.imageproxy';
-import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
-import UserOnSale from '../../tabs/UserOnSale/UserOnSale';
-import UserAchievements from '../../tabs/UserAchievements/UserAchievements';
-import UserBox from '../../tabs/UserBox/UserBox';
-import UserCollectionList from '../../tabs/UserCollectionList/UserCollectionList';
+import { React, useEffect, useState, useCallback } from "react";
+import "./Profilepage.css";
+import { Snackbar, Alert } from "@mui/material";
+import MessageModal from "../../libs/MessageModal/MessageModal";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import {
+  getProfile,
+  getOtherProfile,
+  getAllProductOnSaleOfUser,
+  createReport,
+  getRatingOfUser,
+} from "../../../services/api.user";
+import { format } from "date-fns";
+import { buildImageUrl } from "../../../services/api.imageproxy";
+import SwitchTabs from "../../libs/SwitchTabs/SwitchTabs";
+import UserOnSale from "../../tabs/UserOnSale/UserOnSale";
+import UserAchievements from "../../tabs/UserAchievements/UserAchievements";
+import UserBox from "../../tabs/UserBox/UserBox";
+import UserCollectionList from "../../tabs/UserCollectionList/UserCollectionList";
 // import assets
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
@@ -20,12 +26,17 @@ import FollowIcon from "../../../assets/Icon_line/User_add.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
-import { followUser, getFollowers, getFollowing, unfollowUser } from '../../../services/api.subscription';
-import { Modal } from 'antd';
+import {
+  followUser,
+  getFollowers,
+  getFollowing,
+  unfollowUser,
+} from "../../../services/api.subscription";
+import { Modal } from "antd";
 
 export default function Profilepage() {
   const { id } = useParams();
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   const currentUserId = user?.user_id;
   const navigate = useNavigate();
   const [copySuccess, setCopySuccess] = useState(false);
@@ -36,22 +47,28 @@ export default function Profilepage() {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
-  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
-  const [activeTab, setActiveTab] = useState('Mystery Boxes');
+  const [modal, setModal] = useState({
+    open: false,
+    type: "default",
+    title: "",
+    message: "",
+  });
+  const [activeTab, setActiveTab] = useState("Mystery Boxes");
   const [hasFollowed, setHasFollowed] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   // Show warning modal for unauthorized actions using MessageModal
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+  const [rating, setRating] = useState(null);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
-  const [reportTitle, setReportTitle] = useState('');
-  const [reportContent, setReportContent] = useState('');
+  const [reportTitle, setReportTitle] = useState("");
+  const [reportContent, setReportContent] = useState("");
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [productNumber, setProductNumber] = useState(0);
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -64,56 +81,75 @@ export default function Profilepage() {
         } else if (currentUserId) {
           res = await getProfile();
         } else {
-          setError('You must be logged in to view your own profile.');
+          setError("You must be logged in to view your own profile.");
           setLoading(false);
           return;
         }
         if (res && res.status) {
           setProfile(res.data);
         } else {
-          setError('Profile not found');
+          setError("Profile not found");
+        }
+        const data = await getRatingOfUser(id);
+        setRating(data.data);
+        const productData = await getAllProductOnSaleOfUser(id);
+        console.log("Product Data", productData);
+        if (productData && productData.data) {
+          const count = productData.data.filter(
+            (item) => item.isSell === true && item.quantity > 0
+          ).length;
+          setProductNumber(count);
         }
       } catch {
-        setError('Failed to load profile');
+        setError("Failed to load profile");
       } finally {
         setLoading(false);
       }
     };
     // Always allow fetching other profiles, only block my profile if not logged in
-    if (id || typeof currentUserId !== 'undefined') {
+    if (id || typeof currentUserId !== "undefined") {
       fetchProfile();
     }
   }, [id, currentUserId]);
 
   // Move fetchSocialData outside so it can be reused
+
   const fetchSocialData = useCallback(async () => {
     try {
       setIsLoading(true);
+
+      // Gọi API với tham số myUserId = id
       const [followersRes, followingRes] = await Promise.all([
-        getFollowers(),
-        getFollowing(),
+        getFollowers(id),
+        getFollowing(id),
       ]);
+
       const followersData = followersRes.data || [];
       const followingData = followingRes.data || [];
-      console.log(followersData)
+
       setFollowers(followersData);
       setFollowing(followingData);
-      if (id && followingData.some((user) => user.userId === id)) {
+
+      // Kiểm tra xem id hiện tại có đang follow ai không
+      if (
+        currentUserId &&
+        followersData.some((user) => user.followerId === currentUserId)
+      ) {
         setHasFollowed(true);
       } else {
         setHasFollowed(false);
       }
     } catch (error) {
       console.error("❌ Lỗi khi fetch followers/following:", error);
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
-  }, [id]);
+  }, [id, currentUserId]);
 
   useEffect(() => {
     fetchSocialData();
   }, [fetchSocialData]);
+
   // Refetchable fetchProducts for on-sale products
   const fetchProducts = useCallback(async () => {
     setProductsLoading(true);
@@ -141,97 +177,111 @@ export default function Profilepage() {
     }
   }, [id, currentUserId, fetchProducts]);
 
-  if (loading || isLoading) return (
-    <div className="w-full">
-      {/* Banner skeleton */}
-      <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
+  if (loading || isLoading)
+    return (
+      <div className="w-full">
+        {/* Banner skeleton */}
+        <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
 
-      {/* Profile Info Skeleton */}
-      <div className="profilepage-wrapper">
-        <div className="profilepage-img avatar">
-          <div className="profilepage-avatar-container">
-            <div className="skeleton w-full h-full rounded bg-gray-700/40 backdrop-blur-sm" />
+        {/* Profile Info Skeleton */}
+        <div className="profilepage-wrapper">
+          <div className="profilepage-img avatar">
+            <div className="profilepage-avatar-container">
+              <div className="skeleton w-full h-full rounded bg-gray-700/40 backdrop-blur-sm" />
+            </div>
           </div>
-        </div>
 
-        <div className="profilepage-info">
-          {/* Left skeleton info */}
-          <div className="profilepage-left space-y-4">
-            <div className="space-y-2">
-              <div className="skeleton h-6 w-40 bg-gray-600/40 rounded" />
-              <div className="skeleton h-4 w-24 bg-gray-600/30 rounded" />
+          <div className="profilepage-info">
+            {/* Left skeleton info */}
+            <div className="profilepage-left space-y-4">
+              <div className="space-y-2">
+                <div className="skeleton h-6 w-40 bg-gray-600/40 rounded" />
+                <div className="skeleton h-4 w-24 bg-gray-600/30 rounded" />
+              </div>
+
+              <div className="flex gap-3">
+                <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+                <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+              </div>
             </div>
 
-            <div className="flex gap-3">
+            {/* Right skeleton action */}
+            <div className="profilepage-right-action flex gap-3">
               <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
               <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
             </div>
           </div>
+        </div>
 
-          {/* Right skeleton action */}
-          <div className="profilepage-right-action flex gap-3">
-            <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
-            <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+        {/* Tabs switcher skeleton */}
+        <div className="tabs-switcher-section flex flex-col gap-3">
+          {/*Show 3 skeleton tabs if viewing own profile, else 2 */}
+          <div className="flex justify-center gap-4">
+            {[
+              ...Array((id === currentUserId || !id) && currentUserId ? 3 : 2),
+            ].map((_, i) => (
+              <div
+                key={i}
+                className="skeleton h-10 w-28 bg-gray-700/20 rounded"
+              />
+            ))}
           </div>
+          <div className="skeleton h-60 w-[90%] rounded bg-gray-700/40" />
         </div>
       </div>
+    );
 
-      {/* Tabs switcher skeleton */}
-      <div className="tabs-switcher-section flex flex-col gap-3">
-        {/*Show 3 skeleton tabs if viewing own profile, else 2 */}
-        <div className="flex justify-center gap-4">
-          {[...Array(
-            (id === currentUserId || !id) && currentUserId ? 3 : 2
-          )].map((_, i) => (
-            <div key={i} className="skeleton h-10 w-28 bg-gray-700/20 rounded" />
-          ))}
-        </div>
-        <div className="skeleton h-60 w-[90%] rounded bg-gray-700/40" />
+  if (error)
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
 
+  if (!profile)
+    return (
+      <div className="text-center mt-10 text-gray-400">
+        No profile data found.
       </div>
-    </div>
-  );
-
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
-
-  if (!profile) return <div className="text-center mt-10 text-gray-400">No profile data found.</div>;
+    );
 
   const isMyProfile = currentUserId && (id === currentUserId || !id);
 
   // Construct the tabs array based on isMyProfile
   const tabs = isMyProfile
     ? [
-      {
-        label: 'Mystery Boxes',
-        content: <UserBox />,
-      },
-      {
-        label: 'Collections',
-        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
-      },
-      {
-        label: 'On Sale',
-        content: <UserOnSale products={products} productsLoading={productsLoading} />,
-      },
-    ]
+        {
+          label: "Mystery Boxes",
+          content: <UserBox />,
+        },
+        {
+          label: "Collections",
+          content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
+        },
+        {
+          label: "On Sale",
+          content: (
+            <UserOnSale products={products} productsLoading={productsLoading} />
+          ),
+        },
+      ]
     : [
-      {
-        label: 'Collections',
-        content: <UserAchievements />,
-      },
-      {
-        label: 'On Sale',
-        content: <UserOnSale products={products} productsLoading={productsLoading} />,
-      },
-    ];
+        {
+          label: "Collections",
+          content: <UserAchievements />,
+        },
+        {
+          label: "On Sale",
+          content: (
+            <UserOnSale products={products} productsLoading={productsLoading} />
+          ),
+        },
+      ];
 
-  // change createDate format to month year  
-  const joinedDate = format(new Date(profile.createDate), 'MMMM yyyy');
+  // change createDate format to month year
+  const joinedDate = format(new Date(profile.createDate), "MMMM yyyy");
 
   // Function to copy current domain
   const handleCopyProfileLink = () => {
     const currentUrl = window.location.href;
-    navigator.clipboard.writeText(currentUrl)
+    navigator.clipboard
+      .writeText(currentUrl)
       .then(() => {
         setCopySuccess(true); // show snackbar
       })
@@ -260,7 +310,11 @@ export default function Profilepage() {
   // Function to submit Report form
   const handleSubmitReport = async () => {
     if (!reportTitle || !reportContent) {
-      return showModal('warning', 'Missing field', "Please fill in both Title and Content");;
+      return showModal(
+        "warning",
+        "Missing field",
+        "Please fill in both Title and Content"
+      );
     }
 
     try {
@@ -273,23 +327,32 @@ export default function Profilepage() {
       });
 
       if (res?.success || res?.status) {
-        showModal('default', 'Report sent', "The report has been sent to the higher-ups for processing.");
+        showModal(
+          "default",
+          "Report sent",
+          "The report has been sent to the higher-ups for processing."
+        );
         setShowReportModal(false);
-        setReportTitle('');
-        setReportContent('');
+        setReportTitle("");
+        setReportContent("");
       } else {
-        return showModal('error', 'Error', "Report fail to sent. Invalid response");
+        return showModal(
+          "error",
+          "Error",
+          "Report fail to sent. Invalid response"
+        );
       }
     } catch (err) {
       console.error("Report error:", err);
-      return showModal('error', 'Error', "Something wrong! Please try again later.");
+      return showModal(
+        "error",
+        "Error",
+        "Something wrong! Please try again later."
+      );
     } finally {
       setReportSubmitting(false);
     }
-
   };
-
-
 
   return (
     <div>
@@ -325,27 +388,52 @@ export default function Profilepage() {
           <div className="profilepage-info">
             {/* Left info */}
             <div className="profilepage-left">
-              <div className='profilepage-nameJoin'>
-                <h1 className="profilepage-username oxanium-bold">{profile.username}</h1>
-                <p className='profilepage-joinTime oxanium-semibold'> Join <span className='oxanium-regular'>{joinedDate}</span></p>
+              <div className="profilepage-nameJoin">
+                <h1 className="profilepage-username oxanium-bold">
+                  {profile.username}
+                </h1>
+                <p className="profilepage-joinTime oxanium-semibold">
+                  {" "}
+                  Join <span className="oxanium-regular">{joinedDate}</span>
+                </p>
               </div>
 
               <div className="profilepage-buttons">
+                <div style={{ color: "white" }}>
+                  <h3>⭐ Đánh giá của người dùng:</h3>
+                  <p>{rating}</p>
+                </div>
+                <div style={{ color: "white" }}>
+                  <h3>On sale:</h3>
+                  <p>{productNumber}</p>
+                </div>
+                <div style={{ color: "white" }}>
+                  <h3>Followers:</h3>
+                  <p>{followers.length}</p>
+                </div>
+
+                <div style={{ color: "white" }}>
+                  <h3>Following:</h3>
+                  <p>{following.length}</p>
+                </div>
+                <button
+                  className="profilepage-btn-viewfollows oxanium-semibold"
+                  onClick={() => setIsFollowModalOpen(true)}
+                >
+                  Followers / Following
+                </button>
                 {isMyProfile ? (
                   <>
                     <button
                       className="profilepage-btn-follow oxanium-semibold"
-                      onClick={() => navigate('/settingpage')}
+                      onClick={() => navigate("/settingpage")}
                     >
-                      <img src={EditProfileIcon} alt="Edit" className="profilepage-follow-icon" />
+                      <img
+                        src={EditProfileIcon}
+                        alt="Edit"
+                        className="profilepage-follow-icon"
+                      />
                       Edit profile
-                    </button>
-
-                    <button
-                      className="profilepage-btn-viewfollows oxanium-semibold"
-                      onClick={() => setIsFollowModalOpen(true)}
-                    >
-                      Followers / Following
                     </button>
                   </>
                 ) : (
@@ -365,17 +453,29 @@ export default function Profilepage() {
                       className="profilepage-btn-message oxanium-semibold"
                       onClick={() => {
                         if (!user || !user.user_id) {
-                          showModal('warning', 'Unauthorized', "Bạn cần đăng nhập để nhắn tin.");
+                          showModal(
+                            "warning",
+                            "Unauthorized",
+                            "Bạn cần đăng nhập để nhắn tin."
+                          );
                           return;
                         }
                         if (!id) {
-                          showModal('warning', 'Error', "Không tìm thấy user để nhắn tin.");
+                          showModal(
+                            "warning",
+                            "Error",
+                            "Không tìm thấy user để nhắn tin."
+                          );
                           return;
                         }
                         navigate(`/chatroom/${id}`);
                       }}
                     >
-                      <img src={MessageIcon} alt="Message" className="profilepage-message-icon" />
+                      <img
+                        src={MessageIcon}
+                        alt="Message"
+                        className="profilepage-message-icon"
+                      />
                       Message
                     </button>
                   </>
@@ -392,7 +492,14 @@ export default function Profilepage() {
                   <ul style={{ listStyle: "none", paddingLeft: 0 }}>
                     {followers.length > 0 ? (
                       followers.map((follower) => (
-                        <li key={follower.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                        <li
+                          key={follower.followerId}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: 8,
+                          }}
+                        >
                           <img
                             src={buildImageUrl(follower.urlImage, useBackupImg)}
                             onError={() => setUseBackupImg(true)}
@@ -417,12 +524,25 @@ export default function Profilepage() {
                   <ul style={{ listStyle: "none", paddingLeft: 0 }}>
                     {following.length > 0 ? (
                       following.map((followed) => (
-                        <li key={followed.followerId} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                        <li
+                          key={followed.followerId}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: 8,
+                          }}
+                        >
                           <img
                             src={buildImageUrl(followed.urlImage, useBackupImg)}
                             onError={() => setUseBackupImg(true)}
                             alt={followed.userName}
-                            style={{ width: 32, height: 32, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                              marginRight: 8,
+                              objectFit: "cover",
+                            }}
                           />
                           <span>{followed.userName}</span>
                         </li>
@@ -433,30 +553,44 @@ export default function Profilepage() {
                   </ul>
                 </div>
               </Modal>
-
-
-
-
             </div>
 
             {/* Right extra buttons */}
             <div className="profilepage-right-action">
-              {isMyProfile ? '' : (
-                <button className="profilepage-btn-report oxanium-semibold"
+              {isMyProfile ? (
+                ""
+              ) : (
+                <button
+                  className="profilepage-btn-report oxanium-semibold"
                   onClick={() => {
-                    if (!user || user.role !== 'user') {
-                      showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+                    if (!user || user.role !== "user") {
+                      showModal(
+                        "warning",
+                        "Unauthorized",
+                        "You're not permitted to execute this action"
+                      );
                       return;
                     }
                     setShowReportModal(true);
                   }}
                 >
-                  <img src={ReportIcon} alt="Report" className="profilepage-report-icon" />
+                  <img
+                    src={ReportIcon}
+                    alt="Report"
+                    className="profilepage-report-icon"
+                  />
                   Report
                 </button>
               )}
-              <button className="profilepage-btn-copy oxanium-semibold" onClick={handleCopyProfileLink}>
-                <img src={CopyLinkIcon} alt="Copy" className="profilepage-copyLink-icon" />
+              <button
+                className="profilepage-btn-copy oxanium-semibold"
+                onClick={handleCopyProfileLink}
+              >
+                <img
+                  src={CopyLinkIcon}
+                  alt="Copy"
+                  className="profilepage-copyLink-icon"
+                />
                 Copy profile link
               </button>
             </div>
@@ -464,10 +598,8 @@ export default function Profilepage() {
         </div>
       </div>
 
-
-
       {/* Tabs switcher */}
-      <div className='tabs-switcher-section'>
+      <div className="tabs-switcher-section">
         <SwitchTabs
           tabs={tabs}
           activeTab={activeTab}
@@ -475,34 +607,40 @@ export default function Profilepage() {
         />
       </div>
 
-
       {/* Report modal */}
       {showReportModal && (
         <div className="report-modal-overlay">
           <div className="report-modal-container">
             <div className="report-modal-box">
-              <h3 className='report-modal-header oleo-script-bold'>Report this account</h3>
+              <h3 className="report-modal-header oleo-script-bold">
+                Report this account
+              </h3>
               <input
                 type="text"
                 placeholder="Title"
-                className='oxanium-regular'
+                className="oxanium-regular"
                 value={reportTitle}
                 onChange={(e) => setReportTitle(e.target.value)}
               />
               <textarea
                 placeholder="Content"
-                className='oxanium-regular'
+                className="oxanium-regular"
                 value={reportContent}
                 onChange={(e) => setReportContent(e.target.value)}
               />
               <div className="report-modal-actions oxanium-bold">
-                <button onClick={() => setShowReportModal(false)}>Cancel</button>
-                <button onClick={handleSubmitReport} disabled={reportSubmitting}>
-                  {reportSubmitting ?
+                <button onClick={() => setShowReportModal(false)}>
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitReport}
+                  disabled={reportSubmitting}
+                >
+                  {reportSubmitting ? (
                     <span className="loading loading-bars loading-md"></span>
-                    :
-                    'Submit report'
-                  }
+                  ) : (
+                    "Submit report"
+                  )}
                 </button>
               </div>
             </div>
@@ -510,15 +648,18 @@ export default function Profilepage() {
         </div>
       )}
 
-
       {/* Success copy profile link snackbar */}
       <Snackbar
         open={copySuccess}
         autoHideDuration={3000}
         onClose={() => setCopySuccess(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={() => setCopySuccess(false)} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setCopySuccess(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Profile link copied to clipboard!
         </Alert>
       </Snackbar>
@@ -528,9 +669,13 @@ export default function Profilepage() {
         open={followSuccess}
         autoHideDuration={3000}
         onClose={() => setFollowSuccess(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={() => setFollowSuccess(false)} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setFollowSuccess(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Đã theo dõi thành công!
         </Alert>
       </Snackbar>
@@ -538,7 +683,7 @@ export default function Profilepage() {
       {/* Message Modal */}
       <MessageModal
         open={modal.open}
-        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        onClose={() => setModal((prev) => ({ ...prev, open: false }))}
         type={modal.type}
         title={modal.title}
         message={modal.message}

@@ -4,9 +4,17 @@ import './SwitchTabs.css';
 export default function SwitchTabs({ tabs, onTabChange }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
+
   useEffect(() => {
-    onTabChange(tabs[activeIndex].label); // Call this on mount and tab change
-  }, [activeIndex]);
+    if (tabs.length > 0 && tabs[activeIndex]) {
+      onTabChange?.(tabs[activeIndex].label);
+    }
+  }, [activeIndex, tabs, onTabChange]);
+
+  if (!tabs || tabs.length === 0) {
+    return <div>No tabs available</div>;
+  }
+
 
   return (
     <div className="switchTabs-wrapper">
@@ -22,7 +30,7 @@ export default function SwitchTabs({ tabs, onTabChange }) {
         ))}
       </div>
       <div className="switchTabs-content-container">
-        {tabs[activeIndex].content}
+        {tabs[activeIndex]?.content}
       </div>
     </div>
   );

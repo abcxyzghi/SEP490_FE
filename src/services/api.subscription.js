@@ -1,40 +1,42 @@
 import { apiWithFallback } from "../config/axios";
 
-export const getFollowers = async () => {
+export const getFollowers = async (myUserId) => {
   try {
     const response = await apiWithFallback({
       method: "get",
-      url: `/cs/api/Subscription/subscription/Get-all-followers`,
-      params:null,
-      requiresAuth: true, 
+      url: `/api/Subscription/subscription/get-all-followers`,
+      params: { myUserId },
+      requiresAuth: true,
     });
 
     return response.data;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy get follower:", error);
+    console.error("❌ Lỗi khi lấy followers:", error);
     throw error;
   }
 };
-export const getFollowing = async () => {
+
+
+export const getFollowing = async (myUserId) => {
   try {
     const response = await apiWithFallback({
       method: "get",
-      url: `/cs/api/Subscription/subscription/Get-all-following`,
-      params:null,
-      requiresAuth: true, 
+      url: `/api/Subscription/subscription/get-all-following`,
+      params: { myUserId },
     });
 
     return response.data;
   } catch (error) {
-    console.error("❌ Lỗi khi theo dõi:", error);
+    console.error("❌ Lỗi khi lấy following:", error);
     throw error;
   }
 };
+
 export const followUser = async (userId) => {
   try {
     const response = await apiWithFallback({
       method: "post",
-      url: "/cs/api/Subscription/subscription/add-follower",
+      url: "/api/Subscription/subscription/add-follower",
       data: { userId },
       requiresAuth: true, // đảm bảo token được đính kèm
     });
@@ -49,7 +51,7 @@ export const unfollowUser = async (userId) => {
   try {
     const response = await apiWithFallback({
       method: "delete",
-      url: "/cs/api/Subscription/subscription/unfollow",
+      url: "/api/Subscription/subscription/unfollow",
       params: { userId },
       requiresAuth: true, 
     });
