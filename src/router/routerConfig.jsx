@@ -65,7 +65,6 @@ export const publicRoutes = [
     { path: PATH_NAME.BOXDETAIL_PAGE, element: <BoxDetailpage /> },
     { path: PATH_NAME.COLLECTIONDETAIL_PAGE, element: <CollectionDetailPage /> },
     { path: PATH_NAME.PRODUCTDETAIL_PAGE, element: <ProductDetailpage /> },
-    { path: PATH_NAME.PROFILE, element: <Profilepage /> },
 ];
 
 export const privateRoutes = [
@@ -73,6 +72,7 @@ export const privateRoutes = [
     { path: PATH_NAME.AUNCTION_ROOM, element: <AuctionRoom />, role: ['user'] },
     { path: PATH_NAME.SETTING_PAGE, element: <Settingpage />, role: ['user'] },
     { path: PATH_NAME.CART_PAGE, element: <Cartpage />, role: ['user'] },
+    { path: PATH_NAME.PROFILE, element: <Profilepage />, role: ['user'] },
     { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
     { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
@@ -86,13 +86,13 @@ export const privateRoutes = [
 ];
 
 export const moderatorRoutes = [
-    {path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard /> , role: ['mod'] },
-    {path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile /> , role: ['mod'] },
-    {path: PATH_NAME.MODERATOR_REPORT, element: <ModReport /> , role: ['mod'] },
-    {path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct /> , role: ['mod'] },
-    {path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox /> , role: ['mod'] },
-    {path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction /> , role: ['mod'] },
-    {path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection /> ,role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard />, role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile />, role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_REPORT, element: <ModReport />, role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct />, role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox />, role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction />, role: ['mod'] },
+    { path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection />, role: ['mod'] },
 ];
 
 export const adminRoutes = [

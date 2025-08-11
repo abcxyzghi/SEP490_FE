@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useChatContext } from "../../../context/ChatContext";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import "./ChatWindow.css";
+import SendIcon from "../../../assets/Icon_fill/Send_fill.svg";
 
 export default function ChatWindow() {
   const {
@@ -40,12 +41,12 @@ export default function ChatWindow() {
   }
 
   return (
-    <div className="chat-window">
+    <div className="chat-window oxanium-regular">
       <div className="chat-header">
         <img
           src={buildImageUrl(partnerProfile.profileImage)}
           alt=""
-          className="avatar"
+          className="chat-avatar"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = "https://via.placeholder.com/40";
@@ -57,7 +58,7 @@ export default function ChatWindow() {
 
       <div className="chat-messages" onClick={() => document.querySelector('.chat-input input')?.focus()}>
         {messages.length === 0 ? (
-          <div className="no-messages">No messages yet. Start a conversation!</div>
+          <div className="chat-no-messages">No messages yet. Start a conversation!</div>
         ) : (
           messages.map((msg, idx) => {
             const isMine = msg.sender_id === myId;
@@ -70,7 +71,7 @@ export default function ChatWindow() {
                   <img
                     src={buildImageUrl(partnerProfile.profileImage)}
                     alt=""
-                    className="avatar"
+                    className="chat-avatar"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "https://via.placeholder.com/40";
@@ -79,7 +80,7 @@ export default function ChatWindow() {
                 )}
                 <div className="message-bubble">
                   <p>{msg.content}</p>
-                  <span className="time">
+                  <span className="chat-time">
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -114,7 +115,7 @@ export default function ChatWindow() {
           onClick={handleSendMessage}
           disabled={isSending || !inputMsg.trim() || !partnerProfile}
         >
-          {isSending ? "..." : "✈"}
+          {isSending ? <span className="loading loading-bars loading-md"></span> : <img src={SendIcon} alt="Send" className="chat-send-icon"/>}
         </button>
       </div>
     </div>

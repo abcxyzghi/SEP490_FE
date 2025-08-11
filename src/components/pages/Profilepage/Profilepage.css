@@ -40,6 +40,7 @@
   border-bottom: 1px solid #444;
 }
 
+/*  --------------------------==================== LEFT ====================-------------------------- */
 .profilepage-left {
   margin: -1.6rem 0 0 16rem;
 }
@@ -110,11 +111,20 @@
   filter: var(--lightSVG-1);
 }
 
-.profilepage-right-action {
+/*  --------------------------==================== RIGHT ====================-------------------------- */
+.profilepage-right {
   display: flex;
-  gap: 0.9rem;
+  flex-direction: column;
+  gap: 1.9rem;
   margin-top: -1.2rem;
   margin-left: auto;
+}
+
+/* Buttons */
+.profilepage-right-action {
+  display: flex;
+  justify-content: end;
+  gap: 0.9rem;
 }
 
 .profilepage-btn-report,
@@ -177,6 +187,157 @@
 .profilepage-btn-report:active,
 .profilepage-btn-copy:active {
   transform: scale(0.99);
+}
+
+/* Figures */
+.profilepage-right-figurie {
+  display: flex;
+  gap: 0.9rem;
+  color: var(--light-1);
+}
+
+.profilepage-figurie-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0.8rem 0 0.2rem;
+}
+
+.profilepage-figurie-item h3 {
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.profilepage-figurie-item p {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Divider between items */
+.profilepage-figurie-item:not(:last-child) {
+  border-right: 1px solid var(--light-3);
+}
+
+/* Clickable states for Followers & Following */
+.profilepage-figurie-clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.profilepage-figurie-clickable:hover {
+  color: var(--light-4);
+}
+
+/*  --------------------------==================== Follower/Following modal ====================-------------------------- */
+.profilepage-fllw-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.profilepage-fllw-modal {
+  position: relative;
+  width: 90%;
+  max-width: 420px;
+  max-height: 80vh;
+  padding: 1.5rem;
+
+  background: rgba(25, 25, 25, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--dark-1);
+  border-radius: 12px;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.profilepage-fllw-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  padding: 3px;
+  font-size: 16px;
+  color: var(--light-4);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.profilepage-fllw-close-btn:hover {
+  opacity: 0.85;
+}
+
+.profilepage-fllw-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #6a00ff, #ffcc00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.profilepage-fllw-section-title {
+  color: var(--light-2);
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, #FFD721, #DC0FFF);
+  border-image-slice: 1;
+  /* gradient line for theme accent */
+  padding: 6px 0 0 0;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.profilepage-fllw-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profilepage-fllw-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--light-1);
+}
+
+.profilepage-fllw-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.2rem;
+
+  /* Keep same text color */
+  color: inherit;
+  /* No underline */
+  text-decoration: none;
+  width: 100%;
+}
+
+.profilepage-fllw-link:hover {
+  background: linear-gradient(90deg, rgba(106, 0, 255, 0.15), rgba(255, 204, 0, 0.15));
+  border-radius: 6px;
+}
+
+
+.profilepage-fllw-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profilepage-fllw-empty {
+  color: var(--light-3);
+  font-style: italic;
+  padding: 0.5rem 0;
 }
 
 
@@ -314,7 +475,7 @@
     padding: 0 0.8rem 2rem;
   }
 
-  .profilepage-right-action {
+  .profilepage-right {
     margin-top: -1rem;
   }
 }
@@ -350,8 +511,12 @@
     text-align: center;
   }
 
+  .profilepage-right {
+    margin: 0 auto;
+  }
+
   .profilepage-right-action {
-    margin-left: 0;
+    justify-content: center;
   }
 
   .report-modal-header {
@@ -378,12 +543,44 @@
   .profilepage-buttons,
   .profilepage-right-action {
     flex-direction: column;
+    align-items: center;
     font-size: 12px;
   }
 
   .profilepage-btn-report,
   .profilepage-btn-copy {
     font-size: 12px;
+  }
+
+  .profilepage-right-figurie {
+    max-width: 170px;
+    gap: 0.6rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: var(--light-3-o50) transparent;
+  }
+
+  .profilepage-right-figurie::-webkit-scrollbar {
+    height: 1px;
+  }
+
+  .profilepage-right-figurie::-webkit-scrollbar-thumb {
+    background: var(--light-3-o50);
+    border-radius: 3px;
+  }
+
+  .profilepage-figurie-item h3 {
+    font-size: 0.85rem;
+  }
+
+  .profilepage-figurie-item p {
+    font-size: 0.85rem;
+  }
+
+  .profilepage-figurie-item {
+    padding: 0 0.6rem;
   }
 
   .report-modal-header {

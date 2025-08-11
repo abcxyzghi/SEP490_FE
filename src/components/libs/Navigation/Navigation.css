@@ -260,6 +260,12 @@
   .nav-toggle {
     transform: translate(-50%, 50%);
   }
+
+  .nav-container.collapsed .nav-toggle {
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, 10%);
+  }
 }
 
 /* For screen width ≤ 880px */
