@@ -18,7 +18,7 @@ import ModBoxIcon from '../../../assets/Icon_line/blockchain-03.svg';
 import ModAuctionIcon from '../../../assets/Icon_line/audit-01.svg';
 import SideCloseIcon from '../../../assets/Icon_line/sidebar-left.svg';
 import LogoutIcon from '../../../assets/Icon_line/Sign_out_squre.svg';
-
+import ModCollectionIcon from '../../../assets/Icon_line/audit-01.svg';
 
 export default function ModeratorSidebar() {
     const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -82,6 +82,7 @@ export default function ModeratorSidebar() {
         { path: Pathname('MODERATOR_PRODUCT'), label: 'Product Management', defaultIcon: ModProductIcon },
         { path: Pathname('MODERATOR_MYSTERYBOX'), label: 'Box Management', defaultIcon: ModBoxIcon },
         { path: Pathname('MODERATOR_AUCTION'), label: 'Auction Management', defaultIcon: ModAuctionIcon },
+        { path: Pathname('MODERATOR_COLLECTION'), label: 'Collection Management', defaultIcon: ModCollectionIcon },
     ];
 
     const bottomLinks = [

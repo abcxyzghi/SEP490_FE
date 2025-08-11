@@ -1,38 +1,81 @@
 import React, { useEffect, useState } from "react";
-import { getAllCollection, createCollection } from '../../../services/api.collection';
+import { getAllCollection } from '../../../services/api.collection';
+import { buildImageUrl } from '../../../services/api.imageproxy';
+import { 
+  getAchievementDetail, 
+  createAchievement, 
+  createRewardOfAchievement 
+} from '../../../services/api.achievement';
 import { toast } from "react-toastify";
- import './ModCollection.css';
+import './ModCollection.css';
 
- export default function ModCollection() {
+export default function ModCollection() {
   const [collections, setCollections] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [newTopic, setNewTopic] = useState("");
+  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [achievementDetail, setAchievementDetail] = useState(null);
+  const [useBackupImg, setUseBackupImg] = useState(false);
+  const handleClosePopup = () => {
+  setSelectedCollection(null);
+  setAchievementDetail(null);
+  setConditions("");
+  setFile(null);
+  setQuantityBox("");
+};
 
-  // Fetch collections
+  // Reward form state
+  const [conditions, setConditions] = useState("");
+  const [file, setFile] = useState(null);
+  const [quantityBox, setQuantityBox] = useState("");
+
+  // Fetch all collections
   useEffect(() => {
     const fetchData = async () => {
       const response = await getAllCollection();
-      if (response?.status) {
         setCollections(response.data);
-      }
     };
     fetchData();
   }, []);
 
-  // Handle create new collection
-  const handleCreate = async () => {
-    console.log("Creating collection with topic:", newTopic);
-    if (!newTopic.trim()) {
-      toast.error("Collection topic is required");
+  const handleViewAchievement = async (collection) => {
+    setSelectedCollection(collection);
+    const detail = await getAchievementDetail(collection.id);
+    if (detail.data !== null) {
+      setAchievementDetail(detail.data);
+    } else {
+      setAchievementDetail(null);
+    }
+  };
+
+  const handleCreateAchievement = async () => {
+    const name = prompt("Nhập tên Achievement:");
+    if (!name) return;
+
+    const res = await createAchievement(selectedCollection.id, name);
+    if (res) {
+      toast.success("Achievement created!");
+      handleViewAchievement(selectedCollection);
+    }
+  };
+
+  const handleAddReward = async () => {
+    if (!conditions || !file || !quantityBox) {
+      toast.error("Vui lòng nhập đủ thông tin reward");
       return;
     }
 
-    const response = await createCollection({newTopic});
-    if (response) {
-      toast.success("Collection created!");
-      setCollections((prev) => [...prev, response]);
-      setNewTopic("");
-      setShowPopup(false);
+    const res = await createRewardOfAchievement(
+      selectedCollection.id,
+      conditions,
+      file,
+      quantityBox
+    );
+
+    if (res) {
+      toast.success("Reward added!");
+      setConditions("");
+      setFile(null);
+      setQuantityBox("");
+      handleViewAchievement(selectedCollection); // Refresh detail
     }
   };
 
@@ -40,14 +83,15 @@ import { toast } from "react-toastify";
     <div className="mod-collection-container">
       <div className="mod-collection-header">
         <h1>Collections</h1>
-        <button className="create-button" onClick={() => setShowPopup(true)}>
-          + New Collection
-        </button>
       </div>
 
       <div className="collection-grid">
         {collections.map((collection) => (
-          <div className="collection-card" key={collection.id}>
+          <div 
+            className="collection-card" 
+            key={collection.id}
+            onClick={() => handleViewAchievement(collection)}
+          >
             <h2>{collection.topic}</h2>
             <p>ID: {collection.id}</p>
             <p className={`badge ${collection.isSystem ? "system" : "user"}`}>
@@ -57,24 +101,59 @@ import { toast } from "react-toastify";
         ))}
       </div>
 
-      {showPopup && (
+      {selectedCollection && (
         <div className="popup-overlay">
-            <div className="popup">
-            <h2>Create New Collection</h2>
-            <input
-                type="text"
-                placeholder="Collection Name"
-                value={newTopic}
-                onChange={(e) => setNewTopic(e.target.value)}
-            />
-            <div className="popup-actions">
-                <button className="cancel-button" onClick={() => setShowPopup(false)}>Cancel</button>
-                <button className="create-button popup-create" onClick={handleCreate}>Create</button>
-            </div>
-            </div>
+          <div className="popup-container">
+            <h2 className="mod-collection-achievement-header">Achievement of {selectedCollection.topic}</h2>
+
+            {achievementDetail ? (
+                <div className="achievement-container">
+                  <div className="achievement-header">
+                    <p><strong>{achievementDetail.name}</strong></p>
+                    <p>ID: {achievementDetail.id}</p>
+                    <p>Create at: {new Date(achievementDetail.create_at).toLocaleString()}</p>
+                  </div>
+
+                  <h4>Rewards</h4>
+                  <div className="rewards-grid">
+                      {achievementDetail.dtos.map((reward, idx) => (
+                        <div key={idx} className="reward-card">
+                          {reward.url_image && (
+                            <img
+                              src={buildImageUrl(reward.url_image, useBackupImg)}
+                              alt="Medal"
+                              onError={() => setUseBackupImg(true)}
+                            />
+                          )}
+                          <p><strong>Conditions:</strong> {reward.conditions}</p>
+                          <p><strong>Quantity box reward:</strong> {reward.quantity_box}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                  <div className="add-reward-section">
+                    <h4>Add Reward</h4>
+                    <input type="number" placeholder="Conditions" value={conditions} onChange={(e) => setConditions(e.target.value)} />
+                    <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+                    <input type="number" placeholder="Quantity Box" value={quantityBox} onChange={(e) => setQuantityBox(e.target.value)} />
+                    <button onClick={handleAddReward}>Add Reward</button>
+                  </div>
+                </div>
+
+              ) : (
+                <div>
+                  <p>Don't have any Achievement</p>
+                  <button onClick={handleCreateAchievement}>
+                    Create Achievement
+                  </button>
+                </div>
+              )}
+
+
+            <button onClick={handleClosePopup}>Close</button>
+          </div>
         </div>
-        )}
+      )}
     </div>
   );
-};
- 
+}
