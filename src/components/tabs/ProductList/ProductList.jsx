@@ -175,6 +175,16 @@ export default function ProductList({ searchText, selectedSort, ascending, price
     }
   };
 
+  const handleNavigateToProfile = (e, profileId) => {
+    e?.stopPropagation(); // prevent parent handlers (card toggle) from firing
+    // require logged-in user with role 'user'
+    if (!user || user.role !== 'user') {
+      return showModal('warning', 'Unauthorized', "You must login to see other profile");
+    }
+
+    navigate(Pathname("PROFILE").replace(":id", profileId));
+  };
+
 
   return (
     <div className="productList-card-list-container">
@@ -225,7 +235,10 @@ export default function ProductList({ searchText, selectedSort, ascending, price
                         <div className="productList-card-quantity oxanium-bold">Qty: {item.quantity}</div>
                       </div>
                       <div className="productList-card-sellerName oxanium-bold"
-                        onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}
+                        role="link"
+                        tabIndex={0}
+                        onClick={(e) => handleNavigateToProfile(e, item.userId)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleNavigateToProfile(e, item.userId); }}
                       >
                         {truncate(item.username, 10)}
                       </div>

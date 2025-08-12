@@ -53,7 +53,7 @@
     pointer-events: none;
     /* để icon không chắn input */
     font-size: 16px;
-    color: gray;
+    filter: invert(1);
 }
 
 .search-input-wrapper input {

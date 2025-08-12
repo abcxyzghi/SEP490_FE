@@ -10,6 +10,7 @@ import SubArrow from "../../../assets/Icon_line/Chevron_Right.svg";
 import ChatIcon from "../../../assets/Icon_fill/comment_fill.svg";
 import BellIcon from "../../../assets/Icon_fill/Bell_fill.svg";
 import AchievementIcon from "../../../assets/Icon_fill/Flag_finish.svg";
+import RevenueReportIcon from "../../../assets/Icon_fill/chart-square.svg";
 import ActivityIcon from "../../../assets/Icon_fill/Huge-icon.svg";
 import SettingIcon from "../../../assets/Icon_fill/Setting_fill.svg";
 import LogoutIcon from "../../../assets/Icon_fill/Sign_out_squre_fill.svg";
@@ -236,7 +237,19 @@ export default function NavigationDropdownMenu() {
               <li
                 onClick={(e) => {
                   e.stopPropagation();
-                  // future change to activity page
+                  handleNavigate(Pathname("USER_SALE_REPORT"));
+                }}
+              >
+                <img
+                  className="nav-dropdown-item-icon"
+                  src={RevenueReportIcon}
+                  alt="Activity"
+                />
+                <span className="oxanium-semibold">Revenue report</span>
+              </li>
+              <li
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleNavigate(Pathname("ACTIVITIES_PAGE"));
                 }}
               >
