@@ -10,7 +10,6 @@ export default function MyAuction() {
     const fetchData = async () => {
       try {
         const result = await fetchMyAuctionList();
-        // result.data là 2D array, bạn cần flatten nó
         const flattenedData = result.data.flat();
         setAuctionList(flattenedData);
       } catch (err) {
@@ -24,38 +23,93 @@ export default function MyAuction() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Đang tải dữ liệu...</div>;
-  if (error) return <div>{error}</div>;
-  if (auctionList.length === 0) return <div>Không có phiên đấu giá nào.</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white bg-gray-900">
+       Loading
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-400 bg-gray-900">
+        {error}
+      </div>
+    );
+
+  if (auctionList.length === 0)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-300 bg-gray-900">
+        No auction
+      </div>
+    );
 
   return (
-    <div>
-      <h2>Danh sách phiên đấu giá của tôi</h2>
-      <ul>
-        {auctionList.map((auction) => (
-          <li key={auction._id}>
-            <strong>{auction.title}</strong>
-            <p>{auction.descripition}</p>
-            <p>Bắt đầu: {new Date(auction.start_time).toLocaleString()}</p>
-            <p>Kết thúc: {new Date(auction.end_time).toLocaleString()}</p>
-            <p>Trạng thái: {getStatusLabel(auction.status)}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-6 text-white">
+      <div className="max-w-5xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-6">My auction list</h2>
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {auctionList.map((auction) => (
+            <li
+              key={auction._id}
+              className="bg-gray-800/60 border border-gray-700 rounded-2xl p-4 shadow-sm hover:shadow-lg transition-shadow"
+            >
+              <h3 className="text-lg font-semibold">{auction.title}</h3>
+              <p className="mt-1 text-sm text-gray-300">{auction.descripition}</p>
+              <div className="mt-3 text-sm text-gray-300 space-y-1">
+                <p>
+                  <span className="font-medium text-gray-200">Start:</span> {" "}
+                  {new Date(auction.start_time).toLocaleString()}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-200">End time:</span> {" "}
+                  {new Date(auction.end_time).toLocaleString()}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-200">Status:</span> {" "}
+                  <StatusBadge status={auction.status} />
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
-// Hàm hỗ trợ chuyển đổi trạng thái thành chữ dễ hiểu
-function getStatusLabel(status) {
+function StatusBadge({ status }) {
+  const { label, classes } = getStatusLabelAndClass(status);
+  return (
+    <span
+      className={`px-2 py-0.5 rounded-full text-xs font-medium border ${classes}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function getStatusLabelAndClass(status) {
   switch (status) {
     case 0:
-      return "Đang chờ";
+      return {
+        label: "Waiting",
+        classes: "bg-yellow-500/20 text-yellow-200 border-yellow-600",
+      };
     case 1:
-      return "Đang diễn ra";
-    case 2:
-      return "Đã kết thúc";
+      return {
+        label: "On going",
+        classes: "bg-green-600/20 text-green-200 border-green-500",
+      };
+    case -1:
+      return {
+        label: "Rejected",
+        classes: "bg-gray-600/20 text-gray-200 border-gray-500",
+      };
     default:
-      return "Không xác định";
+      return {
+        label: "Unidentified",
+        classes: "bg-gray-600/20 text-gray-200 border-gray-500",
+      };
   }
 }
