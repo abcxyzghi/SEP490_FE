@@ -44,7 +44,7 @@ import TransactionManagement from "../components/adminPages/TransactionManagemen
 import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
 import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
 import FailurePage from "../components/pages/FailurePage/FailurePage";
-
+import FavoriteListPage from "../components/pages/FavoriteListPage/FavoriteListPage";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -82,7 +82,7 @@ export const privateRoutes = [
     { path: PATH_NAME.USER_SALE_REPORT, element: <UserSaleReport />, role: ['user'] },
     { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
     { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
-
+    { path: PATH_NAME.FAVORITE_LIST, element: <FavoriteListPage />, role: ['user'] }
 ];
 
 export const moderatorRoutes = [

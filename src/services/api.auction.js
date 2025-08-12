@@ -40,7 +40,7 @@ export const fetchAuctionList = async (filter = "started") => {
       url: `/api/auction/all?filter=${filter}`,
       requiresAuth: true,
     });
-    return response.data; // mảng 1 chiều
+    return response; // mảng 1 chiều
   } catch (error) {
     console.error(`Fetch auction list failed (filter=${filter}):`, error);
     throw error;
