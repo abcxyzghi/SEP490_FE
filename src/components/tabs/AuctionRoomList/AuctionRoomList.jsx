@@ -13,6 +13,7 @@ export default function AuctionRoomList() {
       setError("");
       try {
         const result = await fetchAuctionList(statusFilter);
+        console.log("API fetchAuctionList:", result);
         setAuctionList(result);
       } catch (err) {
         setError("Đã xảy ra lỗi khi tải danh sách phòng đấu giá.");
@@ -26,7 +27,7 @@ export default function AuctionRoomList() {
 
   if (loading) return <div>Đang tải danh sách phòng đấu giá...</div>;
   if (error) return <div>{error}</div>;
-  if (auctionList.length === 0) return <div>Hiện không có phòng đấu giá nào.</div>;
+  if (auctionList.data?.error_code !== 0) return <div>Hiện không có phòng đấu giá nào.</div>;
 
   return (
     <div>
@@ -44,8 +45,8 @@ export default function AuctionRoomList() {
       </select>
 
       <ul>
-        {auctionList.map((auction) => (
-          <li key={auction._id}>
+        {auctionList.data.data.map((auction) => (
+          <li key={auction.id}>
             <strong>{auction.title}</strong>
             <p>{auction.descripition}</p>
             <p>Bắt đầu: {new Date(auction.start_time).toLocaleString()}</p>

@@ -126,3 +126,101 @@
 .chat-input button{
     padding-right: 20px;
 }
+
+/* Style thêm cho chat window */
+.chat-window.special {
+  border-radius: 15px;
+
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Header */
+.chat-header.special {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.chat-header.special h2 {
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.chat-header.special p {
+  margin: 5px 0 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* Nội dung thông báo */
+.chat-window.special .welcome-text {
+  font-size: 1.1rem;
+  text-align: center;
+  opacity: 0.9;
+  margin-top: 50px;
+}
+
+/* Hiệu ứng hover */
+.chat-window2 {
+  transition: transform 0.2s ease-in-out;
+}
+.chat-window2:hover {
+  transform: scale(1.01);
+}
+.chat-window.special .empty-state {
+  height: calc(100% - 80px); /* trừ phần header */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  text-align: center;
+  color: white;
+}
+
+.chat-window.special .empty-state p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Loader 3 chấm */
+.loader-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.loader-dots span {
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.loader-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+.no-messages {
+  color: white;
+}

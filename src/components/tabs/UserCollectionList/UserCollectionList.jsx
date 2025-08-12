@@ -11,6 +11,7 @@ import DropdownMenu from '../../libs/DropdownMenu/DropdownMenu';
 import SellFormModal from '../../libs/SellFormModal/SellFormModal';
 import { newAuction, productOfAuction } from '../../../services/api.auction';
 import HostAuctionModal from '../../libs/HostAuctionModal/HostAuctionModal';
+import { addFavourite } from '../../../services/api.favorites';
 
 const PAGE_SIZE = 8;
 
@@ -270,7 +271,15 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     }
   };
 
+  const handleAddFavourite = async (userProductId, productName) => {
+    try {
+      await addFavourite(userProductId);
+      console.log(`Đã thêm "${productName}" vào danh sách yêu thích`);
+    } catch (err) {
+      console.error("Error adding to favorites:", err);
 
+    }
+  };
 
 
   return (
@@ -495,7 +504,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                                   </button>
                                   <DropdownMenu anchorRef={anchorRefs.current[idx]} isOpen={isDropdownOpen} onClose={() => toggleDropdown(idx)}>
                                     {[
-                                      { text: "Add to Favorite", action: () => { } },
+                                      { text: "Add to Favorite", action: () => handleAddFavourite(prod.id, prod.productName) },
                                       { text: "Public to Sell", action: () => openSellModal(prod) },
                                       { text: "Host an Auction", action: () => openAuctionModal(prod) },
                                     ].map((item, i) => (

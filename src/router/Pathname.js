@@ -27,7 +27,8 @@ export const PATH_NAME = {
     USER_SALE_REPORT:"/usersalereport",
     SUCCESS_PAYMENT:"/success-payment",
     FAILURE_PAYMENT:"/failure-payment",
-    
+    FAVORITE_LIST:"/favorite-list",
+
     MODERATOR_DASHBOARD: "/moderatorDashboard",
     MODERATOR_PROFILE: "/moderatorProfile",
     MODERATOR_REPORT: "/moderatorReport",

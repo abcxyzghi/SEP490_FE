@@ -11,11 +11,13 @@ export default function ChatList() {
   } = useChatContext();
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="chat-list loading2">
+      {/* Khi loading thì chỉ cần class này */}
+    </div>;
   }
 
   if (!chatUsers || chatUsers.length === 0) {
-    return <div className="empty-chat-list">No conversations found.</div>;
+    return <div className="chat-list">No conversations found.</div>;
   }
 
   return (
