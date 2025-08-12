@@ -161,10 +161,14 @@ function attachInterceptorsTo(instance) {
 // Fallback API cho C# backend
 const apiWithFallback = async (config) => {
   try {
-    return await primaryAxios(config);
-  } catch (err) {
-    console.warn("[Fallback] C# API failed. Retrying with backup...");
     return await backupAxios(config);
+  } catch (err) {
+    // console.warn("[Fallback] C# API failed. Retrying with backup...");
+    // return await backupAxios(config);     return await primaryAxios(config);  
+    if (!err.response || err.response.status >= 500) {
+      // Không có response (network error, timeout...) hoặc lỗi server (status >= 500) => fallback
+      return await backupAxios(config);
+    }
   }
 };
 
@@ -173,8 +177,11 @@ const pythonApiWithFallback = async (config) => {
   try {
     return await pythonAxios(config);
   } catch (err) {
-    console.warn("[Fallback] Python API failed. Retrying with backup...");
-    return await backupPythonAxios(config);
+    // console.warn("[Fallback] Python API failed. Retrying with backup...");     return await backupPythonAxios(config);  
+    if (!err.response || err.response.status >= 500) {
+      // Không có response (network error, timeout...) hoặc lỗi server (status >= 500) => fallback
+      return await backupPythonAxios(config);
+    }
   }
 };
 
