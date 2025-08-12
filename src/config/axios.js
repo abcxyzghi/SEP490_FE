@@ -118,7 +118,10 @@ function attachInterceptorsTo(instance) {
     },
     async (error) => {
       const originalRequest = error.config;
-
+      // Nếu chính request refresh token bị lỗi thì throw luôn để vào catch
+      if (originalRequest.url.includes('/api/user/auth/refresh')) {
+        throw new Error("Refresh token request failed");
+      }
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
