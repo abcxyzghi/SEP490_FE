@@ -29,13 +29,32 @@ export default function ChatWindow() {
   }, [messages, scrollToBottom]);
 
   if (loading) {
-    return <div className="chat-window-loading">Loading conversations...</div>;
+    return <div className="chat-window special">
+      <div className="empty-state">
+        <p>Loading conversations...</p>
+        <div className="loader-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div></div>;
   }
 
   if (!partnerProfile) {
     return (
-      <div className="chat-window-empty">
-        <p>Select a conversation to start chatting</p>
+      <div className="chat-window special">
+        <div className="chat-header special">
+
+          <h2>Welcome to Chat</h2>
+        </div>
+        <div className="empty-state">
+          <p>Select a conversation to start chatting</p>
+          <div className="loader-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
       </div>
     );
   }

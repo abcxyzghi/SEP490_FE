@@ -109,3 +109,29 @@
     background-color: #6f6f6f;
     border-left: 3px solid #d400ff;
 }
+/* Khi chat-list đang loading */
+.chat-list.loading2 {
+  position: relative;
+  min-height: 200px; /* để đảm bảo có không gian hiển thị */
+}
+
+/* Spinner */
+.chat-list.loading2::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

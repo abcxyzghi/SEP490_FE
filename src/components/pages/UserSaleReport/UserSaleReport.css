@@ -160,11 +160,33 @@
 
 /* Container danh sách top sản phẩm */
 .top-products-list {
+  position: relative; /* để ::after định vị */
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
   gap: 16px;
   margin-top: 20px;
+  margin-bottom: 20px;
+  
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px;
+
+  background: 
+    linear-gradient(var(--tabMain_bg), var(--tabMain_bg)) padding-box,
+    linear-gradient(#FFD721, #DC0FFF) border-box;
+
+  z-index: 0; /* tạo context mới, giúp ::after nằm dưới nội dung */
 }
+
+.top-products-list::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: var(--tabMain_bg);
+  z-index: -1; /* nằm dưới nội dung */
+}
+
 
 /* Card sản phẩm */
 .top-products-list div {
@@ -177,48 +199,83 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.top-products-list div:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+/* Nền modal tông tối */
+.product-modal .ant-modal-content {
+  background: #1a1a1a !important;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f0f0f0;
 }
 
-/* Ảnh sản phẩm */
-.top-products-list img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
+/* Header modal */
+.product-modal .ant-modal-header {
+  background: #1a1a1a !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px 12px 0 0;
+  color: #fff;
 }
 
-/* Tiêu đề sản phẩm */
-.top-products-list h4 {
-  color: black;
-  font-size: 1rem;
-  margin: 8px 0 4px;
-  line-height: 1.3;
+/* Tiêu đề modal */
+.product-modal .ant-modal-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+    width: 90%;
 }
 
-/* Thông tin số lượng & doanh thu */
-.top-products-list p {
-  color: black;
-  font-size: 0.9rem;
+/* Nút đóng */
+.product-modal .ant-modal-close-x {
+  color: #fff;
+}
+
+/* Khu vực đánh giá */
+.product-modal-rating {
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffcc66;
+  margin-bottom: 12px;
+}
+
+/* Danh sách bình luận */
+.product-comment-list {
+  list-style: none;
+  padding-left: 0;
   margin: 0;
 }
 
-/* Nút xem bình luận */
-.top-products-list button {
-  margin-top: auto;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #a855f7, #9333ea);
-  color: #fff;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
+.product-comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.2s ease;
 }
 
-.top-products-list button:hover {
-  opacity: 0.85;
+.product-comment-item:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
+.product-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.product-comment-content strong {
+  color: #ff66cc;
+}
+
+.product-comment-date {
+  color: #aaa;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.product-comment-text {
+  margin: 4px 0 0 0;
+  color: #ddd;
+  font-size: 14px;
+}

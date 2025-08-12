@@ -183,7 +183,7 @@ export default function NavigationDropdownMenu() {
                 className="nav-sub-expand"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSubMenu("chat");
+                  handleNavigate(Pathname("CHAT_ROOM"));
                 }}
               >
                 <div className="nav-dropdown-sub-container">

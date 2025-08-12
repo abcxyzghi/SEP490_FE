@@ -9,6 +9,9 @@ import ThreeDots from '../../../assets/Icon_fill/Meatballs_menu.svg';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import DropdownMenu from '../../libs/DropdownMenu/DropdownMenu';
 import SellFormModal from '../../libs/SellFormModal/SellFormModal';
+import { newAuction, productOfAuction } from '../../../services/api.auction';
+import HostAuctionModal from '../../libs/HostAuctionModal/HostAuctionModal';
+import { addFavourite } from '../../../services/api.favorites';
 
 const PAGE_SIZE = 8;
 
@@ -20,7 +23,6 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
   const [dropdownStates, setDropdownStates] = useState({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [collections, setCollections] = useState([]);
@@ -39,6 +41,96 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+  const [auctionModalOpen, setAuctionModalOpen] = useState(false);
+  const [auctionForm, setAuctionForm] = useState({
+    title: "",
+    description: "",
+    start_time: "",
+    quantity: 1,
+    starting_price: 1000
+  });
+  const [auctionProduct, setAuctionProduct] = useState(null); // lưu sản phẩm đang host auction
+  const [auctionLoading, setAuctionLoading] = useState(false);
+  const [mode, setAuctionMode] = useState("newAuction"); // hoặc "addProduct"
+  const openAuctionModal = (product) => {
+    setAuctionProduct(product);
+    setAuctionForm({
+      title: "",
+      description: "",
+      start_time: "",
+      quantity: 1,
+      starting_price: 1000
+    });
+    setAuctionModalOpen(true);
+  };
+
+  const handleHostAuction = async () => {
+    console.log("Starting handleHostAuction...");
+    console.log("mode:", mode);
+    console.log("auctionForm data:", auctionForm);
+    console.log("auctionProduct data:", auctionProduct);
+
+    if (!auctionProduct) {
+      console.warn("auctionProduct is missing, cannot proceed.");
+      return;
+    }
+
+    setAuctionLoading(true);
+
+    try {
+      if (mode === "newAuction") {
+        const startTimeISO = auctionForm.start_time?.toDate().toISOString();
+        console.log("Auction start time (ISO):", startTimeISO);
+
+        // 1️⃣ Tạo auction mới
+        console.log(" Sending newAuction request...");
+        const auctionRes = await newAuction({
+          title: auctionForm.title,
+          description: auctionForm.description,
+          start_time: startTimeISO
+        });
+
+        console.log("📥 newAuction API response:", auctionRes);
+
+        const auctionSessionId =
+          auctionRes?.data?.id || auctionRes?.data?.auction_session_id;
+        console.log("🆔 auctionSessionId:", auctionSessionId);
+
+        if (!auctionSessionId) throw new Error(" Auction session ID not found");
+
+        // 2️⃣ Gán sản phẩm vào auction
+        console.log("Sending productOfAuction request...");
+        const productRes = await productOfAuction({
+          product_id: auctionProduct.productId,
+          auction_session_id: auctionSessionId,
+          quantity: auctionForm.quantity,
+          starting_price: auctionForm.starting_price
+        });
+        console.log("productOfAuction API response:", productRes);
+
+      } else if (mode === "addProduct") {
+        console.log("Sending productOfAuction request (existing auction)...");
+        const productRes = await productOfAuction({
+          product_id: auctionProduct.productId,
+          auction_session_id: auctionForm.auction_session_id,
+          quantity: auctionForm.quantity,
+          starting_price: auctionForm.starting_price
+        });
+        console.log("productOfAuction API response:", productRes);
+      }
+
+      alert("✅ Auction hosted successfully!");
+      setAuctionModalOpen(false);
+    } catch (error) {
+      console.error("handleHostAuction error:", error);
+      alert("Failed to host auction");
+    } finally {
+      setAuctionLoading(false);
+      console.log("handleHostAuction finished.");
+    }
+  };
+
+
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -102,7 +194,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     await fetchProductsOfCollection(collectionId);
   };
 
-    const toggleDropdown = (idx) => {
+  const toggleDropdown = (idx) => {
     setDropdownStates(prev => ({ ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}), [idx]: !prev[idx] }));
   };
 
@@ -136,7 +228,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     }
     // Validation: quantity must be > 0
     if (sellForm.quantity <= 0) {
-     return showModal('warning', 'Invalid price input', "Quantity can't be lower than 0");
+      return showModal('warning', 'Invalid price input', "Quantity can't be lower than 0");
     }
     // Validation: quantity must not exceed owned
     if (sellForm.quantity > (sellModalProduct?.quantity || 0)) {
@@ -176,6 +268,16 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       showModal('default', 'Your product is now on sale', 'After a successful sale, 5% of your profit will be deducted.');
       // Close the modal
       setSellModalOpen(false);
+    }
+  };
+
+  const handleAddFavourite = async (userProductId, productName) => {
+    try {
+      await addFavourite(userProductId);
+      console.log(`Đã thêm "${productName}" vào danh sách yêu thích`);
+    } catch (err) {
+      console.error("Error adding to favorites:", err);
+
     }
   };
 
@@ -402,9 +504,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                                   </button>
                                   <DropdownMenu anchorRef={anchorRefs.current[idx]} isOpen={isDropdownOpen} onClose={() => toggleDropdown(idx)}>
                                     {[
-                                      { text: "Add to Favorite", action: () => { } },
+                                      { text: "Add to Favorite", action: () => handleAddFavourite(prod.id, prod.productName) },
                                       { text: "Public to Sell", action: () => openSellModal(prod) },
-                                      { text: "Host an Auction", action: () => { } },
+                                      { text: "Host an Auction", action: () => openAuctionModal(prod) },
                                     ].map((item, i) => (
                                       <div
                                         key={i}
@@ -471,8 +573,18 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         title={modal.title}
         message={modal.message}
       />
-    </>
+      <HostAuctionModal
+        isOpen={auctionModalOpen}
+        onClose={() => setAuctionModalOpen(false)}
+        onSubmit={handleHostAuction}
+        form={auctionForm}
+        setForm={setAuctionForm}
+        loading={auctionLoading}
+        mode={mode} // truyền thêm
+        setMode={setAuctionMode}
+      />
 
+    </>
 
   );
 }
