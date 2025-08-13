@@ -18,10 +18,10 @@ export default function Notificationpage() {
 
     return (
         <div className="notificationPage-container">
-            <div className="notificationPage-searchFilterSort-wrapper">
                 {/* Search bar */}
+            {/* <div className="notificationPage-searchFilterSort-wrapper">
                 <SearchBar value={searchText} onChange={setSearchText} />
-            </div>
+            </div> */}
 
             {/* Tabs switcher */}
             <div className='tabs-switcher-section'>
