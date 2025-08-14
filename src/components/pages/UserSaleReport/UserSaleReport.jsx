@@ -86,27 +86,28 @@ export default function UserSaleReport() {
   };
 
   const renderBarChart = (title, data, timeLabel) => (
-    <div className="chart-container bar-chart">
-      <h3 className="chart-title">{title} - Orders & Products</h3>
-      <ResponsiveContainer>
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="name"
-            label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="orders" fill="#82ca9d" name="Orders" />
-          <Bar dataKey="productsSold" fill="#ffc658" name="Products Sold" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
+  <div className="chart-container bar-chart">
+    <h3 className="chart-title">{title} - Orders & Products</h3>
+    <ResponsiveContainer>
+      <BarChart
+        data={data}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        barCategoryGap="30%" // khoảng cách giữa các nhóm cột
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="name"
+          label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+        />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="orders" fill="#82ca9d" name="Orders" barSize={30} />
+        <Bar dataKey="productsSold" fill="#ffc658" name="Products Sold" barSize={30} />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
 
   const renderLineChart = (title, data, timeLabel) => (
     <div className="chart-container line-chart">
@@ -144,23 +145,45 @@ export default function UserSaleReport() {
     </div>
   );
 
-  const renderTopProductsChart = (data) => (
+    const renderTopProductsChart = (data) => (
     <div className="chart-container top-products-chart">
       <h3 className="chart-title">🔥 Top Selling Products</h3>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={420}>
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 90 }}
+          margin={{ top: 30, right: 40, left: 20, bottom: 100 }}
+          barCategoryGap="20%"  // giảm khoảng cách giữa nhóm cột
+          barGap={6}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="productName"
             angle={-25}
-            textAnchor="end"
+            textAnchor="middle"
             interval={0}
             height={100}
+            tick={(props) => {
+              const { x, y, payload } = props;
+              const text =
+                payload.value.length > 20
+                  ? payload.value.substring(0, 20) + "..."
+                  : payload.value;
+              return (
+                <text
+                  x={x}
+                  y={y}
+                  dy={16}
+                  textAnchor="middle"
+                  fill="white"
+                  fontSize={14}
+                >
+                  {text}
+                </text>
+              );
+            }}
           />
-          <YAxis yAxisId="left" />
+
+          <YAxis yAxisId="left" tick={{ fill: "white" }} />
           <YAxis
             yAxisId="right"
             orientation="right"
@@ -170,6 +193,7 @@ export default function UserSaleReport() {
                 currency: "VND",
               }).format(value)
             }
+            tick={{ fill: "white" }}
           />
           <Tooltip
             formatter={(value, name) =>
@@ -188,12 +212,14 @@ export default function UserSaleReport() {
             dataKey="totalSold"
             fill="#82ca9d"
             name="Quantity Sold"
+            barSize={40} // tăng độ dày cột
           />
           <Bar
             yAxisId="right"
             dataKey="totalRevenue"
             fill="#8884d8"
             name="Revenue"
+            barSize={40} // tăng độ dày cột
           />
         </BarChart>
       </ResponsiveContainer>
@@ -201,115 +227,82 @@ export default function UserSaleReport() {
   );
 
   return (
-    <>
-      <div className="statistics-wrapper">
-        <div className="tab-buttons-chart">
-          <button
-            className={activeTab === "day" ? "active" : ""}
-            onClick={() => setActiveTab("day")}
-          >
-            📅 Day
-          </button>
-          <button
-            className={activeTab === "month" ? "active" : ""}
-            onClick={() => setActiveTab("month")}
-          >
-            🗓️ Month
-          </button>
-          <button
-            className={activeTab === "year" ? "active" : ""}
-            onClick={() => setActiveTab("year")}
-          >
-            📈 Year
-          </button>
-          <button
-            className={activeTab === "top" ? "active" : ""}
-            onClick={() => setActiveTab("top")}
-          >
-            🔥 Top Products
-          </button>
-        </div>
+  <div className="statistics-wrapper">
 
-        {activeTab === "day" && (
-          <>
-            {renderBarChart("📅 Daily Statistics", byDay)}
-            {renderLineChart("📅 Daily Statistics", byDay)}
-          </>
-        )}
+    {/* Day chart */}
+    <div className="day-section">
+      {renderBarChart("📅 Daily Statistics", byDay, "Day")}
+      {renderLineChart("📅 Daily Statistics", byDay, "Day")}
+    </div>
 
-        {activeTab === "month" && (
-          <>
-            {renderBarChart("🗓️ Monthly Statistics", byMonth)}
-            {renderLineChart("🗓️ Monthly Statistics", byMonth)}
-          </>
-        )}
-
-        {activeTab === "year" && (
-          <>
-            {renderBarChart("📈 Yearly Statistics", byYear)}
-            {renderLineChart("📈 Yearly Statistics", byYear)}
-          </>
-        )}
-
-        {activeTab === "top" && (
-          <>
-            {renderTopProductsChart(topProducts)}
-
-            <div className="top-products-list">
-              {topProducts.map((product, index) => (
-                <ProductCard
-                  key={index}
-                  product={product}
-                  onShowComments={handleShowComments}
-                />
-              ))}
-            </div>
-
-            <Modal
-              className="product-modal"
-              open={isModalOpen}
-              title={`Comments for product: ${selectedProductName}`}
-              onCancel={() => {
-                setIsModalOpen(false);
-                setSelectedProductRating(null);
-              }}
-              footer={null}
-            >
-              <div className="product-modal-rating">
-                ⭐ Average Rating:{" "}
-                {selectedProductRating !== null
-                  ? selectedProductRating
-                  : "Loading..."}
-              </div>
-
-              {comments.length === 0 ? (
-                <p style={{ color: "#ccc" }}>No comments available.</p>
-              ) : (
-                <ul className="product-comment-list">
-                  {comments.map((comment, index) => (
-                    <li key={index} className="product-comment-item">
-                      <img
-                        src={buildImageUrl(comment.profileImage)}
-                        alt={comment.username}
-                        className="product-comment-avatar"
-                      />
-                      <div className="product-comment-content">
-                        <strong>{comment.username}</strong>
-                        <small className="product-comment-date">
-                          {new Date(comment.createdAt).toLocaleString("vi-VN")}
-                        </small>
-                        <p className="product-comment-text">
-                          {comment.content || <i>(No content)</i>}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Modal>
-          </>
-        )}
+    {/* Month & Year side by side */}
+    <div className="month-year-section" style={{ display: "flex", gap: "20px" }}>
+      <div style={{ flex: 1 }}>
+        {renderBarChart("🗓️ Monthly Statistics", byMonth, "Month")}
+        {renderLineChart("🗓️ Monthly Statistics", byMonth, "Month")}
       </div>
-    </>
-  );
+      <div style={{ flex: 1 }}>
+        {renderBarChart("📈 Yearly Statistics", byYear, "Year")}
+        {renderLineChart("📈 Yearly Statistics", byYear, "Year")}
+      </div>
+    </div>
+
+    {/* Top products */}
+    <div className="top-products-section" style={{ marginTop: "30px" }}>
+      {renderTopProductsChart(topProducts)}
+      <div className="top-products-list">
+        {topProducts.map((product, index) => (
+          <ProductCard
+            key={index}
+            product={product}
+            onShowComments={handleShowComments}
+          />
+        ))}
+      </div>
+    </div>
+
+    {/* Modal giữ nguyên */}
+    <Modal
+      className="product-modal"
+      open={isModalOpen}
+      title={`Comments for product: ${selectedProductName}`}
+      onCancel={() => {
+        setIsModalOpen(false);
+        setSelectedProductRating(null);
+      }}
+      footer={null}
+    >
+      <div className="product-modal-rating">
+        ⭐ Average Rating:{" "}
+        {selectedProductRating !== null
+          ? selectedProductRating
+          : "Loading..."}
+      </div>
+      {comments.length === 0 ? (
+        <p style={{ color: "#ccc" }}>No comments available.</p>
+      ) : (
+        <ul className="product-comment-list">
+          {comments.map((comment, index) => (
+            <li key={index} className="product-comment-item">
+              <img
+                src={buildImageUrl(comment.profileImage)}
+                alt={comment.username}
+                className="product-comment-avatar"
+              />
+              <div className="product-comment-content">
+                <strong>{comment.username}</strong>
+                <small className="product-comment-date">
+                  {new Date(comment.createdAt).toLocaleString("vi-VN")}
+                </small>
+                <p className="product-comment-text">
+                  {comment.content || <i>(No content)</i>}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Modal>
+  </div>
+);
 }
