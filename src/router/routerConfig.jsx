@@ -44,7 +44,7 @@ import TransactionManagement from "../components/adminPages/TransactionManagemen
 import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
 import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
 import FailurePage from "../components/pages/FailurePage/FailurePage";
-import FavoriteListPage from "../components/pages/FavoriteListPage/FavoriteListPage";
+import FavoriteListPage from "../components/tabs/FavoriteListPage/FavoriteListPage";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },

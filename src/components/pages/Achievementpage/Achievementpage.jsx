@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
   getallmedalofuser,
+  getUserCollectionProgress,
   updateStatusAuction,
 } from "../../../services/api.achivement";
 import { buildImageUrl } from "../../../services/api.imageproxy";
+import { useSelector } from "react-redux";
 
 export default function Achievementpage() {
   const [medals, setMedals] = useState([]);
@@ -11,8 +13,33 @@ export default function Achievementpage() {
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState(null); // để biết huy chương nào đang update
   const [useBackupImg, setUseBackupImg] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const userId = user.user_id;
+  const [progress, setProgress] = useState([]);
+
+
+  // 1️⃣ Tách hàm fetch riêng
+  const loadProgress = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getUserCollectionProgress(user.user_id);
+      setProgress(data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch user collection progress.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    loadProgress();
+  }, [user.user_id]);
   const fetchMedals = async () => {
     try {
+
       const res = await getallmedalofuser();
       setMedals(res.data || []);
       console.log("Medals API response:", res);
@@ -26,7 +53,7 @@ export default function Achievementpage() {
   };
 
   useEffect(() => {
-    fetchMedals();    
+    fetchMedals();
   }, []);
 
   const handleToggleStatus = async (userRewardId) => {
@@ -61,7 +88,7 @@ export default function Achievementpage() {
   }
 
   return (
-    <div className="p-4">
+    <>  <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Your medal</h1>
       {medals.length === 0 ? (
         <div>No medal</div>
@@ -73,7 +100,7 @@ export default function Achievementpage() {
               className="flex flex-col items-center p-3 border rounded-lg hover:shadow-md transition"
             >
               <img
-                src={buildImageUrl(medal.urlImage, useBackupImg)} 
+                src={buildImageUrl(medal.urlImage, useBackupImg)}
                 onError={() => setUseBackupImg(true)}
                 alt="Medal"
                 className="w-20 h-20 object-cover rounded-full border cursor-pointer"
@@ -82,23 +109,50 @@ export default function Achievementpage() {
               <button
                 onClick={() => handleToggleStatus(medal.userRewardId)}
                 disabled={updatingId === medal.userRewardId}
-                className={`mt-2 px-3 py-1 text-xs rounded ${
-                  medal.isPublic
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-400 text-white"
-                }`}
+                className={`mt-2 px-3 py-1 text-xs rounded ${medal.isPublic
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-400 text-white"
+                  }`}
               >
                 {console.log(medal)}
                 {updatingId === medal.userRewardId
                   ? "Đang cập nhật..."
                   : medal.isPublic
-                  ? "Công khai"
-                  : "Riêng tư"}
+                    ? "Công khai"
+                    : "Riêng tư"}
               </button>
             </div>
           ))}
         </div>
       )}
     </div>
+      <div className="p-4" style={{ color: "white" }}>
+        <h1 className="text-xl font-bold mb-4">Your Collection Progress</h1>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {progress.map((item) => (
+            <div
+              key={item.userRewardId || item.id} // tùy API trả id gì
+              className="flex flex-col items-center p-3 border rounded-lg hover:shadow-md transition"
+            >
+              <img
+                src={buildImageUrl(item.urlImage, useBackupImg)}
+                onError={() => setUseBackupImg(true)}
+                alt="Achievement"
+                className="w-20 h-20 object-cover rounded-full border cursor-pointer"
+              />
+              <div className="mt-2 text-center text-sm">
+                {item.name || item.title}
+              </div>
+              <div className="mt-1 text-xs text-gray-600">
+                {item.progressPercentage != null
+                  ? `${item.progressPercentage}% completed`
+                  : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+
   );
 }

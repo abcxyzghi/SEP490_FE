@@ -11,7 +11,7 @@ import DropdownMenu from '../../libs/DropdownMenu/DropdownMenu';
 import SellFormModal from '../../libs/SellFormModal/SellFormModal';
 import { newAuction, productOfAuction } from '../../../services/api.auction';
 import HostAuctionModal from '../../libs/HostAuctionModal/HostAuctionModal';
-import { addFavourite } from '../../../services/api.favorites';
+import { addFavourite, getFavoriteImages } from '../../../services/api.favorites';
 
 const PAGE_SIZE = 8;
 
@@ -34,10 +34,8 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const [sellModalOpen, setSellModalOpen] = useState(false);
   const [sellModalProduct, setSellModalProduct] = useState(null);
   const [sellForm, setSellForm] = useState({ quantity: 1, description: '', price: 100000 });
-
   const navigate = useNavigate();
   const anchorRefs = useRef([]);
-
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
@@ -63,7 +61,29 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     });
     setAuctionModalOpen(true);
   };
+  const [favImages, setFavImages] = useState([]);
+  const [favVisibleCount, setFavVisibleCount] = useState(8);
+  const [favExpandedIndex, setFavExpandedIndex] = useState(null);
+  const [favUseBackupImg, setFavUseBackupImg] = useState(false);
 
+  const visibleFavs = Array.isArray(favImages) ? favImages.slice(0, favVisibleCount) : [];
+  const isEndFavs = Array.isArray(favImages) ? favVisibleCount >= favImages.length : true;
+
+  useEffect(() => {
+    const fetchFavImages = async () => {
+      try {
+        const data = await getFavoriteImages();
+        setFavImages(data.data);
+      } catch (err) {
+        console.error("Failed to fetch favorite images:", err);
+      }
+    };
+    fetchFavImages();
+  }, []);
+
+  const handleShowFavProducts = () => {
+    navigate("/favorite-list")
+  };
   const handleHostAuction = async () => {
     console.log("Starting handleHostAuction...");
     console.log("mode:", mode);
@@ -74,14 +94,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       console.warn("auctionProduct is missing, cannot proceed.");
       return;
     }
-
     setAuctionLoading(true);
-
     try {
       if (mode === "newAuction") {
         const startTimeISO = auctionForm.start_time?.toDate().toISOString();
         console.log("Auction start time (ISO):", startTimeISO);
-
         // 1️⃣ Tạo auction mới
         console.log(" Sending newAuction request...");
         const auctionRes = await newAuction({
@@ -310,130 +327,255 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
       {/* Collection cards */}
       {!showProducts && (
-        <div className="userCollectionList-card-list-container">
-          {visibleCollections.length === 0 ? (
-            <div className="text-gray-500 mt-2">No collections found.</div>
-          ) : (
-            <div className="userCollectionList-card-grid">
-              {visibleCollections.map((col, idx) => {
-                const isExpanded = expandedCardIndex === idx;
-                return (
-                  <div
-                    key={col.id}
-                    className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
-                    onMouseEnter={() => setExpandedCardIndex(idx)}
-                    onMouseLeave={() => setExpandedCardIndex(null)}
-                  >
-                    <div className="userCollectionList-card-background-preview">
-                      {col.image.length === 0 ? (
-                        <div className="userCollectionList-card-background-none">
-                          <span>No preview image shown</span>
-                        </div>
-                      ) : col.image.length === 1 ? (
-                        <div className="userCollectionList-card-background-single">
+        <>
+          <div className="userCollectionList-card-list-container">
+            {visibleCollections.length === 0 ? (
+              <div className="text-gray-500 mt-2">No collections found.</div>
+            ) : (
+              <div className="userCollectionList-card-grid">
+                {visibleCollections.map((col, idx) => {
+                  const isExpanded = expandedCardIndex === idx;
+                  return (
+                    <div
+                      key={col.id}
+                      className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
+                      onMouseEnter={() => setExpandedCardIndex(idx)}
+                      onMouseLeave={() => setExpandedCardIndex(null)}
+                    >
+                      <div className="userCollectionList-card-background-preview">
+                        {col.image.length === 0 ? (
+                          <div className="userCollectionList-card-background-none">
+                            <span>No preview image shown</span>
+                          </div>
+                        ) : col.image.length === 1 ? (
+                          <div className="userCollectionList-card-background-single">
+                            <img
+                              src={buildImageUrl(col.image[0].urlImage, useBackupImg)}
+                              onError={() => setUseBackupImg(true)}
+                              alt={`${col.collectionTopic} background`}
+                              className="userCollectionList-card-background-img-single"
+                            />
+                          </div>
+                        ) : (
+                          <div className="userCollectionList-card-background-group">
+                            {col.image.map((img, index) => (
+                              <img
+                                key={img.id || index}
+                                src={buildImageUrl(img.urlImage, useBackupImg)}
+                                onError={() => setUseBackupImg(true)}
+                                alt={`${col.collectionTopic} background-${index}`}
+                                className="userCollectionList-card-background-img-group"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className={`userCollectionList-card-image-preview ${col.image.length === 0 ? "none" : col.image.length === 1 ? "single" : "multi"
+                        }`}>
+                        {col.image.length === 0 ? (
+                          <span className="userCollectionList-card-no-image oxanium-semibold">No preview image shown</span>
+                        ) : col.image.length === 1 ? (
                           <img
                             src={buildImageUrl(col.image[0].urlImage, useBackupImg)}
                             onError={() => setUseBackupImg(true)}
-                            alt={`${col.collectionTopic} background`}
-                            className="userCollectionList-card-background-img-single"
+                            alt={`collection-0`}
+                            className="userCollectionList-card-image-single"
                           />
-                        </div>
-                      ) : (
-                        <div className="userCollectionList-card-background-group">
-                          {col.image.map((img, index) => (
+                        ) : (
+                          col.image.map((img, i) => (
                             <img
-                              key={img.id || index}
+                              key={img.id}
                               src={buildImageUrl(img.urlImage, useBackupImg)}
                               onError={() => setUseBackupImg(true)}
-                              alt={`${col.collectionTopic} background-${index}`}
-                              className="userCollectionList-card-background-img-group"
+                              alt={`collection-${i}`}
+                              className="userCollectionList-card-image-multi"
                             />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={`userCollectionList-card-image-preview ${col.image.length === 0 ? "none" : col.image.length === 1 ? "single" : "multi"
-                      }`}>
-                      {col.image.length === 0 ? (
-                        <span className="userCollectionList-card-no-image oxanium-semibold">No preview image shown</span>
-                      ) : col.image.length === 1 ? (
-                        <img
-                          src={buildImageUrl(col.image[0].urlImage, useBackupImg)}
-                          onError={() => setUseBackupImg(true)}
-                          alt={`collection-0`}
-                          className="userCollectionList-card-image-single"
-                        />
-                      ) : (
-                        col.image.map((img, i) => (
-                          <img
-                            key={img.id}
-                            src={buildImageUrl(img.urlImage, useBackupImg)}
-                            onError={() => setUseBackupImg(true)}
-                            alt={`collection-${i}`}
-                            className="userCollectionList-card-image-multi"
-                          />
-                        ))
-                      )}
-                    </div>
-
-                    <div
-                      className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
-                      style={{
-                        transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                        maxHeight: isExpanded ? '200px' : '60px',
-                        opacity: isExpanded ? 1 : 0.9,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div className="userCollectionList-card-toggle">
-                        <img src={DetailArrow} alt="Toggle" className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                          ))
+                        )}
                       </div>
+
                       <div
-                        className="userCollectionList-card-slide-content"
+                        className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
                         style={{
-                          transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                          transform: isExpanded ? 'translateY(0)' : 'translateY(20px)',
-                          opacity: isExpanded ? 1 : 0,
-                          pointerEvents: isExpanded ? 'auto' : 'none',
+                          transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                          maxHeight: isExpanded ? '200px' : '60px',
+                          opacity: isExpanded ? 1 : 0.9,
+                          overflow: 'hidden',
                         }}
                       >
-                        <div className="userCollectionList-card-title oxanium-bold">{col.collectionTopic}</div>
-                        <div className="userCollectionList-card-quantity oxanium-bold">Cards achieved: {col.count}</div>
-                        <div className="userCollectionList-card-actions">
-                          <button
-                            className="userCollectionList-view-button"
-                            onClick={() => handleShowProducts(col.id)}
-                          >
-                            <span className="userCollectionList-view-button-text oleo-script-bold">View Collection</span>
-                          </button>
+                        <div className="userCollectionList-card-toggle">
+                          <img src={DetailArrow} alt="Toggle" className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div
+                          className="userCollectionList-card-slide-content"
+                          style={{
+                            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                            transform: isExpanded ? 'translateY(0)' : 'translateY(20px)',
+                            opacity: isExpanded ? 1 : 0,
+                            pointerEvents: isExpanded ? 'auto' : 'none',
+                          }}
+                        >
+                          <div className="userCollectionList-card-title oxanium-bold">{col.collectionTopic}</div>
+                          <div className="userCollectionList-card-quantity oxanium-bold">Cards achieved: {col.count}</div>
+                          <div className="userCollectionList-card-actions">
+                            <button
+                              className="userCollectionList-view-button"
+                              onClick={() => handleShowProducts(col.id)}
+                            >
+                              <span className="userCollectionList-view-button-text oleo-script-bold">View Collection</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
 
-          {/* End Line or Load More */}
-          {isEnd ? (
-            <div className="userCollectionList-end-content oxanium-semibold divider divider-warning">
-              End of content
-            </div>
-          ) : (
-            <button
-              className="userCollectionList-loadmore-button oxanium-semibold"
-              onClick={() =>
-                setVisibleCount(count =>
-                  Math.min(count + PAGE_SIZE, collections.length)
-                )
-              }
-            >
-              Load more
-            </button>
-          )}
-        </div>
+            {/* End Line or Load More */}
+            {isEnd ? (
+              <div className="userCollectionList-end-content oxanium-semibold divider divider-warning">
+                * Favourite List *
+              </div>
+            ) : (
+              <button
+                className="userCollectionList-loadmore-button oxanium-semibold"
+                onClick={() =>
+                  setVisibleCount(count =>
+                    Math.min(count + PAGE_SIZE, collections.length)
+                  )
+                }
+              >
+                Load more
+              </button>
+            )}
+          </div>
+          <div className="userCollectionList-card-list-container">
+            {visibleFavs.length === 0 ? (
+              <div className="text-gray-500 mt-2">No collections found.</div>
+            ) : (
+              <div className="userCollectionList-card-grid">
+                {visibleFavs.map((col, idx) => {
+                  const isExpanded = favExpandedIndex === idx;
+                  return (
+                    <div
+                      key={col.id || idx}
+                      className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
+                      onMouseEnter={() => setFavExpandedIndex(idx)}
+                      onMouseLeave={() => setFavExpandedIndex(null)}
+                    >
+                      <div className="userCollectionList-card-background-preview">
+                        {col.image.length === 0 ? (
+                          <div className="userCollectionList-card-background-none">
+                            <span>No preview image shown</span>
+                          </div>
+                        ) : col.image.length === 1 ? (
+                          <div className="userCollectionList-card-background-single">
+                            <img
+                              src={buildImageUrl(col.image[0].urlImage, favUseBackupImg)}
+                              onError={() => setFavUseBackupImg(true)}
+                              alt={`${col.collectionTopic} background`}
+                              className="userCollectionList-card-background-img-single"
+                            />
+                          </div>
+                        ) : (
+                          <div className="userCollectionList-card-background-group">
+                            {col.image.map((img, index) => (
+                              <img
+                                key={img.id || index}
+                                src={buildImageUrl(img.urlImage, favUseBackupImg)}
+                                onError={() => setFavUseBackupImg(true)}
+                                alt={`${col.collectionTopic} background-${index}`}
+                                className="userCollectionList-card-background-img-group"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className={`userCollectionList-card-image-preview ${col.image.length === 0 ? "none" : col.image.length === 1 ? "single" : "multi"}`}>
+                        {col.image.length === 0 ? (
+                          <span className="userCollectionList-card-no-image oxanium-semibold">No preview image shown</span>
+                        ) : col.image.length === 1 ? (
+                          <img
+                            src={buildImageUrl(col.image[0].urlImage, favUseBackupImg)}
+                            onError={() => setFavUseBackupImg(true)}
+                            alt={`collection-0`}
+                            className="userCollectionList-card-image-single"
+                          />
+                        ) : (
+                          col.image.map((img, i) => (
+                            <img
+                              key={img.id || i}
+                              src={buildImageUrl(img.urlImage, favUseBackupImg)}
+                              onError={() => setFavUseBackupImg(true)}
+                              alt={`collection-${i}`}
+                              className="userCollectionList-card-image-multi"
+                            />
+                          ))
+                        )}
+                      </div>
+
+                      <div
+                        className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
+                        style={{
+                          transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                          maxHeight: isExpanded ? '200px' : '60px',
+                          opacity: isExpanded ? 1 : 0.9,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div className="userCollectionList-card-toggle">
+                          <img src={DetailArrow} alt="Toggle" className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div
+                          className="userCollectionList-card-slide-content"
+                          style={{
+                            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                            transform: isExpanded ? 'translateY(0)' : 'translateY(20px)',
+                            opacity: isExpanded ? 1 : 0,
+                            pointerEvents: isExpanded ? 'auto' : 'none',
+                          }}
+                        >
+                          <div className="userCollectionList-card-title oxanium-bold">{col.collectionTopic}</div>
+                          <div className="userCollectionList-card-quantity oxanium-bold">Cards achieved: {col.count}</div>
+                          <div className="userCollectionList-card-actions">
+                            <button
+                              className="userCollectionList-view-button"
+                              onClick={() => handleShowFavProducts(col.id)}
+                            >
+                              <span className="userCollectionList-view-button-text oleo-script-bold">View Collection</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* End Line or Load More */}
+            {isEndFavs ? (
+              <div className="userCollectionList-end-content oxanium-semibold divider divider-warning">
+                End of content
+              </div>
+            ) : (
+              <button
+                className="userCollectionList-loadmore-button oxanium-semibold"
+                onClick={() =>
+                  setFavVisibleCount(count =>
+                    Math.min(count + PAGE_SIZE, favImages.length)
+                  )
+                }
+              >
+                Load more
+              </button>
+            )}
+          </div>
+        </>
       )}
 
 
@@ -563,6 +705,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
             </button>
           )}
         </div>
+
       )}
 
       {/* Message Modal */}

@@ -45,3 +45,18 @@ try {
     return null;
   }
 }
+export const getUserCollectionProgress = async (userCollectionId) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/cs/api/UserAchievement/get-user-collection-completion-achievement-progress",
+      params: { userCollectionId },
+      requiresAuth: true, // nếu API yêu cầu authentication
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch user collection progress failed:", error);
+    throw error;
+  }
+};

@@ -35,3 +35,17 @@ export const removeFavourite = async (favoriteId) => {
   });
   return response.data;
 };
+export const getFavoriteImages = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/cs/api/ProductFavorite/get-image-product-favorite",
+      requiresAuth: true, // nếu API yêu cầu authentication
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch favorite product images failed:", error);
+    throw error;
+  }
+};
