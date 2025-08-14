@@ -92,7 +92,8 @@ export default function UserSaleReport() {
       <BarChart
         data={data}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        barCategoryGap="30%" // khoảng cách giữa các nhóm cột
+        barCategoryGap="40%" // tăng khoảng cách giữa nhóm
+        barGap={6}           // khoảng cách giữa cột trong nhóm
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
@@ -102,8 +103,18 @@ export default function UserSaleReport() {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="orders" fill="#82ca9d" name="Orders" barSize={30} />
-        <Bar dataKey="productsSold" fill="#ffc658" name="Products Sold" barSize={30} />
+        <Bar
+          dataKey="orders"
+          fill="#82ca9d"
+          name="Orders"
+          barSize={25} // hẹp thanh
+        />
+        <Bar
+          dataKey="productsSold"
+          fill="#ffc658"
+          name="Products Sold"
+          barSize={25} // hẹp thanh
+        />
       </BarChart>
     </ResponsiveContainer>
   </div>
@@ -227,82 +238,115 @@ export default function UserSaleReport() {
   );
 
   return (
-  <div className="statistics-wrapper">
+    <>
+      <div className="statistics-wrapper">
+        <div className="tab-buttons-chart">
+          <button
+            className={activeTab === "day" ? "active" : ""}
+            onClick={() => setActiveTab("day")}
+          >
+            📅 Day
+          </button>
+          <button
+            className={activeTab === "month" ? "active" : ""}
+            onClick={() => setActiveTab("month")}
+          >
+            🗓️ Month
+          </button>
+          <button
+            className={activeTab === "year" ? "active" : ""}
+            onClick={() => setActiveTab("year")}
+          >
+            📈 Year
+          </button>
+          <button
+            className={activeTab === "top" ? "active" : ""}
+            onClick={() => setActiveTab("top")}
+          >
+            🔥 Top Products
+          </button>
+        </div>
 
-    {/* Day chart */}
-    <div className="day-section">
-      {renderBarChart("📅 Daily Statistics", byDay, "Day")}
-      {renderLineChart("📅 Daily Statistics", byDay, "Day")}
-    </div>
+        {activeTab === "day" && (
+          <>
+            {renderBarChart("📅 Daily Statistics", byDay)}
+            {renderLineChart("📅 Daily Statistics", byDay)}
+          </>
+        )}
 
-    {/* Month & Year side by side */}
-    <div className="month-year-section" style={{ display: "flex", gap: "20px" }}>
-      <div style={{ flex: 1 }}>
-        {renderBarChart("🗓️ Monthly Statistics", byMonth, "Month")}
-        {renderLineChart("🗓️ Monthly Statistics", byMonth, "Month")}
-      </div>
-      <div style={{ flex: 1 }}>
-        {renderBarChart("📈 Yearly Statistics", byYear, "Year")}
-        {renderLineChart("📈 Yearly Statistics", byYear, "Year")}
-      </div>
-    </div>
+        {activeTab === "month" && (
+          <>
+            {renderBarChart("🗓️ Monthly Statistics", byMonth)}
+            {renderLineChart("🗓️ Monthly Statistics", byMonth)}
+          </>
+        )}
 
-    {/* Top products */}
-    <div className="top-products-section" style={{ marginTop: "30px" }}>
-      {renderTopProductsChart(topProducts)}
-      <div className="top-products-list">
-        {topProducts.map((product, index) => (
-          <ProductCard
-            key={index}
-            product={product}
-            onShowComments={handleShowComments}
-          />
-        ))}
-      </div>
-    </div>
+        {activeTab === "year" && (
+          <>
+            {renderBarChart("📈 Yearly Statistics", byYear)}
+            {renderLineChart("📈 Yearly Statistics", byYear)}
+          </>
+        )}
 
-    {/* Modal giữ nguyên */}
-    <Modal
-      className="product-modal"
-      open={isModalOpen}
-      title={`Comments for product: ${selectedProductName}`}
-      onCancel={() => {
-        setIsModalOpen(false);
-        setSelectedProductRating(null);
-      }}
-      footer={null}
-    >
-      <div className="product-modal-rating">
-        ⭐ Average Rating:{" "}
-        {selectedProductRating !== null
-          ? selectedProductRating
-          : "Loading..."}
-      </div>
-      {comments.length === 0 ? (
-        <p style={{ color: "#ccc" }}>No comments available.</p>
-      ) : (
-        <ul className="product-comment-list">
-          {comments.map((comment, index) => (
-            <li key={index} className="product-comment-item">
-              <img
-                src={buildImageUrl(comment.profileImage)}
-                alt={comment.username}
-                className="product-comment-avatar"
-              />
-              <div className="product-comment-content">
-                <strong>{comment.username}</strong>
-                <small className="product-comment-date">
-                  {new Date(comment.createdAt).toLocaleString("vi-VN")}
-                </small>
-                <p className="product-comment-text">
-                  {comment.content || <i>(No content)</i>}
-                </p>
+        {activeTab === "top" && (
+          <>
+            {renderTopProductsChart(topProducts)}
+
+            <div className="top-products-list">
+              {topProducts.map((product, index) => (
+                <ProductCard
+                  key={index}
+                  product={product}
+                  onShowComments={handleShowComments}
+                />
+              ))}
+            </div>
+
+            <Modal
+              className="product-modal"
+              open={isModalOpen}
+              title={`Comments for product: ${selectedProductName}`}
+              onCancel={() => {
+                setIsModalOpen(false);
+                setSelectedProductRating(null);
+              }}
+              footer={null}
+            >
+              <div className="product-modal-rating">
+                ⭐ Average Rating:{" "}
+                {selectedProductRating !== null
+                  ? selectedProductRating
+                  : "Loading..."}
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </Modal>
-  </div>
-);
+
+              {comments.length === 0 ? (
+                <p style={{ color: "#ccc" }}>No comments available.</p>
+              ) : (
+                <ul className="product-comment-list">
+                  {comments.map((comment, index) => (
+                    <li key={index} className="product-comment-item">
+                      <img
+                        src={buildImageUrl(comment.profileImage)}
+                        alt={comment.username}
+                        className="product-comment-avatar"
+                      />
+                      <div className="product-comment-content">
+                        <strong>{comment.username}</strong>
+                        <small className="product-comment-date">
+                          {new Date(comment.createdAt).toLocaleString("vi-VN")}
+                        </small>
+                        <p className="product-comment-text">
+                          {comment.content || <i>(No content)</i>}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Modal>
+          </>
+        )}
+      </div>
+    </>
+  );
 }
