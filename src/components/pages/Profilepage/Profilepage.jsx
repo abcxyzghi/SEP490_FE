@@ -6,8 +6,20 @@ import MessageModal from "../../libs/MessageModal/MessageModal";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Pathname } from "../../../router/Pathname";
 import { useSelector } from "react-redux";
-import { getProfile, getOtherProfile, getAllProductOnSaleOfUser, createReport, getRatingOfUser } from "../../../services/api.user";
-import { followUser, getFollowers, getFollowing, unfollowUser } from "../../../services/api.subscription";
+import {
+  getProfile,
+  getOtherProfile,
+  getAllProductOnSaleOfUser,
+  createReport,
+  getRatingOfUser,
+} from "../../../services/api.user";
+import {
+  followUser,
+  getFollowers,
+  getFollowing,
+  unfollowUser,
+} from "../../../services/api.subscription";
+import { getpublicmedalofuser } from "../../../services/api.achivement";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import { format } from "date-fns";
 import SwitchTabs from "../../libs/SwitchTabs/SwitchTabs";
@@ -59,6 +71,33 @@ export default function Profilepage() {
   const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [productNumber, setProductNumber] = useState(0);
+  const [medals, setMedals] = useState([]);
+  const [medalsLoading, setMedalsLoading] = useState(true);
+  useEffect(() => {
+    const fetchMedals = async () => {
+      setMedalsLoading(true);
+      try {
+        const userId = id || currentUserId;
+        if (!userId) {
+          setMedals([]);
+          return;
+        }
+        const res = await getpublicmedalofuser(userId);
+        if (res && res.status && Array.isArray(res.data)) {
+          setMedals(res.data);
+        } else {
+          setMedals([]);
+        }
+      } catch (err) {
+        console.error("❌ Lỗi khi lấy huy chương:", err);
+        setMedals([]);
+      } finally {
+        setMedalsLoading(false);
+      }
+    };
+
+    fetchMedals();
+  }, [id, currentUserId]);
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -213,7 +252,6 @@ export default function Profilepage() {
                 ))}
               </div>
             </div>
-
           </div>
         </div>
 
@@ -250,33 +288,33 @@ export default function Profilepage() {
   // Construct the tabs array based on isMyProfile
   const tabs = isMyProfile
     ? [
-      {
-        label: "Mystery Boxes",
-        content: <UserBox />,
-      },
-      {
-        label: "Collections",
-        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
-      },
-      {
-        label: "On Sale",
-        content: (
-          <UserOnSale products={products} productsLoading={productsLoading} />
-        ),
-      },
-    ]
+        {
+          label: "Mystery Boxes",
+          content: <UserBox />,
+        },
+        {
+          label: "Collections",
+          content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
+        },
+        {
+          label: "On Sale",
+          content: (
+            <UserOnSale products={products} productsLoading={productsLoading} />
+          ),
+        },
+      ]
     : [
-      {
-        label: "Collections",
-        content: <UserAchievements />,
-      },
-      {
-        label: "On Sale",
-        content: (
-          <UserOnSale products={products} productsLoading={productsLoading} />
-        ),
-      },
-    ];
+        {
+          label: "Collections",
+          content: <UserAchievements />,
+        },
+        {
+          label: "On Sale",
+          content: (
+            <UserOnSale products={products} productsLoading={productsLoading} />
+          ),
+        },
+      ];
 
   // change createDate format to month year
   const joinedDate = format(new Date(profile.createDate), "MMMM yyyy");
@@ -403,7 +441,6 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
-
                 {isMyProfile ? (
                   <>
                     <button
@@ -463,7 +500,6 @@ export default function Profilepage() {
                   </>
                 )}
               </div>
-
             </div>
 
             {/* Right section */}
@@ -535,35 +571,73 @@ export default function Profilepage() {
                   <h3>Avg review</h3>
                   <p>⭐ {rating}</p>
                 </div>
+                {/* Medals Section */}
+                <div className="profilepage-medals mt-4">
+                  <h3 className="oxanium-semibold">Achievements</h3>
+                  {medalsLoading ? (
+                    <p className="text-gray-400">Loading medals...</p>
+                  ) : medals.length > 0 ? (
+                    <div className="flex flex-wrap gap-3 mt-2">
+                      {medals.map((medal) => (
+                        <div
+                          key={medal.medalId}
+                          className="flex flex-col items-center"
+                        >
+                          <img
+                            src={buildImageUrl(medal.imageUrl, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={medal.medalName}
+                            className="w-12 h-12 object-cover rounded-full"
+                          />
+                          <span className="text-xs mt-1 text-center">
+                            {medal.medalName}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-400">No medals yet</p>
+                  )}
+                </div>
               </div>
-
             </div>
           </div>
         </div>
       </div>
 
-
       {/* Modal Followers / Following */}
       {isFollowModalOpen && (
-        <div className="profilepage-fllw-modal-overlay" onClick={() => setIsFollowModalOpen(false)}>
+        <div
+          className="profilepage-fllw-modal-overlay"
+          onClick={() => setIsFollowModalOpen(false)}
+        >
           <div
             className="profilepage-fllw-modal"
             onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
           >
-
             {/* Close Button */}
-            <button className="profilepage-fllw-close-btn" onClick={() => setIsFollowModalOpen(false)}>
+            <button
+              className="profilepage-fllw-close-btn"
+              onClick={() => setIsFollowModalOpen(false)}
+            >
               ⨉
             </button>
 
-            <h2 className="profilepage-fllw-title oleo-script-bold">Followers & Following</h2>
+            <h2 className="profilepage-fllw-title oleo-script-bold">
+              Followers & Following
+            </h2>
 
             {/* Followers List */}
-            <h4 className="profilepage-fllw-section-title oxanium-semibold">Followers</h4>
+            <h4 className="profilepage-fllw-section-title oxanium-semibold">
+              Followers
+            </h4>
             <ul className="profilepage-fllw-list">
               {followers.length > 0 ? (
                 followers.map((follower) => (
-                  <li key={`follower-${follower.followerId}`} className="profilepage-fllw-item oxanium-regular">
+                  <li
+                    key={`follower-${follower.followerId}`}
+                    className="profilepage-fllw-item oxanium-regular"
+                  >
                     <Link
                       to={Pathname("PROFILE").replace(":id", follower.userId)}
                       className="profilepage-fllw-link"
@@ -579,16 +653,23 @@ export default function Profilepage() {
                   </li>
                 ))
               ) : (
-                <li className="profilepage-fllw-empty">Not followed by anyone</li>
+                <li className="profilepage-fllw-empty">
+                  Not followed by anyone
+                </li>
               )}
             </ul>
 
             {/* Following List */}
-            <h4 className="profilepage-fllw-section-title oxanium-semibold">Following</h4>
+            <h4 className="profilepage-fllw-section-title oxanium-semibold">
+              Following
+            </h4>
             <ul className="profilepage-fllw-list">
               {following.length > 0 ? (
                 following.map((followed) => (
-                  <li key={`following-${followed.followerId}`} className="profilepage-fllw-item oxanium-regular">
+                  <li
+                    key={`following-${followed.followerId}`}
+                    className="profilepage-fllw-item oxanium-regular"
+                  >
                     <Link
                       to={Pathname("PROFILE").replace(":id", followed.userId)}
                       className="profilepage-fllw-link"
@@ -604,14 +685,14 @@ export default function Profilepage() {
                   </li>
                 ))
               ) : (
-                <li className="profilepage-fllw-empty">Not following anyone yet</li>
+                <li className="profilepage-fllw-empty">
+                  Not following anyone yet
+                </li>
               )}
             </ul>
-
           </div>
         </div>
       )}
-
 
       {/* Tabs switcher */}
       <div className="tabs-switcher-section">
