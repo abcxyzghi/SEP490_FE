@@ -134,7 +134,7 @@ export default function UserSaleReport() {
           <Line
             type="monotone"
             dataKey="revenue"
-            stroke="#8884d8"
+            stroke="#FF4DFF"
             name="Revenue"
             strokeWidth={2}
             dot={{ r: 3 }}
@@ -175,9 +175,9 @@ export default function UserSaleReport() {
             formatter={(value, name) =>
               name === "Revenue"
                 ? new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(value)
+                  style: "currency",
+                  currency: "VND",
+                }).format(value)
                 : value
             }
           />
