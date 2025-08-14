@@ -540,7 +540,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                           }}
                         >
                           <div className="userCollectionList-card-title oxanium-bold">{col.collectionTopic}</div>
-                          <div className="userCollectionList-card-quantity oxanium-bold">Cards achieved: {col.count}</div>
+                          {/* <div className="userCollectionList-card-quantity oxanium-bold">Cards achieved: {col.count}</div> */}
                           <div className="userCollectionList-card-actions">
                             <button
                               className="userCollectionList-view-button"
