@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getFavoriteList, removeFavourite } from "../../../services/api.favorites";
+import { buildImageUrl } from "../../../services/api.imageproxy";
 
 
 export default function FavoriteListPage() {
   const [favourites, setFavourites] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [useBackupImg, setUseBackupImg] = useState(false);
 
   useEffect(() => {
     fetchFavourites();
@@ -55,6 +56,11 @@ export default function FavoriteListPage() {
           {favourites.map((item) => (
             <li key={item.id} style={{ marginBottom: "8px" }}>
               <span>{item.productName}</span>
+              <img
+                src={buildImageUrl(item.urlImage, useBackupImg)}
+                onError={() => setUseBackupImg(true)}
+                alt={`${item.productName} background`}
+              />
               <button
                 style={{
                   marginLeft: "10px",

@@ -86,27 +86,39 @@ export default function UserSaleReport() {
   };
 
   const renderBarChart = (title, data, timeLabel) => (
-    <div className="chart-container bar-chart">
-      <h3 className="chart-title">{title} - Orders & Products</h3>
-      <ResponsiveContainer>
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="name"
-            label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="orders" fill="#82ca9d" name="Orders" />
-          <Bar dataKey="productsSold" fill="#ffc658" name="Products Sold" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
+  <div className="chart-container bar-chart">
+    <h3 className="chart-title">{title} - Orders & Products</h3>
+    <ResponsiveContainer>
+      <BarChart
+        data={data}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        barCategoryGap="40%" // tăng khoảng cách giữa nhóm
+        barGap={6}           // khoảng cách giữa cột trong nhóm
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="name"
+          label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+        />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar
+          dataKey="orders"
+          fill="#82ca9d"
+          name="Orders"
+          barSize={25} // hẹp thanh
+        />
+        <Bar
+          dataKey="productsSold"
+          fill="#ffc658"
+          name="Products Sold"
+          barSize={25} // hẹp thanh
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
 
   const renderLineChart = (title, data, timeLabel) => (
     <div className="chart-container line-chart">
@@ -134,7 +146,7 @@ export default function UserSaleReport() {
           <Line
             type="monotone"
             dataKey="revenue"
-            stroke="#8884d8"
+            stroke="#FF4DFF"
             name="Revenue"
             strokeWidth={2}
             dot={{ r: 3 }}
@@ -144,23 +156,45 @@ export default function UserSaleReport() {
     </div>
   );
 
-  const renderTopProductsChart = (data) => (
+    const renderTopProductsChart = (data) => (
     <div className="chart-container top-products-chart">
       <h3 className="chart-title">🔥 Top Selling Products</h3>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={420}>
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 90 }}
+          margin={{ top: 30, right: 40, left: 20, bottom: 100 }}
+          barCategoryGap="20%"  // giảm khoảng cách giữa nhóm cột
+          barGap={6}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="productName"
             angle={-25}
-            textAnchor="end"
+            textAnchor="middle"
             interval={0}
             height={100}
+            tick={(props) => {
+              const { x, y, payload } = props;
+              const text =
+                payload.value.length > 20
+                  ? payload.value.substring(0, 20) + "..."
+                  : payload.value;
+              return (
+                <text
+                  x={x}
+                  y={y}
+                  dy={16}
+                  textAnchor="middle"
+                  fill="white"
+                  fontSize={14}
+                >
+                  {text}
+                </text>
+              );
+            }}
           />
-          <YAxis yAxisId="left" />
+
+          <YAxis yAxisId="left" tick={{ fill: "white" }} />
           <YAxis
             yAxisId="right"
             orientation="right"
@@ -170,14 +204,15 @@ export default function UserSaleReport() {
                 currency: "VND",
               }).format(value)
             }
+            tick={{ fill: "white" }}
           />
           <Tooltip
             formatter={(value, name) =>
               name === "Revenue"
                 ? new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(value)
+                  style: "currency",
+                  currency: "VND",
+                }).format(value)
                 : value
             }
           />
@@ -188,12 +223,14 @@ export default function UserSaleReport() {
             dataKey="totalSold"
             fill="#82ca9d"
             name="Quantity Sold"
+            barSize={40} // tăng độ dày cột
           />
           <Bar
             yAxisId="right"
             dataKey="totalRevenue"
             fill="#8884d8"
             name="Revenue"
+            barSize={40} // tăng độ dày cột
           />
         </BarChart>
       </ResponsiveContainer>

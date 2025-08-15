@@ -1,11 +1,14 @@
 .statistics-wrapper {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
+   background-color: #2b2b2b; 
   margin: 0 auto;
   padding-top: 24px;
   display: flex;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
   flex-direction: column;
   gap: 20px;
+  padding-bottom:20px;
 }
 
 .chart-container {
@@ -35,14 +38,13 @@
 }
 .tab-buttons-chart {
   display: inline-flex;
-  background-color: #1e1e1e; /* Nền của container */
+  background-color: #444; /* sáng hơn hẳn, tách biệt với wrapper */
   border-radius: 999px;
-  margin-top:40px !important;
+  margin-top: 40px !important;
   margin-bottom: 24px;
-  border: 1px solid #333;
-    margin:0 auto;
+  border: 1px solid #666; /* viền sáng hơn */
+  margin: 0 auto;
 }
-
 
 .tab-buttons-chart button {
   border: none;
@@ -54,8 +56,20 @@
   transition: all 0.3s ease;
   font-size: 14px;
   white-space: nowrap;
-
 }
+
+/* Active button style */
+.tab-buttons-chart button.active {
+  background: linear-gradient(135deg, #9b5cf6, #b572f8);  /* tím sáng hơn */
+  color: white;
+  box-shadow: 0 0 8px rgba(155, 92, 246, 0.6); /* glow nhẹ */
+}
+
+/* Hover cho nút không active */
+.tab-buttons-chart button:not(.active):hover {
+  background-color: #555; /* hover sáng hơn */
+}
+
 
 /* Button 1: bo góc trái */
 .tab-buttons-chart button:first-child {
@@ -78,26 +92,6 @@
   border-bottom-left-radius: 0;
 }
 
-/* Active button style */
-.tab-buttons-chart button.active {
-  background: linear-gradient(135deg, #a855f7, #9333ea);
-  color: white;
-}
-
-/* Hover cho nút không active */
-.tab-buttons-chart button:not(.active):hover {
-  background-color: #2a2a2a;
-}
-
-
-.tab-buttons-chart button.active {
-  background: linear-gradient(135deg, #a855f7, #9333ea);
-  color: white;
-}
-
-.tab-buttons-chart button:not(.active):hover {
-  background-color: #2a2a2a;
-}
 
 
 .shoppage-container {
@@ -162,15 +156,16 @@
 .top-products-list {
   position: relative; /* để ::after định vị */
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-  gap: 16px;
+ grid-template-columns: repeat(auto-fit, minmax(225px, max-content));
+  gap: 25px;
   margin-top: 20px;
+  width:90%;
+  justify-content: center;
   margin-bottom: 20px;
-  
+  margin:0 auto;
   border: 2px solid transparent;
   border-radius: 8px;
-  padding: 12px;
-
+  padding: 20px;
   background: 
     linear-gradient(var(--tabMain_bg), var(--tabMain_bg)) padding-box,
     linear-gradient(#FFD721, #DC0FFF) border-box;
