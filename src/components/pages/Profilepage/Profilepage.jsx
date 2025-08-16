@@ -584,7 +584,7 @@ export default function Profilepage() {
                           className="flex flex-col items-center"
                         >
                           <img
-                            src={buildImageUrl(medal.imageUrl, useBackupImg)}
+                            src={buildImageUrl(medal.urlImage, useBackupImg)}
                             onError={() => setUseBackupImg(true)}
                             alt={medal.medalName}
                             className="w-12 h-12 object-cover rounded-full"
