@@ -11,7 +11,7 @@ import DropdownMenu from '../../libs/DropdownMenu/DropdownMenu';
 import SellFormModal from '../../libs/SellFormModal/SellFormModal';
 import { newAuction, productOfAuction } from '../../../services/api.auction';
 import HostAuctionModal from '../../libs/HostAuctionModal/HostAuctionModal';
-import { addFavourite, getFavoriteImages,getFavoriteList, removeFavourite } from '../../../services/api.favorites';
+import { addFavourite, getFavoriteImages, getFavoriteList, removeFavourite } from '../../../services/api.favorites';
 
 const PAGE_SIZE = 8;
 
@@ -72,6 +72,8 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const visibleFavs = Array.isArray(favImages) ? favImages.slice(0, favVisibleCount) : [];
   const isEndFavs = Array.isArray(favImages) ? favVisibleCount >= favImages.length : true;
 
+  const [productsLoading, setProductsLoading] = useState(false);
+
   useEffect(() => {
     const fetchFavImages = async () => {
       try {
@@ -91,9 +93,12 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
   const handleShowFavProducts = async (collectionId) => {
     setSelectedCollectionId(collectionId);
-    setShowProducts(true);
-    // setSellResult(null);
+    setSellResult(null);
+    setFavProducts([]);
+    setProductsLoading(true);
     await getFavoriteProductList();
+    setProductsLoading(false);
+    setShowProducts(true);
   };
 
   const handleHostAuction = async () => {
@@ -260,11 +265,20 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
   const handleShowProducts = async (collectionId) => {
     setSelectedCollectionId(collectionId);
-    setShowProducts(true);
     setSellResult(null);
-    await fetchProductsOfCollection(collectionId);
-  };
 
+    // Clear previous products to avoid stale render (tùy ý)
+    setProducts([]);
+
+    // Bật loading cho khu vực product
+    setProductsLoading(true);
+
+    // Fetch rồi mới show UI
+    await fetchProductsOfCollection(collectionId);
+
+    setProductsLoading(false);
+    setShowProducts(true);
+  };
   const toggleDropdown = (idx) => {
     setDropdownStates(prev => ({ ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}), [idx]: !prev[idx] }));
   };
@@ -388,14 +402,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
             {visibleCollections.length === 0 ? (
               <div className="text-gray-500 mt-2">No collections found.</div>
             ) : (
-
-
-
-
               <div className="userCollectionList-card-grid">
-
                 {visibleFavs.length === 0 ? (
-                  <div className="text-gray-500 mt-2">No collections found.</div>
+                  ''
                 ) : (
                   <div className="userCollectionList-card-grid">
                     {visibleFavs.map((col, idx) => {
@@ -644,202 +653,158 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       {/* Product cards */}
       {showProducts && (
         <div className="userCollectionList-card-list-container">
-          {visibleProducts.length === 0 && visiblefavProducts === 0 ? (
+          {productsLoading ? (
+            // hiển thị skeleton giống phần loading global (hoặc 1 spinner nhỏ)
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
+              {[...Array(PAGE_SIZE)].map((_, index) => (
+                <div key={index} className="flex justify-center w-full flex-col gap-4">
+                  <div className="skeleton h-42 w-full bg-gray-700/40"></div>
+                  <div className="skeleton h-4 w-28 bg-gray-700/40"></div>
+                  <div className="skeleton h-4 w-full bg-gray-700/40"></div>
+                  <div className="skeleton h-4 w-full bg-gray-700/40"></div>
+                </div>
+              ))}
+            </div>
+          ) : visibleProducts.length === 0 && visiblefavProducts.length === 0 ? (
             <div className="text-gray-500 mt-2">This collection is empty.</div>
           ) : (
-            <div className="userCollectionList-card-grid">
-              {visibleProducts
-                .filter(prod => prod.quantity > 0)
-                .map((prod, idx) => {
-                  const isExpanded = expandedCardIndex === idx;
-                  const isDropdownOpen = !!dropdownStates[idx];
-                  // Ensure anchorRefs.current[idx] exists
-                  if (!anchorRefs.current[idx]) anchorRefs.current[idx] = React.createRef();
-                  return (
-                    <div
-                      key={prod.userProductId}
-                      className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
-                      onMouseEnter={() => setExpandedCardIndex(idx)}
-                      onMouseLeave={() => { setExpandedCardIndex(null); setDropdownStates({}); }}
-                    >
-                      <div className="userCollectionList-card-background">
-                        <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${prod.productName} background`} />
-                      </div>
-                      <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={prod.productName} className="userCollectionList-card-image" />
+            (() => {
+              // Chuẩn bị 2 list đã filter
+              const primaryList = visibleProducts
+                .filter(p => (p.quantity ?? 0) > 0)
+                .map(p => ({ ...p, isFavorite: false }));
+              const secondaryList = visiblefavProducts
+                .filter(p => (p.quantity ?? 0) > 0)
+                .map(p => ({ ...p, isFavorite: true }));
+              const listToRender = primaryList.length > 0 ? primaryList : secondaryList;
+              const isPrimary = primaryList.length > 0;
+
+              return (
+                <div className="userCollectionList-card-grid">
+                  {listToRender.map((prod) => {
+                    // uniqueKey (an toàn nếu product đã được normalize)
+                    const key = prod.userProductId ?? prod.id ?? prod.productId;
+                    const isExpanded = expandedCardIndex === key;
+                    const isDropdownOpen = !!dropdownStates[key];
+
+                    // Ensure anchorRefs is an object keyed by product id
+                    if (!anchorRefs.current) anchorRefs.current = {};
+                    if (!anchorRefs.current[key]) anchorRefs.current[key] = React.createRef();
+
+                    return (
                       <div
-                        className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
-                        style={{
-                          transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                          maxHeight: isExpanded ? '300px' : '60px',
-                          opacity: isExpanded ? 1 : 0.85,
-                          overflow: 'hidden',
-                        }}
+                        key={key}
+                        className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
+                        onMouseEnter={() => setExpandedCardIndex(key)}
+                        onMouseLeave={() => { setExpandedCardIndex(null); setDropdownStates({}); }}
                       >
-                        <div className="userCollectionList-card-toggle">
-                          <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+                        <div className="userCollectionList-card-background">
+                          <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${prod.productName} background`} />
                         </div>
+
+                        <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={prod.productName} className="userCollectionList-card-image" />
+
                         <div
-                          className="userCollectionList-card-slide-content"
+                          className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
                           style={{
-                            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                            transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
-                            opacity: isExpanded ? 1 : 0,
-                            pointerEvents: isExpanded ? 'auto' : 'none',
+                            transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                            maxHeight: isExpanded ? '300px' : '60px',
+                            opacity: isExpanded ? 1 : 0.85,
+                            overflow: 'hidden',
                           }}
                         >
-                          {isExpanded && (
-                            <>
-                              <div className="userCollectionList-card-title oxanium-bold">{prod.productName}</div>
-                              <div className="userCollectionList-card-quantity oxanium-bold">Qty: {prod.quantity}</div>
-                              <div className="userCollectionList-card-actions">
-                                <button
-                                  className="userCollectionList-view-button"
-                                  onClick={() => navigate(`/collectiondetailpage/${prod.productId}`)}
-                                >
-                                  <span className="userCollectionList-view-button-text oleo-script-bold">View Detail</span>
-                                </button>
-                                <div className="userCollectionList-dropdown-container">
-                                  <button
-                                    ref={anchorRefs.current[idx]}
-                                    onClick={() => toggleDropdown(idx)}
-                                    className="userCollectionList-more-button oxanium-bold"
-                                  >
-                                    <img src={ThreeDots} alt="More Icon" className='userCollectionList-more-icon' />
-                                  </button>
-                                  <DropdownMenu anchorRef={anchorRefs.current[idx]} isOpen={isDropdownOpen} onClose={() => toggleDropdown(idx)}>
-                                    {[
-                                      { text: "Add to Favorite", action: () => handleAddFavourite(prod.id, prod.productName) },
-                                      { text: "Public to Sell", action: () => openSellModal(prod) },
-                                      { text: "Host an Auction", action: () => openAuctionModal(prod) },
-                                    ].map((item, i) => (
-                                      <div
-                                        key={i}
-                                        className="userCollectionList-dropdown-item oxanium-regular"
-                                        onClick={() => {
-                                          item.action();
-                                          setDropdownStates({});
-                                        }}
-                                      >
-                                        {item.text}
-                                      </div>
-                                    ))}
-                                  </DropdownMenu>
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              {visiblefavProducts
-                .filter(prod => prod.quantity > 0)
-                .map((prod, idx) => {
-                  const isExpanded = expandedCardIndex === idx;
-                  const isDropdownOpen = !!dropdownStates[idx];
-                  console.log(visiblefavProducts);
-                  // Ensure anchorRefs.current[idx] exists
-                  if (!anchorRefs.current[idx]) anchorRefs.current[idx] = React.createRef();
-                  return (
-                    <div
-                      key={prod.userProductId}
-                      className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
-                      onMouseEnter={() => setExpandedCardIndex(idx)}
-                      onMouseLeave={() => { setExpandedCardIndex(null); setDropdownStates({}); }}
-                    >
-                      <div className="userCollectionList-card-background">
-                        <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${prod.productName} background`} />
-                      </div>
-                      <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={prod.productName} className="userCollectionList-card-image" />
-                      <div
-                        className={`userCollectionList-card-overlay ${isExpanded ? 'userCollectionList-card-overlay--expanded' : ''}`}
-                        style={{
-                          transition: 'max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                          maxHeight: isExpanded ? '300px' : '60px',
-                          opacity: isExpanded ? 1 : 0.85,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <div className="userCollectionList-card-toggle">
-                          <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
-                        </div>
-                        <div
-                          className="userCollectionList-card-slide-content"
-                          style={{
-                            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
-                            transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
-                            opacity: isExpanded ? 1 : 0,
-                            pointerEvents: isExpanded ? 'auto' : 'none',
-                          }}
-                        >
-                          {isExpanded && (
-                            <>
-                              <div className="userCollectionList-card-title oxanium-bold">{prod.productName}</div>
-                              {/* <div className="userCollectionList-card-quantity oxanium-bold">Qty: {prod.quantity}</div> */}
-                              <div className="userCollectionList-card-actions">
-                                <button
-                                  className="userCollectionList-view-button"
-                                  onClick={() => navigate(`/collectiondetailpage/${prod.productId}`)}
-                                >
-                                  <span className="userCollectionList-view-button-text oleo-script-bold">View Detail</span>
-                                </button>
-                                <div className="userCollectionList-dropdown-container">
-                                  <button
-                                    ref={anchorRefs.current[idx]}
-                                    onClick={() => toggleDropdown(idx)}
-                                    className="userCollectionList-more-button oxanium-bold"
-                                  >
-                                    <img src={ThreeDots} alt="More Icon" className='userCollectionList-more-icon' />
-                                  </button>
-                                  <DropdownMenu anchorRef={anchorRefs.current[idx]} isOpen={isDropdownOpen} onClose={() => toggleDropdown(idx)}>
-                                    {[
-                                      { text: "Remove from Favorites", action: () => handleRemove(prod.id) },
-                                      // { text: "Add to Favorite", action: () => handleAddFavourite(prod.id, prod.productName) },
-                                      // { text: "Public to Sell", action: () => openSellModal(prod) },
-                                      // { text: "Host an Auction", action: () => openAuctionModal(prod) },
-                                    ].map((item, i) => (
-                                      <div
-                                        key={i}
-                                        className="userCollectionList-dropdown-item oxanium-regular"
-                                        onClick={() => {
-                                          item.action();
-                                          setDropdownStates({});
-                                        }}
-                                      >
-                                        {item.text}
-                                      </div>
-                                    ))}
-                                  </DropdownMenu>
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                          <div className="userCollectionList-card-toggle">
+                            <img src={DetailArrow} style={{ width: '16px', height: '16px', transition: 'transform 0.3s' }} className={isExpanded ? 'rotate-180' : ''} />
+                          </div>
 
-              {/* Sell Modal */}
-              <SellFormModal
-                isOpen={sellModalOpen}
-                onClose={() => setSellModalOpen(false)}
-                onSubmit={handleSellProduct}
-                product={sellModalProduct}
-                form={sellForm}
-                setForm={setSellForm}
-                loading={sellLoading}
-                result={sellResult}
-                minDescLength={10}
-                maxDescLength={300}
-                minPrice={1000}
-                maxPrice={100000000}
-                multilineDescription={true}
-              />
+                          <div
+                            className="userCollectionList-card-slide-content"
+                            style={{
+                              transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s',
+                              transform: isExpanded ? 'translateY(0)' : 'translateY(30px)',
+                              opacity: isExpanded ? 1 : 0,
+                              pointerEvents: isExpanded ? 'auto' : 'none',
+                            }}
+                          >
+                            {isExpanded && (
+                              <>
+                                <div className="userCollectionList-card-title oxanium-bold">{prod.productName}</div>
+                                {/* nếu model có quantity */}
+                                {!prod.isFavorite && typeof prod.quantity !== 'undefined' && (
+                                  <div className="userCollectionList-card-quantity oxanium-bold">Qty: {prod.quantity}</div>
+                                )}
 
-            </div>
+                                <div className="userCollectionList-card-actions">
+                                  <button
+                                    className="userCollectionList-view-button"
+                                    onClick={() => navigate(`/collectiondetailpage/${prod.productId ?? prod.id}`)}
+                                  >
+                                    <span className="userCollectionList-view-button-text oleo-script-bold">View Detail</span>
+                                  </button>
+
+                                  <div className="userCollectionList-dropdown-container">
+                                    <button
+                                      ref={anchorRefs.current[key]}
+                                      onClick={() => setDropdownStates(prev => ({ ...prev, [key]: !prev[key] }))}
+                                      className="userCollectionList-more-button oxanium-bold"
+                                    >
+                                      <img src={ThreeDots} alt="More Icon" className='userCollectionList-more-icon' />
+                                    </button>
+
+                                    <DropdownMenu anchorRef={anchorRefs.current[key]} isOpen={isDropdownOpen} onClose={() => setDropdownStates(prev => ({ ...prev, [key]: false }))}>
+                                      {(
+                                        isPrimary
+                                          ? [
+                                            { text: "Add to Favorite", action: () => handleAddFavourite(prod.id ?? prod.userProductId, prod.productName) },
+                                            { text: "Public to Sell", action: () => openSellModal(prod) },
+                                            { text: "Host an Auction", action: () => openAuctionModal(prod) },
+                                          ]
+                                          : [
+                                            { text: "Remove from Favorites", action: () => handleRemove(prod.id ?? prod.userProductId) },
+                                          ]
+                                      ).map((item, i) => (
+                                        <div
+                                          key={i}
+                                          className="userCollectionList-dropdown-item oxanium-regular"
+                                          onClick={() => {
+                                            item.action();
+                                            setDropdownStates({});
+                                          }}
+                                        >
+                                          {item.text}
+                                        </div>
+                                      ))}
+                                    </DropdownMenu>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()
           )}
+
+          {/* Sell Modal */}
+          <SellFormModal
+            isOpen={sellModalOpen}
+            onClose={() => setSellModalOpen(false)}
+            onSubmit={handleSellProduct}
+            product={sellModalProduct}
+            form={sellForm}
+            setForm={setSellForm}
+            loading={sellLoading}
+            result={sellResult}
+            minDescLength={10}
+            maxDescLength={300}
+            minPrice={1000}
+            maxPrice={100000000}
+            multilineDescription={true}
+          />
 
           {isEnd ? (
             <div className="userCollectionList-end-content oxanium-semibold divider divider-warning">
@@ -854,8 +819,8 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
             </button>
           )}
         </div>
-
       )}
+
 
       {/* Message Modal */}
       <MessageModal
