@@ -45,12 +45,12 @@ try {
     return null;
   }
 }
-export const getUserCollectionProgress = async (userCollectionId) => {
+export const getUserCollectionProgress = async () => {
   try {
     const response = await apiWithFallback({
       method: "get",
       url: "/cs/api/UserAchievement/get-user-collection-completion-achievement-progress",
-      params: { userCollectionId },
+      // params: { userCollectionId },
       requiresAuth: true, // nếu API yêu cầu authentication
     });
 

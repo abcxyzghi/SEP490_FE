@@ -9,7 +9,8 @@ import { toast } from "react-toastify";
 import { message, Modal } from "antd";
 import Rating from '@mui/material/Rating';
 import MessageModal from "../../libs/MessageModal/MessageModal";
-
+import { useNavigate } from "react-router-dom";
+import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 export default function ExchangeHistory() {
   const [sent, setSent] = useState([]);
   const [received, setReceived] = useState([]);
@@ -31,7 +32,7 @@ export default function ExchangeHistory() {
   const [selectedFeedbackList, setSelectedFeedbackList] = useState([]);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [view, setView] = useState('sent'); // 'sent' or 'received'
-
+  const navigate = useNavigate();
   const handleShowFeedbacks = async (exchangeId) => {
     try {
       const res = await getFeedbackOfSellProduct(exchangeId);
@@ -87,6 +88,7 @@ export default function ExchangeHistory() {
       const receivedArray = Array.isArray(receivedRes)
         ? receivedRes
         : [receivedRes];
+
       setSent(sentArray);
       setReceived(receivedArray);
 
@@ -155,6 +157,7 @@ export default function ExchangeHistory() {
       setReceived((prev) =>
         prev.map((req) => (req.id === id ? { ...req, status: 4 } : req))
       );
+      // navigate(`/profilepage/${myId}`);
     } catch (err) {
       setActionError("Accept failed");
       showModal("error", "Error", "Accept error: " + err);
@@ -330,12 +333,34 @@ export default function ExchangeHistory() {
                         {STATUS_MAP[req.status] || req.status}
                       </div>
                       <div className="exchange-history-date">
-                        {new Date(req.datetime).toLocaleString()}
+                        {new Date(req.datetime).toLocaleString()} -  {new Date(req.enddate).toLocaleString()}
                       </div>
+
                     </div>
+
 
                     {/* Actions (right) */}
                     <div className="exchange-history-card-actions">
+                      <button
+                        className="profilepage-btn-message oxanium-semibold"
+                        onClick={() => {
+                          const targetId = view === "sent" ? req.sellerId : req.buyerId;
+
+                          if (!targetId) {
+                            showModal("warning", "Error", "No user found to message.");
+                            return;
+                          }
+
+                          navigate(`/chatroom/${targetId}`);
+                        }}
+                      >
+                        <img
+                          src={MessageIcon}
+                          alt="Message"
+                          className="profilepage-message-icon"
+                        />
+                        Message
+                      </button>
                       {/* Sent cancel */}
                       {view === 'sent' && req.status === 1 && (
                         <button
@@ -389,6 +414,30 @@ export default function ExchangeHistory() {
                           Show Feedbacks
                         </button>
                       )}
+                    </div>
+                  </div>
+                  <div
+                    className={`exchange-history-user-wrapper ${view === "received" ? "reverse" : ""
+                      }`}
+                  >
+                    {/* Buyer Info */}
+                    <div className="exchange-history-user">
+                      <img
+                        src={buildImageUrl(req.buyerImage)}
+                        alt={req.buyerName}
+                        className="exchange-history-user-image"
+                      />
+                      <span className="exchange-history-user-name">{req.buyerName}</span>
+                    </div>
+
+                    {/* Seller Info */}
+                    <div className="exchange-history-user">
+                      <img
+                        src={buildImageUrl(req.sellerImage)}
+                        alt={req.sellerName}
+                        className="exchange-history-user-image"
+                      />
+                      <span className="exchange-history-user-name">{req.sellerName}</span>
                     </div>
                   </div>
 
