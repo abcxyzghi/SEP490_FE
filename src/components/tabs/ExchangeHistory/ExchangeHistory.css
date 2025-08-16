@@ -702,3 +702,30 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
   }
 }
+.exchange-history-user {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.exchange-history-user-image {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+}
+
+.exchange-history-user-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+.exchange-history-user-wrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.exchange-history-user-wrapper.reverse {
+  flex-direction: row-reverse;
+}

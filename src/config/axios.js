@@ -10,22 +10,22 @@ const BACKUP_PY_API = import.meta.env.VITE_BACKUP_PY_KEY;
 // Tạo instance Axios cho từng API
 const primaryAxios = axios.create({
   baseURL: CS_API,
-  timeout: 25000,
+  timeout: 5000,
 });
 
 const backupAxios = axios.create({
   baseURL: BACKUP_CS_API,
-  timeout: 25000,
+  // timeout: 25000,
 });
 
 const pythonAxios = axios.create({
   baseURL: PY_API,
-  timeout: 25000,
+  timeout: 5000,
 });
 
 const backupPythonAxios = axios.create({
   baseURL: BACKUP_PY_API,
-  timeout: 25000,
+  // timeout: 25000,
 });
 
 export const IMAGE_BASE_URL = `${CS_API}/api/ImageProxy`;
@@ -161,10 +161,10 @@ function attachInterceptorsTo(instance) {
 // Fallback API cho C# backend
 const apiWithFallback = async (config) => {
   try {
-    return await primaryAxios(config);
+    return await backupAxios(config);
   } catch (err) {
     console.warn("[Fallback] C# API failed. Retrying with backup...");
-    return await backupAxios(config);
+    return await primaryAxios(config);
   }
 };
 
