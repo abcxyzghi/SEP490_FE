@@ -157,6 +157,7 @@ export default function ExchangeHistory() {
       setReceived((prev) =>
         prev.map((req) => (req.id === id ? { ...req, status: 4 } : req))
       );
+      // navigate(`/profilepage/${myId}`);
     } catch (err) {
       setActionError("Accept failed");
       showModal("error", "Error", "Accept error: " + err);
