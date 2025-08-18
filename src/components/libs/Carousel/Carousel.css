@@ -1,6 +1,6 @@
 .swiper {
   width: 100%;
-  height: 490px;
+  height: 100% ;
   border-radius: 20px;
   cursor: grab;
 }
@@ -29,32 +29,32 @@
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
 
 /* For screen width ≤ 1200px */
-@media (max-width: 1200px) {
+/* @media (max-width: 1200px) {
   .swiper-slide img {
     object-fit: fill;
   }
 
-}
+} */
 
 /* For screen width ≤ 765px */
-@media (max-width: 765px) {
+/* @media (max-width: 765px) {
   .swiper {
     height: 350px;
   }
 
-}
+} */
 
 /* For screen width ≤ 600px */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .swiper {
     height: 400px;
   }
-}
+} */
 
 
 /* For screen width ≤ 480px */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .swiper {
     height: 300px;
   }
-}
+} */

@@ -1,0 +1,12 @@
+.ativitypage-container {
+    overflow-x: hidden;
+    margin-top: 50px;
+}
+
+.activitypage-searchFilterSort-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    margin: 20px auto;
+}

@@ -28,7 +28,7 @@ const ImageCarousel = () => {
       },
       autoplay: {
         delay: 2600,
-        pauseOnMouseEnter: false,
+        pauseOnMouseEnter: true,
       },
     });
 

@@ -336,7 +336,7 @@ export default function EditUserProfile() {
   // Daisy skeleton while fetching user data profile
   if (loadingProfileFetching) {
     return (
-      <div className="editUserProfile-container flex flex-col items-center justify-center min-h-screen gap-8">
+      <div className="editUserProfile-container flex flex-col items-center justify-center gap-8">
         {/* Title Skeleton */}
         <h2 className="editUserProfile-title">
           <div className="skeleton h-6 w-72 mb-4 bg-gray-700/40"></div>

@@ -183,27 +183,6 @@ export default function NavigationDropdownMenu() {
                 className="nav-sub-expand"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleNavigate(Pathname("CHAT_ROOM"));
-                }}
-              >
-                <div className="nav-dropdown-sub-container">
-                  <img
-                    className="nav-dropdown-item-icon"
-                    src={ChatIcon}
-                    alt="Chats"
-                  />
-                  <span className="oxanium-semibold">Chats</span>
-                </div>
-                <img
-                  className="nav-dropdown-item-subIcon"
-                  src={SubArrow}
-                  alt="Submenu"
-                />
-              </li>
-              {/* <li
-                className="nav-sub-expand"
-                onClick={(e) => {
-                  e.stopPropagation();
                   setSubMenu("notification");
                 }}
               >
@@ -220,7 +199,28 @@ export default function NavigationDropdownMenu() {
                   src={SubArrow}
                   alt="Submenu"
                 />
-              </li> */}
+              </li>
+              <li
+                className="nav-sub-expand"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNavigate(Pathname("CHAT_ROOM"));
+                }}
+              >
+                <div className="nav-dropdown-sub-container">
+                  <img
+                    className="nav-dropdown-item-icon"
+                    src={ChatIcon}
+                    alt="Chats"
+                  />
+                  <span className="oxanium-semibold">Chats</span>
+                </div>
+                {/* <img
+                  className="nav-dropdown-item-subIcon"
+                  src={SubArrow}
+                  alt="Submenu"
+                /> */}
+              </li>
               <li
                 onClick={(e) => {
                   e.stopPropagation();
@@ -291,6 +291,7 @@ export default function NavigationDropdownMenu() {
               </li>
             </ul>
           ) : subMenu === "chat" ? (
+            // Submenu for Chat
             <div
               className={`nav-submenu-panel${submenuExiting ? " exiting" : ""}`}
               onClick={(e) => e.stopPropagation()}
@@ -310,6 +311,7 @@ export default function NavigationDropdownMenu() {
               </div>
             </div>
           ) : (
+            // Submenu for Notification
             <div
               className={`nav-submenu-panel${submenuExiting ? " exiting" : ""}`}
               onClick={(e) => e.stopPropagation()}

@@ -5,17 +5,11 @@ import './RegisterForm.css';
 import OtpDialog from '../OtpDialog/OtpDialog';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import { registerApi, sendVerifyEmailApi, confirmOtpApi } from '../../../services/api.auth';
 import { PATH_NAME } from '../../../router/Pathname';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-export default function RegisterForm() {
+export default function RegisterForm({ showSnackbar = () => { } }) {
     // Form validation func
     const [form, setForm] = useState({
         userName: '',
@@ -27,7 +21,6 @@ export default function RegisterForm() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
     const [isLoading, setIsLoading] = useState(false);
     const [showOtpModal, setShowOtpModal] = useState(false);
     const [otpTimer, setOtpTimer] = useState(0);
@@ -56,40 +49,38 @@ export default function RegisterForm() {
 
         if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
             setIsLoading(false);
-            return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
+            return showSnackbar('Please fill in all fields.', 'error');
         }
 
         if (!validateUsername(userName)) {
             setIsLoading(false);
-            return setSnackbar({
-                open: true,
-                message: 'Username must be between 3 - 15 characters long. Only letters (Eng charaters), numbers, and underscores are allowed.',
-                severity: 'warning'
-            });
+            return showSnackbar(
+                'Username must be 3-15 characters and may contain letters, numbers and underscores.',
+                'warning'
+            );
         }
 
         if (!validateEmail(email)) {
             setIsLoading(false);
-            return setSnackbar({ open: true, message: 'Invalid Email format.', severity: 'warning' });
+            return showSnackbar('Invalid Email format.', 'warning');
         }
 
         if (!validatePassword(password)) {
             setIsLoading(false);
-            return setSnackbar({
-                open: true,
-                message: 'Password must be between 8 - 15 characters long, include at least an uppercase, lowercase, number, and special character.',
-                severity: 'warning',
-            });
+            return showSnackbar(
+                'Password must be 8-15 chars and include uppercase, lowercase, number, and special character.',
+                'warning'
+            );
         }
 
         if (password !== confirmPassword) {
             setIsLoading(false);
-            return setSnackbar({ open: true, message: 'Passwords do not match!', severity: 'error' });
+            return showSnackbar('Passwords do not match!', 'error');
         }
 
         if (!accepted) {
             setIsLoading(false);
-            return setSnackbar({ open: true, message: 'You must agree to all policies.', severity: 'warning' });
+            return showSnackbar('You must agree to the policies.', 'warning');
         }
 
         try {
@@ -98,16 +89,15 @@ export default function RegisterForm() {
             toast.success('Successfully created new account. OTP sent to your email.');
             setShowOtpModal(true);
         } catch (err) {
-
             const apiError = err.response?.data;
             if (apiError && apiError.error === 'Email aready in use !') {
-                setSnackbar({ open: true, message: apiError.error, severity: 'error' });
+                showSnackbar(apiError.error, 'error');
             } else if (apiError && apiError.error === '400: username already exist !') {
-                setSnackbar({ open: true, message: apiError.error, severity: 'error' });
+                showSnackbar(apiError.error, 'error');
             } else {
+                // fallback to toast if you still want the toast behavior
                 toast.error(apiError || 'Registration failed');
             }
-
         } finally {
             setIsLoading(false);
         }
@@ -185,7 +175,8 @@ export default function RegisterForm() {
                 <div className="register-form-control register-full-width">
                     <input
                         name="userName"
-                        type="text" placeholder="User Name"
+                        type="text" 
+                        placeholder="User Name"
                         className="register-input input-bordered h-12 oxanium-regular"
                         // required
                         value={form.userName}
@@ -196,7 +187,8 @@ export default function RegisterForm() {
                 <div className="register-form-control register-full-width">
                     <input
                         name="email"
-                        type="email" placeholder="Email"
+                        type="email" 
+                        placeholder="Email"
                         className="register-input input-bordered w-full h-12 oxanium-regular"
                         // required
                         value={form.email}
@@ -215,7 +207,7 @@ export default function RegisterForm() {
                             value={form.password}
                             onChange={handleChange}
                         />
-                        <IconButton className="register-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small">
+                        <IconButton className="register-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small" sx={{ color: "white" }}>
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                     </div>
@@ -230,18 +222,18 @@ export default function RegisterForm() {
                             value={form.confirmPassword}
                             onChange={handleChange}
                         />
-                        <IconButton className="register-toggle-icon" onClick={() => setShowConfirm(!showConfirm)} size="small">
+                        <IconButton className="register-toggle-icon" onClick={() => setShowConfirm(!showConfirm)} size="small" sx={{ color: "white" }}>
                             {showConfirm ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                     </div>
                 </div>
 
                 {/* Policy tick box  */}
-                <div className="register-form-control register-checkbox-control">
+                <div className="register-form-control register-checkbox-control oxanium-regular">
                     <label>
                         <Checkbox type="checkbox"
                             size="small"
-                            sx={{ padding: 0, mt: "-5px" }}
+                            sx={{ padding: 0, mt: "-5px", color: "white" }}
                             color="secondary"
                             // required 
                             name="accepted"
@@ -298,11 +290,11 @@ export default function RegisterForm() {
                 </button>
             </form>
 
-            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
+            {/* Navigate note */}
+            <p className="register-botNote oxanium-light">
+                Already have an account? <span className="register-botNote-link oxanium-regular" onClick={() => navigate(PATH_NAME.LOGIN)}>Login</span>
+            </p>
+
 
             {/* OTP Modal */}
             <OtpDialog

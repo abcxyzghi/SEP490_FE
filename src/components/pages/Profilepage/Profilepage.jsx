@@ -2,6 +2,7 @@
 import { React, useEffect, useState, useCallback } from "react";
 import "./Profilepage.css";
 import { Snackbar, Alert } from "@mui/material";
+import Particles from "../../libs/Particles/Particles";
 import MessageModal from "../../libs/MessageModal/MessageModal";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Pathname } from "../../../router/Pathname";
@@ -49,6 +50,7 @@ export default function Profilepage() {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
+  const [pauseOnHoverZone, setPauseOnHoverZone] = useState(false);
   const [modal, setModal] = useState({
     open: false,
     type: "default",
@@ -288,33 +290,33 @@ export default function Profilepage() {
   // Construct the tabs array based on isMyProfile
   const tabs = isMyProfile
     ? [
-        {
-          label: "Mystery Boxes",
-          content: <UserBox />,
-        },
-        {
-          label: "Collections",
-          content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
-        },
-        {
-          label: "On Sale",
-          content: (
-            <UserOnSale products={products} productsLoading={productsLoading} />
-          ),
-        },
-      ]
+      {
+        label: "Mystery Boxes",
+        content: <UserBox />,
+      },
+      {
+        label: "Collections",
+        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
+      },
+      {
+        label: "On Sale",
+        content: (
+          <UserOnSale products={products} productsLoading={productsLoading} />
+        ),
+      },
+    ]
     : [
-        {
-          label: "Collections",
-          content: <UserAchievements />,
-        },
-        {
-          label: "On Sale",
-          content: (
-            <UserOnSale products={products} productsLoading={productsLoading} />
-          ),
-        },
-      ];
+      {
+        label: "Collections",
+        content: <UserAchievements />,
+      },
+      {
+        label: "On Sale",
+        content: (
+          <UserOnSale products={products} productsLoading={productsLoading} />
+        ),
+      },
+    ];
 
   // change createDate format to month year
   const joinedDate = format(new Date(profile.createDate), "MMMM yyyy");
@@ -397,19 +399,36 @@ export default function Profilepage() {
   };
 
   return (
-    <div>
+    <div
+      onMouseEnter={() => setPauseOnHoverZone(false)}   // won't pause while hovered
+      onMouseLeave={() => setPauseOnHoverZone(false)}
+    >
       {/* Head profile */}
       <div className="w-full">
         {/* Top banner */}
-        <div
+        {/* <div
           className="profilepage-banner"
           style={{
             backgroundImage: `url(https://i.pinimg.com/736x/86/87/d2/8687d2981dd01ed750fae1a55830735e.jpg)`,
           }}
-        />
+        /> */}
+        <div className='profilepage-banner'>
+          <Particles
+            particleColors={['#960BAF', '#F8AC52', '#0db6e0']}
+            particleCount={370}
+            particleSpread={10}
+            speed={0.2}
+            particleBaseSize={100}
+            moveParticlesOnHover={true}
+            pauseOnHoverZone={pauseOnHoverZone}
+            alphaParticles={false}
+            disableRotation={false}
+          />
+        </div>
+
 
         {/* Profile Info Section */}
-        <div className="profilepage-wrapper">
+        <div className="profilepage-wrapper" >
           {/* Profile image */}
           <div className="profilepage-img avatar">
             <div className="profilepage-avatar-container">
@@ -695,7 +714,10 @@ export default function Profilepage() {
       )}
 
       {/* Tabs switcher */}
-      <div className="tabs-switcher-section">
+      <div className="tabs-switcher-section"
+        onMouseEnter={() => setPauseOnHoverZone(false)}   // won't pause while hovered
+        onMouseLeave={() => setPauseOnHoverZone(false)}
+      >
         <SwitchTabs
           tabs={tabs}
           activeTab={activeTab}

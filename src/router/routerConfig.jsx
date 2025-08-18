@@ -45,6 +45,7 @@ import ModCollection from "../components/moderatorPages/ModCollection/ModCollect
 import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
 import FailurePage from "../components/pages/FailurePage/FailurePage";
 import FavoriteListPage from "../components/tabs/FavoriteListPage/FavoriteListPage";
+import Activitypage from "../components/pages/Activitypage/Activitypage";
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -74,16 +75,21 @@ export const privateRoutes = [
     { path: PATH_NAME.CART_PAGE, element: <Cartpage />, role: ['user'] },
     { path: PATH_NAME.PROFILE, element: <Profilepage />, role: ['user'] },
     { path: PATH_NAME.PAYMENT_PAGE, element: <Paymentpage />, role: ['user'] },
-    { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
+    { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
+    { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
+    // { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
-    { path: PATH_NAME.ACTIVITIES_PAGE, element: <Notificationpage />, role: ['user'] },
+    { path: PATH_NAME.ACTIVITIES_PAGE, element: <Activitypage />, role: ['user'] },
+    { path: PATH_NAME.NOTIFICATION_PAGE, element: <Notificationpage />, role: ['user'] },
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
     { path: PATH_NAME.CHAT_ROOM, element: <ChatRoom />, role: ['user'] },
     { path: PATH_NAME.USER_SALE_REPORT, element: <UserSaleReport />, role: ['user'] },
+
     { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
     { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
     { path: PATH_NAME.FAVORITE_LIST, element: <FavoriteListPage />, role: ['user'] },
     { path: PATH_NAME.WITH_DRAW, element: <Withdraw />, role: ['user'] },
+
 ];
 
 export const moderatorRoutes = [

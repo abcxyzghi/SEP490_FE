@@ -108,7 +108,7 @@ export default function ReportHistory() {
                   <>
                     <p className="report-history-type oleo-script-bold">User Report</p>
                     <p className="report-history-field oxanium-regular">
-                      Reported User: {report.sellerName || "Unknown"}
+                      Reporting user: {report.sellerName || "Unknown"}
                     </p>
                     <p className="report-history-field oxanium-regular">Title: {report.title}</p>
                     <p className="report-history-field oxanium-regular">Content: {report.content}</p>
