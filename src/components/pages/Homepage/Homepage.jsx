@@ -74,7 +74,7 @@ export default function Homepage() {
 
       <div className='homepage-content'>
         {/* Comic section */}
-        <div className='homepage-comic-container max-w-screen-2xl mx-auto '>
+        <div className='homepage-comic-container'>
           <motion.div
             className='homepage-comic-left'
             ref={comicLeftRef}
@@ -112,7 +112,7 @@ export default function Homepage() {
 
 
         {/* Box section */}
-        <div className='homepage-box-container max-w-screen-2xl mx-auto '>
+        <div className='homepage-box-container'>
           <motion.div
             className='homepage-box-left'
             ref={boxLeftRef}
@@ -150,7 +150,7 @@ export default function Homepage() {
 
 
         {/* Card section */}
-        <div className='homepage-card-container max-w-screen-2xl mx-auto '>
+        <div className='homepage-card-container'>
           <motion.div
             className='homepage-card-left'
             ref={cardLeftRef}
@@ -159,10 +159,10 @@ export default function Homepage() {
             transition={{ duration: 0.8 }}
           // viewport={{ once: true, amount: 0.4 }}
           >
-            <div className='homepage-box-title oleo-script-bold'>
+            <div className='homepage-card-title oleo-script-bold'>
               <h2>Bet your luck on most beloved Legendary</h2>
             </div>
-            <div className='homepage-box-description oxanium-regular'>
+            <div className='homepage-card-description oxanium-regular'>
               <p>Hidden behind every card is a potential treasure - rare character editions, holographic prints, or limited-run designs that few ever get their hands on. <br />
                 Each pull is an opportunity to uncover something truly legendary.
                 Meticulously printed and securely sealed, our cards are crafted for serious collectors who seek the thrill of rarity and the joy of discovery.</p>
@@ -219,9 +219,6 @@ export default function Homepage() {
           </div>
         </div>
       </div>
-
-      {/* Footer section */}
-
 
     </div>
   )

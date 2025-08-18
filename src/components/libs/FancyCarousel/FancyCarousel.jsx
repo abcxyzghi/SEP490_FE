@@ -45,13 +45,13 @@ const FancyCarousel = () => {
             grabCursor: true,
             autoplay: {
                 delay: 5000,
-                pauseOnMouseEnter: false,
+                pauseOnMouseEnter: true,
             },
         });
     }, []);
 
     return (
-        <div className="swiper fancy-swiper fancy-flow">
+        <div className="fancy-swiper fancy-flow">
             <div className="swiper-wrapper fancy-flow">
                 {slides.map((slide, index) => (
                     <div className="swiper-slide fancy-slide fancy-flow" key={index}>
@@ -67,6 +67,31 @@ const FancyCarousel = () => {
 const HoverCard = ({ defaultImg, hoverImg, charImg }) => {
     const [hovered, setHovered] = useState(false);
 
+    const [screenSize, setScreenSize] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setScreenSize(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    // Default values
+    let tiltMaxAngleX = 15;
+    let tiltMaxAngleY = 15;
+    let perspective = 500;
+
+    if (screenSize <= 770 && screenSize > 480) {
+        // Tablet
+        tiltMaxAngleX = 12;
+        tiltMaxAngleY = 12;
+        perspective = 800;
+    } else if (screenSize <= 480) {
+        // Mobile
+        tiltMaxAngleX = 9;
+        tiltMaxAngleY = 9;
+        perspective = 700;
+    }
+
     return (
         <div
             className="carousel-hover-card"
@@ -76,12 +101,10 @@ const HoverCard = ({ defaultImg, hoverImg, charImg }) => {
             <img src={hovered ? hoverImg : defaultImg} alt="main" className="carousel-mainbg-img" />
             {hovered && (
                 <Tilt className="char-wrapper"
-                    tiltMaxAngleX={15} //maximum tilt range on X and Y axes (0–90)
-                    tiltMaxAngleY={15}
-                    perspective={500} //Sets how "deep" the tilt looks (Smaller number → more intense tilt)
+                    tiltMaxAngleX={tiltMaxAngleX} //maximum tilt range on X and Y axes (0–90)
+                    tiltMaxAngleY={tiltMaxAngleY}
+                    perspective={perspective} //Sets how "deep" the tilt looks (Smaller number → more intense tilt)
                     scale={1.05} //Scales the entire component on hover (default: 1)
-                    glareEnable={false} //Enables a light reflection glare on hover
-                    glareMaxOpacity={0.45} //Controls how strong the glare is (0 = none, 1 = full)
                     trackOnWindow={true} //Tracks the mouse globally (not just inside component)
                     gyroscope={true}  // mobile tilt support
                 >

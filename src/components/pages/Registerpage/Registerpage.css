@@ -1,10 +1,10 @@
 .registerpage-container {
     position: relative;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
     /* Add vertical scrolling when content overflows */
     overflow-y: auto;
-    z-index: 0;
+    z-index: 1;
     background-color: transparent;
 }
 
@@ -22,6 +22,23 @@
 
     /* Just in case video fails to load visually */
     background-color: var(--page-mainBG);
+}
+
+.logister-particle-background {
+    /* stays pinned like your video */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--page-mainBG);
+    /* keep it *behind* content but not negative */
+    z-index: 0;
+    /* makes UI clickable */
+    pointer-events: none;
+}
+.logister-particle-background canvas {
+  pointer-events: none;
 }
 
 /* Header toggle */
@@ -70,8 +87,8 @@
     margin-left: -10px;
 }
 
-.registerpage-headleft-bar:hover{
-    transform: scale(0.98);
+.registerpage-headleft-bar:hover {
+    transform: scale(0.96);
     background: var(--dark-2-o90);
     z-index: -200;
 }

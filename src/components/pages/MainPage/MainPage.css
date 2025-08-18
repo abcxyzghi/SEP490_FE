@@ -5,5 +5,14 @@
 }
 
 .MainP-content {
+  /* max-width: 1990px;
+  margin: 0 auto; */
   flex: 1; /* take remaining space */
+}
+
+@media (min-width: 2000px) {
+  .MainP-content {
+    max-width: 1990px;
+    margin: 0 auto;
+  }
 }

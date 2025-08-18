@@ -1,17 +1,65 @@
 .register-container {
+    position: relative;
     max-width: 570px;
     width: 45%;
     margin: 20px auto;
-    background: var(--light-1-o70);
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.02));
+    backdrop-filter: blur(6px) saturate(150%);
     padding: 20px 60px;
     border-radius: 20px;
-    border: solid 4px var(--secondary-6);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.25),
+        0 0 40px rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.register-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg,
+            var(--secondary-4),
+            transparent,
+            var(--secondary-6),
+            transparent);
+    background-size: 300% 300%;
+    /* makes gradient larger for animation */
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: borderFlow 6s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes borderFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
 .register-title {
-    text-align: center;
     margin-bottom: 24px;
+    color: var(--light-3);
+    text-align: center;
     font-size: 1.75rem;
     font-weight: bold;
 }
@@ -40,15 +88,35 @@
 }
 
 .register-input {
-    background: var(--light-3);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--light-1);
+    border-radius: 12px;
     padding: 10px 12px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-input:focus {
+    outline: none;
+    border: 1px solid var(--secondary-4);
+    box-shadow: 0 0 8px var(--secondary-4);
 }
 
 .register-input.input-pw {
-    background: var(--light-3);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--light-1);
+    border-radius: 12px;
     padding: 10px 12px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-input.input-pw:focus {
+    outline: none;
+    border: 1px solid var(--secondary-4);
+    box-shadow: 0 0 8px var(--secondary-4);
 }
 
 .register-password-wrapper {
@@ -68,9 +136,11 @@
     display: flex;
     justify-content: center;
     align-self: center;
+    color: var(--light-5);
     text-align: left;
     font-size: 0.875rem;
     line-height: 1.4;
+    letter-spacing: 0.05em;
 }
 
 .register-checkbox-control label {
@@ -101,6 +171,31 @@
     background: var(--dark-4);
 }
 
+.register-botNote {
+    margin-top: 7px;
+    color: var(--light-4);
+    text-align: center;
+    font-size: 0.75rem;
+    cursor: default;
+}
+
+.register-botNote-link {
+    text-decoration: underline;
+    color: var(--light-4);
+    cursor: pointer;
+    transition: color 0.1s ease, font-weight 0.1s ease;
+}
+
+.register-botNote-link:hover {
+    color: var(--light-5);
+    font-weight: 600;
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
 /* For screen width ≤ 1200px */
 @media (max-width: 1200px) {
     .register-container {
@@ -124,7 +219,7 @@
 
 /* For screen width ≤ 480px */
 @media (max-width: 480px) {
-  .register-form-control {
-    width: 100%;
-}
+    .register-form-control {
+        width: 100%;
+    }
 }
