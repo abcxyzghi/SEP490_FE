@@ -121,6 +121,5 @@ export default function TransactionHistory() {
 
       )}
     </div>
-
   );
 }

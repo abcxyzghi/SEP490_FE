@@ -291,3 +291,18 @@ export const getAverageRatingsOfSellProduct = async (productid) => {
     throw error;
   }
 }
+
+export const createWithdrawTransaction = async (amount) => {
+  try {
+    const response = await apiWithFallback({
+      method: "post", 
+      url: "/cs/api/TransactionHistory/create-withdraw-transaction-request",
+      params: { amount }, 
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating withdraw transaction:", error);
+    return null;
+  }
+};
