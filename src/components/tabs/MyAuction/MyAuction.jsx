@@ -56,6 +56,9 @@ export default function MyAuction() {
             >
               <h3 className="text-lg font-semibold">{auction.title}</h3>
               <p className="mt-1 text-sm text-gray-300">{auction.descripition}</p>
+              <p className="text-sm text-gray-600">{auction.host_value}</p>
+              <p className="text-sm text-gray-600">{auction.fee_charge}</p>
+              <p className="text-sm text-gray-600">{auction.incoming_value}</p>
               <div className="mt-3 text-sm text-gray-300 space-y-1">
                 <p>
                   <span className="font-medium text-gray-200">Start:</span> {" "}

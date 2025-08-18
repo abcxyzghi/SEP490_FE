@@ -13,6 +13,7 @@ import {
   getProductOnSaleDetail,
   TurnOnOffProductOnSale,
   updateSellProduct,
+  cancelSellProduct
 } from "../../../services/api.product";
 import { addToCart } from "../../../services/api.cart";
 import { buildImageUrl } from "../../../services/api.imageproxy";
@@ -66,6 +67,15 @@ export default function UserOnSale({ products, productsLoading }) {
       setProductList(filtered);
     }
   }, [products]);
+  // --- cancel product handler ---
+  const handleCancelSellProduct = async (sellProductId) => {
+    const result = await cancelSellProduct(sellProductId);
+    if (result) {
+
+      setProductList((prev) => prev.filter((p) => p.id !== sellProductId));
+
+    }
+  };
 
   // Hàm hiển thị modal thông báo
   const showModal = (type, title, message) => {
@@ -181,11 +191,11 @@ export default function UserOnSale({ products, productsLoading }) {
         prevList.map((product) =>
           product.id === selectedProduct.id
             ? {
-                ...product,
-                description: editedDescription,
-                price: priceNum,
-                updatedAt: new Date().toISOString(),
-              }
+              ...product,
+              description: editedDescription,
+              price: priceNum,
+              updatedAt: new Date().toISOString(),
+            }
             : product
         )
       );
@@ -290,9 +300,8 @@ export default function UserOnSale({ products, productsLoading }) {
           const isDropdownOpen = !!dropdownStates[index];
           return (
             <div
-              className={`userOnSale-card-item ${
-                isExpanded ? "userOnSale-card-item--expanded" : ""
-              }`}
+              className={`userOnSale-card-item ${isExpanded ? "userOnSale-card-item--expanded" : ""
+                }`}
               key={item.id}
               onMouseEnter={() => setExpandedCardIndex(index)}
               onMouseLeave={() => {
@@ -315,9 +324,8 @@ export default function UserOnSale({ products, productsLoading }) {
                 className="userOnSale-card-image"
               />
               <div
-                className={`userOnSale-card-overlay ${
-                  isExpanded ? "userOnSale-card-overlay--expanded" : ""
-                }`}
+                className={`userOnSale-card-overlay ${isExpanded ? "userOnSale-card-overlay--expanded" : ""
+                  }`}
                 style={{
                   transition:
                     "max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s",
@@ -367,9 +375,8 @@ export default function UserOnSale({ products, productsLoading }) {
                       {/* Thêm trạng thái bán */}
                       {isOwnerOfItem ? (
                         <div
-                          className={`oxanium-bold text-sm mb-2 ${
-                            item.isSell ? "text-green-400" : "text-red-400"
-                          }`}
+                          className={`oxanium-bold text-sm mb-2 ${item.isSell ? "text-green-400" : "text-red-400"
+                            }`}
                         >
                           {item.isSell ? "On Sale" : "Sale Halt"}
                         </div>
@@ -395,11 +402,10 @@ export default function UserOnSale({ products, productsLoading }) {
                             <button
                               ref={anchorRef}
                               onClick={() => toggleDropdown(index)}
-                              className={`userOnSale-cart-button oxanium-bold ${
-                                loadingBtnId === item.id
-                                  ? "opacity-70 cursor-not-allowed"
-                                  : ""
-                              }`}
+                              className={`userOnSale-cart-button oxanium-bold ${loadingBtnId === item.id
+                                ? "opacity-70 cursor-not-allowed"
+                                : ""
+                                }`}
                               disabled={loadingBtnId === item.id}
                             >
                               {loadingBtnId === item.id ? (
@@ -418,32 +424,35 @@ export default function UserOnSale({ products, productsLoading }) {
                               onClose={() => toggleDropdown(index)}
                             >
                               <div
-                                className={`userOnSale-dropdown-item oxanium-regular ${
-                                  !item.isSell && item.quantity <= 0
-                                    ? "disabled"
-                                    : ""
-                                }`}
+                                className={`userOnSale-dropdown-item oxanium-regular ${!item.isSell && item.quantity <= 0
+                                  ? "disabled"
+                                  : ""
+                                  }`}
                                 onClick={() => handleToggleSell(item)}
                               >
                                 {item.isSell ? "Sale On" : "Sale Off"}
                               </div>
                               <div
-                                className={`userOnSale-dropdown-item oxanium-regular ${
-                                  item.isSell ? "disabled" : ""
-                                }`}
+                                className={`userOnSale-dropdown-item oxanium-regular ${item.isSell ? "disabled" : ""
+                                  }`}
                                 onClick={() =>
                                   !item.isSell && handleOpenUpdate(item)
                                 }
                               >
                                 Update Sale Product
                               </div>
+                              <div
+                                className={`userOnSale-dropdown-item oxanium-regular`}
+                                onClick={() => handleCancelSellProduct(item.id)}
+                              >
+                                Cancel Product
+                              </div>
                             </DropdownMenu>
                           </div>
                         ) : (
                           <button
-                            className={`userOnSale-cart-button oleo-script-bold ${
-                              loadingBtnId === item.id ? "disabled" : ""
-                            } ${!item.isSell ? "hidden" : ""}`}
+                            className={`userOnSale-cart-button oleo-script-bold ${loadingBtnId === item.id ? "disabled" : ""
+                              } ${!item.isSell ? "hidden" : ""}`}
                             disabled={loadingBtnId === item.id || !item.isSell}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -534,14 +543,13 @@ export default function UserOnSale({ products, productsLoading }) {
                   fontSize: "12px",
                   color:
                     editedDescription.trim().length < 10 ||
-                    editedDescription.trim().length > 300
+                      editedDescription.trim().length > 300
                       ? "red"
                       : "#aaa",
                 }}
               >
-                {`Description: ${
-                  editedDescription.trim().length
-                }/300 characters. (Min: 10, Max: 300)`}
+                {`Description: ${editedDescription.trim().length
+                  }/300 characters. (Min: 10, Max: 300)`}
               </div>
             </div>
 
@@ -563,7 +571,7 @@ export default function UserOnSale({ products, productsLoading }) {
                   fontSize: "12px",
                   color:
                     Number(editedPrice) < 1000 ||
-                    Number(editedPrice) > 100000000
+                      Number(editedPrice) > 100000000
                       ? "red"
                       : "#aaa",
                 }}

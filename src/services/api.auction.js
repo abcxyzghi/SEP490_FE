@@ -6,7 +6,7 @@ export const getAllAuctionOfMod = async () => {
     try {
     const response = await apiWithFallback({
       method: "get",
-      url: "https://api.mmb.io.vn/py/api/auction/mod",
+      url: "/api/auction/mod",
       requiresAuth: true,
     });
     return response.data;
@@ -118,6 +118,21 @@ export const productOfAuction = async (productData) => {
     return response.data;
   } catch (error) {
     console.error("Add product to auction failed:", error);
+    throw error;
+  }
+}; 
+
+export const fetchJoinedAuctionList = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/api/auction/joined-history",
+      requiresAuth: true, 
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch joined auction list failed:", error);
     throw error;
   }
 };
