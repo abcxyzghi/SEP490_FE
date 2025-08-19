@@ -62,5 +62,26 @@ export const getTransaction = async () => {
     toast.error(error.response?.data?.error || "Error fetching transaction history");
     return null;
   }
-};
+}; 
+
+// export const getWithdrawTransaction = async () => {
+//   try {
+//     const response = await apiWithFallback({
+//       method: "get",
+//       url: "/api/TransactionHistory/withdraw-transaction-history",
+//       requiresAuth: true,
+//     });
+
+//     if (response.data?.status) {
+//       return response.data.data;
+//     } else {
+//       toast.error("Failed to fetch transaction history");
+//       return [];
+//     }
+//   } catch (error) {
+//     toast.error(error.response?.data?.error || "Error fetching withdraw transaction history");
+//     return null;
+//   }
+// };
+
 
