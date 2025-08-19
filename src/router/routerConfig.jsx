@@ -86,8 +86,8 @@ export const privateRoutes = [
 
     { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
     { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
-    { path: PATH_NAME.FAVORITE_LIST, element: <FavoriteListPage />, role: ['user'] },
-    { path: PATH_NAME.WITH_DRAW, element: <Withdraw />, role: ['user'] },
+    // { path: PATH_NAME.FAVORITE_LIST, element: <FavoriteListPage />, role: ['user'] },
+    // { path: PATH_NAME.WITH_DRAW, element: <Withdraw />, role: ['user'] },
 
 ];
 
