@@ -1,0 +1,105 @@
+.withdrawTab-container {
+    min-height: 50vh;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 32px;
+
+    border-radius: 14px;
+    background: rgba(22, 22, 24, 0.897);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+
+    color: var(--light-1);
+    text-align: center;
+}
+
+/* --------------------------==================== Header ====================--------------------------  */
+.withdrawTab-header {
+    margin-bottom: 20px;
+}
+
+.withdrawTab-title {
+    margin: 0;
+    font-size: 2.1rem;
+    color: #f5f3ff;
+    letter-spacing: -0.5px;
+}
+
+.withdrawTab-subtitle {
+    margin: 6px 0 0;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.95rem;
+}
+
+.withdrawTab-balance {
+    margin: 25px 0 5px;
+    text-align: left;
+    font-size: 0.98rem;
+}
+
+.withdrawTab-balance strong {
+    --prizeText-color: rgb(29, 235, 108);
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--prizeText-color);
+    text-shadow:
+        1px 1px rgb(33, 163, 7);
+}
+
+/* --------------------------==================== Form ====================--------------------------  */
+.withdrawTab-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.withdrawTab-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    color: #fff;
+    outline: none;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.withdrawTab-input:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* --------------------------==================== Button ====================--------------------------  */
+.withdrawTab-btn {
+    width: 60%;
+    margin: 1rem auto 2rem auto;
+    background: linear-gradient(135deg, #6a00ff, #ffcc00);
+    /* color: #0b0b0b; */
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.12s ease, color 0.12s ease;
+}
+
+.withdrawTab-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.withdrawTab-btn:active:not(:disabled) {
+    color: var(--light-5);
+    transform: scale(0.99);
+}
+
+.withdrawTab-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/

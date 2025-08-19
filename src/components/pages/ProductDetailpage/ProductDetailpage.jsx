@@ -121,7 +121,7 @@ export default function ProductDetailpage() {
     // Prevent seller from buying their own product
     if (product.userId === user.user_id) {
       // return showModal('warning', 'Action Not Allowed', "You cannot purchase your own product.");
-      return showModal('warning', 'Action Not Allowed', "Nuh uh, I don't think so >:)");
+      return showModal('warning', 'Action Not Allowed', "You cannot buy your own product.");
     }
     // Prevent user cheating currency imbalance 
     if (user.wallet_amount < product.price * quantity) {
