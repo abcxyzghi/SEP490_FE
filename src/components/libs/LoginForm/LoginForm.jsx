@@ -137,7 +137,7 @@ export default function LoginForm({ showSnackbar = () => { } }) {
             value={form.password}
             onChange={handleChange}
           />
-          <IconButton className="login-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small">
+          <IconButton className="login-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small" sx={{ color: "white" }}>
             {showPassword ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </div>

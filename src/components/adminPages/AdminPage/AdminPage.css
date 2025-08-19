@@ -1,13 +1,8 @@
-.AdminP-container {
+.AdminP-container{
     display: flex;
-    /* height: 100; */
-    /* width: 100vw; */
-    margin: 0.5rem 0.2rem;
-
 }
 
-.AdminP-content {
-    margin: 0.1rem 1.5rem;
-    /* Take up remaining space after the sidebar */
-    flex-grow: 1;
+.AdminP-content{
+    margin: 0.6rem 1.5rem;
+    flex-grow: 1; /* Take up remaining space after the sidebar */
 }

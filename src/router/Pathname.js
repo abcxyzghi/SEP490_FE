@@ -19,7 +19,7 @@ export const PATH_NAME = {
     PROFILE: "/profilepage/:id",    
     CART_PAGE: "/cartpage",
     PAYMENT_PAGE: "/paymentpage",
-    CHECKOUT_PAGE: "/checkoutpage",
+    // CHECKOUT_PAGE: "/checkoutpage",
     CHAT_ROOM: "/chatroom/*",
     ACHIEVEMENT_PAGE: "/achievementpage",
     NOTIFICATION_PAGE: "/notifications",
@@ -28,7 +28,6 @@ export const PATH_NAME = {
     USER_SALE_REPORT:"/usersalereport",
     SUCCESS_PAYMENT:"/success-payment",
     FAILURE_PAYMENT:"/failure-payment",
-    FAVORITE_LIST:"/favorite-list",
 
     MODERATOR_DASHBOARD: "/moderatorDashboard",
     MODERATOR_PROFILE: "/moderatorProfile",
@@ -39,12 +38,15 @@ export const PATH_NAME = {
     MODERATOR_COLLECTION: "/moderatorCollection",
     
     ADMIN_DASHBOARD: "/adminDashboard",
-    ADMIN_USERMANGEMENT: "/adminUserManagement",
-    ADMIN_MODERATORMANGEMENT: "/adminModeratorManagement",
-    ADMIN_SYSTEM: "/adminSystem",
-    ADMIN_CATEGORY: "/adminCategories",
-    ADMIN_ANALYTIC: "/adminAnalytics",
-    ADMIN_TRANSACTION: "/adminTransaction",
+    ADMIN_USERS: "/adminUsers",
+    ADMIN_PRODUCT: "/adminProduct",
+    ADMIN_AUCTION: "/adminAuction",
+    ADMIN_REVENUE: "/adminRevenue",
+    ADMIN_REPORT: "/adminReport",
+    // ADMIN_SYSTEM: "/adminSystem",
+    // ADMIN_CATEGORY: "/adminCategories",
+    // ADMIN_ANALYTIC: "/adminAnalytics",
+    // ADMIN_TRANSACTION: "/adminTransaction",
 };
 // domain sau dấu "/" nếu id là 123 thì nó là /123
 // "productdetailpage" chứa sản phẩm của ng bán; "collectiondetailpage" chứa sản phẩm dạng view
