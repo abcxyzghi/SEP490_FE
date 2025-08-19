@@ -1,0 +1,192 @@
+/* Sidebar container */
+.admin-sidebar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    max-width: 236px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 16px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    border: 4px solid #0000;
+    background:
+        linear-gradient(var(--light-1-o60), var(--light-1-o60)) padding-box,
+        linear-gradient(#DC0FFF, #FFD721) border-box;
+    transition: max-width 0.4s ease;
+}
+
+.admin-sidebar.collapsed {
+    width: 100%;
+    max-width: 80px;
+}
+
+/*  --------------------------==================== Logo ====================--------------------------   */
+.admin-sidebar-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.6rem 1rem;
+}
+
+.admin-sidebar-full-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 240px;
+}
+
+.admin-sidebar-sole-logo {
+    display: none;
+    height: auto;
+    width: 40px;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-full-logo {
+    display: none;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-sole-logo {
+    display: block;
+}
+
+
+/*  --------------------------==================== Toggle button ====================--------------------------   */
+.admin-sidebar-toggle-btn {
+    position: absolute;
+    top: 50%;
+    /* Move it outside the sidebar to create the jut effect */
+    right: -20px;
+    transform: translateY(-50%);
+
+    width: 40px;
+    height: 35px;
+    padding: 4px;
+    /* background-color: var(--light-2); */
+    backdrop-filter: blur(8px);
+    /* Make it visually distinct */
+    border: 1px solid var(--light-2);
+    border-radius: 8px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    cursor: pointer;
+
+    -webkit-user-drag: none;
+    /* Vô hiệu kéo-thả */
+    user-select: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+}
+
+.admin-sidebar-toggle-btn:hover {
+    background-color: var(--light-2-o50);
+}
+
+.admin-sidebar-toggle-icon {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+}
+
+/*  --------------------------==================== Links container ====================--------------------------   */
+.admin-sidebar-links-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 10px;
+}
+
+/* Link styles */
+.admin-sidebar-link {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    text-decoration: none;
+    color: var(--dark-3);
+
+    /* so size stays stable */
+    border: 1px solid transparent;
+    border-radius: 16px;
+
+    -webkit-user-drag: none;
+    /* Vô hiệu kéo-thả */
+    user-select: none;
+    /* Vô hiệu bôi đen chọn văn bản */
+}
+
+.admin-sidebar-link .admin-sidebar-icon {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.admin-sidebar-label-style {
+    font-size: 12px;
+    margin-top: 1px;
+}
+
+.admin-sidebar-bottom-links {
+    margin-bottom: 0.5rem;
+}
+
+
+.logoutBtn-style {
+    text-align: left;
+    /* Ensures label alignment */
+    width: 100%;
+    /* Matches the full width of other links */
+    border: none;
+    /* Removes button borders */
+    cursor: pointer;
+}
+
+
+/*  --------------------------==================== Hover effects ====================--------------------------   */
+.admin-sidebar-link:hover {
+    border-color: var(--light-2-o50);
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/*  --------------------------==================== Active link styles ====================--------------------------   */
+.admin-sidebar-link.active {
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--light-2-o50);
+    backdrop-filter: blur(8px);
+}
+
+/* Active link text */
+.admin-sidebar-link.active span {
+    color: var(--primary-2);
+}
+
+.admin-sidebar-link.active .admin-sidebar-icon {
+    transform: scale(1.05);
+    filter: var(--primarySVG-2);
+}
+
+
+/*  --------------------------==================== Collapsed state adjustments ====================--------------------------   */
+.admin-sidebar.collapsed .admin-sidebar-link {
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-link span {
+    display: none;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-link .icon {
+    margin-right: 0;
+}

@@ -12,7 +12,7 @@
 .topUpTab-card {
   width: 100%;
   max-width: 1100px;
-  background: rgba(18, 18, 20, 0.55);
+  background: rgba(22, 22, 24, 0.897);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: 14px;
@@ -51,7 +51,8 @@
 
 /* --------------------------==================== Pack card ====================--------------------------  */
 .topUpTab-pack-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  /* background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)); */
+  background: linear-gradient(180deg, var(--dark-4-o60), var(--dark-5-o50));
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.04);
   padding: 12px;
@@ -72,9 +73,10 @@
 
 /* selected state uses purple-yellow gradient outline */
 .topUpTab-pack-card.selected {
-  box-shadow: 0 12px 36px rgba(106, 0, 255, 0.12);
+  /* box-shadow:  3px 12px 36px rgba(106, 0, 255, 0.22); */
+  box-shadow: rgba(106, 0, 255, 0.12) 0px 54px 55px, rgba(106, 0, 255, 0.12) 0px -12px 30px, rgba(255, 204, 0, 0.12) 0px 4px 6px, rgba(255, 204, 0, 0.12) 0px 12px 13px, rgba(255, 204, 0, 0.12) 0px -3px 5px;
   border: 1px solid transparent;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+  background: linear-gradient(180deg, var(--dark-4-o70), var(--dark-5-o60));
   position: relative;
 }
 
@@ -90,7 +92,7 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  opacity: 0.38;
+  opacity: 0.58;
 }
 
 /* inner layout */
@@ -126,11 +128,15 @@
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--prizeText-color);
-  filter: drop-shadow(3px 4px 6px rgb(33, 163, 7));
+  filter: drop-shadow(3px 2px 2px rgb(33, 163, 7));
   text-shadow:
     1px 1px rgb(33, 163, 7),
     1px 2px rgb(33, 163, 7),
     1px 3px rgb(33, 163, 7);
+}
+
+.topUpTab-pack-card.selected .topUpTab-pack-price {
+  filter: drop-shadow(3px 4px 6px rgb(33, 163, 7));
 }
 
 /*   --------------------------==================== Meta row ====================--------------------------  */
@@ -144,7 +150,7 @@
 .topUpTab-pack-kv {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.082);
   padding: 4px 8px;
   border-radius: 8px;
 }

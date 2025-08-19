@@ -18,11 +18,14 @@ import CollectionDetailPage from "../components/pages/CollectionDetailPage/Colle
 import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDetailpage";
 import Settingpage from "../components/pages/Settingpage/Settingpage";
 import Notificationpage from "../components/pages/Notificationpage/Notificationpage";
+import Activitypage from "../components/pages/Activitypage/Activitypage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
 import Exchangepage from "../components/pages/Exchangepage/Exchangepage";
 import Paymentpage from "../components/pages/Paymentpage/Paymentpage";
-import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
+import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
+import FailurePage from "../components/pages/FailurePage/FailurePage";
+// import Checkoutpage from "../components/pages/Checkoutpage/Checkoutpage";
 import Achievementpage from "../components/pages/Achievementpage/Achievementpage";
 import ChatRoom from "../components/pages/ChatRoom/ChatRoom";
 import UserSaleReport from "../components/pages/UserSaleReport/UserSaleReport";
@@ -33,19 +36,15 @@ import ModReport from "../components/moderatorPages/ModReport/ModReport";
 import ModProduct from "../components/moderatorPages/ModProduct/ModProduct";
 import ModMysteryBox from "../components/moderatorPages/ModMysteryBox/ModMysteryBox";
 import ModAuction from "../components/moderatorPages/ModAuction/ModAuction";
+import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
 
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
-import UserManagement from "../components/adminPages/UserManagement/UserManagement";
-import ModeratorManagement from "../components/adminPages/ModeratorManagement/ModeratorManagement";
-import SystemManagement from "../components/adminPages/SystemManagement/SystemManagement";
-import AdminCategories from "../components/adminPages/AdminCategories/AdminCategories";
-import AdminAnalytics from "../components/adminPages/AdminAnalytics/AdminAnalytics";
-import TransactionManagement from "../components/adminPages/TransactionManagement/TransactionManagement";
-import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
-import SuccessPayment from "../components/pages/SuccessPage/SuccessPage";
-import FailurePage from "../components/pages/FailurePage/FailurePage";
-import FavoriteListPage from "../components/tabs/FavoriteListPage/FavoriteListPage";
-import Activitypage from "../components/pages/Activitypage/Activitypage";
+import AdUserManagement from "../components/adminPages/AdUserManagement/AdUserManagement";
+import AdProductManagement from "../components/adminPages/AdProductManagement/AdProductManagement";
+import AdAuctionManagement from "../components/adminPages/AdAuctionManagement/AdAuctionManagement";
+import AdRevenueReport from "../components/adminPages/AdRevenueReport/AdRevenueReport";
+import AdReportManagement from "../components/adminPages/AdReportManagement/AdReportManagement";
+
 
 export const logisterRoutes = [
     { path: PATH_NAME.REGISTER, element: <Registerpage /> },
@@ -104,11 +103,10 @@ export const moderatorRoutes = [
 
 export const adminRoutes = [
     { path: PATH_NAME.ADMIN_DASHBOARD, element: <AdminDashboard />, role: ['admin'] },
-    { path: PATH_NAME.ADMIN_USERMANGEMENT, element: <UserManagement />, role: ['admin'] },
-    { path: PATH_NAME.ADMIN_MODERATORMANGEMENT, element: <ModeratorManagement />, role: ['admin'] },
-    { path: PATH_NAME.ADMIN_SYSTEM, element: <SystemManagement />, role: ['admin'] },
-    { path: PATH_NAME.ADMIN_CATEGORY, element: <AdminCategories />, role: ['admin'] },
-    { path: PATH_NAME.ADMIN_ANALYTIC, element: <AdminAnalytics />, role: ['admin'] },
-    { path: PATH_NAME.ADMIN_TRANSACTION, element: <TransactionManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_USERS, element: <AdUserManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_PRODUCT, element: <AdProductManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_AUCTION, element: <AdAuctionManagement />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_REVENUE, element: <AdRevenueReport />, role: ['admin'] },
+    { path: PATH_NAME.ADMIN_REPORT, element: <AdReportManagement />, role: ['admin'] },
 ];
 
