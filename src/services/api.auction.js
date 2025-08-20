@@ -135,4 +135,19 @@ export const fetchJoinedAuctionList = async () => {
     console.error("Fetch joined auction list failed:", error);
     throw error;
   }
-};
+}; 
+
+export const fetchAuctionWinner = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/api/auction/win-history",
+      requiresAuth: true, 
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Fetch joined auction list failed:", error);
+    throw error;
+  }
+}; 
