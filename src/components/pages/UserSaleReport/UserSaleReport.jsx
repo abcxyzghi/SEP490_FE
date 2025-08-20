@@ -17,10 +17,10 @@ import {
   getUserSale,
   getAverageRatingsOfSellProduct,
 } from "../../../services/api.user";
-// import { useParams } from "react-router-dom";
 import { Modal } from "antd";
 import { useSelector } from "react-redux";
 import { buildImageUrl } from "../../../services/api.imageproxy";
+import ProductCard from "../../libs/ProductCard/ProductCard";
 
 export default function UserSaleReport() {
   const [activeTab, setActiveTab] = useState("day");
@@ -34,6 +34,7 @@ export default function UserSaleReport() {
   const [comments, setComments] = useState([]);
   const [selectedProductName, setSelectedProductName] = useState(null);
   const [selectedProductRating, setSelectedProductRating] = useState(null);
+
   useEffect(() => {
     const fetchUserSale = async () => {
       try {
@@ -57,13 +58,13 @@ export default function UserSaleReport() {
 
     fetchUserSale();
   }, []);
+
   const handleShowComments = async (productName) => {
     try {
       setSelectedProductName(productName);
       const res = await getAllCommentsOfSellProduct(currentUserId, productName);
       setComments(res.data);
 
-      // Tìm productId từ topProducts
       const product = topProducts.find((p) => p.productName === productName);
 
       if (product) {
@@ -73,42 +74,55 @@ export default function UserSaleReport() {
           );
           setSelectedProductRating(ratingRes.data);
         } catch (err) {
-          console.error("Lỗi khi lấy rating:", err);
+          console.error("Error fetching rating:", err);
           setSelectedProductRating(null);
         }
       }
 
       setIsModalOpen(true);
     } catch (err) {
-      console.error("Lỗi khi lấy bình luận sản phẩm:", err);
+      console.error("Error fetching product comments:", err);
     }
   };
+
   const renderBarChart = (title, data, timeLabel) => (
-    <div className="chart-container bar-chart">
-      <h3 className="chart-title">{title} - Đơn hàng & Sản phẩm</h3>
-      <ResponsiveContainer>
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="name"
-            label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="orders" fill="#82ca9d" name="Số đơn hàng" />
-          <Bar dataKey="productsSold" fill="#ffc658" name="Sản phẩm đã bán" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
+  <div className="chart-container bar-chart">
+    <h3 className="chart-title">{title} - Orders & Products</h3>
+    <ResponsiveContainer>
+      <BarChart
+        data={data}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        barCategoryGap="40%" // tăng khoảng cách giữa nhóm
+        barGap={6}           // khoảng cách giữa cột trong nhóm
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="name"
+          label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+        />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar
+          dataKey="orders"
+          fill="#82ca9d"
+          name="Orders"
+          barSize={25} // hẹp thanh
+        />
+        <Bar
+          dataKey="productsSold"
+          fill="#ffc658"
+          name="Products Sold"
+          barSize={25} // hẹp thanh
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
 
   const renderLineChart = (title, data, timeLabel) => (
     <div className="chart-container line-chart">
-      <h3 className="chart-title">{title} - Doanh thu</h3>
+      <h3 className="chart-title">{title} - Revenue</h3>
       <ResponsiveContainer>
         <LineChart
           data={data}
@@ -132,8 +146,8 @@ export default function UserSaleReport() {
           <Line
             type="monotone"
             dataKey="revenue"
-            stroke="#8884d8"
-            name="Doanh thu"
+            stroke="#FF4DFF"
+            name="Revenue"
             strokeWidth={2}
             dot={{ r: 3 }}
           />
@@ -141,23 +155,46 @@ export default function UserSaleReport() {
       </ResponsiveContainer>
     </div>
   );
-  const renderTopProductsChart = (data) => (
+
+    const renderTopProductsChart = (data) => (
     <div className="chart-container top-products-chart">
-      <h3 className="chart-title">🔥 Top sản phẩm bán chạy</h3>
-      <ResponsiveContainer width="100%" height={400}>
+      <h3 className="chart-title">🔥 Top Selling Products</h3>
+      <ResponsiveContainer width="100%" height={420}>
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 90 }}
+          margin={{ top: 30, right: 40, left: 20, bottom: 100 }}
+          barCategoryGap="20%"  // giảm khoảng cách giữa nhóm cột
+          barGap={6}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="productName"
             angle={-25}
-            textAnchor="end"
+            textAnchor="middle"
             interval={0}
             height={100}
+            tick={(props) => {
+              const { x, y, payload } = props;
+              const text =
+                payload.value.length > 20
+                  ? payload.value.substring(0, 20) + "..."
+                  : payload.value;
+              return (
+                <text
+                  x={x}
+                  y={y}
+                  dy={16}
+                  textAnchor="middle"
+                  fill="white"
+                  fontSize={14}
+                >
+                  {text}
+                </text>
+              );
+            }}
           />
-          <YAxis yAxisId="left" />
+
+          <YAxis yAxisId="left" tick={{ fill: "white" }} />
           <YAxis
             yAxisId="right"
             orientation="right"
@@ -167,34 +204,39 @@ export default function UserSaleReport() {
                 currency: "VND",
               }).format(value)
             }
+            tick={{ fill: "white" }}
           />
           <Tooltip
             formatter={(value, name) =>
-              name === "Doanh thu"
+              name === "Revenue"
                 ? new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(value)
+                  style: "currency",
+                  currency: "VND",
+                }).format(value)
                 : value
             }
           />
           <Legend />
+
           <Bar
             yAxisId="left"
             dataKey="totalSold"
             fill="#82ca9d"
-            name="Số lượng đã bán"
+            name="Quantity Sold"
+            barSize={40} // tăng độ dày cột
           />
           <Bar
             yAxisId="right"
             dataKey="totalRevenue"
             fill="#8884d8"
-            name="Doanh thu"
+            name="Revenue"
+            barSize={40} // tăng độ dày cột
           />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
+
   return (
     <>
       <div className="statistics-wrapper">
@@ -203,46 +245,46 @@ export default function UserSaleReport() {
             className={activeTab === "day" ? "active" : ""}
             onClick={() => setActiveTab("day")}
           >
-            📅 Ngày
+            📅 Day
           </button>
           <button
             className={activeTab === "month" ? "active" : ""}
             onClick={() => setActiveTab("month")}
           >
-            🗓️ Tháng
+            🗓️ Month
           </button>
           <button
             className={activeTab === "year" ? "active" : ""}
             onClick={() => setActiveTab("year")}
           >
-            📈 Năm
+            📈 Year
           </button>
           <button
             className={activeTab === "top" ? "active" : ""}
             onClick={() => setActiveTab("top")}
           >
-            🔥 Top Sản Phẩm
+            🔥 Top Products
           </button>
         </div>
 
         {activeTab === "day" && (
           <>
-            {renderBarChart("📅 Thống kê theo ngày", byDay)}
-            {renderLineChart("📅 Thống kê theo ngày", byDay)}
+            {renderBarChart("📅 Daily Statistics", byDay)}
+            {renderLineChart("📅 Daily Statistics", byDay)}
           </>
         )}
 
         {activeTab === "month" && (
           <>
-            {renderBarChart("🗓️ Thống kê theo tháng", byMonth)}
-            {renderLineChart("🗓️ Thống kê theo tháng", byMonth)}
+            {renderBarChart("🗓️ Monthly Statistics", byMonth)}
+            {renderLineChart("🗓️ Monthly Statistics", byMonth)}
           </>
         )}
 
         {activeTab === "year" && (
           <>
-            {renderBarChart("📈 Thống kê theo năm", byYear)}
-            {renderLineChart("📈 Thống kê theo năm", byYear)}
+            {renderBarChart("📈 Yearly Statistics", byYear)}
+            {renderLineChart("📈 Yearly Statistics", byYear)}
           </>
         )}
 
@@ -252,83 +294,49 @@ export default function UserSaleReport() {
 
             <div className="top-products-list">
               {topProducts.map((product, index) => (
-                <div
+                <ProductCard
                   key={index}
-                  style={{
-                    border: "1px solid #ccc",
-                    borderRadius: 8,
-                    padding: 16,
-                    marginTop: 12,
-                    backgroundColor: "#fff",
-                    color: "#000",
-                  }}
-                >
-                  <h4>{product.productName}</h4>
-                  <p>Số lượng bán: {product.totalSold}</p>
-                  <p>Doanh thu: {product.totalRevenue}</p>
-                  <img
-                    src={buildImageUrl(product.urlImage)}
-                    alt={product.productName}
-                    style={{ maxWidth: "100%", height: "auto" }}
-                  />
-                  <button
-                    onClick={() => handleShowComments(product.productName)}
-                  >
-                    💬 Xem bình luận
-                  </button>
-                </div>
+                  product={product}
+                  onShowComments={handleShowComments}
+                />
               ))}
             </div>
 
             <Modal
+              className="product-modal"
               open={isModalOpen}
-              title={`Bình luận về sản phẩm: ${selectedProductName}`}
+              title={`Comments for product: ${selectedProductName}`}
               onCancel={() => {
                 setIsModalOpen(false);
-                setSelectedProductRating(null); // Reset rating khi đóng modal
+                setSelectedProductRating(null);
               }}
               footer={null}
             >
-              <div style={{ marginBottom: 10 }}>
-                ⭐ Đánh giá trung bình:{" "}
+              <div className="product-modal-rating">
+                ⭐ Average Rating:{" "}
                 {selectedProductRating !== null
                   ? selectedProductRating
-                  : "Đang tải..."}
+                  : "Loading..."}
               </div>
 
               {comments.length === 0 ? (
-                <p>Không có bình luận nào.</p>
+                <p style={{ color: "#ccc" }}>No comments available.</p>
               ) : (
-                <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                <ul className="product-comment-list">
                   {comments.map((comment, index) => (
-                    <li
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 12,
-                        padding: "10px 0",
-                        borderBottom: "1px solid #eee",
-                      }}
-                    >
+                    <li key={index} className="product-comment-item">
                       <img
                         src={buildImageUrl(comment.profileImage)}
                         alt={comment.username}
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          marginTop: 2,
-                        }}
+                        className="product-comment-avatar"
                       />
-                      <div>
-                        <strong>{comment.username}</strong>{" "}
-                        <small style={{ color: "#888", marginLeft: 6 }}>
+                      <div className="product-comment-content">
+                        <strong>{comment.username}</strong>
+                        <small className="product-comment-date">
                           {new Date(comment.createdAt).toLocaleString("vi-VN")}
                         </small>
-                        <p style={{ margin: "4px 0" }}>
-                          {comment.content || <i>(Không có nội dung)</i>}
+                        <p className="product-comment-text">
+                          {comment.content || <i>(No content)</i>}
                         </p>
                       </div>
                     </li>

@@ -195,3 +195,17 @@ export const createProduct = async (product) => {
     return null;
   }
 };
+export const cancelSellProduct = async (sellProductId) => {
+  try {
+    const response = await apiWithFallback({
+      method: "patch", 
+      url: "/api/SellProduct/cancel-sell-product",
+      params: { sellProductId }, 
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+     toast.error(error.response?.data?.error || "Error remove product on sale");
+    return null;
+  }
+};

@@ -15,7 +15,7 @@ const primaryAxios = axios.create({
 
 const backupAxios = axios.create({
   baseURL: BACKUP_CS_API,
-  timeout: 5000,
+  // timeout: 25000,
 });
 
 const pythonAxios = axios.create({
@@ -25,7 +25,7 @@ const pythonAxios = axios.create({
 
 const backupPythonAxios = axios.create({
   baseURL: BACKUP_PY_API,
-  timeout: 5000,
+  // timeout: 25000,
 });
 
 export const IMAGE_BASE_URL = `${CS_API}/api/ImageProxy`;
@@ -118,7 +118,10 @@ function attachInterceptorsTo(instance) {
     },
     async (error) => {
       const originalRequest = error.config;
-
+      // Nếu chính request refresh token bị lỗi thì throw luôn để vào catch
+      if (originalRequest.url.includes('/api/user/auth/refresh')) {
+        throw new Error("Refresh token request failed");
+      }
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
@@ -158,10 +161,10 @@ function attachInterceptorsTo(instance) {
 // Fallback API cho C# backend
 const apiWithFallback = async (config) => {
   try {
-    return await primaryAxios(config);
+    return await backupAxios(config);
   } catch (err) {
     console.warn("[Fallback] C# API failed. Retrying with backup...");
-    return await backupAxios(config);
+    return await primaryAxios(config);
   }
 };
 

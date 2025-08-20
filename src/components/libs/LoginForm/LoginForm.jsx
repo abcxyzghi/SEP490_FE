@@ -5,22 +5,15 @@ import OtpDialog from '../OtpDialog/OtpDialog';
 import ForgotPasswordDialog from '../ForgotPasswordDialog/ForgotPasswordDialog';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import { confirmOtpApi, loginApi, sendVerifyEmailApi } from '../../../services/api.auth';
 import { PATH_NAME } from '../../../router/Pathname';
 import { useDispatch } from 'react-redux';
 import { setToken, setUser } from '../../../redux/features/authSlice';
 import { jwtDecode } from "jwt-decode";
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-export default function LoginForm() {
+export default function LoginForm({ showSnackbar = () => { } }) {
   const [form, setForm] = useState({ userName: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'warning' });
   const [openForgotDialog, setOpenForgotDialog] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +38,7 @@ export default function LoginForm() {
     const { userName, password } = form;
     if (!userName.trim() || !password.trim()) {
       setIsLoading(false);
-      return setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'error' });
+      return showSnackbar('Please fill in all fields.', 'error');
     }
 
     try {
@@ -58,9 +51,9 @@ export default function LoginForm() {
         const decoded = jwtDecode(data.access_token);
         const role = decoded.role;   // decode to get "role" inside token payload
         // console.log(role)  //debugg
-        
+
         dispatch(setToken(data.access_token));
-        setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
+        showSnackbar('Login successful!', 'success');
 
         // role-based redirect
         if (role === 'admin') {
@@ -73,35 +66,23 @@ export default function LoginForm() {
 
       } else if (data?.is_email_verification === false) {
         setEmailToVerify(data.email);
-        setSnackbar({ open: true, message: 'Please verify your email before logging in.', severity: 'warning' });
+        showSnackbar('Please verify your email before logging in.', 'warning');
         setShowOtpSection(true); // Mở dialog OTP
         await sendVerifyEmailApi(data.email);
       } else if (data?.success === false && data?.error_code === 403) {
-        setSnackbar({ open: true, message: data.error || 'Incorrect username or password!', severity: 'error' });
+        showSnackbar( data.error || 'Incorrect username or password!', 'error');
       } else {
-        setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
+        showSnackbar('Login failed. Please try again later.', 'error');
       }
     } catch (error) {
       console.error('API call error:', error);
       const responseData = error?.response?.data;
       if (responseData?.error_code === 403) {
-        setSnackbar({
-          open: true,
-          message: responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts.',
-          severity: 'error',
-        });
+        showSnackbar( responseData.error || 'You will be restricted for 30 minutes after 10 failed login attempts.', 'error');
       } else if (responseData?.error_code === 404) {
-        setSnackbar({
-          open: true,
-          message: responseData.error || 'Login Failed! Incorrect username or password!',
-          severity: 'error',
-        });
+        showSnackbar( responseData.error || 'Login Failed! Incorrect username or password!', 'error');
       } else {
-        setSnackbar({
-          open: true,
-          message: 'Login failed. Please check your credentials.',
-          severity: 'error',
-        });
+        showSnackbar('Login failed. Please check your credentials.', 'error');
       }
     } finally {
       setIsLoading(false);
@@ -110,7 +91,8 @@ export default function LoginForm() {
 
   const handleVerifyEmail = async (code) => {
     if (!code || code.length !== 6) {
-      return setSnackbar({ open: true, message: 'Please enter the 6-digit OTP.', severity: 'error' });
+      // return setSnackbar({ open: true, message: 'Please enter the 6-digit OTP.', severity: 'error' });
+      return showSnackbar('Please enter the 6-digit OTP.', 'warning');
     }
 
     try {
@@ -118,16 +100,16 @@ export default function LoginForm() {
       const result = res.data;
 
       if (result.success) {
-        setSnackbar({ open: true, message: 'Email verified successfully! Please login again.', severity: 'success' });
+        showSnackbar('Email verified successfully! Please login again.', 'success');
         setShowOtpSection(false); // đóng OTP section nếu có
         setEmailToVerify('');
         navigate('/login');
       } else {
-        setSnackbar({ open: true, message: res.message || 'Invalid verification code.', severity: 'error' });
+        showSnackbar( res.message || 'Invalid verification code.', 'error');
       }
     } catch (err) {
       console.error('Verify email error:', err);
-      setSnackbar({ open: true, message: 'Verification failed. Please try again.', severity: 'error' });
+      showSnackbar('Verification failed. Please try again later.', 'error');
     }
   };
 
@@ -155,7 +137,7 @@ export default function LoginForm() {
             value={form.password}
             onChange={handleChange}
           />
-          <IconButton className="login-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small">
+          <IconButton className="login-toggle-icon" onClick={() => setShowPassword(!showPassword)} size="small" sx={{ color: "white" }}>
             {showPassword ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </div>
@@ -183,12 +165,11 @@ export default function LoginForm() {
         <div style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>{error}</div>
       )}
 
-      {/* Snackbar */}
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      {/* Navigate note */}
+      <p className="login-botNote oxanium-light">
+        Don't have an account? <span className="login-botNote-link" onClick={() => navigate(PATH_NAME.REGISTER)}>Register</span>
+      </p>
+
 
       {/* Forgot Password Dialog */}
       <ForgotPasswordDialog

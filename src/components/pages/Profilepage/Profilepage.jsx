@@ -2,8 +2,10 @@
 import { React, useEffect, useState, useCallback } from "react";
 import "./Profilepage.css";
 import { Snackbar, Alert } from "@mui/material";
+import Particles from "../../libs/Particles/Particles";
 import MessageModal from "../../libs/MessageModal/MessageModal";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { Pathname } from "../../../router/Pathname";
 import { useSelector } from "react-redux";
 import {
   getProfile,
@@ -12,8 +14,15 @@ import {
   createReport,
   getRatingOfUser,
 } from "../../../services/api.user";
-import { format } from "date-fns";
+import {
+  followUser,
+  getFollowers,
+  getFollowing,
+  unfollowUser,
+} from "../../../services/api.subscription";
+import { getpublicmedalofuser } from "../../../services/api.achivement";
 import { buildImageUrl } from "../../../services/api.imageproxy";
+import { format } from "date-fns";
 import SwitchTabs from "../../libs/SwitchTabs/SwitchTabs";
 import UserOnSale from "../../tabs/UserOnSale/UserOnSale";
 import UserAchievements from "../../tabs/UserAchievements/UserAchievements";
@@ -23,16 +32,10 @@ import UserCollectionList from "../../tabs/UserCollectionList/UserCollectionList
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 import FollowIcon from "../../../assets/Icon_line/User_add.svg";
+import FollowedIcon from "../../../assets/Icon_line/User_Check.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
-import {
-  followUser,
-  getFollowers,
-  getFollowing,
-  unfollowUser,
-} from "../../../services/api.subscription";
-import { Modal } from "antd";
 
 export default function Profilepage() {
   const { id } = useParams();
@@ -47,6 +50,7 @@ export default function Profilepage() {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
+  const [pauseOnHoverZone, setPauseOnHoverZone] = useState(false);
   const [modal, setModal] = useState({
     open: false,
     type: "default",
@@ -69,6 +73,33 @@ export default function Profilepage() {
   const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [productNumber, setProductNumber] = useState(0);
+  const [medals, setMedals] = useState([]);
+  const [medalsLoading, setMedalsLoading] = useState(true);
+  useEffect(() => {
+    const fetchMedals = async () => {
+      setMedalsLoading(true);
+      try {
+        const userId = id || currentUserId;
+        if (!userId) {
+          setMedals([]);
+          return;
+        }
+        const res = await getpublicmedalofuser(userId);
+        if (res && res.status && Array.isArray(res.data)) {
+          setMedals(res.data);
+        } else {
+          setMedals([]);
+        }
+      } catch (err) {
+        console.error("❌ Lỗi khi lấy huy chương:", err);
+        setMedals([]);
+      } finally {
+        setMedalsLoading(false);
+      }
+    };
+
+    fetchMedals();
+  }, [id, currentUserId]);
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -179,7 +210,7 @@ export default function Profilepage() {
 
   if (loading || isLoading)
     return (
-      <div className="w-full">
+      <div className="w-full sm:px-2 ">
         {/* Banner skeleton */}
         <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
 
@@ -206,9 +237,22 @@ export default function Profilepage() {
             </div>
 
             {/* Right skeleton action */}
-            <div className="profilepage-right-action flex gap-3">
-              <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
-              <div className="skeleton h-10 w-32 rounded bg-gray-600/30" />
+            <div className="profilepage-right flex flex-col gap-4">
+              {/* Action buttons skeleton */}
+              <div className="profilepage-right-action flex gap-3">
+                <div className="skeleton h-10 w-28 rounded-lg bg-gray-600/30" />
+                <div className="skeleton h-10 w-38 rounded-lg bg-gray-600/30" />
+              </div>
+
+              {/* Figurine stats skeleton */}
+              <div className="profilepage-right-figurie flex items-center divide-x divide-gray-500/40 rounded-lg p-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="flex flex-col items-center px-3">
+                    <div className="skeleton h-4 w-14 rounded bg-gray-600/30 mb-2" />
+                    <div className="skeleton h-4 w-10 rounded bg-gray-600/30" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -246,33 +290,33 @@ export default function Profilepage() {
   // Construct the tabs array based on isMyProfile
   const tabs = isMyProfile
     ? [
-        {
-          label: "Mystery Boxes",
-          content: <UserBox />,
-        },
-        {
-          label: "Collections",
-          content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
-        },
-        {
-          label: "On Sale",
-          content: (
-            <UserOnSale products={products} productsLoading={productsLoading} />
-          ),
-        },
-      ]
+      {
+        label: "Mystery Boxes",
+        content: <UserBox />,
+      },
+      {
+        label: "Collections",
+        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
+      },
+      {
+        label: "On Sale",
+        content: (
+          <UserOnSale products={products} productsLoading={productsLoading} />
+        ),
+      },
+    ]
     : [
-        {
-          label: "Collections",
-          content: <UserAchievements />,
-        },
-        {
-          label: "On Sale",
-          content: (
-            <UserOnSale products={products} productsLoading={productsLoading} />
-          ),
-        },
-      ];
+      {
+        label: "Collections",
+        content: <UserAchievements />,
+      },
+      {
+        label: "On Sale",
+        content: (
+          <UserOnSale products={products} productsLoading={productsLoading} />
+        ),
+      },
+    ];
 
   // change createDate format to month year
   const joinedDate = format(new Date(profile.createDate), "MMMM yyyy");
@@ -355,19 +399,36 @@ export default function Profilepage() {
   };
 
   return (
-    <div>
+    <div
+      onMouseEnter={() => setPauseOnHoverZone(false)}   // won't pause while hovered
+      onMouseLeave={() => setPauseOnHoverZone(false)}
+    >
       {/* Head profile */}
       <div className="w-full">
         {/* Top banner */}
-        <div
+        {/* <div
           className="profilepage-banner"
           style={{
             backgroundImage: `url(https://i.pinimg.com/736x/86/87/d2/8687d2981dd01ed750fae1a55830735e.jpg)`,
           }}
-        />
+        /> */}
+        <div className='profilepage-banner'>
+          <Particles
+            particleColors={['#960BAF', '#F8AC52', '#0db6e0']}
+            particleCount={370}
+            particleSpread={10}
+            speed={0.2}
+            particleBaseSize={100}
+            moveParticlesOnHover={true}
+            pauseOnHoverZone={pauseOnHoverZone}
+            alphaParticles={false}
+            disableRotation={false}
+          />
+        </div>
+
 
         {/* Profile Info Section */}
-        <div className="profilepage-wrapper">
+        <div className="profilepage-wrapper" >
           {/* Profile image */}
           <div className="profilepage-img avatar">
             <div className="profilepage-avatar-container">
@@ -399,29 +460,6 @@ export default function Profilepage() {
               </div>
 
               <div className="profilepage-buttons">
-                <div style={{ color: "white" }}>
-                  <h3>⭐ Đánh giá của người dùng:</h3>
-                  <p>{rating}</p>
-                </div>
-                <div style={{ color: "white" }}>
-                  <h3>On sale:</h3>
-                  <p>{productNumber}</p>
-                </div>
-                <div style={{ color: "white" }}>
-                  <h3>Followers:</h3>
-                  <p>{followers.length}</p>
-                </div>
-
-                <div style={{ color: "white" }}>
-                  <h3>Following:</h3>
-                  <p>{following.length}</p>
-                </div>
-                <button
-                  className="profilepage-btn-viewfollows oxanium-semibold"
-                  onClick={() => setIsFollowModalOpen(true)}
-                >
-                  Followers / Following
-                </button>
                 {isMyProfile ? (
                   <>
                     <button
@@ -443,8 +481,8 @@ export default function Profilepage() {
                       onClick={handleFollowToggle}
                     >
                       <img
-                        src={FollowIcon}
-                        alt="Follow"
+                        src={hasFollowed ? FollowedIcon : FollowIcon}
+                        alt={hasFollowed ? "Following" : "Follow"}
                         className="profilepage-follow-icon"
                       />
                       {hasFollowed ? "Following" : "Follow"}
@@ -456,7 +494,7 @@ export default function Profilepage() {
                           showModal(
                             "warning",
                             "Unauthorized",
-                            "Bạn cần đăng nhập để nhắn tin."
+                            "You need to log in to message."
                           );
                           return;
                         }
@@ -464,7 +502,7 @@ export default function Profilepage() {
                           showModal(
                             "warning",
                             "Error",
-                            "Không tìm thấy user để nhắn tin."
+                            "No user found to message."
                           );
                           return;
                         }
@@ -481,125 +519,205 @@ export default function Profilepage() {
                   </>
                 )}
               </div>
-              <Modal
-                title="Followers & Following"
-                open={isFollowModalOpen}
-                onCancel={() => setIsFollowModalOpen(false)}
-                footer={null}
-              >
-                <div>
-                  <h4>Followers</h4>
-                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-                    {followers.length > 0 ? (
-                      followers.map((follower) => (
-                        <li
-                          key={follower.followerId}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: 8,
-                          }}
-                        >
-                          <img
-                            src={buildImageUrl(follower.urlImage, useBackupImg)}
-                            onError={() => setUseBackupImg(true)}
-                            alt={follower.followerName}
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: "50%",
-                              marginRight: 8,
-                              objectFit: "cover",
-                            }}
-                          />
-                          <span>{follower.followerName}</span>
-                        </li>
-                      ))
-                    ) : (
-                      <li>Chưa có ai theo dõi</li>
-                    )}
-                  </ul>
-
-                  <h4 style={{ marginTop: 16 }}>Following</h4>
-                  <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-                    {following.length > 0 ? (
-                      following.map((followed) => (
-                        <li
-                          key={followed.followerId}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: 8,
-                          }}
-                        >
-                          <img
-                            src={buildImageUrl(followed.urlImage, useBackupImg)}
-                            onError={() => setUseBackupImg(true)}
-                            alt={followed.userName}
-                            style={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: "50%",
-                              marginRight: 8,
-                              objectFit: "cover",
-                            }}
-                          />
-                          <span>{followed.userName}</span>
-                        </li>
-                      ))
-                    ) : (
-                      <li>Chưa theo dõi ai</li>
-                    )}
-                  </ul>
-                </div>
-              </Modal>
             </div>
 
-            {/* Right extra buttons */}
-            <div className="profilepage-right-action">
-              {isMyProfile ? (
-                ""
-              ) : (
+            {/* Right section */}
+            <div className="profilepage-right">
+              {/* Right buttons */}
+              <div className="profilepage-right-action">
+                {isMyProfile ? (
+                  ""
+                ) : (
+                  <button
+                    className="profilepage-btn-report oxanium-semibold"
+                    onClick={() => {
+                      if (!user || user.role !== "user") {
+                        showModal(
+                          "warning",
+                          "Unauthorized",
+                          "You're not permitted to execute this action"
+                        );
+                        return;
+                      }
+                      setShowReportModal(true);
+                    }}
+                  >
+                    <img
+                      src={ReportIcon}
+                      alt="Report"
+                      className="profilepage-report-icon"
+                    />
+                    Report
+                  </button>
+                )}
                 <button
-                  className="profilepage-btn-report oxanium-semibold"
-                  onClick={() => {
-                    if (!user || user.role !== "user") {
-                      showModal(
-                        "warning",
-                        "Unauthorized",
-                        "You're not permitted to execute this action"
-                      );
-                      return;
-                    }
-                    setShowReportModal(true);
-                  }}
+                  className="profilepage-btn-copy oxanium-semibold"
+                  onClick={handleCopyProfileLink}
                 >
                   <img
-                    src={ReportIcon}
-                    alt="Report"
-                    className="profilepage-report-icon"
+                    src={CopyLinkIcon}
+                    alt="Copy"
+                    className="profilepage-copyLink-icon"
                   />
-                  Report
+                  Copy profile link
                 </button>
-              )}
-              <button
-                className="profilepage-btn-copy oxanium-semibold"
-                onClick={handleCopyProfileLink}
-              >
-                <img
-                  src={CopyLinkIcon}
-                  alt="Copy"
-                  className="profilepage-copyLink-icon"
-                />
-                Copy profile link
-              </button>
+              </div>
+
+              {/* Right figures */}
+              <div className="profilepage-right-figurie oxanium-regular">
+                <div
+                  className="profilepage-figurie-item profilepage-figurie-clickable"
+                  onClick={() => setIsFollowModalOpen(true)}
+                >
+                  <h3>Followers</h3>
+                  <p>{followers.length}</p>
+                </div>
+
+                <div
+                  className="profilepage-figurie-item profilepage-figurie-clickable"
+                  onClick={() => setIsFollowModalOpen(true)}
+                >
+                  <h3>Following</h3>
+                  <p>{following.length}</p>
+                </div>
+
+                <div className="profilepage-figurie-item">
+                  <h3>On sale</h3>
+                  <p>{productNumber}</p>
+                </div>
+
+                <div className="profilepage-figurie-item">
+                  <h3>Avg review</h3>
+                  <p>⭐ {rating}</p>
+                </div>
+                {/* Medals Section */}
+                <div className="profilepage-medals mt-4">
+                  <h3 className="oxanium-semibold">Achievements</h3>
+                  {medalsLoading ? (
+                    <p className="text-gray-400">Loading medals...</p>
+                  ) : medals.length > 0 ? (
+                    <div className="flex flex-wrap gap-3 mt-2">
+                      {medals.map((medal) => (
+                        <div
+                          key={medal.medalId}
+                          className="flex flex-col items-center"
+                        >
+                          <img
+                            src={buildImageUrl(medal.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={medal.medalName}
+                            className="w-12 h-12 object-cover rounded-full"
+                          />
+                          <span className="text-xs mt-1 text-center">
+                            {medal.medalName}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-400">No medals yet</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Modal Followers / Following */}
+      {isFollowModalOpen && (
+        <div
+          className="profilepage-fllw-modal-overlay"
+          onClick={() => setIsFollowModalOpen(false)}
+        >
+          <div
+            className="profilepage-fllw-modal"
+            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+          >
+            {/* Close Button */}
+            <button
+              className="profilepage-fllw-close-btn"
+              onClick={() => setIsFollowModalOpen(false)}
+            >
+              ⨉
+            </button>
+
+            <h2 className="profilepage-fllw-title oleo-script-bold">
+              Followers & Following
+            </h2>
+
+            {/* Followers List */}
+            <h4 className="profilepage-fllw-section-title oxanium-semibold">
+              Followers
+            </h4>
+            <ul className="profilepage-fllw-list">
+              {followers.length > 0 ? (
+                followers.map((follower) => (
+                  <li
+                    key={`follower-${follower.followerId}`}
+                    className="profilepage-fllw-item oxanium-regular"
+                  >
+                    <Link
+                      to={Pathname("PROFILE").replace(":id", follower.userId)}
+                      className="profilepage-fllw-link"
+                    >
+                      <img
+                        src={buildImageUrl(follower.urlImage, useBackupImg)}
+                        onError={() => setUseBackupImg(true)}
+                        alt={follower.followerName}
+                        className="profilepage-fllw-avatar"
+                      />
+                      <span>{follower.followerName}</span>
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="profilepage-fllw-empty">
+                  Not followed by anyone
+                </li>
+              )}
+            </ul>
+
+            {/* Following List */}
+            <h4 className="profilepage-fllw-section-title oxanium-semibold">
+              Following
+            </h4>
+            <ul className="profilepage-fllw-list">
+              {following.length > 0 ? (
+                following.map((followed) => (
+                  <li
+                    key={`following-${followed.followerId}`}
+                    className="profilepage-fllw-item oxanium-regular"
+                  >
+                    <Link
+                      to={Pathname("PROFILE").replace(":id", followed.userId)}
+                      className="profilepage-fllw-link"
+                    >
+                      <img
+                        src={buildImageUrl(followed.urlImage, useBackupImg)}
+                        onError={() => setUseBackupImg(true)}
+                        alt={followed.userName}
+                        className="profilepage-fllw-avatar"
+                      />
+                      <span>{followed.userName}</span>
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="profilepage-fllw-empty">
+                  Not following anyone yet
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* Tabs switcher */}
-      <div className="tabs-switcher-section">
+      <div className="tabs-switcher-section"
+        onMouseEnter={() => setPauseOnHoverZone(false)}   // won't pause while hovered
+        onMouseLeave={() => setPauseOnHoverZone(false)}
+      >
         <SwitchTabs
           tabs={tabs}
           activeTab={activeTab}

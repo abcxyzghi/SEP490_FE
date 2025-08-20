@@ -71,7 +71,7 @@ export default function Auctionpage() {
 
 
       {/* Guidebook */}
-      <div className="p-10">
+      {/* <div className="p-10">
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded-lg"
           onClick={() => setOpen(true)}
@@ -80,10 +80,10 @@ export default function Auctionpage() {
         </button>
 
         <Guidebook isOpen={open} onClose={() => setOpen(false)} steps={steps} />
-      </div>
+      </div> */}
 
       {/* Confirm modal */}
-      <div style={{ padding: '2rem' }}>
+      {/* <div style={{ padding: '2rem' }}>
         <button className="bg-green-600 text-white px-4 py-2 rounded-l" onClick={handleOpenModal}>
           Open Confirm Modal
         </button>
@@ -95,7 +95,7 @@ export default function Auctionpage() {
           title="Are you sure?"
           message="This action cannot be undone."
         />
-      </div>
+      </div> */}
 
     </div>
   )
