@@ -1,13 +1,21 @@
 .MainP-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  /* use dynamic viewport height */
+  height: 100dvh;
 }
 
 .MainP-content {
-  /* max-width: 1990px;
-  margin: 0 auto; */
   flex: 1; /* take remaining space */
+}
+
+/* Special mode for ChatRoom */
+.MainP-content.chatroom-mode {
+  flex: 1 1 auto;
+  display: flex;            /* so child can flex to fill */
+  overflow: hidden;         /* page itself won't scroll here */
+  min-height: 0;    
 }
 
 @media (min-width: 2000px) {

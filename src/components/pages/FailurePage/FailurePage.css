@@ -1,0 +1,97 @@
+.failurepage-container {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
+  color: var(--light-1);
+  padding: 20px;
+}
+
+.failurepage-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-radius: 20px;
+  padding: 40px 60px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4),
+              0 0 40px rgba(255, 50, 50, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.failurepage-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  animation: shake 1.2s infinite;
+}
+
+.failurepage-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ff4d4d, #a020f0);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+
+.failurepage-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 30px;
+}
+
+.failurepage-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.failurepage-btn {
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.failurepage-btn.failurepage-tryagainText {
+  color: #fff;
+  background: linear-gradient(135deg, #ff4d4d, #ff8c8c);
+}
+
+.failurepage-btn.failurepage-tryagainText:hover {
+  transform: translateX(-3px);
+  box-shadow: 0 8px 20px rgba(255, 77, 77, 0.35);
+}
+
+.failurepage-btn.failurepage-homeText {
+  color: #0b0b0b;
+  background: linear-gradient(135deg, #FFD700, #A020F0);
+}
+
+.failurepage-btn.failurepage-homeText:hover {
+  transform: translateX(3px);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.35);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
