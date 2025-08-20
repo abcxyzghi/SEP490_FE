@@ -35,6 +35,7 @@ export const PATH_NAME = {
     MODERATOR_MYSTERYBOX: "/moderatorMysteryBox",
     MODERATOR_AUCTION: "/moderatorAuction",
     MODERATOR_COLLECTION: "/moderatorCollection",
+    MODERATOR_WITHDRAW_REQUEST: "/moderatorWithdrawRequest",
     
     ADMIN_DASHBOARD: "/adminDashboard",
     ADMIN_USERMANGEMENT: "/adminUserManagement",

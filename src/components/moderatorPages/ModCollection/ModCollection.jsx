@@ -47,18 +47,24 @@ export default function ModCollection() {
   };
 
   const handleCreateAchievement = async () => {
-    const name = prompt("Nhập tên Achievement:");
-    if (!name) return;
+  const name = prompt("Nhập tên Achievement:");
+  if (!name) return;
 
+  try {
     const res = await createAchievement(selectedCollection.id, name);
-    if (res) {
+    if (res.status) {
       toast.success("Achievement created!");
       handleViewAchievement(selectedCollection);
+    } else {
+      toast.error(res.error || "Can't create Achievement");
     }
-  };
+  } catch (err) {
+    toast.error("Lỗi kết nối server");
+  }
+};
 
   const handleAddReward = async () => {
-    if (!conditions || !file || !quantityBox) {
+    if (!conditions || !quantityBox) {
       toast.error("Vui lòng nhập đủ thông tin reward");
       return;
     }

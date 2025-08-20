@@ -253,7 +253,12 @@ body {
   align-items: center;
   z-index: 1000;
 }
-
+.mod-collection-achievement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
 .popup-container {
   background:  rgb(39, 32, 69);
   padding: 20px;

@@ -1,0 +1,140 @@
+.mod-withdraw-container {
+  padding: 20px;
+}
+
+.mod-withdraw-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #0bd8b9;
+  text-shadow: 0 0 10px rgba(7, 160, 157, 0.567);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.tab-btn {
+  padding: 8px 16px;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.tab-btn.active {
+  background: #0bb19e;
+  color: white;
+}
+
+/* Card list */
+.mod-withdraw-request-card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+/* Card */
+.withdraw-request-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+.withdraw-request-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Status */
+.status-approved {
+  color: green;
+  font-weight: bold;
+}
+.status-rejected {
+  color: red;
+  font-weight: bold;
+}
+.status-pending {
+  color: orange;
+  font-weight: bold;
+}
+
+/* Actions */
+.withdraw-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.mod-btn-approve,
+.mod-btn-reject {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+/* Approve - xanh ngọc */
+.mod-btn-approve {
+  background: linear-gradient(135deg, #0bb19e, #0bd8b9);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(11, 177, 158, 0.4);
+}
+.mod-btn-approve:hover {
+  background: linear-gradient(135deg, #0bd8b9, #0bb19e);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 5px 12px rgba(11, 177, 158, 0.6);
+}
+
+/* Reject - đỏ */
+.mod-btn-reject {
+  background: linear-gradient(135deg, #f44336, #e53935);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(244, 67, 54, 0.4);
+}
+.mod-btn-reject:hover {
+  background: linear-gradient(135deg, #e53935, #f44336);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 5px 12px rgba(244, 67, 54, 0.6);
+}
+
+
+/* Bank info */
+.bank-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+.bank-info img {
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* Hiệu ứng fade-in */
+.fade-in {
+  animation: fadeInUp 0.6s ease both;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
