@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
+import './SuccessPayment.css';
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { PATH_NAME } from '../../../router/Pathname';
 import { useDispatch, useSelector } from "react-redux";
 import { updateWallet } from "../../../redux/features/authSlice";
 
@@ -28,24 +30,31 @@ export default function SuccessPayment() {
     }, [searchParams, dispatch]);
 
     const handleGoHome = () => {
-        navigate("/");
+        navigate(PATH_NAME.HOMEPAGE);
+    };
+
+    const handleTryAgain = () => {
+        navigate(PATH_NAME.PAYMENT_PAGE);
     };
 
     return (
-        <div style={{ textAlign: "center", marginTop: "100px" }}>
-            <h2>🎉 Nạp tiền thành công!</h2>
-            <p>Số dư ví của bạn đã được cập nhật.</p>
-            <button
-                onClick={handleGoHome}
-                style={{
-                    marginTop: "20px",
-                    padding: "10px 20px",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                }}
-            >
-                Về trang chủ
-            </button>
+        <div className="successpage-container">
+            <div className="successpage-card">
+                <div className="successpage-icon">🎉</div>
+                <h2 className="successpage-title oleo-script-bold">Payment Successful!</h2>
+                <p className="successpage-subtitle oxanium-regular">
+                    Your wallet balance has been updated.
+                </p>
+
+                <div className="failurepage-actions oxanium-regular">
+                    <button className="successpage-btn successpage-tryagainText" onClick={handleTryAgain}>
+                        Continue Recharge
+                    </button>
+                    <button className="successpage-btn successpage-homeText" onClick={handleGoHome}>
+                        Back to Home
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

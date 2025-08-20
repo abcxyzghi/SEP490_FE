@@ -112,8 +112,8 @@ export default function TopUp() {
 
                                     <div className="topUpTab-pack-meta">
                                         {/* <span className="topUpTab-pack-kv">
-                        {Math.round(p.price / 1000)}k
-                      </span> */}
+                                            {Math.round(p.price / 1000)}k
+                                        </span> */}
                                         <span className="topUpTab-pack-cta">
                                             {selected ? "Selected" : "Choose"}
                                         </span>

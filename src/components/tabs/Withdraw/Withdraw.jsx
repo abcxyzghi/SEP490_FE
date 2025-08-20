@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import './Withdraw.css';
 import { createWithdrawTransaction, getProfile } from "../../../services/api.user";
 import { fetchUserInfo } from "../../../services/api.auth";
+import MessageModal from "../../libs/MessageModal/MessageModal";
 
 export default function Withdraw() {
   const [amount, setAmount] = useState("");
@@ -8,6 +10,14 @@ export default function Withdraw() {
   const [message, setMessage] = useState("");
   const [bankInfo, setBankInfo] = useState(null);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [modal, setModal] = useState({ open: false, type: "default", title: "", message: "" });
+
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
+
+  const formatVND = (n) =>
+    new Intl.NumberFormat("vi-VN").format(n) + " VND";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,65 +48,83 @@ export default function Withdraw() {
   const handleWithdraw = async () => {
     // Validate bank info
     if (!bankInfo || !bankInfo.bankId || !bankInfo.accountBankName || !bankInfo.banknumber) {
-      setMessage("Chưa có thông tin ngân hàng, vui lòng cập nhật trước khi rút tiền.");
-      return;
+      return showModal("warning", "Missing Bank Info", "Please update your bank information before withdrawing.");
     }
 
     // Validate số tiền hợp lệ
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      setMessage("Vui lòng nhập số tiền hợp lệ");
-      return;
+      return showModal("warning", "Invalid Amount", "Please enter a valid amount to withdraw.");
     }
 
     // Validate số dư trong ví
     if (Number(amount) > walletBalance) {
-      setMessage(`Số tiền rút vượt quá số dư hiện tại (${walletBalance})`);
-      return;
+      return showModal("warning", "Insufficient Balance", `Your withdraw amount exceeds your wallet balance (${walletBalance} VND).`);
     }
 
     setLoading(true);
-    setMessage("");
 
     try {
       const res = await createWithdrawTransaction(Number(amount));
       if (res) {
-        setMessage("Gửi yêu cầu rút tiền thành công!");
+        showModal("default", "Withdraw Request Sent", "Your withdrawal request has been submitted successfully.");
+        setAmount("");
       } else {
-        setMessage("Có lỗi xảy ra khi tạo yêu cầu rút tiền.");
+        showModal("error", "Transaction Failed", "An error occurred while creating your withdrawal request.");
       }
     } catch (error) {
       console.log(error);
-      setMessage("Lỗi hệ thống, vui lòng thử lại sau.");
+      showModal("error", "System Error", "Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-sm mx-auto bg-white border rounded-xl shadow">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Withdraw</h2>
+    <div className="withdrawTab-container">
+      <div className="withdrawTab-header">
+        <h2 className="withdrawTab-title oleo-script-regular">Withdraw Wallet</h2>
+        <p className="withdrawTab-subtitle oxanium-regular">
+          Manage your wallet and transfer funds securely
+        </p>
+      </div>
 
-      <p className="text-sm text-gray-600 mb-4">
-        Số dư khả dụng: <span className="font-bold">{walletBalance} VNĐ</span>
-      </p>
+      <div className="withdrawTab-balance oxanium-regular">
+        <span>Available Balance:</span>{" "}
+        <strong>{formatVND(walletBalance)}</strong>
+      </div>
 
-      <input
-        type="number"
-        placeholder="Nhập số tiền cần rút"
-        className="w-full p-2 border rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+      <div className="withdrawTab-form oxanium-regular">
+        <input
+          type="number"
+          min={1}
+          placeholder="Enter amount"
+          className="withdrawTab-input"
+          value={amount}
+          // onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "" || Number(val) >= 1) {
+              setAmount(val);
+            }
+          }}
+        />
+
+        <button
+          onClick={handleWithdraw}
+          disabled={loading}
+          className="withdrawTab-btn"
+        >
+          {loading ? <span className="loading loading-bars loading-md"></span> : "Send request"}
+        </button>
+      </div>
+
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal((prev) => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
       />
-
-      <button
-        onClick={handleWithdraw}
-        disabled={loading}
-        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
-      >
-        {loading ? "Đang xử lý..." : "Rút tiền"}
-      </button>
-
-      {message && <p className="mt-3 text-sm text-center text-gray-700">{message}</p>}
     </div>
   );
 }

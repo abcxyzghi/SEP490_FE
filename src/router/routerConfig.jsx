@@ -29,7 +29,7 @@ import FailurePage from "../components/pages/FailurePage/FailurePage";
 import Achievementpage from "../components/pages/Achievementpage/Achievementpage";
 import ChatRoom from "../components/pages/ChatRoom/ChatRoom";
 import UserSaleReport from "../components/pages/UserSaleReport/UserSaleReport";
-import Withdraw from "../components/tabs/Withdraw/Withdraw";
+
 import ModeratorDashboard from "../components/moderatorPages/ModeratorDashboard/ModeratorDashboard";
 import ModProfile from "../components/moderatorPages/ModProfile/ModProfile";
 import ModReport from "../components/moderatorPages/ModReport/ModReport";
@@ -84,12 +84,6 @@ export const privateRoutes = [
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
     { path: PATH_NAME.CHAT_ROOM, element: <ChatRoom />, role: ['user'] },
     { path: PATH_NAME.USER_SALE_REPORT, element: <UserSaleReport />, role: ['user'] },
-
-    { path: PATH_NAME.FAILURE_PAYMENT, element: <FailurePage />, role: ['user'] },
-    { path: PATH_NAME.SUCCESS_PAYMENT, element: <SuccessPayment />, role: ['user'] },
-    // { path: PATH_NAME.FAVORITE_LIST, element: <FavoriteListPage />, role: ['user'] },
-    // { path: PATH_NAME.WITH_DRAW, element: <Withdraw />, role: ['user'] },
-
 ];
 
 export const moderatorRoutes = [
