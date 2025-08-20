@@ -9,12 +9,12 @@ export default function MainPage() {
   const isChatRoom = location.pathname.startsWith("/chatroom")
 
   return (
-    <div className='MainP-container'>
+    <div className={`MainP-container ${isChatRoom ? "MainP-chatroom-mode" : ""}`}>
       {/* Naviagation on top */}
       <Navigation />
 
       {/* Main content area */}
-      <div className={`MainP-content ${isChatRoom ? "chatroom-mode" : ""}`}>
+      <div className={`MainP-content ${isChatRoom ? "MainP-chatroom-mode" : ""}`}>
         <Outlet />  {/* This will render nested routes like /home/shop */}
       </div>
 
