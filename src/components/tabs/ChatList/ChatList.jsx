@@ -1,6 +1,7 @@
 import { useChatContext } from "../../../context/ChatContext";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import "./ChatList.css";
+import SearchIcon from "../../../assets/Icon_fill/Search_alt_fill.svg";
 
 export default function ChatList() {
   const {
@@ -11,22 +12,26 @@ export default function ChatList() {
   } = useChatContext();
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="chat-list loading2">
+      {/* Khi loading thì chỉ cần class này */}
+    </div>;
   }
 
   if (!chatUsers || chatUsers.length === 0) {
-    return <div className="empty-chat-list">No conversations found.</div>;
+    return <div className="chat-list">No conversations found.</div>;
   }
 
   return (
-    <div className="chat-list">
+    <div className="chat-list oxanium-regular">
       <div className="search-box">
         <div className="search-header">
           <span className="back-arrow">&lt;</span>
           <span className="chat-title">Chat</span>
         </div>
         <div className="search-input-wrapper">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon">
+            <img src={SearchIcon} alt="Search" />
+          </span>
           <input type="text" placeholder="Search Collector" />
         </div>
       </div>

@@ -179,9 +179,9 @@ export default function Navigation() {
 
           {loadingUser ? (
             <div className="nav-right flex items-center gap-5">
-              <div className="skeleton w-24 h-8 rounded-lg"></div>
-              <div className="skeleton w-30 h-8 rounded-lg"></div>
-              <div className="skeleton w-12 h-12 rounded-full"></div>
+              <div className="skeleton w-24 h-8 rounded-lg bg-gray-700/40"></div>
+              <div className="skeleton w-30 h-8 rounded-lg bg-gray-700/40"></div>
+              <div className="skeleton w-12 h-12 rounded-full bg-gray-700/40"></div>
             </div>
           ) : user ? (
             user.role === 'user' ? (
@@ -248,7 +248,7 @@ export default function Navigation() {
               {/* Register button */}
               <button className="nav-auth-btn register oxanium-bold" onClick={() => navigate(Pathname('REGISTER'))}>
                 <img src={PlusIcon} alt="Profile Icon" className="nav-register-icon" />
-                Join the box party
+                Register for free
               </button>
             </>
           )}

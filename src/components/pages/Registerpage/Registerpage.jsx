@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import './Registerpage.css';
 import { useNavigate } from "react-router-dom";
+import Particles from '../../libs/Particles/Particles';
 import RegisterForm from '../../libs/RegisterForm/RegisterForm';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 //import media
 import GrDLogo from '../../../assets/logoSVG/Logo-Grdient.svg';
 import lvaVid from '../../../assets/pageBG/Logister/black-and-yellow-background-with-a-wave-pattern.mp4'
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function Registerpage() {
   const [nextPage, setNextPage] = useState("Home"); // default target when logo is clicked
+  const [pauseOnHoverZone, setPauseOnHoverZone] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info',
+    duration: 6000,
+  });
   const navigate = useNavigate();
 
   // Page transition toggle
@@ -23,14 +37,41 @@ export default function Registerpage() {
     }
   };
 
+  // Helper to show snackbar from child components
+  const showSnackbar = (message, severity = 'info', duration = 6000) => {
+    setSnackbar({ open: true, message, severity, duration });
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   return (
     <div className="registerpage-container">
-      <video autoPlay muted loop playsInline className="logister-background-video">
+      {/* <video autoPlay muted loop playsInline className="logister-background-video">
         <source src={lvaVid} type="video/mp4" />
-      </video>
+      </video> */}
+      <div className='logister-particle-background'>
+        <Particles
+          particleColors={['#960BAF', '#F8AC52', '#0db6e0']}
+          particleCount={700}
+          particleSpread={10}
+          speed={0.2}
+          particleBaseSize={100}
+          moveParticlesOnHover={true}
+          pauseOnHoverZone={pauseOnHoverZone}
+          alphaParticles={false}
+          disableRotation={false}
+        />
+      </div>
 
       {/* Page switcher on the top */}
-      <div className="registerpage-header">
+      <div
+        className="registerpage-header"
+        onMouseEnter={() => setPauseOnHoverZone(false)}   // won't pause while hovered
+        onMouseLeave={() => setPauseOnHoverZone(false)}
+      >
         <div className="registerpage-toggle">
           <div className="registerpage-headleft-bar" onClick={toggleNextPage}>
             <div className="registerpage-flip-container">
@@ -61,10 +102,26 @@ export default function Registerpage() {
       </div>
 
       {/* Register Form */}
-      <div className="registerpage-content flex items-center justify-center min-h-[calc(100vh-60px)]">
-        <RegisterForm />
+      <div
+        className="registerpage-content flex items-center justify-center min-h-[calc(100vh-60px)]"
+        onMouseEnter={() => setPauseOnHoverZone(false)}   // won't pause while hovered
+        onMouseLeave={() => setPauseOnHoverZone(false)}
+      >
+        {/* PASS the showSnackbar function to the form */}
+        <RegisterForm showSnackbar={showSnackbar} />
       </div>
 
+      {/* Top-level Snackbar (renders relative to viewport) */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={snackbar.duration}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
     </div>
   );
