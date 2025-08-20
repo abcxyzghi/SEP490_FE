@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAllReport, updateStatusReport } from "../../../services/api.report";
 import "./ModReport.css";
 import { toast } from "react-toastify";
-
+import moment from "moment";
 
 export default function ModReport() {
    const [reports, setReports] = useState([]);
@@ -67,6 +67,7 @@ export default function ModReport() {
             <th>ID</th>
             <th>Accuser</th>
             <th>The accused</th>
+            <th>Product</th>
             <th>Title</th>
             <th>Description</th>
             <th>Create at</th>
@@ -75,14 +76,15 @@ export default function ModReport() {
           </tr>
         </thead>
         <tbody>
-          {currentReports.map((report) => (
+          {currentReports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) .map((report) => (
             <tr key={report.id}>
               <td>{report.id.slice(0, 6)}...</td>
               <td>{report.userId || "Unknow"}</td>
               <td>{report.sellerId || "Unknow"}</td>
+              <td>{report.sellProductId || "Unknow"}</td>
               <td>{report.title}</td>
               <td>{report.content}</td>
-              <td>{report.createdAt}</td>
+              <td>{moment(report.createdAtmoment).format("DD/MM/YYYY HH:mm")}</td>
               <td>
                 <span
                   className={`report-status ${

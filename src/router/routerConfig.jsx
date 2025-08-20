@@ -36,6 +36,7 @@ import ModReport from "../components/moderatorPages/ModReport/ModReport";
 import ModProduct from "../components/moderatorPages/ModProduct/ModProduct";
 import ModMysteryBox from "../components/moderatorPages/ModMysteryBox/ModMysteryBox";
 import ModAuction from "../components/moderatorPages/ModAuction/ModAuction";
+import ModWithdrawRequest from "../components/moderatorPages/ModWithdrawRequest/ModWithdrawRequest";
 import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
 
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
@@ -86,13 +87,15 @@ export const privateRoutes = [
 ];
 
 export const moderatorRoutes = [
-    { path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_REPORT, element: <ModReport />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction />, role: ['mod'] },
-    { path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection />, role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_DASHBOARD, element: <ModeratorDashboard /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_PROFILE, element: <ModProfile /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_REPORT, element: <ModReport /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_PRODUCT, element: <ModProduct /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_MYSTERYBOX, element: <ModMysteryBox /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction /> , role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection /> ,role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_WITHDRAW_REQUEST, element: <ModWithdrawRequest /> ,role: ['mod'] },
+
 ];
 
 export const adminRoutes = [

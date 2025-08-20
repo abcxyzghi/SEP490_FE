@@ -11,7 +11,10 @@ export default function ModAuction() {
   const fetchAuctions = async () => {
     const res = await getAllAuctionOfMod();
     if (res?.success) {
-      const filtered = res.data.filter(a => !!a.product_id); 
+      const filtered = res.data.filter(a => 
+      a.product_id !== null && 
+      a.product_id !== undefined &&
+      a.product_id !== ""); 
       setAuctions(filtered);
     } else {
       toast.error("Error loading auctions");
@@ -19,6 +22,7 @@ export default function ModAuction() {
   };
 
   const handleUpdateStatus = async (id, status) => {
+    console.log("Updating auction status:", id, status);
     const res = await updateStatusAuction(id, status);
     if (res?.success) {
       toast.success(status === 1 ? "Accepted" : "Rejected");
@@ -32,11 +36,14 @@ export default function ModAuction() {
     fetchAuctions();
   }, []);
 
-  const pendingAuctions = auctions.filter(a => a.status === 0);
+  const pendingAuctions = auctions.filter(a => a.status === 0 &&
+                                              new Date(a.start_time).getTime() > Date.now() &&
+                                              new Date(a.end_time).getTime() > Date.now()
+                                          );
   const otherAuctions = auctions.filter(a => a.status !== 0);
 
   const renderAuctionCard = (auction) => (
-    <div key={auction._id} className="auction-card fade-in">
+    <div key={auction.auction_id} className="auction-card fade-in">
       <p><strong>Seller:</strong> {auction.host_username}</p>
       <p><strong>Start time:</strong> {moment(auction.start_time).format("DD/MM/YYYY HH:mm")}</p>
       <p><strong>End time:</strong> {moment(auction.end_time).format("DD/MM/YYYY HH:mm")}</p>
@@ -54,13 +61,13 @@ export default function ModAuction() {
         <div className="auction-actions">
           <button
             className="btn-approve"
-            onClick={() => handleUpdateStatus(auction._id, 1)}
+            onClick={() => handleUpdateStatus(auction.auction_id, 1)}
           >
             ✅ Approve
           </button>
           <button
             className="btn-reject"
-            onClick={() => handleUpdateStatus(auction._id, -1)}
+            onClick={() => handleUpdateStatus(auction.auction_id, -1)}
           >
             ❌ Reject
           </button>
