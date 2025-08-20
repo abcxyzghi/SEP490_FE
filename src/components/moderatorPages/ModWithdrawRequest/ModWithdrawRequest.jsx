@@ -200,10 +200,10 @@ const renderWithdrawRequestCard = (request) => {
       <div className="mod-withdraw-request-card-list">
         {activeTab === "Pending"
           ? pendingRequests.length > 0
-            ? pendingRequests.map(renderWithdrawRequestCard)
+            ? pendingRequests.sort((a, b) => new Date(b.dataTime) - new Date(a.dataTime)) .map(renderWithdrawRequestCard)
             : "Not yet data pending."
           : otherRequests.length > 0
-          ? otherRequests.map(renderWithdrawRequestCard)
+          ? otherRequests.sort((a, b) => new Date(b.dataTime) - new Date(a.dataTime)).map(renderWithdrawRequestCard)
           : "Not yet data other."}
       </div>
     </div>
