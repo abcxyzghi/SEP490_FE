@@ -1,9 +1,9 @@
-import { apiWithFallback } from "../config/axios";
+import { pythonApiWithFallback  } from "../config/axios";
 
 // Fetch all users (GET)
 export const getAllUsers = async () => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "get",
       url: "/py/api/admin/user",
       requiresAuth: true,
@@ -18,7 +18,7 @@ export const getAllUsers = async () => {
 // Fetch all moderators (GET)
 export const getAllModerators = async () => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "get",
       url: "/py/api/admin/moderator",
       requiresAuth: true,
@@ -33,7 +33,7 @@ export const getAllModerators = async () => {
 // Promote user to moderator (PATCH)
 export const promoteToModerator = async (userId) => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "patch",
       url: "/py/api/admin/moderator/promote",
       params: { user_id: userId },
@@ -49,7 +49,7 @@ export const promoteToModerator = async (userId) => {
 // Demote moderator to user (PATCH)
 export const demoteModerator = async (userId) => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "patch",
       url: "/py/api/adminmoderator/demote",
       params: { user_id: userId },
@@ -65,7 +65,7 @@ export const demoteModerator = async (userId) => {
 // Toggle ban/unban user (PATCH)
 export const toggleUserActivation = async (userId) => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "patch",
       url: "/py/api/admin/user/tooggle-activation",
       params: { user_id: userId },
@@ -83,7 +83,7 @@ export const toggleUserActivation = async (userId) => {
 // filter: 'all' | 'day' | 'month' | 'year'
 export const getRevenue = async (filter = "all") => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "get",
       url: "/py/api/admin/revenue",
       params: { filter },
@@ -100,7 +100,7 @@ export const getRevenue = async (filter = "all") => {
 // filter: 'all' | 'day' | 'month' | 'year'
 export const getRevenueFee = async (filter = "all") => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "get",
       url: "/py/api/admin/revenue-fee",
       params: { filter },
@@ -117,7 +117,7 @@ export const getRevenueFee = async (filter = "all") => {
 // status: 1 (approve), 0 (reject)
 export const approveAuction = async (auctionId, status) => {
   try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "patch",
       url: "/py/api/admin/auction/approval",
       params: { auction_id: auctionId, status },

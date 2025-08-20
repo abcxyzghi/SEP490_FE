@@ -1,10 +1,10 @@
 
 import { toast } from "react-toastify"
-import { apiWithFallback } from "../config/axios";
-import { pythonApiWithFallback } from "../config/axios";
+import { apiWithFallback,pythonApiWithFallback  } from "../config/axios";
+
 export const getAllAuctionOfMod = async () => {
     try {
-    const response = await apiWithFallback({
+    const response = await pythonApiWithFallback({
       method: "get",
       url: "/api/auction/mod",
       requiresAuth: true,
