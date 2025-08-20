@@ -12,7 +12,7 @@ export default function ModAuction() {
     const res = await getAllAuctionOfMod();
     if (res?.success) {
       const filtered = res.data.filter(a => a.product_id !== null && a.product_id !== undefined && a.product_id !== ""); 
-      setAuctions(res.data);
+      setAuctions(filtered);
     } else {
       toast.error("Error loading auctions");
     }
