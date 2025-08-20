@@ -11,7 +11,10 @@ export default function ModAuction() {
   const fetchAuctions = async () => {
     const res = await getAllAuctionOfMod();
     if (res?.success) {
-      const filtered = res.data.filter(a => a.product_id !== null && a.product_id !== undefined && a.product_id !== ""); 
+      const filtered = res.data.filter(a => 
+      a.product_id !== null && 
+      a.product_id !== undefined &&
+      a.product_id !== ""); 
       setAuctions(filtered);
     } else {
       toast.error("Error loading auctions");
@@ -33,7 +36,10 @@ export default function ModAuction() {
     fetchAuctions();
   }, []);
 
-  const pendingAuctions = auctions.filter(a => a.status === 0);
+  const pendingAuctions = auctions.filter(a => a.status === 0 &&
+                                              new Date(a.start_time).getTime() > Date.now() &&
+                                              new Date(a.end_time).getTime() > Date.now()
+                                          );
   const otherAuctions = auctions.filter(a => a.status !== 0);
 
   const renderAuctionCard = (auction) => (
