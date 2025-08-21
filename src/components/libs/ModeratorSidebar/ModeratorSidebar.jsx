@@ -18,8 +18,9 @@ import ModBoxIcon from '../../../assets/Icon_line/blockchain-03.svg';
 import ModAuctionIcon from '../../../assets/Icon_line/audit-01.svg';
 import SideCloseIcon from '../../../assets/Icon_line/sidebar-left.svg';
 import LogoutIcon from '../../../assets/Icon_line/Sign_out_squre.svg';
-import ModCollectionIcon from '../../../assets/Icon_line/audit-01.svg';
-import ModWithdrawRequestIcon from '../../../assets/Icon_line/audit-01.svg';
+import ModCollectionIcon from '../../../assets/Icon_line/collection.svg';
+import ModWithdrawRequestIcon from '../../../assets/Icon_line/money-send.svg';
+import ModAuctionResultIcon from '../../../assets/Icon_line/auction-result-mod.svg';
 
 export default function ModeratorSidebar() {
     const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -85,6 +86,7 @@ export default function ModeratorSidebar() {
         { path: Pathname('MODERATOR_AUCTION'), label: 'Auction Management', defaultIcon: ModAuctionIcon },
         { path: Pathname('MODERATOR_COLLECTION'), label: 'Collection Management', defaultIcon: ModCollectionIcon },
         { path: Pathname('MODERATOR_WITHDRAW_REQUEST'), label: 'Withdraw Request Management', defaultIcon: ModWithdrawRequestIcon },
+        { path: Pathname('MODERATOR_AUCTION_RESULT'), label: 'Auction Result Management', defaultIcon: ModAuctionResultIcon },
     ];
 
     const bottomLinks = [

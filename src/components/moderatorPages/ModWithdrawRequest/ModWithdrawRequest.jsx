@@ -178,7 +178,7 @@ const renderWithdrawRequestCard = (request) => {
 
   return (
     <div className="mod-withdraw-container">
-      <h2>🏷 List Withdraw Request</h2>
+      <h2>List Withdraw Request</h2>
 
       {/* Tabs */}
       <div className="tabs">
@@ -192,7 +192,7 @@ const renderWithdrawRequestCard = (request) => {
           className={activeTab === "Others" ? "tab-btn active" : "tab-btn"}
           onClick={() => setActiveTab("Others")}
         >
-          Others
+          Processed
         </button>
       </div>
 
@@ -204,7 +204,7 @@ const renderWithdrawRequestCard = (request) => {
             : "Not yet data pending."
           : otherRequests.length > 0
           ? otherRequests.sort((a, b) => new Date(b.dataTime) - new Date(a.dataTime)).map(renderWithdrawRequestCard)
-          : "Not yet data other."}
+          : "Not yet data processed."}
       </div>
     </div>
   );

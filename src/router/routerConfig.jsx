@@ -38,6 +38,7 @@ import ModMysteryBox from "../components/moderatorPages/ModMysteryBox/ModMystery
 import ModAuction from "../components/moderatorPages/ModAuction/ModAuction";
 import ModWithdrawRequest from "../components/moderatorPages/ModWithdrawRequest/ModWithdrawRequest";
 import ModCollection from "../components/moderatorPages/ModCollection/ModCollection";
+import ModAuctionResult from "../components/moderatorPages/ModAuctionResult/ModAuctionResult";
 
 import AdminDashboard from "../components/adminPages/AdminDashboard/AdminDashboard";
 import AdUserManagement from "../components/adminPages/AdUserManagement/AdUserManagement";
@@ -95,6 +96,7 @@ export const moderatorRoutes = [
     {path: PATH_NAME.MODERATOR_AUCTION, element: <ModAuction /> , role: ['mod'] },
     {path: PATH_NAME.MODERATOR_COLLECTION, element: <ModCollection /> ,role: ['mod'] },
     {path: PATH_NAME.MODERATOR_WITHDRAW_REQUEST, element: <ModWithdrawRequest /> ,role: ['mod'] },
+    {path: PATH_NAME.MODERATOR_AUCTION_RESULT, element: <ModAuctionResult /> ,role: ['mod'] },
 
 ];
 

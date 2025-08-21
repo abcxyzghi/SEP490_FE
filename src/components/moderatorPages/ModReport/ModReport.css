@@ -1,8 +1,8 @@
 .mod-report-container {
   padding: 24px;
-  max-width: 100%;
-  color: #ffffff;
-  overflow-x: auto;
+  max-width: 1200px;
+  margin: auto;
+  color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -34,15 +34,22 @@
   justify-content: space-between;
 }
 
-.report-table th {
-  background-color: #f0f0f0;
-  font-weight: 600;
-  color: #333;
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.report-table td {
-  background-color: #fff;
-  color: #444;
+.report-id {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.report-body p {
+  margin: 6px 0;
+  font-size: 0.9rem;
 }
 
 /* Thêm thuộc tính này cho phần tử cha */
@@ -58,8 +65,7 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-weight: 600;
-  font-size: 0.85rem;
-  display: inline-block;
+  font-size: 0.8rem;
 }
 
 .status-pending {
@@ -72,10 +78,15 @@
   color: #155724;
 }
 
+.report-footer {
+  margin-top: 12px;
+  text-align: right;
+}
+
 .update-btn {
   background-color: #00cc66;
   color: white;
-  padding: 8px 8px;
+  padding: 8px 12px;
   border: none;
   border-radius: 16px;
   font-weight: bold;

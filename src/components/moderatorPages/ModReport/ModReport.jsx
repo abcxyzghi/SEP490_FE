@@ -11,6 +11,7 @@ export default function ModReport() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [expandedReports, setExpandedReports] = useState({});
 
+
   const reportsPerPage = 3;
 
   const fetchReports = async () => {
@@ -78,15 +79,15 @@ export default function ModReport() {
   const totalPages = Math.ceil(sortedReports.length / reportsPerPage);
 
   const Pagination = () => (
-    <div style={{ marginTop: "20px", textAlign: "center" }}>
+    <div className="pagination">
       <button
         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
       >
         ◀ Before
       </button>
-      <span style={{ margin: "0 12px" }}>
-        Page {currentPage} / {totalPages}
+      <span>
+        Page {currentPage} / {totalPages || 1}
       </span>
       <button
         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
@@ -96,6 +97,7 @@ export default function ModReport() {
       </button>
     </div>
   );
+
 
   return (
     <div className="mod-report-container">
@@ -223,6 +225,7 @@ export default function ModReport() {
       )}
 
       {sortedReports.length > reportsPerPage && <Pagination />}
+
     </div>
   );
 }
