@@ -488,7 +488,7 @@ export default function ModMysteryBox() {
                 setProductList(updatedList);
               }}
             >
-              Áp dụng cho sản phẩm đã chọn
+              Apply
             </button>
 
           </div>
