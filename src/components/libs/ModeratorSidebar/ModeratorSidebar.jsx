@@ -18,9 +18,9 @@ import ModBoxIcon from '../../../assets/Icon_line/blockchain-03.svg';
 import ModAuctionIcon from '../../../assets/Icon_line/audit-01.svg';
 import SideCloseIcon from '../../../assets/Icon_line/sidebar-left.svg';
 import LogoutIcon from '../../../assets/Icon_line/Sign_out_squre.svg';
-import ModCollectionIcon from '../../../assets/Icon_line/audit-01.svg';
-import ModWithdrawRequestIcon from '../../../assets/Icon_line/audit-01.svg';
-import ModAuctionResultIcon from '../../../assets/Icon_line/audit-01.svg';
+import ModCollectionIcon from '../../../assets/Icon_line/collection.svg';
+import ModWithdrawRequestIcon from '../../../assets/Icon_line/money-send.svg';
+import ModAuctionResultIcon from '../../../assets/Icon_line/auction-result-mod.svg';
 
 export default function ModeratorSidebar() {
     const [isCollapsed, setIsCollapsed] = useState(() => {
