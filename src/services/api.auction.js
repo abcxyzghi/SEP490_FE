@@ -151,3 +151,31 @@ export const fetchAuctionWinner = async () => {
     throw error;
   }
 }; 
+
+export const getAllAuctionResultForMod = async () => {
+    try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/api/auction/auction-result",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
+  }
+};
+export const updateAuctionSettlement = async (auctionId ) => {
+try {
+    const response = await apiWithFallback({
+      method: "patch",
+      url: `/api/AuctionSettlement/update-status-auction-session/${auctionId}`,
+      params: { auctionId },
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error Approve/Reject auction");
+    return null;
+  }
+};
