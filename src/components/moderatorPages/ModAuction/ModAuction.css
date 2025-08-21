@@ -33,11 +33,20 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 15px;
 }
+.auction-card-list p {
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 20px;
+}
 
 .auction-card {
-  background: white;
+  background: rgba(59, 58, 58, 0.614);
   padding: 15px;
   border-radius: 8px;
+  border-color: #0bd8b9;
+  border-width: 2px;
+  color: white;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
 }

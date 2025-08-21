@@ -78,7 +78,7 @@ export default function ModAuction() {
 
   return (
     <div className="mod-auction-container">
-      <h2>🏷 List Auction</h2>
+      <h2>List Auction</h2>
 
       {/* Tabs */}
       <div className="tabs">
@@ -86,13 +86,13 @@ export default function ModAuction() {
           className={activeTab === "pending" ? "tab-btn active" : "tab-btn"}
           onClick={() => setActiveTab("pending")}
         >
-          ⏳ Pending
+          Pending
         </button>
         <button
           className={activeTab === "others" ? "tab-btn active" : "tab-btn"}
           onClick={() => setActiveTab("others")}
         >
-          📦 Others
+          Processed
         </button>
       </div>
 
@@ -101,10 +101,10 @@ export default function ModAuction() {
         {activeTab === "pending"
           ? pendingAuctions.length > 0
             ? pendingAuctions.map(renderAuctionCard)
-            : <p>Không có dữ liệu pending.</p>
+            : <p>Not have data pending.</p>
           : otherAuctions.length > 0
             ? otherAuctions.map(renderAuctionCard)
-            : <p>Không có dữ liệu khác.</p>
+            : <p>Not have data processed.</p>
         }
       </div>
     </div>
