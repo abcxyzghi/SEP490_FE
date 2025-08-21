@@ -161,10 +161,10 @@ function attachInterceptorsTo(instance) {
 // Fallback API cho C# backend
 const apiWithFallback = async (config) => {
   try {
-    return await backupAxios(config);
+    return await primaryAxios(config);
   } catch (err) {
     console.warn("[Fallback] C# API failed. Retrying with backup...");
-    return await primaryAxios(config);
+    return await backupAxios(config);
   }
 };
 

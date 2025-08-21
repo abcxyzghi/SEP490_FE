@@ -220,7 +220,7 @@ export const updateProfile = async (data, isFormData = false) => {
 export const getBankID = async () => {
   const response = await axios.get(VIET_QR_API);
   return response.data;
-}; 
+};
 
 export const getUserSale = async () => {
   try {
@@ -241,14 +241,14 @@ export const getListChat = async () => {
     const response = await pythonApiWithFallback({
       method: "get",
       url: "/py/api/chatboxconservation/list",
-      requiresAuth: true, 
+      requiresAuth: true,
     });
     return response.data;
   } catch (error) {
     console.error("Lỗi khi gọi getUserInChat:", error);
     throw error;
   }
-};export const getRatingOfUser = async (userId) => {
+}; export const getRatingOfUser = async (userId) => {
   try {
     const response = await apiWithFallback({
       method: "get",
@@ -275,7 +275,7 @@ export const getAllCommentsOfSellProduct = async (userId, productName) => {
     console.error("Lỗi khi lấy comment của sản phẩm:", error);
     throw error;
   }
-} 
+}
 
 export const getAverageRatingsOfSellProduct = async (productid) => {
   try {
@@ -295,14 +295,16 @@ export const getAverageRatingsOfSellProduct = async (productid) => {
 export const createWithdrawTransaction = async (amount) => {
   try {
     const response = await apiWithFallback({
-      method: "post", 
+      method: "post",
       url: "/cs/api/TransactionHistory/create-withdraw-transaction-request",
-      params: { amount }, 
+      params: { amount },
       requiresAuth: true,
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating withdraw transaction:", error);
-    return null;
+    if (error.response) {
+      return error.response.data;
+    }
+    throw error;
   }
 };
