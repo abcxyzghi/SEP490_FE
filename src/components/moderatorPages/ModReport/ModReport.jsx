@@ -14,6 +14,10 @@ export default function ModReport() {
 
   const reportsPerPage = 3;
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+
   const fetchReports = async () => {
     const response = await getAllReport();
     if (response?.status) {
@@ -100,8 +104,8 @@ export default function ModReport() {
 
 
   return (
-    <div className="mod-report-container">
-      <h2>List Report</h2>
+    <div className="mod-report-container oxanium-regular">
+      <h2 className="oxanium-bold">List Report</h2>
       {/* Thanh search + filter */}
       <div className="mod-filter-bar">
         <input
@@ -139,19 +143,19 @@ export default function ModReport() {
               {report.sellProductId ? (
                 <>
                   <p className="report-type-tag product">
-                    <strong>Reported Item:</strong> Product on sale
+                    <strong lassName="oxanium-bold">Reported Item:</strong> Product on sale
                   </p>
                   <p>
-                    <strong>Accuser:</strong> {report.userName || "Unknown"}
+                    <strong lassName="oxanium-bold">Accuser:</strong> {report.userName || "Unknown"}
                   </p>
                   <p>
-                    <strong>Product Name:</strong> {report.productName || "Unknown"}
+                    <strong lassName="oxanium-bold">Product Name:</strong> {report.productName || "Unknown"}
                   </p>
                   <p>
-                    <strong>Seller:</strong> {report.sellerName || "Unknown"}
+                    <strong lassName="oxanium-bold">Seller:</strong> {report.sellerName || "Unknown"}
                   </p>
                   <p>
-                    <strong>Title:</strong> {report.title}
+                    <strong lassName="oxanium-bold">Title:</strong> {report.title}
                   </p>
                   <p>
                     <strong>Description:</strong>{" "}
