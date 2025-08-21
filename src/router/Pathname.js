@@ -22,7 +22,7 @@ export const PATH_NAME = {
     // CHECKOUT_PAGE: "/checkoutpage",
     CHAT_ROOM: "/chatroom/*",
     ACHIEVEMENT_PAGE: "/achievementpage",
-    NOTIFICATION_PAGE: "/notifications",
+    // NOTIFICATION_PAGE: "/notifications",
     ACTIVITIES_PAGE: "/activities",
     EXCHANGE_PAGE: "/exchangepage/:sellProductId",
     USER_SALE_REPORT:"/usersalereport",

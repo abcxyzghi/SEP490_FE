@@ -89,7 +89,7 @@ export default function BoxRatelity({ mysteryBoxDetail }) {
               <div style={{ position: 'relative', zIndex: 1, display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="box-rarity-label oleo-script-regular">{rarity}</div>
                 <div className="box-ratelity-chance-label oxanium-bold">
-                  {grouped[rarity][0]?.chance.toFixed(2)}%
+                  {(grouped[rarity][0]?.chance * 100).toFixed(0)}%
                 </div>
               </div>
             </AccordionSummary>

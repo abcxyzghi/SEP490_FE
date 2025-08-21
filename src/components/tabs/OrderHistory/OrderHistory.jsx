@@ -209,7 +209,8 @@ export default function OrderHistory() {
                         </div>
                       </div>
 
-                      {order.type !== "Box" && (
+                      {/* Rate btn for Purchased product */}
+                      {order.type === "ProductBuy" && (
                         <>
                           {!isAvailable ? (
                             <span className="order-history-unavailable oxanium-regular">
@@ -230,6 +231,13 @@ export default function OrderHistory() {
                             )
                           ) : null}
                         </>
+                      )}
+
+                      {/* Fee notice for Sold product */}
+                      {order.type === "ProductSell" && (
+                        <p className="order-history-productFee oxanium-regular">
+                          Product <span>{(order.transactionFeeRate * 100).toFixed(0)}%</span> fee has been applied
+                        </p>
                       )}
                     </div>
                   </div>

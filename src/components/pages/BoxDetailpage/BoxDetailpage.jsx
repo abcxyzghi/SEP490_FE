@@ -90,6 +90,7 @@ export default function BoxDetailpage() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
+
   const increaseQuantity = () => {
     setQuantity(prev => prev + 1);
   };
@@ -97,9 +98,10 @@ export default function BoxDetailpage() {
   const decreaseQuantity = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
   };
-  if (!box || box.status !== 1) {
-  return <div className="text-center mt-10 text-red-500">Box not found or unavailable.</div>;
-  }
+  
+  // if (!box || box.status !== 1) {
+  // return <div className="text-center mt-10 text-red-500">Box not found or unavailable.</div>;
+  // }
   if (loading) {
     return (
       <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-16">
@@ -139,8 +141,8 @@ export default function BoxDetailpage() {
     );
   }
 
-  if (!box) {
-    return <div className="text-center mt-10 text-red-500">Box not found or error loading data.</div>;
+  if (!box || box.status !== 1) {
+    return <div className="text-center mt-10 text-red-500">Box not found or unavailable on the system.</div>;
   }
 
   // Handle instant pay
@@ -322,7 +324,7 @@ export default function BoxDetailpage() {
               content: <BoxInformation mysteryBoxDetail={box} />
             },
             {
-              label: 'Ratelity',
+              label: 'Rarity',
               content: <BoxRatelity mysteryBoxDetail={box} />
             },
           ]}

@@ -7,6 +7,8 @@ import MyAuction from '../../tabs/MyAuction/MyAuction';
 
 import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 import Guidebook from '../../libs/Guidebook/Guidebook';
+import { useNavigate } from "react-router-dom";
+import ConfirmNavigateModal from '../../libs/ConfirmNavigateModal/ConfirmNavigateModal';
 
 export default function Auctionpage() {
   const [activeTab, setActiveTab] = useState('Auction Rooms');
@@ -14,6 +16,8 @@ export default function Auctionpage() {
 
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ open: false, title: "", message: "", onConfirm: null });
+  const navigate = useNavigate();
 
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
@@ -21,6 +25,16 @@ export default function Auctionpage() {
   const handleConfirm = () => {
     alert('Confirmed!');
     setModalOpen(false);
+  };
+
+  const handleNavConfirm = () => {
+    setConfirmModal({
+      open: true,
+      title: "Exchange complete!",
+      message: "Check out your new collection.",
+      onConfirm: () => navigate(`/`),
+      onCancel: () => setConfirmModal({ ...confirmModal, open: false }),
+    });
   };
 
   const steps = [
@@ -97,6 +111,25 @@ export default function Auctionpage() {
         />
       </div> */}
 
+      {/* Nav Confirm modal */}
+      {/* <div className="p-10">
+        <button
+          className="bg-orange-600 text-white px-4 py-2 rounded-lg"
+          onClick={handleNavConfirm}
+        >
+          Open nav confirm
+        </button>
+
+        <ConfirmNavigateModal
+          open={confirmModal.open}
+          title={confirmModal.title}
+          message={confirmModal.message}
+          confirmLabel="Take me there"
+          cancelLabel="Maybe later"
+          onConfirm={confirmModal.onConfirm}
+          onCancel={confirmModal.onCancel}
+        />
+      </div> */}
     </div>
   )
 }
