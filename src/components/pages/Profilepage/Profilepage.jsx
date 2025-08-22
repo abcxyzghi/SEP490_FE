@@ -794,7 +794,7 @@ export default function Profilepage() {
           severity="success"
           sx={{ width: "100%" }}
         >
-          Đã theo dõi thành công!
+          Following successfully!
         </Alert>
       </Snackbar>
 

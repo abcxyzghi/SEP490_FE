@@ -123,7 +123,11 @@
     user-select: none;
     /* Vô hiệu bôi đen chọn văn bản */
 }
-
+.admin-sidebar-top-links{
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+}
 .admin-sidebar-link .admin-sidebar-icon {
     width: 22px;
     height: 22px;
