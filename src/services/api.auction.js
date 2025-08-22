@@ -179,3 +179,17 @@ try {
     return null;
   }
 };
+export const checkIsJoinedAuction = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: `/api/auction/is-joined-auction`,
+      requiresAuth: true,
+    });
+    console.log("true or false let's find out" + response.data)
+    return response.data;
+  } catch (error) {
+    console.error("Check is joined auction failed:", error);
+    throw error;
+  }
+};

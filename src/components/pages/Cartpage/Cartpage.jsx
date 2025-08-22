@@ -14,6 +14,7 @@ import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import CartBoxList from '../../tabs/CartBoxList/CartBoxList';
 import CartProductList from '../../tabs/CartProductList/CartProductList';
+import { checkIsJoinedAuction } from '../../../services/api.auction';
 
 export default function Cartpage() {
   const dispatch = useDispatch();
@@ -66,6 +67,15 @@ export default function Cartpage() {
 
   // Buy handler for Cartpage
   const handleBuyAllSelected = async () => {
+    const isJoined = await checkIsJoinedAuction();
+    if (isJoined) {
+      showModal(
+        "warning",
+        "Cannot Buy",
+        "You cannot buy while participating in an auction."
+      );
+      return; // dừng hàm nếu đã tham gia auction
+    }
     if (selectedItemsData.length === 0) {
       return showModal('warning', 'No Selection', 'Please select at least one item to buy.');
     }
