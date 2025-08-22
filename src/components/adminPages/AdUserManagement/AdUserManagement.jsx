@@ -1,9 +1,6 @@
-
-
-
 import React, { useEffect, useState } from 'react';
 import { getAllUsers, getAllModerators, promoteToModerator, demoteModerator, toggleUserActivation } from '../../../services/api.admin';
-
+import "./AdUserManagement.css";
 export default function AdUserManagement() {
   const [tab, setTab] = useState('user'); // 'user' or 'moderator'
   const [data, setData] = useState([]);
@@ -22,6 +19,7 @@ export default function AdUserManagement() {
       } else {
         res = await getAllModerators();
       }
+      console.log(res.data)
       setData(res.data || []);
     } catch {
       setError('Lỗi khi lấy danh sách');
@@ -40,7 +38,9 @@ export default function AdUserManagement() {
     setActionLoading(userId);
     try {
       await promoteToModerator(userId);
-      await fetchData();
+      setData((prev) =>
+        prev.filter((u) => u._id !== userId)
+      );
     } finally {
       setActionLoading(null);
     }
@@ -51,7 +51,11 @@ export default function AdUserManagement() {
     setActionLoading(userId);
     try {
       await toggleUserActivation(userId);
-      await fetchData();
+      setData((prevData) =>
+        prevData.map((user) =>
+          user._id === userId ? { ...user, is_active: !user.is_active } : user
+        )
+      );
     } finally {
       setActionLoading(null);
     }
@@ -62,87 +66,81 @@ export default function AdUserManagement() {
     setActionLoading(userId);
     try {
       await demoteModerator(userId);
-      await fetchData();
+      setData((prev) =>
+        prev.filter((u) => u._id !== userId)
+      );
     } finally {
       setActionLoading(null);
     }
   };
 
   return (
-    <div>
-      <div style={{ marginBottom: 16 }}>
+    <div className="aduser-container">
+      <div className="aduser-tabButtons">
         <button
-          onClick={() => setTab('user')}
-          style={{
-            padding: '8px 16px',
-            marginRight: 8,
-            background: tab === 'user' ? '#1976d2' : '#eee',
-            color: tab === 'user' ? '#fff' : '#333',
-            border: 'none',
-            borderRadius: 4,
-            cursor: 'pointer',
-          }}
+          onClick={() => setTab("user")}
+          className={`aduser-tabButton ${tab === "user" ? "active" : ""}`}
         >
           User
         </button>
         <button
-          onClick={() => setTab('moderator')}
-          style={{
-            padding: '8px 16px',
-            background: tab === 'moderator' ? '#1976d2' : '#eee',
-            color: tab === 'moderator' ? '#fff' : '#333',
-            border: 'none',
-            borderRadius: 4,
-            cursor: 'pointer',
-          }}
+          onClick={() => setTab("moderator")}
+          className={`aduser-tabButton ${tab === "moderator" ? "active" : ""}`}
         >
           Moderator
         </button>
       </div>
-      <h2>Danh sách {tab === 'user' ? 'User' : 'Moderator'}</h2>
+
+      <h2 className="aduser-title">
+        Danh sách {tab === "user" ? "User" : "Moderator"}
+      </h2>
+
       {loading ? (
-        <div>Đang tải...</div>
+        <div className="aduser-status">Đang tải...</div>
       ) : error ? (
-        <div>{error}</div>
+        <div className="aduser-status">{error}</div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="aduser-table">
           <thead>
             <tr>
-              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Username</th>
-              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Role</th>
-              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Trạng thái</th>
-              <th style={{ border: '1px solid #ccc', padding: '8px' }}>Thao tác</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            {data.map(user => (
+            {data.map((user) => (
               <tr key={user._id}>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{user.username}</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{user.role_id}</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{user.is_active ? 'Hoạt động' : 'Bị khóa'}</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px', minWidth: 180 }}>
-                  {tab === 'user' ? (
+                <td>{user.username}</td>
+                <td>{user.role_id}</td>
+                <td>{user.is_active ? "Hoạt động" : "Bị khóa"}</td>
+                <td>
+                  {tab === "user" ? (
                     <>
                       <button
                         onClick={() => handlePromote(user._id)}
                         disabled={actionLoading === user._id}
-                        style={{ marginRight: 8, padding: '4px 12px', background: '#43a047', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}
+                        className="aduser-actionBtn aduser-promoteBtn"
                       >
                         Promote
                       </button>
                       <button
                         onClick={() => handleToggleLock(user._id)}
                         disabled={actionLoading === user._id}
-                        style={{ padding: '4px 12px', background: user.is_active ? '#e53935' : '#1976d2', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}
+                        className={`aduser-actionBtn ${user.is_active
+                          ? "aduser-lockBtn"
+                          : "aduser-unlockBtn"
+                          }`}
                       >
-                        {user.is_active ? 'Lock' : 'Unlock'}
+                        {user.is_active ? "Lock" : "Unlock"}
                       </button>
                     </>
                   ) : (
                     <button
                       onClick={() => handleDemote(user._id)}
                       disabled={actionLoading === user._id}
-                      style={{ padding: '4px 12px', background: '#e53935', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}
+                      className="aduser-actionBtn aduser-demoteBtn"
                     >
                       Demote
                     </button>
