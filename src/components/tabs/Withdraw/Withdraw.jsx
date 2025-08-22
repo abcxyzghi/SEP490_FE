@@ -3,6 +3,7 @@ import './Withdraw.css';
 import { createWithdrawTransaction, getProfile } from "../../../services/api.user";
 import { fetchUserInfo } from "../../../services/api.auth";
 import MessageModal from "../../libs/MessageModal/MessageModal";
+import { checkIsJoinedAuction } from "../../../services/api.auction";
 
 export default function Withdraw() {
   const [amount, setAmount] = useState("");
@@ -46,6 +47,15 @@ export default function Withdraw() {
   }, []);
 
   const handleWithdraw = async () => {
+    const isJoined = await checkIsJoinedAuction();
+    if (isJoined) {
+      showModal(
+        "warning",
+        "Cannot Withdraw",
+        "You cannot withdraw while participating in an auction."
+      );
+      return; // dừng hàm nếu đã tham gia auction
+    }
     // Validate bank info
     if (!bankInfo || !bankInfo.bankId || !bankInfo.accountBankName || !bankInfo.banknumber) {
       return showModal("warning", "Missing Bank Info", "Please update your bank information before withdrawing.");
@@ -60,6 +70,7 @@ export default function Withdraw() {
     if (Number(amount) > walletBalance) {
       return showModal("warning", "Insufficient Balance", `Your withdraw amount exceeds your wallet balance (${walletBalance} VND).`);
     }
+
 
     setLoading(true);
 
