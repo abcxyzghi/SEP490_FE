@@ -2,7 +2,7 @@ import { toast } from "react-toastify"
 import { apiWithFallback } from "../config/axios";
 
 export const getAllReport = async () => {
-try {
+  try {
     const response = await apiWithFallback({
       method: "get",
       url: "/api/Report/get-all-report",
@@ -18,7 +18,7 @@ export const updateStatusReport = async (reportId) => {
     const response = await apiWithFallback({
       method: "patch",
       url: "/api/Report/update-report",
-      data:reportId,
+      params: { reportId },
       requiresAuth: true,
       headers: {
         "Content-Type": "application/json",

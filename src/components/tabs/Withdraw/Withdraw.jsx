@@ -65,15 +65,22 @@ export default function Withdraw() {
 
     try {
       const res = await createWithdrawTransaction(Number(amount));
-      if (res) {
+      if (res.status) {
         showModal("default", "Withdraw Request Sent", "Your withdrawal request has been submitted successfully.");
         setAmount("");
       } else {
-        showModal("error", "Transaction Failed", "An error occurred while creating your withdrawal request.");
+        showModal(
+          "error",
+          "Transaction Failed",
+          res.error || res.data?.message || "An unknown error occurred."
+        );
       }
     } catch (error) {
-      console.log(error);
-      showModal("error", "System Error", "Please try again later.");
+      let serverMessage = error.message || "An unknown error occurred.";
+      if (error.response && error.response.data) {
+        serverMessage = error.response.data.error || error.response.data.message;
+      }
+      showModal("error", "Transaction Failed", serverMessage);
     } finally {
       setLoading(false);
     }
