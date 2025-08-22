@@ -619,8 +619,15 @@ export default function ProductDetailpage() {
         <div className="productdetailP-seller-info">
           <div className="productdetailP-seller-nameHdr oxanium-semibold">
             Collection owner:
-            <span className="productdetailP-seller-name oxanium-bold"
-              onClick={() => navigate(Pathname("PROFILE").replace(":id", product.userId))}
+            <span
+              className="productdetailP-seller-name oxanium-bold"
+              onClick={() => {
+                if (!user || user.role !== "user") {
+                  showModal("warning", "Unauthorized", "You must login to see other profile");
+                  return;
+                }
+                navigate(Pathname("PROFILE").replace(":id", product.userId));
+              }}
             >
               {product.username}
             </span>
@@ -651,7 +658,6 @@ export default function ProductDetailpage() {
                   showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
                   return;
                 }
-                // Ở đây bạn có thể thêm logic mở chatroom nếu là user hợp lệ
               }}
             >
               <img src={MessageIcon} alt="Message" className="productdetailP-seller-mIcon" />
