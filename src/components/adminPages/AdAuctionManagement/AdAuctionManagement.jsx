@@ -22,21 +22,21 @@ export default function AdAuctionManagement() {
     fetchAuctions();
   }, []);
 
-  if (loading) return <p>Đang tải...</p>;
+  if (loading) return <p>Loading ...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="adau-container">
-      <h2 className="adau-title">Quản lý Đấu giá</h2>
+      <h2 className="adau-title">Auction Management</h2>
       <table className="adau-table">
         <thead>
           <tr>
-            <th>Tiêu đề</th>
-            <th>Mô tả</th>
-            <th>Người bán</th>
-            <th>Thời gian bắt đầu</th>
-            <th>Thời gian kết thúc</th>
-            <th>Trạng thái</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Seller</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>

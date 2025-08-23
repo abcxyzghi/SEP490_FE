@@ -1,4 +1,4 @@
-import { pythonApiWithFallback  } from "../config/axios";
+import { apiWithFallback, pythonApiWithFallback  } from "../config/axios";
 
 // Fetch all users (GET)
 export const getAllUsers = async () => {
@@ -127,6 +127,61 @@ export const approveAuction = async (auctionId, status) => {
     return { success: response.data.success, error: response.data.error };
   } catch (error) {
     console.error("Auction approval failed:", error);
+    throw error;
+  }
+};
+export const getAllTransaction = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/TransactionHistory/all-users-transactions",
+      params: null,
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Fetch revenue failed:", error);
+    throw error;
+  }
+};
+export const getAllTransactionFee = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/TransactionFee/all",
+      params: null,
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Fetch revenue failed:", error);
+    throw error;
+  }
+};
+
+export const GetOrderHistoryDetail = async (orderHistoryId) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: `/api/OrderHistory/${orderHistoryId}`, 
+      requiresAuth: true,
+    });
+    return response.data; 
+  } catch (error) {
+    console.error("Get order history detail failed:", error);
+    throw error;
+  }
+};
+export const GetAuctionSettlementById = async (id) => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: `/api/AuctionSettlement/get-by-id/${id}`, // path param
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Get auction settlement detail failed:", error);
     throw error;
   }
 };

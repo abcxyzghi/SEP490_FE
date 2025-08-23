@@ -101,3 +101,29 @@
   font-size: 15px;
   color: #bbb;
 }
+.adproduct-tabs {
+  margin-bottom: 16px;
+}
+
+.adproduct-tabButton {
+  padding: 8px 18px;
+  margin-right: 8px;
+  background: #2c2c2c;
+  color: #bbb;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.adproduct-tabButton:hover {
+  background: #3a3a3a;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.adproduct-tabButton.active {
+  background: linear-gradient(135deg, #fa81b4, #f7778c, #fb9c6d);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(255, 118, 136, 0.6);
+}

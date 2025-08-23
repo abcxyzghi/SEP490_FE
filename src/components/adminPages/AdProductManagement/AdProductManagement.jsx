@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
-
 import "./AdProductManagement.css";
 import { getAllProducts } from "../../../services/api.product";
 import { buildImageUrl } from "../../../services/api.imageproxy";
+import { getCatergory } from "../../../services/api.category";
 
 export default function AdProductManagement() {
-  const [data, setData] = useState([]);
+  const [activeTab, setActiveTab] = useState("products"); // "products" | "categories"
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  // Fetch sản phẩm
+  const fetchProducts = async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await getAllProducts();
-      console.log(res.data);
-      setData(res.data || []);
+      setProducts(res.data || []);
     } catch {
       setError("Lỗi khi lấy danh sách sản phẩm");
     } finally {
@@ -23,9 +25,28 @@ export default function AdProductManagement() {
     }
   };
 
+  // Fetch category
+  const fetchCategories = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getCatergory();
+      setCategories(res.data || []);
+    } catch {
+      setError("Lỗi khi lấy danh sách bộ sưu tập");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Khi đổi tab thì gọi API tương ứng
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (activeTab === "products") {
+      fetchProducts();
+    } else {
+      fetchCategories();
+    }
+  }, [activeTab]);
 
   const renderStatus = (isBlock) => (
     <span className={`adproduct-badge ${isBlock ? "no" : "ok"}`}>
@@ -35,27 +56,45 @@ export default function AdProductManagement() {
 
   return (
     <div className="adproduct-container">
-      <h2 className="adproduct-title">Danh sách Sản phẩm</h2>
+      <h2 className="adproduct-title">Products & Collections</h2>
 
+      {/* Tabs */}
+      <div className="adproduct-tabs">
+        <button
+          className={`adproduct-tabButton ${activeTab === "products" ? "active" : ""}`}
+          onClick={() => setActiveTab("products")}
+        >
+          Products
+        </button>
+        <button
+          className={`adproduct-tabButton ${activeTab === "categories" ? "active" : ""}`}
+          onClick={() => setActiveTab("categories")}
+        >
+          Collections
+        </button>
+      </div>
+
+
+      {/* Nội dung */}
       {loading ? (
         <div className="adproduct-status">Đang tải...</div>
       ) : error ? (
         <div className="adproduct-status">{error}</div>
-      ) : (
+      ) : activeTab === "products" ? (
         <table className="adproduct-table">
           <thead>
             <tr>
-              <th>Hình ảnh</th>
-              <th>Tên sản phẩm</th>
-              <th>Mã sản phẩm</th>
-              <th>Bộ sưu tập</th>
-              <th>Độ hiếm</th>
-              <th>Mô tả</th>
-              <th>Trạng thái</th>
+              <th>Image</th>
+              <th>Product Name</th>
+              <th>Product ID</th>
+              <th>Collection</th>
+              <th>Rarity</th>
+              <th>Description</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((product) => (
+            {products.map((product) => (
               <tr key={product.productId}>
                 <td>
                   {product.urlImage ? (
@@ -76,6 +115,25 @@ export default function AdProductManagement() {
                   {product.description}
                 </td>
                 <td>{renderStatus(product.is_Block)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <table className="adproduct-table">
+          <thead>
+            <tr>
+              <th>Collection id</th>
+              <th>Topic</th>
+              <th>System</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((cate) => (
+              <tr key={cate.id}>
+                <td>{cate.id}</td>
+                <td>{cate.topic}</td>
+                <td>{cate.isSystem ? "✔" : "-"}</td>
               </tr>
             ))}
           </tbody>
