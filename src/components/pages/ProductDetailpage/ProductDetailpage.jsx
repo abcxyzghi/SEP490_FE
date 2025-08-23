@@ -21,6 +21,7 @@ import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
+import { checkIsJoinedAuction } from '../../../services/api.auction';
 
 export default function ProductDetailpage() {
   const dispatch = useDispatch();
@@ -114,6 +115,15 @@ export default function ProductDetailpage() {
 
   // Handle instant pay
   const handlePayInstant = async () => {
+     const isJoined = await checkIsJoinedAuction();
+        if (isJoined) {
+          showModal(
+            "warning",
+            "Cannot Withdraw",
+            "You cannot buy instant while participating in an auction."
+          );
+          return;
+        }
     // Prevent unsigned user commit action
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");

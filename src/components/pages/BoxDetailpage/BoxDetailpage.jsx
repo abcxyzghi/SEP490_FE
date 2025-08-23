@@ -15,6 +15,7 @@ import MessageModal from '../../libs/MessageModal/MessageModal';
 //import icons
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
 import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
+import { checkIsJoinedAuction } from '../../../services/api.auction';
 
 
 export default function BoxDetailpage() {
@@ -163,6 +164,15 @@ export default function BoxDetailpage() {
   //   }
   // };
   const handlePayInstant = async () => {
+     const isJoined = await checkIsJoinedAuction();
+        if (isJoined) {
+          showModal(
+            "warning",
+            "Cannot Withdraw",
+            "You cannot buy instant while participating in an auction."
+          );
+          return;
+        }
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
