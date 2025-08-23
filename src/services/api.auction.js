@@ -193,3 +193,16 @@ export const checkIsJoinedAuction = async () => {
     throw error;
   }
 };
+export const getAllAuctions = async () => {
+    try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "api/auction/all?filter=default",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
+  }
+};

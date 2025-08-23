@@ -13,6 +13,7 @@ export const getAllReport = async () => {
     return null;
   }
 };
+
 export const updateStatusReport = async (reportId) => {
   try {
     const response = await apiWithFallback({

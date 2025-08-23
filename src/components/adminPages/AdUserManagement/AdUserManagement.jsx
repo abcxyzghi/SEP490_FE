@@ -105,8 +105,8 @@ export default function AdUserManagement() {
             <tr>
               <th>Username</th>
               <th>Role</th>
-              <th>Trạng thái</th>
-              <th>Thao tác</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -114,7 +114,7 @@ export default function AdUserManagement() {
               <tr key={user._id}>
                 <td>{user.username}</td>
                 <td>{user.role_id}</td>
-                <td>{user.is_active ? "Hoạt động" : "Bị khóa"}</td>
+                <td>{user.is_active ? "Active" : "Lock"}</td>
                 <td>
                   {tab === "user" ? (
                     <>

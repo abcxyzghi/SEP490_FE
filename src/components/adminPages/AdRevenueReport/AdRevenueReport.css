@@ -1,0 +1,168 @@
+/* Container */
+.adt-container {
+  padding: 20px;
+  color: #f5f5f5;
+  background-color: #121212;
+  border-radius: 8px;
+}
+
+/* Title */
+.adt-title {
+  margin: 16px 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Table */
+.adt-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.adt-table th,
+.adt-table td {
+  padding: 14px 12px;
+  text-align: left;
+}
+
+.adt-table th {
+  background: linear-gradient(135deg, #fa81b4, #f7778c, #fb9c6d);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.adt-table tr {
+  transition: background 0.2s ease;
+}
+
+.adt-table tr:nth-child(even) {
+  background: #242424;
+}
+
+.adt-table tr:nth-child(odd) {
+  background: #1b1b1b;
+}
+
+.adt-table tr:hover {
+  background: #2d2d2d;
+}
+
+/* Badge status */
+.adt-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  user-select: none;
+}
+
+.adt-badge.success {
+  background: linear-gradient(135deg, #56ab2f, #a8e063);
+  box-shadow: 0 0 10px rgba(86, 171, 47, 0.35);
+}
+
+.adt-badge.pending {
+  background: linear-gradient(135deg, #f7971e, #ffd200);
+  box-shadow: 0 0 10px rgba(247, 151, 30, 0.35);
+}
+
+.adt-badge.cancel{
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  box-shadow: 0 0 10px rgba(255, 65, 108, 0.35);
+}
+.adt-tabButtons {
+  margin-bottom: 16px;
+}
+
+.adt-tabButton {
+  padding: 8px 18px;
+  margin-right: 8px;
+  background: #2c2c2c;
+  color: #bbb;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.adt-tabButton:hover {
+  background: #3a3a3a;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.adt-tabButton.active {
+  background: linear-gradient(135deg, #fa81b4, #f7778c, #fb9c6d);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(255, 118, 136, 0.6);
+}
+
+
+/* Dark modal toàn cục */
+.dark-modal .ant-modal-content {
+  background-color: #1e1e1e;
+  color: #f5f5f5; /* chữ sáng hơn */
+}
+
+.dark-modal .ant-modal-header {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+  color: #f5f5f5;
+}
+
+.dark-modal .ant-modal-title {
+  color: #f5f5f5;
+}
+
+.dark-modal .ant-modal-body {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+  max-height: 400px;
+  overflow: auto;
+  font-family: monospace;
+}
+
+.dark-modal .ant-modal-footer {
+  background-color: #1e1e1e;
+  border-top: 1px solid #333;
+}
+
+.dark-modal .ant-btn {
+  background-color: #3a3a3a;
+  color: #f5f5f5;
+  border: none;
+}
+
+.dark-modal .ant-btn:hover {
+  background-color: #555;
+}
+
+/* Descriptions dark theme: label và content chữ sáng */
+.dark-modal .ant-descriptions-bordered {
+  border: 1px solid #333;
+  background-color: #1e1e1e;
+}
+
+.dark-modal .ant-descriptions-bordered .ant-descriptions-item-label {
+  color: #ddd !important; /* label sáng hơn */
+}
+
+.dark-modal .ant-descriptions-bordered .ant-descriptions-item-content {
+  color: #f5f5f5 !important; /* content chữ sáng */
+}
+
+/* Avatar nền tối */
+.dark-modal .ant-avatar {
+  background-color: #555;
+  color: #f5f5f5;
+}
