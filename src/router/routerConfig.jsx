@@ -17,7 +17,7 @@ import BoxDetailpage from "../components/pages/BoxDetailpage/BoxDetailpage";
 import CollectionDetailPage from "../components/pages/CollectionDetailPage/CollectionDetailPage";
 import ProductDetailpage from "../components/pages/ProductDetailpage/ProductDetailpage";
 import Settingpage from "../components/pages/Settingpage/Settingpage";
-import Notificationpage from "../components/pages/Notificationpage/Notificationpage";
+// import Notificationpage from "../components/pages/Notificationpage/Notificationpage";
 import Activitypage from "../components/pages/Activitypage/Activitypage";
 import Profilepage from "../components/pages/Profilepage/Profilepage";
 import Cartpage from "../components/pages/Cartpage/Cartpage";
@@ -81,7 +81,7 @@ export const privateRoutes = [
     // { path: PATH_NAME.CHECKOUT_PAGE, element: <Checkoutpage />, role: ['user'] },
     { path: PATH_NAME.ACHIEVEMENT_PAGE, element: <Achievementpage />, role: ['user'] },
     { path: PATH_NAME.ACTIVITIES_PAGE, element: <Activitypage />, role: ['user'] },
-    { path: PATH_NAME.NOTIFICATION_PAGE, element: <Notificationpage />, role: ['user'] },
+    // { path: PATH_NAME.NOTIFICATION_PAGE, element: <Notificationpage />, role: ['user'] },
     { path: PATH_NAME.EXCHANGE_PAGE, element: <Exchangepage />, role: ['user'] },
     { path: PATH_NAME.CHAT_ROOM, element: <ChatRoom />, role: ['user'] },
     { path: PATH_NAME.USER_SALE_REPORT, element: <UserSaleReport />, role: ['user'] },

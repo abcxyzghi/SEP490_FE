@@ -24,12 +24,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   margin: auto;
   padding: 2rem 4rem;
   border: 1px dashed #444;
   border-radius: 12px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   color: #bbb;
 }
 
@@ -44,21 +44,26 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  
-  width: 100%;         /* allow it to shrink/grow */
-  max-width: 800px;    /* cap the maximum width */
-  margin: 0 auto;      /* center on large screens */
+
+  /* allow it to shrink/grow */
+  width: 100%;
+  /* cap the maximum width */
+  max-width: 800px;
+  /* center on large screens */
+  margin: 0 auto;
 }
 
 .order-history-card {
   width: 90%;
-  background: #1e1e1e; /* dark grey container */
+  /* dark grey container */
+  background: #1e1e1e;
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255,255,255,0.08); /* subtle border */
+  /* subtle border */
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .order-history-card-top {
@@ -98,13 +103,16 @@
   font-weight: 600;
 }
 .order-history-type-buy {
-  color: #ef5350; /* softer red for dark bg */
+  /* softer red for dark bg */
+  color: #ef5350;
 }
 .order-history-type-sell {
-  color: #66bb6a; /* softer green for dark bg */
+  /* softer green for dark bg */
+  color: #66bb6a;
 }
 .order-history-type-box {
-  color: #ff7a21; /* orange highlight for Box*/
+  /* orange highlight for Box*/
+  color: #ff7a21;
 }
 
 .order-history-amount-wrapper {
@@ -120,29 +128,32 @@
 }
 .order-history-arrow-wrapper-buy,
 .order-history-arrow-wrapper-box,
-.order-history-arrow-wrapper-sell{
+.order-history-arrow-wrapper-sell {
   padding: 3px;
   border-radius: 100%;
 }
-.order-history-arrow-wrapper-buy{
-background-color: #ef5350;
+.order-history-arrow-wrapper-buy {
+  background-color: #ef5350;
 }
-.order-history-arrow-wrapper-box{
+.order-history-arrow-wrapper-box {
   background-color: #ff7a21;
 }
-.order-history-arrow-wrapper-sell{
+.order-history-arrow-wrapper-sell {
   background-color: #66bb6a;
 }
 .order-history-arrow {
   width: 16px;
   height: 16px;
-  filter: invert(1); /* make arrow white-ish on dark bg */
+  /* make arrow white-ish on dark bg */
+  filter: invert(1);
 }
 
+/* Rate btn or Subtext under price change */
 .order-history-rate-btn {
   padding: 0.3rem 0.7rem;
   font-size: 0.8rem;
-  background: linear-gradient(45deg, #FFD721, #DC0FFF); /* yellow → purple */
+  /* yellow → purple */
+  background: linear-gradient(45deg, #FFD721, #DC0FFF);
   color: #1e1e1e;
   font-weight: 600;
   border-radius: 6px;
@@ -164,11 +175,22 @@ background-color: #ef5350;
   font-weight: 500;
 }
 
+.order-history-productFee {
+  font-size: 0.7rem;
+  color: #888;
+  font-weight: 500;
+}
+.order-history-productFee span{
+  color: var(--light-5);
+  font-weight: 700;
+}
+
 .order-history-expand {
   margin-top: 0.5rem;
   border-top: 2px solid transparent;
+  /* gradient line for theme accent */
   border-image: linear-gradient(90deg, #FFD721, #DC0FFF);
-  border-image-slice: 1; /* gradient line for theme accent */
+  border-image-slice: 1;
   padding-top: 0.5rem;
 }
 .order-history-expand-btn {
@@ -176,13 +198,14 @@ background-color: #ef5350;
   margin: 0 auto;
   padding: 0;
   font-size: 0.85rem;
-  color: #aaa; /* less vibrant than blue */
+  color: var(--light-5);
   background: none;
   border: none;
   cursor: pointer;
 }
 .order-history-expand-btn:hover {
-  color: #fff; /* brighten a bit on hover */
+  /* brighten a bit on hover */
+  color: var(--light-1);
 }
 .order-history-expand-content {
   margin-top: 0.5rem;
@@ -411,15 +434,17 @@ background-color: #ef5350;
   }
 
   .order-history-card-top {
-    flex-direction: column-reverse; /* stack left + right */
+    /* stack left + right */
+    flex-direction: column-reverse;
     gap: 0.5rem;
   }
 
   .order-history-card-right {
-    align-items: flex-end; /* keep its own content to the right */
+    /* keep its own content to the right */
+    align-items: flex-end;
     width: 100%;
     gap: 0.4rem;
-}
+  }
 
   .order-history-name {
     font-size: 1rem;
@@ -439,7 +464,7 @@ background-color: #ef5350;
 
   .order-history-arrow-wrapper-buy,
   .order-history-arrow-wrapper-box,
-  .order-history-arrow-wrapper-sell{
+  .order-history-arrow-wrapper-sell {
     padding: 2px;
     border-radius: 100%;
   }

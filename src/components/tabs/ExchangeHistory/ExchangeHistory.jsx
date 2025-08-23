@@ -5,17 +5,21 @@ import { useSelector } from "react-redux";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import { getBuyer, getReceive, ExchangeAccept, ExchangeReject, ExchangeCancel } from "../../../services/api.exchange";
 import { createFeedback, getFeedbackOfSellProduct } from "../../../services/api.feedback";
-import { toast } from "react-toastify";
-import { message, Modal } from "antd";
+import * as HoverCard from "@radix-ui/react-hover-card";
 import Rating from '@mui/material/Rating';
 import MessageModal from "../../libs/MessageModal/MessageModal";
-import { useNavigate } from "react-router-dom";
+import ConfirmNavigateModal from "../../libs/ConfirmNavigateModal/ConfirmNavigateModal";
+import { useNavigate, Link } from "react-router-dom";
+import { Pathname } from "../../../router/Pathname";
+import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
+
 export default function ExchangeHistory() {
   const [sent, setSent] = useState([]);
   const [received, setReceived] = useState([]);
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  const [confirmModal, setConfirmModal] = useState({ open: false, title: "", message: "", onConfirm: null });
   const [loading, setLoading] = useState(true);
   const user = useSelector((state) => state.auth.user);
   const [sentFeedbackMap, setSentFeedbackMap] = useState({});
@@ -153,7 +157,15 @@ export default function ExchangeHistory() {
     setActionError(null);
     try {
       const res = await ExchangeAccept(id);
-      showModal("default", "Accepted", "Exchange request accepted.");
+
+      setConfirmModal({
+        open: true,
+        title: "Exchange complete!",
+        message: "Check out your new collection.",
+        onConfirm: () => navigate(`/profilepage/${myId}`),
+        onCancel: () => setConfirmModal({ ...confirmModal, open: false }),
+      });
+
       setReceived((prev) =>
         prev.map((req) => (req.id === id ? { ...req, status: 4 } : req))
       );
@@ -250,7 +262,8 @@ export default function ExchangeHistory() {
                 <div className="exchange-history-card-header">
                   <div className="exchange-history-card-top-left">
                     <div className="skeleton h-6 w-28 rounded2xl bg-gray-700/40" />
-                    <div className="skeleton h-5 w-20 rounded bg-gray-700/40 mt-2" />
+                    <div className="skeleton h-3 w-45 rounded bg-gray-700/40 mt-2" />
+                    <div className="skeleton h-3 w-45 rounded bg-gray-700/40" />
                   </div>
 
                   <div className="exchange-history-card-actions" style={{ alignItems: 'center' }}>
@@ -260,14 +273,9 @@ export default function ExchangeHistory() {
                 </div>
 
                 {/* card body: goal + products */}
-                <div className="exchange-history-card-body">
-                  <div className="exchange-history-goal">
-                    <div className="skeleton h-4 w-36 rounded mb-2 bg-gray-700/40" />
-                    <div className="skeleton rounded w-[170px] h-[170px] bg-gray-700/40" />
-                  </div>
-
+                <div className="exchange-history-card-body ">
                   <div className="exchange-history-products-wrapper">
-                    <div className="skeleton h-4 w-36 rounded mb-2 bg-gray-700/40" />
+                    <div className="skeleton h-4 w-30 rounded mb-2 bg-gray-700/40" />
                     <div className="exchange-history-products">
                       {[1, 2, 3].map((j) => (
                         <div key={j} className="exchange-history-product-item">
@@ -277,6 +285,12 @@ export default function ExchangeHistory() {
                       ))}
                     </div>
                   </div>
+
+                  <div className="exchange-history-goal">
+                    <div className="skeleton h-4 w-30 rounded mb-2 bg-gray-700/40" />
+                    <div className="skeleton rounded w-[150px] h-[170px] bg-gray-700/40" />
+                  </div>
+
                 </div>
               </div>
             ))}
@@ -313,11 +327,6 @@ export default function ExchangeHistory() {
           </div>
         </div>
 
-        {/* Section Title */}
-        {/* <h3 className="exchange-history-section-title">
-          {view === 'sent' ? 'Requests You Sent' : 'Requests You Received'}
-        </h3> */}
-
         {/* List wrapper */}
         <div className="exchange-history-list oxanium-regular">
           {(view === 'sent' ? sent : received).length === 0 ? (
@@ -333,7 +342,8 @@ export default function ExchangeHistory() {
                         {STATUS_MAP[req.status] || req.status}
                       </div>
                       <div className="exchange-history-date">
-                        {new Date(req.datetime).toLocaleString()} -  {new Date(req.enddate).toLocaleString()}
+                        <p><strong>Created:</strong> {new Date(req.datetime).toLocaleString()}</p>
+                        <p><strong>Due:</strong> {new Date(req.enddate).toLocaleString()}</p>
                       </div>
 
                     </div>
@@ -341,26 +351,6 @@ export default function ExchangeHistory() {
 
                     {/* Actions (right) */}
                     <div className="exchange-history-card-actions">
-                      <button
-                        className="profilepage-btn-message oxanium-semibold"
-                        onClick={() => {
-                          const targetId = view === "sent" ? req.sellerId : req.buyerId;
-
-                          if (!targetId) {
-                            showModal("warning", "Error", "No user found to message.");
-                            return;
-                          }
-
-                          navigate(`/chatroom/${targetId}`);
-                        }}
-                      >
-                        <img
-                          src={MessageIcon}
-                          alt="Message"
-                          className="profilepage-message-icon"
-                        />
-                        Message
-                      </button>
                       {/* Sent cancel */}
                       {view === 'sent' && req.status === 1 && (
                         <button
@@ -368,7 +358,7 @@ export default function ExchangeHistory() {
                           onClick={() => handleCancel(req.id)}
                           disabled={actionLoading === req.id}
                         >
-                          {actionLoading === req.id ? <span className="loading loading-bars loading-md"></span> : 'Cancel'}
+                          {actionLoading === req.id ? <span className="loading loading-bars loading-md"></span> : 'Cancel request'}
                         </button>
                       )}
 
@@ -407,58 +397,93 @@ export default function ExchangeHistory() {
 
                       {/* Show feedbacks */}
                       {req.status === 4 && (
-                        <button
-                          className="exchange-history-btn exchange-history-btn-secondary"
-                          onClick={() => handleShowFeedbacks(req.itemReciveId)}
-                        >
-                          Show Feedbacks
-                        </button>
+                        <>
+                          {!req.isFeedback ? (
+                            <button
+                              className="exchange-history-btn exchange-history-btn-secondary !cursor-default !active:scale-100"
+                            >
+                              No Feedbacks yet
+                            </button>
+                          ) : (
+                            <button
+                              className="exchange-history-btn exchange-history-btn-secondary"
+                              onClick={() => handleShowFeedbacks(req.itemReciveId)}
+                            >
+                              Show Feedbacks
+                            </button>
+                          )}
+                        </>
                       )}
-                    </div>
-                  </div>
-                  <div
-                    className={`exchange-history-user-wrapper ${view === "received" ? "reverse" : ""
-                      }`}
-                  >
-                    {/* Buyer Info */}
-                    <div className="exchange-history-user">
-                      <img
-                        src={buildImageUrl(req.buyerImage)}
-                        alt={req.buyerName}
-                        className="exchange-history-user-image"
-                      />
-                      <span className="exchange-history-user-name">{req.buyerName}</span>
-                    </div>
-
-                    {/* Seller Info */}
-                    <div className="exchange-history-user">
-                      <img
-                        src={buildImageUrl(req.sellerImage)}
-                        alt={req.sellerName}
-                        className="exchange-history-user-image"
-                      />
-                      <span className="exchange-history-user-name">{req.sellerName}</span>
                     </div>
                   </div>
 
                   {/* Card body */}
                   <div className="exchange-history-card-body">
-                    {/* Goal product */}
-                    <div className="exchange-history-goal">
-                      <strong>Product request:</strong>
-                      {req.iamgeItemRecive && (
-                        <img
-                          src={buildImageUrl(req.iamgeItemRecive, useBackupImg)}
-                          onError={() => setUseBackupImg(true)}
-                          alt="goal"
-                          className="exchange-history-goal-image"
-                        />
-                      )}
-                    </div>
-
-                    {/* Exchange products */}
+                    {/* Request exchange products */}
                     <div className="exchange-history-products-wrapper">
-                      <strong>Products exchange:</strong>
+                      {/* User name and hover info */}
+                      <p className="exchange-history-user-name">
+                        From:{" "}
+                        <span className={`${view === "sent" ? "" : "exchange-history-user-info"}`}>
+                          {view === "sent" ? (
+                            "Me"
+                          ) : (
+                            <HoverCard.Root>
+                              <HoverCard.Trigger asChild>
+                                <span>{req.buyerName}</span>
+                              </HoverCard.Trigger>
+                              <HoverCard.Content
+                                side="bottom" sideOffset={3} align="start"
+                                className="exchange-history-hovercard-content"
+                                forceMount
+                              >
+                                <div className="exchange-history-hovercard-inner">
+                                  <img
+                                    src={
+                                      req.buyerImage
+                                        ? buildImageUrl(req.buyerImage, useBackupImg)
+                                        : ProfileHolder
+                                    }
+                                    onError={() => setUseBackupImg(true)}
+                                    alt={req.buyerName}
+                                    className="exchange-history-hovercard-avatar"
+                                  />
+                                  <div>
+                                    <Link
+                                      to={Pathname("PROFILE").replace(":id", req.buyerId)}
+                                      className="exchange-history-hovercard-name">
+                                      {req.buyerName}
+                                    </Link>
+
+                                    <button
+                                      // reuse style from Profilepage
+                                      className="profilepage-btn-message oxanium-semibold"
+                                      onClick={() => {
+                                        const targetId = view === "sent" ? req.sellerId : req.buyerId;
+
+                                        if (!targetId) {
+                                          showModal("warning", "Error", "No user found to message.");
+                                          return;
+                                        }
+
+                                        navigate(`/chatroom/${targetId}`);
+                                      }}
+                                    >
+                                      <img
+                                        src={MessageIcon}
+                                        alt="Message"
+                                        className="profilepage-message-icon"
+                                      />
+                                      Message
+                                    </button>
+                                  </div>
+                                </div>
+                              </HoverCard.Content>
+                            </HoverCard.Root>
+                          )}
+                        </span>
+                      </p>
+
                       <div className="exchange-history-products">
                         {req.products?.map((p) => (
                           <div key={p.productExchangeId} className="exchange-history-product-item">
@@ -472,6 +497,79 @@ export default function ExchangeHistory() {
                           </div>
                         ))}
                       </div>
+                    </div>
+
+                    {/* Goal product */}
+                    <div className="exchange-history-goal">
+                      <p className="exchange-history-user-name">
+                        To:{" "}
+                        <span className={`${view === "sent" ? "exchange-history-user-info" : ""}`}>
+                          {view === "sent" ? (
+                            <HoverCard.Root>
+                              <HoverCard.Trigger asChild>
+                                <span>{req.sellerName}</span>
+                              </HoverCard.Trigger>
+                              <HoverCard.Content
+                                side="bottom" sideOffset={3} align="start"
+                                className="exchange-history-hovercard-content"
+                                forceMount
+                              >
+                                <div className="exchange-history-hovercard-inner">
+                                  <img
+                                    src={
+                                      req.sellerImage
+                                        ? buildImageUrl(req.sellerImage, useBackupImg)
+                                        : ProfileHolder
+                                    }
+                                    onError={() => setUseBackupImg(true)}
+                                    alt={req.sellerName}
+                                    className="exchange-history-hovercard-avatar"
+                                  />
+                                  <div>
+                                    <Link
+                                      to={Pathname("PROFILE").replace(":id", req.sellerId)}
+                                      className="exchange-history-hovercard-name">
+                                      {req.sellerName}
+                                    </Link>
+
+                                    <button
+                                      // reuse style from Profilepage
+                                      className="profilepage-btn-message oxanium-semibold"
+                                      onClick={() => {
+                                        const targetId = view === "sent" ? req.sellerId : req.buyerId;
+
+                                        if (!targetId) {
+                                          showModal("warning", "Error", "No user found to message.");
+                                          return;
+                                        }
+
+                                        navigate(`/chatroom/${targetId}`);
+                                      }}
+                                    >
+                                      <img
+                                        src={MessageIcon}
+                                        alt="Message"
+                                        className="profilepage-message-icon"
+                                      />
+                                      Message
+                                    </button>
+                                  </div>
+                                </div>
+                              </HoverCard.Content>
+                            </HoverCard.Root>
+                          ) : (
+                            "Me"
+                          )}
+                        </span>
+                      </p>
+                      {req.iamgeItemRecive && (
+                        <img
+                          src={buildImageUrl(req.iamgeItemRecive, useBackupImg)}
+                          onError={() => setUseBackupImg(true)}
+                          alt="goal"
+                          className="exchange-history-goal-image"
+                        />
+                      )}
                     </div>
 
                   </div>
@@ -587,6 +685,17 @@ export default function ExchangeHistory() {
         type={modal.type}
         title={modal.title}
         message={modal.message}
+      />
+
+      {/* Confirm on navigate modal */}
+      <ConfirmNavigateModal
+        open={confirmModal.open}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmLabel="Take me there"
+        cancelLabel="Click outside to close"
+        onConfirm={confirmModal.onConfirm}
+        onCancel={confirmModal.onCancel}
       />
 
     </div>

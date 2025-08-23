@@ -649,6 +649,7 @@
 
 .productdetailP-seller-btn-outfill:hover {
     background: var(--gradient-light);
+    opacity: 0.9;
     border: none;
 }
 

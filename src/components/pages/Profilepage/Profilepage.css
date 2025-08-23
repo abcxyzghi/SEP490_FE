@@ -101,7 +101,7 @@
 }
 
 .profilepage-btn-message:hover {
-  background: var(--gradient-dark);
+  opacity: 0.9;
 }
 
 

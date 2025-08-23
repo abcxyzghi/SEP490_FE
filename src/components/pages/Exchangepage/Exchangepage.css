@@ -24,7 +24,7 @@
 .exchangepage-seller {
     text-align: center;
     font-size: 1rem;
-    color: var(--light-3);
+    color: var(--primary-3);
     cursor: pointer;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .exchangepage-seller span:hover {
-    color: var(--light-2);
+    color: var(--primary-1);
     text-decoration: underline;
 }
 
