@@ -1,366 +1,365 @@
-body {
-  background-color: #0f111a;
-  margin: 0;
-}
-
-/* Base container */
+/* === Main Layout: Master-Detail === */
 .mod-collection-container {
-  padding: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0f111a; /* Darker background */
-  min-height: 100vh;
-  color: #f1f5f9;
-}
-
-/* Header */
-.mod-collection-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  height: 100vh;
+  background-color: #181a20;
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden;
 }
 
-.mod-collection-header h1 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #f1f5f9;
+/* === Sidebar (Master View) === */
+.mod-collection-sidebar {
+  width: 350px;
+  background-color: #23272f;
+  border-right: 1px solid #3a3f4b;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  flex-shrink: 0;
 }
 
-.create-button {
-  background-color: #3b82f6;
+.mod-collection-sidebar-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0bd8b9;
+  text-shadow: 0 0 10px rgba(11, 216, 185, 0.5);
+  margin-bottom: 20px;
+}
+
+/* Forms in sidebar */
+.mod-collection-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mod-collection-form input {
+  flex-grow: 1;
+  padding: 10px 14px;
+  background-color: #181a20;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.mod-collection-form input:focus {
+  border-color: #0bd8b9;
+  box-shadow: 0 0 8px rgba(11, 216, 185, 0.3);
+}
+
+.mod-collection-form button {
+  padding: 0 14px;
+  background: #0bb19e;
   color: white;
-  padding: 10px 16px;
   border: none;
   border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.create-button:hover {
-  background-color: #2563eb;
-}
-
-/* Card Grid */
-.collection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-/* Card */
-.collection-card {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  padding: 16px;
-  color: #111827;
-}
-
-.collection-card h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 9999px;
-  font-weight: 500;
-}
-
-.system {
-  background-color: #e0f2fe;
-  color: #0284c7;
-}
-
-.user {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-/* Popup Overlay */
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5); /* Tối hơn một chút */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.popup {
-  background-color: #1f2937; /* Gray-800 */
-  padding: 24px;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  color: #f9fafb; /* Gray-50 */
-  animation: fadeIn 0.25s ease;
-}
-
-.popup h2 {
-  font-size: 20px;
+  font-size: 1.2rem;
   font-weight: bold;
-  margin-bottom: 16px;
-  color: #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.popup input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #374151; /* Gray-700 */
-  background-color: #111827; /* Gray-900 */
-  color: #f1f5f9;
-  border-radius: 8px;
+.mod-collection-form button:hover {
+  background-color: #0bd8b9;
+}
+
+/* Filters */
+.mod-collection-filters {
+  display: flex;
+  gap: 8px;
   margin-bottom: 16px;
-  font-size: 16px;
+}
+
+.mod-collection-search {
+  flex-grow: 1;
+}
+
+.mod-collection-filters input,
+.mod-collection-filters select {
+  padding: 10px;
+  background-color: #181a20;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
   outline: none;
 }
 
-.popup input:focus {
-  border-color: #3b82f6; /* Blue-500 */
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+/* Collection List */
+.mod-collection-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 12px;
 }
 
-.popup-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.cancel-button {
-  background-color: #374151; /* Gray-700 */
-  color: #f1f5f9;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.cancel-button:hover {
-  background-color: #4b5563; /* Gray-600 */
-}
-
-.create-button.popup-create {
-  background-color: #3b82f6;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-}
-
-.create-button.popup-create:hover {
-  background-color: #2563eb;
-}
-
-/* Optional smooth appearance */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.achievement-detail {
-  background: #1e2530;
+.mod-collection-list-item {
   padding: 16px;
-  border-radius: 10px;
-  color: white;
-}
-
-.rewards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 30px;
-}
-
-.reward-card {
-  background: #2b3240;
-  padding: 12px;
   border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-.reward-card img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-bottom: 10px;
-  border: 2px solid #ff4757;
-}
-
-.add-reward-section {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 15px;
-}
-
-.add-reward-section input {
-  margin-bottom: 10px;
-  display: block;
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
-}
-
-.add-reward-section button {
-  background: #ff4757;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
+  margin-bottom: 8px;
+  background-color: #181a20;
+  border: 1px solid #444;
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-.reward-info p {
-  margin: 4px 0;
-  font-size: 14px;
+.mod-collection-list-item:hover {
+  background-color: #2c3340;
+  border-color: #555;
 }
 
-.add-reward-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
+.mod-collection-list-item.active {
+  background-color: #0bb19e22;
+  border-color: #0bb19e;
 }
 
-.add-reward-form input,
-.add-reward-form button {
-  padding: 6px;
-  border-radius: 6px;
-  border: none;
+.mod-collection-list-item h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  color: #fff;
 }
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+
+.mod-collection-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 12px;
+  font-weight: 500;
 }
-.mod-collection-achievement-header {
+
+.mod-collection-badge.system {
+  background-color: #3b82f622;
+  color: #60a5fa;
+}
+
+.mod-collection-badge.user {
+  background-color: #f59e0b22;
+  color: #facc15;
+}
+
+.mod-collection-pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  padding-top: 12px;
+  border-top: 1px solid #3a3f4b;
 }
-.popup-container {
-  background:  rgb(39, 32, 69);
-  padding: 20px;
-  border-radius: 10px;
-  max-height: 90vh;
+
+.mod-collection-pagination button {
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.mod-collection-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mod-collection-pagination span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* === Main Content (Detail View) === */
+.mod-collection-main {
+  flex-grow: 1;
+  padding: 40px;
   overflow-y: auto;
 }
 
-
-.rewards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+.mod-collection-placeholder {
+  text-align: center;
+  margin-top: 20vh;
+  color: #777;
 }
 
-.reward-card {
-  background-color: #1e2a38; /* Màu nền tối hài hòa */
+.mod-collection-placeholder h3 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.mod-collection-detail-view {
+  animation: fadeIn 0.5s ease;
+}
+
+.mod-collection-detail-header {
+  font-size: 1.8rem;
+  margin-bottom: 24px;
+  color: #0bd8b9;
+}
+
+.mod-collection-achievement-container h4 {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 24px 0 12px 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 8px;
+}
+
+.mod-collection-achievement-info {
+  background: #23272f;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+.mod-collection-achievement-info p {
+  margin: 0 0 8px 0;
+}
+
+.mod-collection-achievement-info strong {
+  color: #aaa;
+}
+
+.mod-collection-rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.mod-collection-reward-card {
+  background-color: #2c3340;
   border-radius: 8px;
   padding: 12px;
   text-align: center;
   color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.reward-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
 }
 
-.reward-card img {
-  width: 80px;
-  height: 80px;
+.mod-collection-reward-card img {
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   margin-bottom: 8px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  /* border: 2px solid #0bd8b9; */
 }
 
-.reward-card p {
+.mod-collection-reward-card p {
   margin: 4px 0;
-  font-size: 14px;
-}
-.achievement-container {
-  width: 900px;
-  max-height: 90vh;
-  background: #1e2530;
-  padding: 20px;
-  border-radius: 12px;
-  color: white;
+  font-size: 0.9rem;
 }
 
-.achievement-header {
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 10px;
+.mod-collection-form.add-reward {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: end;
 }
 
-.achievement-header h3 {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-/* Form tạo collection mới */
-.create-collection-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 15px;
+.mod-collection-form.add-reward h4 {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
 }
 
-.create-collection-form input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s ease-in-out;
-}
-
-.create-collection-form input:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-}
-
-.create-collection-form button {
-  padding: 8px 16px;
-  background: rgb(13, 158, 110);
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
+.mod-collection-form.add-reward input[type="file"] {
+  background: none;
   border: none;
+  padding: 0;
+}
+
+.mod-collection-form.add-reward button {
+  grid-column: 1 / -1;
+}
+
+.mod-collection-no-achievement {
+  text-align: center;
+  padding: 40px;
+  background: #23272f;
   border-radius: 8px;
+}
+
+.mod-collection-no-achievement p {
+  margin-bottom: 16px;
+}
+
+.mod-collection-no-achievement button {
+  background: #0bb19e;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease-in-out;
 }
 
-.create-collection-form button:hover {
-  background: rgb(8, 91, 63);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.create-collection-form button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+/* Style cơ bản cho cả 2 loại thẻ */
+.mod-collection-reward-card {
+  background-color: #2c3340;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  color: #fff;
+  border: 1px solid #444;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mod-collection-reward-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.mod-collection-reward-card p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.mod-collection-reward-card p strong {
+  color: #888;
+}
+
+/* Style riêng cho thẻ Huy hiệu */
+.mod-collection-reward-card--medal img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  /* border: 3px solid #0bd8b9; */
+}
+
+.mod-collection-reward-card--medal {
+  border-color: #f39c12;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+/* Style riêng cho thẻ Hộp quà */
+.mod-collection-reward-card--box {
+  border: 3px solid #0bd8b9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Viền màu vàng để phân biệt */
+}
+
+.reward-box-icon {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 5px #f39c12);
 }
