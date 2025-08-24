@@ -41,7 +41,7 @@ export default function AdUserManagement() {
     try {
       await Promise.all([fetchUsers(), fetchModerators()]);
     } catch {
-      setError('Lỗi khi lấy danh sách');
+      setError('Error when grabbing list');
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export default function AdUserManagement() {
     if (allUsers.length === 0 && allModerators.length === 0) {
       fetchAllData();
     }
-  }, []);
+  }, [fetchAllData, allUsers.length, allModerators.length]);
 
   const filteredData = useMemo(() => {
     const dataToFilter = tab === 'user' ? allUsers : allModerators;
@@ -106,17 +106,34 @@ export default function AdUserManagement() {
     }
   };
 
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+  const handleTabChange = (newTab) => {
+    setTab(newTab);
+    setSearchTerm('');
+    setCurrentPage(1);
+  };
+
   return (
     <div className="aduser-container">
       <h2 className="aduser-title">User & Moderator Management</h2>
       <div className="aduser-tabButtons">
-        <button onClick={() => setTab("user")} className={`aduser-tabButton ${tab === "user" ? "active" : ""}`}>User</button>
-        <button onClick={() => setTab("moderator")} className={`aduser-tabButton ${tab === "moderator" ? "active" : ""}`}>Moderator</button>
+        <button onClick={() => handleTabChange("user")} className={`aduser-tabButton ${tab === "user" ? "active" : ""}`}>User</button>
+        <button onClick={() => handleTabChange("moderator")} className={`aduser-tabButton ${tab === "moderator" ? "active" : ""}`}>Moderator</button>
       </div>
 
       <div className="aduser-filters">
-        <input type="text" placeholder="Search by username or status..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-        <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))}>
+        <input type="text" placeholder="Search by username or status..." value={searchTerm} onChange={handleSearchChange} />
+        <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
           <option value={10}>10 per page</option>
           <option value={20}>20 per page</option>
           <option value={50}>50 per page</option>
