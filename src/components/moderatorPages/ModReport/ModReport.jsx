@@ -3,7 +3,7 @@ import { getAllReport, updateStatusReport } from "../../../services/api.report";
 import "./ModReport.css";
 import { toast } from "react-toastify";
 import moment from "moment";
-
+import ProfileIcon from '../../../assets/others/mmbAvatar.png';
 export default function ModReport() {
   const [reports, setReports] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
