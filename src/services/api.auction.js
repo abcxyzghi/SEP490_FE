@@ -187,9 +187,24 @@ export const checkIsJoinedAuction = async () => {
       requiresAuth: true,
     });
     console.log("true or false let's find out" + response.data)
-    return response.data;
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      return response.data.data[0]; 
+    }
   } catch (error) {
     console.error("Check is joined auction failed:", error);
     throw error;
+  }
+};
+export const getAllAuctions = async () => {
+    try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "api/auction/all?filter=default",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
   }
 };

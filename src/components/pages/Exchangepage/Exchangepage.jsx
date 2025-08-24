@@ -7,6 +7,7 @@ import { exchangeProduct, getAllProductsOfCollection, getCollectionOfProfile } f
 import { buildImageUrl } from '../../../services/api.imageproxy';
 import { Pathname } from '../../../router/Pathname';
 import MessageModal from '../../libs/MessageModal/MessageModal';
+import ConfirmNavigateModal from "../../libs/ConfirmNavigateModal/ConfirmNavigateModal";
 
 export default function Exchangepage() {
   const { sellProductId } = useParams();
@@ -21,6 +22,7 @@ export default function Exchangepage() {
   const [loadingUserProducts, setLoadingUserProducts] = useState(true);
   const [isExchanging, setIsExchanging] = useState(false);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  const [confirmModal, setConfirmModal] = useState({ open: false, title: "", message: "", onConfirm: null });
   const [selectedCards, setSelectedCards] = useState([]);
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
@@ -192,7 +194,15 @@ export default function Exchangepage() {
       };
       const res = await exchangeProduct(payload);
 
-      showModal('default', 'Exchange sent', 'Your exchange request has been sent successfully! What you should do next is wait.');
+      // showModal('default', 'Exchange sent', 'Your exchange request has been sent successfully! What you should do next is wait.');
+      setConfirmModal({
+        open: true,
+        title: "Request sent!",
+        message: "Your exchange request has been sent. View your request details?",
+        onConfirm: () => navigate(Pathname("ACTIVITIES_PAGE")),
+        onCancel: () => setConfirmModal({ ...confirmModal, open: false }),
+      });
+
     } catch (err) {
       showModal('error', 'Oops!', 'Something went wrong in exchange process. Please try again later.');
     } finally {
@@ -335,30 +345,32 @@ export default function Exchangepage() {
               <div className="exchangepage-no-card text-gray-300 opacity-50 oxanium-regular">You have no cards to exchange.</div>
             ) : (
               <ul className="exchangepage-products-list">
-                {displayedProducts.map((card) => {
-                  const isSelected = selectedCards.find((c) => c.id === card.id);
-                  return (
-                    <li
-                      key={card.id}
-                      onClick={() => {
-                        if (card.quantity > 0) handleCardClick(card);
-                      }}
-                      className={`exchangepage-card ${card.quantity === 0 ? 'disabled' : ''
-                        } ${isSelected ? 'selected' : ''}`}
-                    >
-                      <img
-                        src={buildImageUrl(card.urlImage, useBackupImg)}
-                        onError={() => setUseBackupImg(true)}
-                        alt='card name'
-                        className="exchangepage-card-image"
-                      />
-                      {/* <div className="exchangepage-card-name">{card.name}</div> */}
-                      <div className="exchangepage-card-quantity oxanium-light">
-                        Qty: {card.quantity}
-                      </div>
-                    </li>
-                  );
-                })}
+                {displayedProducts
+                  .filter(card => card.quantity > 0)
+                  .map((card) => {
+                    const isSelected = selectedCards.find((c) => c.id === card.id);
+                    return (
+                      <li
+                        key={card.id}
+                        onClick={() => {
+                          if (card.quantity > 0) handleCardClick(card);
+                        }}
+                        className={`exchangepage-card ${card.quantity === 0 ? 'disabled' : ''
+                          } ${isSelected ? 'selected' : ''}`}
+                      >
+                        <img
+                          src={buildImageUrl(card.urlImage, useBackupImg)}
+                          onError={() => setUseBackupImg(true)}
+                          alt='card name'
+                          className="exchangepage-card-image"
+                        />
+                        {/* <div className="exchangepage-card-name">{card.name}</div> */}
+                        <div className="exchangepage-card-quantity oxanium-light">
+                          Qty: {card.quantity}
+                        </div>
+                      </li>
+                    );
+                  })}
               </ul>
             )}
           </div>
@@ -374,6 +386,18 @@ export default function Exchangepage() {
         title={modal.title}
         message={modal.message}
       />
+
+      {/* Confirm on navigate modal */}
+      <ConfirmNavigateModal
+        open={confirmModal.open}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmLabel="View Details"
+        cancelLabel="Click outside to close"
+        onConfirm={confirmModal.onConfirm}
+        onCancel={confirmModal.onCancel}
+      />
+
     </div>
   );
 }

@@ -123,7 +123,6 @@ export default function AdUserManagement() {
         </select>
       </div>
 
-
       {loading ? <div className="aduser-status">Loading...</div> :
         error ? <div className="aduser-status">{error}</div> : (
           <>
@@ -152,6 +151,7 @@ export default function AdUserManagement() {
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           </>
         )}
+
     </div>
   );
 }
