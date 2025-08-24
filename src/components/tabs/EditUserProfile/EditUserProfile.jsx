@@ -276,19 +276,19 @@ export default function EditUserProfile() {
         showModal('warning', 'Missing information', 'Please enter bank account number.');
         return;
       }
-      if (form.phoneNumber.trim()) {
-        const phone = form.phoneNumber.trim();
-        if (!/^\d+$/.test(phone)) {
-          setMessage("Số điện thoại chỉ được chứa số.");
-          return;
-        }
-        if (!/^0\d{9}$/.test(phone)) {
-          setMessage(
-            "Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng số 0."
-          );
-          return;
-        }
-      }
+      // if (form.phoneNumber.trim()) {
+      //   const phone = form.phoneNumber.trim();
+      //   if (!/^\d+$/.test(phone)) {
+      //     showModal('warning', 'Missing information', 'Please enter a valid phone number.');
+      //     return;
+      //   }
+      //   if (!/^0\d{9}$/.test(phone)) {
+      //     setMessage(
+      //       "Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng số 0."
+      //     );
+      //     return;
+      //   }
+      // }
     }
 
     // Phone number validation (only if there's something in the input)
