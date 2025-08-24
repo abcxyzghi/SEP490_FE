@@ -1,124 +1,234 @@
-.mod-profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  padding: 20px;
-  background-color: #1a1a2e;
+/* === Main Container === */
+.profile-page {
+  min-height: 100vh;
+  background-color: #181a20;
   color: #fff;
+  padding: 20px;
   font-family: 'Roboto', sans-serif;
 }
 
+/* === Profile Header === */
 .profile-header {
-  width: 100%;
-  max-width: 800px;
-  background-color: #16213e;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  margin-bottom: 20px;
-  position: relative;
+  max-width: 900px;
+  margin: 20px auto 40px auto;
+  background: #23272f;
+  border-radius: 16px;
+  border: 1px solid #38f9d744;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.edit-btn,
-.save-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #e94560;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.edit-btn:hover,
-.save-btn:hover {
-  background-color: #d63447;
-}
-
-.profile-banner {
+.profile-header__banner {
   height: 200px;
+  background: linear-gradient(135deg, #38f9d733, #181a20), url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
+  border-radius: 16px 16px 0 0;
 }
 
-.profile-info {
+.profile-header__main {
   display: flex;
-  align-items: center;
-  padding: 20px;
+  align-items: flex-end;
+  padding: 0 40px 20px 40px;
+  margin-top: -60px;
+  /* Kéo avatar và info lên trên banner */
 }
 
-.avatar-container {
+.profile-header__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #38f9d7;
+  box-shadow: 0 0 15px #38f9d777;
+  overflow: hidden;
   flex-shrink: 0;
+  background-color: #181a20;
+}
+
+.profile-header__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-header__info {
+  margin-left: 24px;
+}
+
+.profile-header__info h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px 0;
+}
+
+.profile-header__info p {
+  font-size: 1rem;
+  color: #ccc;
+  margin: 0;
+}
+
+/* === Profile Content & Tabs === */
+.profile-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 16px;
+  border-bottom: 2px solid #23272f;
+  margin-bottom: 24px;
+}
+
+.profile-tabs__button {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, border-bottom 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.profile-tabs__button--active {
+  color: #38f9d7;
+  border-bottom-color: #38f9d7;
+}
+
+.profile-tab-content {
+  background: #23272f;
+  border-radius: 16px;
+  padding: 24px 32px;
+  border: 1px solid #38f9d722;
+}
+
+.profile-form__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #444;
+}
+
+/* === Form Elements (giữ style cũ) === */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-form__group {
+  width: 100%;
+}
+
+.profile-form__label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.profile-form__input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #181a20;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-form__input:focus {
+  border-color: #38f9d7;
+  box-shadow: 0 0 8px #38f9d755;
+}
+
+.profile-form__avatar-preview {
   width: 100px;
   height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-right: 20px;
-  border: 2px solid #0f3460;
-  position: relative;
-}
-
-.avatar {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #444;
 }
 
-.avatar-preview {
+.profile-form__file-input {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #e94560;
+  font-size: 0.9rem;
+  color: #aaa;
 }
 
-.avatar-container input[type="file"] {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+.profile-form__file-input::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 16px;
+  background: #38f9d722;
+  color: #38f9d7;
+  border: 1px solid #38f9d7;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.info {
-  flex-grow: 1;
+.profile-form__file-input::file-selector-button:hover {
+  background: #38f9d733;
 }
 
-.info input {
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #0f3460;
-  border-radius: 4px;
-  background-color: #1a1a2e;
-  color: #fff;
+.profile-form__button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  border: 2px solid #38f9d7;
+  background: transparent;
+  color: #38f9d7;
 }
 
-.info h1 {
-  font-size: 24px;
-  margin: 0;
-  color: #e94560;
+.profile-form__button:hover:not(:disabled) {
+  background: rgba(56, 249, 215, 0.2);
+  box-shadow: 0 0 12px #38f9d755;
 }
 
-.info p {
-  font-size: 14px;
-  color: #a5a5a5;
-  margin: 5px 0 0;
+.profile-form__button--secondary {
+  border-color: #15ba8e;
+  color: #15ba8e;
 }
 
-/* Loading, error, fallback states */
-.loading,
-.error,
-.no-profile {
-  font-size: 16px;
-  color: #94a3b8;
+.profile-form__button--secondary:hover:not(:disabled) {
+  background: rgba(21, 186, 142, 0.2);
+  box-shadow: 0 0 12px #15ba8e55;
+}
+
+.profile-form__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #555;
+  color: #888;
+}
+
+.profile-form__message {
+  margin-top: 16px;
   text-align: center;
-  margin-top: 100px;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.profile-form__message--success {
+  color: #2ecc71;
+  background-color: rgba(46, 204, 113, 0.1);
+}
+
+.profile-form__message--error {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
 }
