@@ -192,23 +192,30 @@
 }
 
 .mod-mysterybox-detail-container {
+  width: 630px;
   padding: 16px;
   background: rgba(44, 44, 44, 0.9);
   border-radius: 12px;
   color: #fff;
+  justify-content: center;
+  align-items: center; 
+  
 }
 
 .mod-mysterybox-detail-image {
-  width: 100%;
+  width: 70%;
   height: auto;
   border-radius: 8px;
   margin-bottom: 16px;
+  margin-left: 85px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  justify-content: center;
 }
 
 .mod-mysterybox-detail-description {
   font-size: 1rem;
   margin-bottom: 12px;
+  padding: auto;
   line-height: 1.5;
   color: #ccc;
 }
@@ -227,6 +234,7 @@
   margin-top: 16px;
   margin-bottom: 12px;
   color: #ffcc00;
+  justify-content: center;
 }
 
 .mod-mysterybox-detail-products {
@@ -331,12 +339,14 @@
 /* Styling for the Create New Mystery Box modal */
 /* === Add Product Modal Styling === */
 .mod-mysterybox-create-modal .ant-modal-content {
+  width: 650px;
   background: #181a20;
   color: #fff;
   border-radius: 16px;
   box-shadow: 0 0 24px #38f9d744;
 }
 .mod-mysterybox-detail-modal .ant-modal-content {
+  width: 700px;
   background: #181a20;
   color: #fff;
   border-radius: 16px;
@@ -348,6 +358,7 @@
   border-radius: 16px 16px 0 0;
 }
 .mod-mysterybox-detail-modal .ant-modal-header {
+  width: 650px;
   background: #23272f;
   border-bottom: 1px solid #38f9d7;
   border-radius: 16px 16px 0 0;
@@ -359,6 +370,7 @@
   text-align: center;
 }
 .mod-mysterybox-detail-modal .ant-modal-title {
+  width: 700px;
   color: #38f9d7;
   font-size: 1.35rem;
   font-weight: 700;
@@ -497,7 +509,7 @@
 
 }
 .add-product-image {
-  max-width: 90%;
+  max-width: 40%;
   height: auto;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -520,6 +532,8 @@
   width: 20px;
   height: 20px;
   margin-bottom: 10px;
+  border-color: #15ba8e;
+  border-width: 3px;
 }
 
 .add-product-info input[type="number"] {
