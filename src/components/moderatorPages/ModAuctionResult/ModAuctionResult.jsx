@@ -128,7 +128,7 @@ export default function ModAuctionResult() {
                 className="mod-auction-result-btn-update"
                 onClick={() => handleUpdateSettlement(item.auction_id)}
               >
-                Update Settlement
+                Confirm Settlement
               </button>
             )}
           </div>

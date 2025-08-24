@@ -63,6 +63,7 @@ export default function ModCollection() {
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [achievementDetail, setAchievementDetail] = useState(null);
 
+
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   // Form states
