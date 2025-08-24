@@ -25,10 +25,12 @@ export default function HostAuctionModal({
 
                     if (res?.data?.length) {
                         setAuctionOptions(
-                            res.data.map((a) => ({
-                                value: a._id,
-                                label: `${a.title} — ${dayjs(a.start_time).format("YYYY-MM-DD HH:mm")}`
-                            }))
+                            res.data
+                                .filter(a => a.id)
+                                .map(a => ({
+                                    value: a.id,
+                                    label: `${a.title} — ${dayjs(a.start_time).format("YYYY-MM-DD HH:mm")}`
+                                }))
                         );
                     } else {
                         console.warn("⚠️ No auction data found!");

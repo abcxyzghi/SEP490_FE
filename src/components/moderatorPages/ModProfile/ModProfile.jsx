@@ -5,6 +5,10 @@ import { PATH_NAME } from "../../../router/Pathname";
 import { useNavigate } from 'react-router-dom';
 import { logout, updateProfileImage } from '../../../redux/features/authSlice';
 import { clearCart } from '../../../redux/features/cartSlice';
+import ProfileIcon from '../../../assets/others/mmbAvatar.png'; // Thêm import cho ảnh mặc định
+
+// Import CSS
+import "./ModProfile.css";
 
 export default function EditUserProfile() {
   const navigate = useNavigate();
@@ -18,6 +22,7 @@ export default function EditUserProfile() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); // 'success' or 'error'
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -25,7 +30,10 @@ export default function EditUserProfile() {
     confirmPassword: ''
   });
   const [pwMessage, setPwMessage] = useState('');
+  const [pwMessageType, setPwMessageType] = useState(''); // 'success' or 'error'
   const [pwLoading, setPwLoading] = useState(false);
+
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'password'
 
   useEffect(() => {
     fetchProfile();
@@ -36,10 +44,7 @@ export default function EditUserProfile() {
       const res = await getProfile();
       if (res?.data) {
         setUser(res.data);
-        setForm(f => ({
-          ...f,
-          phoneNumber: res.data.phoneNumber || '',
-        }));
+        setForm(f => ({ ...f, phoneNumber: res.data.phoneNumber || '' }));
       }
     } catch {
       setUser(reduxUser || {});
@@ -65,12 +70,14 @@ export default function EditUserProfile() {
     setPwMessage('');
     setPwLoading(true);
     if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
-      setPwMessage('Vui lòng nhập đầy đủ thông tin.');
+      setPwMessage('Please fill in all fields.');
+      setPwMessageType('error');
       setPwLoading(false);
       return;
     }
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPwMessage('Mật khẩu mới và xác nhận không khớp.');
+      setPwMessage('New password and confirmation do not match.');
+      setPwMessageType('error');
       setPwLoading(false);
       return;
     }
@@ -81,13 +88,16 @@ export default function EditUserProfile() {
         confirmPassword: passwordForm.confirmPassword
       });
       if (res?.status) {
-        setPwMessage('Đổi mật khẩu thành công! Đang chuyển hướng...');
-        handleLogout();
+        setPwMessage('Password changed successfully! Redirecting...');
+        setPwMessageType('success');
+        setTimeout(handleLogout, 2000);
       } else {
-        setPwMessage(res?.message || 'Đổi mật khẩu thất bại!');
+        setPwMessage(res?.message || 'Failed to change password!');
+        setPwMessageType('error');
       }
     } catch {
-      setPwMessage('Đổi mật khẩu thất bại!');
+      setPwMessage('Failed to change password!');
+      setPwMessageType('error');
     }
     setPwLoading(false);
   };
@@ -101,7 +111,7 @@ export default function EditUserProfile() {
       try {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map(name => caches.delete(name)));
-      } catch {}
+      } catch { }
     }
     navigate(PATH_NAME.LOGIN, { replace: true });
   };
@@ -110,7 +120,6 @@ export default function EditUserProfile() {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-
     try {
       const formData = new FormData();
       if (form.profileImage) formData.append('urlImage', form.profileImage);
@@ -118,98 +127,101 @@ export default function EditUserProfile() {
       formData.append('accountBankName', '');
       formData.append('bankNumber', '');
       formData.append('bankid', '');
-
       const res = await updateProfile(formData, true);
       if (res.data?.profileImage) {
         dispatch(updateProfileImage(res.data.profileImage));
       }
-      setMessage(res.status ? '✅ Cập nhật thành công!' : '❌ Cập nhật thất bại!');
       if (res.status) {
+        setMessage('Profile updated successfully!');
+        setMessageType('success');
         await fetchProfile();
+      } else {
+        setMessage('Profile update failed!');
+        setMessageType('error');
       }
     } catch {
-      setMessage('Có lỗi xảy ra!');
+      setMessage('An error occurred!');
+      setMessageType('error');
     }
-
     setLoading(false);
   };
 
+  const currentAvatar = user?.profileImage ? `https://mmb-be-dotnet.onrender.com/api/ImageProxy/${user.profileImage}` : ProfileIcon;
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white px-4 py-8">
-      <div className="max-w-xl mx-auto bg-gray-800 rounded-2xl shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">📝 Cập nhật thông tin cá nhân</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
-          <div>
-            <label className="block mb-1 font-medium">Ảnh đại diện</label>
-            {form.profileImage ? (
-              <img src={URL.createObjectURL(form.profileImage)} alt="Preview"
-                className="w-28 h-28 object-cover rounded-xl mb-3 border border-gray-700" />
-            ) : user?.profileImage ? (
-              <img src={`https://mmb-be-dotnet.onrender.com/api/ImageProxy/${user.profileImage}`} alt="Current avatar"
-                className="w-28 h-28 object-cover rounded-xl mb-3 border border-gray-700" />
-            ) : null}
-            <input type="file" name="profileImage" accept="image/*"
-              onChange={handleChange}
-              className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4
-                         file:rounded-full file:border-0 file:text-sm file:font-semibold
-                         file:bg-blue-600 file:text-white hover:file:bg-blue-500"/>
+    <div className="profile-page">
+      {/* --- Profile Header --- */}
+      <div className="profile-header">
+        <div className="profile-header__banner"></div>
+        <div className="profile-header__main">
+          <div className="profile-header__avatar">
+            <img src={currentAvatar} alt="Avatar" />
           </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Số điện thoại</label>
-            <input
-              name="phoneNumber"
-              value={form.phoneNumber}
-              onChange={handleChange}
-              placeholder="Nhập số điện thoại"
-              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+          <div className="profile-header__info">
+            <h1>{user?.username || 'Username'}</h1>
+            <p>{user?.email || 'email@example.com'}</p>
           </div>
+        </div>
+      </div>
 
-          <button type="submit" disabled={loading}
-            className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition font-semibold">
-            {loading ? '⏳ Đang cập nhật...' : '💾 Cập nhật'}
+      {/* --- Profile Content --- */}
+      <div className="profile-content">
+        <div className="profile-tabs">
+          <button
+            className={`profile-tabs__button ${activeTab === 'profile' ? 'profile-tabs__button--active' : ''}`}
+            onClick={() => setActiveTab('profile')}
+          >
+            Profile Settings
           </button>
-        </form>
+          <button
+            className={`profile-tabs__button ${activeTab === 'password' ? 'profile-tabs__button--active' : ''}`}
+            onClick={() => setActiveTab('password')}
+          >
+            Change Password
+          </button>
+        </div>
 
-        {message && <div className="mt-3 text-center">{message}</div>}
+        <div className="profile-tab-content">
+          {activeTab === 'profile' && (
+            <form onSubmit={handleSubmit} className="profile-form">
+              <h3 className="profile-form__title">Edit Information</h3>
+              <div className="profile-form__group">
+                <label className="profile-form__label">Profile Picture</label>
+                {form.profileImage && <img src={URL.createObjectURL(form.profileImage)} alt="Preview" className="profile-form__avatar-preview" />}
+                <input type="file" name="profileImage" accept="image/*" onChange={handleChange} className="profile-form__file-input" />
+              </div>
+              <div className="profile-form__group">
+                <label className="profile-form__label">Phone Number</label>
+                <input name="phoneNumber" value={form.phoneNumber} onChange={handleChange} placeholder="Enter your phone number" className="profile-form__input" />
+              </div>
+              <button type="submit" disabled={loading} className="profile-form__button">
+                {loading ? 'Updating...' : 'Save Changes'}
+              </button>
+              {message && <div className={`profile-form__message profile-form__message--${messageType}`}>{message}</div>}
+            </form>
+          )}
 
-        {/* Change password */}
-        <div className="mt-10">
-          <h2 className="text-xl font-bold mb-4">🔒 Đổi mật khẩu</h2>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div>
-              <label className="block mb-1 font-medium">Mật khẩu hiện tại</label>
-              <input type="password" name="currentPassword"
-                value={passwordForm.currentPassword}
-                onChange={handlePasswordChange}
-                placeholder="Nhập mật khẩu hiện tại"
-                className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"/>
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">Mật khẩu mới</label>
-              <input type="password" name="newPassword"
-                value={passwordForm.newPassword}
-                onChange={handlePasswordChange}
-                placeholder="Nhập mật khẩu mới"
-                className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"/>
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">Xác nhận mật khẩu mới</label>
-              <input type="password" name="confirmPassword"
-                value={passwordForm.confirmPassword}
-                onChange={handlePasswordChange}
-                placeholder="Xác nhận mật khẩu mới"
-                className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none"/>
-            </div>
-
-            <button type="submit" disabled={pwLoading}
-              className="w-full py-2 rounded-lg bg-green-600 hover:bg-green-500 transition font-semibold">
-              {pwLoading ? '⏳ Đang đổi...' : '🔑 Đổi mật khẩu'}
-            </button>
-          </form>
-          {pwMessage && <div className="mt-3 text-center">{pwMessage}</div>}
+          {activeTab === 'password' && (
+            <form onSubmit={handlePasswordSubmit} className="profile-form">
+              <h3 className="profile-form__title">Update Password</h3>
+              <div className="profile-form__group">
+                <label className="profile-form__label">Current Password</label>
+                <input type="password" name="currentPassword" value={passwordForm.currentPassword} onChange={handlePasswordChange} placeholder="Enter current password" className="profile-form__input" />
+              </div>
+              <div className="profile-form__group">
+                <label className="profile-form__label">New Password</label>
+                <input type="password" name="newPassword" value={passwordForm.newPassword} onChange={handlePasswordChange} placeholder="Enter new password" className="profile-form__input" />
+              </div>
+              <div className="profile-form__group">
+                <label className="profile-form__label">Confirm New Password</label>
+                <input type="password" name="confirmPassword" value={passwordForm.confirmPassword} onChange={handlePasswordChange} placeholder="Confirm new password" className="profile-form__input" />
+              </div>
+              <button type="submit" disabled={pwLoading} className="profile-form__button profile-form__button--secondary">
+                {pwLoading ? 'Changing...' : 'Change Password'}
+              </button>
+              {pwMessage && <div className={`profile-form__message profile-form__message--${pwMessageType}`}>{pwMessage}</div>}
+            </form>
+          )}
         </div>
       </div>
     </div>
