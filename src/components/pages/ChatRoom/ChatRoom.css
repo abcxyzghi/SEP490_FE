@@ -1,26 +1,40 @@
 .chat-layout {
   display: flex;
+  flex: 1 1 auto;
   width: 100%;
-  height: 100vh;
-  background-color: black; /* bg-gray-100 */
+  height: 100%;
+  min-height: 0;            /* let children shrink to fit */
   padding: 16px;
   box-sizing: border-box;
-  margin-top:20px;
+  overflow: hidden;         /* no page scrollbar */
 }
 
 .chat-list-container {
-  width: 25%;
+  flex: 0 0 25%;
+  height: 100%;
   background-color: #fff;
   border-radius: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   margin-right: 16px;
+  overflow: hidden;         /* keep rounded corners */
+  display: flex;
+  flex-direction: column;
+}
+
+ /* let the actual list scroll */
+.chat-list-container > * {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 
 .chat-window-container {
-  flex: 1;
+  flex: 1 1 auto;
+  height: 100%;
+  min-width: 0;             /* prevents overflow in flex rows */
+  min-height: 0;            /* critical */
   background-color: #fff;
   border-radius: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }

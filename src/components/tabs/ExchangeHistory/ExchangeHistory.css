@@ -282,11 +282,90 @@
   gap: 14px;
 }
 
+/*   --------------------------==================== Sent and Received user ====================--------------------------  */
+.exchange-history-user-image {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+}
+
+.exchange-history-user-name {
+  vertical-align: super;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: default;
+}
+
+.exchange-history-user-info{
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* HoverCard Content container */
+.exchange-history-hovercard-content {
+  background-color: var(--dark-5-o60);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  color: var(--light-2);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 260px;
+  border: 1px solid rgba(143, 143, 143, 0.3);
+  z-index: 10;
+  cursor: default;
+  
+  /* Animation */
+  transform-origin: var(--radix-hover-card-content-transform-origin);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.exchange-history-hovercard-content[data-state="open"] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.exchange-history-hovercard-content[data-state="closed"] {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Inner layout */
+.exchange-history-hovercard-inner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.exchange-history-hovercard-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  border: 1px solid var(--light-3);
+  background-color: var(--dark-1-o50);
+}
+
+.exchange-history-hovercard-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--light-2);
+  margin-bottom: 10px;
+}
+
+.exchange-history-hovercard-name:hover {
+  font-weight: 700;
+}
+
+/*   --------------------------==================== Card images ====================--------------------------  */
 /* Products goal container (left)*/
 .exchange-history-goal {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  min-width: 170px;
 }
 
 /* goal image */
@@ -294,9 +373,10 @@
   width: auto;
   height: 190px;
   object-fit: contain;
+  align-self: flex-start;
 }
 
-/* Products row container (right) */
+/* Products row container (left) */
 .exchange-history-products-wrapper {
   flex: 1 1 300px;
   max-width: 50%;
@@ -701,31 +781,4 @@
   .exchange-history-card {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
   }
-}
-.exchange-history-user {
-  display: flex;
-  align-items: center;
-  margin-top: 6px;
-}
-
-.exchange-history-user-image {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  margin-right: 8px;
-  object-fit: cover;
-}
-
-.exchange-history-user-name {
-  font-size: 14px;
-  font-weight: 500;
-}
-.exchange-history-user-wrapper {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
-
-.exchange-history-user-wrapper.reverse {
-  flex-direction: row-reverse;
 }

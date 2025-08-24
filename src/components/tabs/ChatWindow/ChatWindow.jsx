@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChatContext } from "../../../context/ChatContext";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import "./ChatWindow.css";
 import SendIcon from "../../../assets/Icon_fill/Send_fill.svg";
+import ProfileHolder from "../../../assets/others/mmbAvatar.png"; 
 
 export default function ChatWindow() {
   const {
@@ -20,6 +21,11 @@ export default function ChatWindow() {
   } = useChatContext();
 
   const prevMessagesLength = useRef(0);
+  const [partnerImgSrc, setPartnerImgSrc] = useState(
+    partnerProfile?.profileImage ? buildImageUrl(partnerProfile.profileImage) : ProfileHolder
+  );
+  const [partnerImgErrorCount, setPartnerImgErrorCount] = useState(0);
+  const [usePartnerBackupImg, setUsePartnerBackupImg] = useState(false);
 
   useEffect(() => {
     if (messages.length > prevMessagesLength.current) {
@@ -28,9 +34,18 @@ export default function ChatWindow() {
     prevMessagesLength.current = messages.length;
   }, [messages, scrollToBottom]);
 
+  useEffect(() => {
+    if (partnerProfile?.profileImage) {
+      setPartnerImgSrc(buildImageUrl(partnerProfile.profileImage, usePartnerBackupImg));
+      setPartnerImgErrorCount(0);
+    } else {
+      setPartnerImgSrc(ProfileHolder);
+    }
+  }, [partnerProfile, usePartnerBackupImg]);
+
   if (loading) {
     return <div className="chat-window special">
-      <div className="empty-state">
+      <div className="empty-state ml-4 mb-2">
         <p>Loading conversations...</p>
         <div className="loader-dots">
           <span></span>
@@ -43,11 +58,10 @@ export default function ChatWindow() {
   if (!partnerProfile) {
     return (
       <div className="chat-window special">
-        <div className="chat-header special">
-
-          <h2>Welcome to Chat</h2>
+        <div className="chat-header special oxanium-bold">
+          <span>Welcome to Chats</span>
         </div>
-        <div className="empty-state">
+        <div className="empty-state text-center mt-2 oxanium-regular">
           <p>Select a conversation to start chatting</p>
           <div className="loader-dots">
             <span></span>
@@ -63,12 +77,17 @@ export default function ChatWindow() {
     <div className="chat-window oxanium-regular">
       <div className="chat-header">
         <img
-          src={buildImageUrl(partnerProfile.profileImage)}
+          src={partnerImgSrc}
           alt=""
           className="chat-avatar"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "https://via.placeholder.com/40";
+          onError={() => {
+            if (partnerImgErrorCount === 0 && partnerProfile?.profileImage) {
+              setUsePartnerBackupImg(true);
+              setPartnerImgSrc(buildImageUrl(partnerProfile.profileImage, true));
+            } else {
+              setPartnerImgSrc(ProfileHolder);
+            }
+            setPartnerImgErrorCount((prev) => prev + 1);
           }}
         />
         <span>{partnerProfile.username}</span>
@@ -77,7 +96,7 @@ export default function ChatWindow() {
 
       <div className="chat-messages" onClick={() => document.querySelector('.chat-input input')?.focus()}>
         {messages.length === 0 ? (
-          <div className="chat-no-messages">No messages yet. Start a conversation!</div>
+          <div className="chat-no-messages text-center">No messages yet. Start a conversation!</div>
         ) : (
           messages.map((msg, idx) => {
             const isMine = msg.sender_id === myId;
@@ -88,12 +107,17 @@ export default function ChatWindow() {
               >
                 {!isMine && partnerProfile && (
                   <img
-                    src={buildImageUrl(partnerProfile.profileImage)}
+                    src={partnerImgSrc}
                     alt=""
                     className="chat-avatar"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://via.placeholder.com/40";
+                    onError={() => {
+                      if (partnerImgErrorCount === 0 && partnerProfile?.profileImage) {
+                        setUsePartnerBackupImg(true);
+                        setPartnerImgSrc(buildImageUrl(partnerProfile.profileImage, true));
+                      } else {
+                        setPartnerImgSrc(ProfileHolder);
+                      }
+                      setPartnerImgErrorCount((prev) => prev + 1);
                     }}
                   />
                 )}

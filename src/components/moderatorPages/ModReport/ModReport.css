@@ -3,14 +3,16 @@
   max-width: 1200px;
   margin: auto;
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
 }
+
 .mod-report-container h2 {
   font-size: 1.8rem;
   margin-bottom: 20px;
   color: #0bd8b9;
   text-shadow: 0 0 10px rgba(7, 160, 157, 0.567);
 }
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -25,7 +27,7 @@
   border-color: #0bd8b9;
   border-width: 2px;
   border-style: solid;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -48,6 +50,15 @@
 .report-body p {
   margin: 6px 0;
   font-size: 0.9rem;
+}
+
+/* Thêm thuộc tính này cho phần tử cha */
+.report-body {
+  display: flex;
+  flex-direction: column;
+  /* Quan trọng: xếp các thẻ theo chiều dọc */
+  gap: 8px;
+  /* Thêm khoảng cách giữa các dòng */
 }
 
 .report-status {
@@ -86,6 +97,7 @@
 .update-btn:hover {
   background-color: #00b359;
 }
+
 .filter-bar {
   display: flex;
   justify-content: space-between;
@@ -108,28 +120,36 @@
 }
 
 .mod-filter-bar input:focus {
-  border-color: #00cc66;
-  box-shadow: 0 0 6px rgba(0, 204, 102, 0.5);
+  border-color: #0bd8b9;
+  box-shadow: 0 0 6px #0bd8b9;
 }
 
+.mod-filter-bar input,
 .mod-filter-bar select {
-  min-width: 160px;
   padding: 10px 14px;
-  margin-left: 20px;
   border-radius: 12px;
-  border: 1px solid #444;
+  border: 1px solid #0bd8b9;
   background: #1e1e1e;
   color: #fff;
   font-size: 0.95rem;
   outline: none;
   transition: border 0.3s, box-shadow 0.3s;
-  cursor: pointer;
+}
+
+.mod-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 20px;
 }
 
 .mod-filter-bar select:focus {
-  border-color: #00cc66;
-  box-shadow: 0 0 6px rgba(0, 204, 102, 0.5);
+  border-color: #0bd8b9;
+  box-shadow: 0 0 6px #0bd8b9;
 }
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -167,3 +187,54 @@
   font-weight: 500;
 }
 
+/* Trong file ModReport.css */
+
+.report-type-tag {
+  /* Các thuộc tính cơ bản */
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  /* Tăng kích thước font một chút */
+  text-align: center;
+  margin-bottom: 12px;
+  /* Tăng khoảng cách dưới để nổi bật hơn */
+  text-transform: uppercase;
+  /* Chữ in hoa cho phong cách mạnh mẽ */
+  letter-spacing: 1px;
+  /* Thêm khoảng cách giữa các chữ */
+}
+
+/* Kiểu dáng cho thẻ báo cáo Sản phẩm */
+.report-type-tag.product {
+  background-color: transparent;
+  border: 1px solid #0bd8b966;
+  /* Viền mỏng, nhạt hơn */
+  color: #0bd8b9;
+  box-shadow: 0 0 4px rgba(11, 216, 185, 0.4),
+    inset 0 0 4px rgba(11, 216, 185, 0.2);
+  /* Đổ bóng nhẹ nhàng hơn */
+}
+
+/* Kiểu dáng cho thẻ báo cáo Người bán */
+.report-type-tag.seller {
+  background-color: transparent;
+  border: 1px solid #ff007f66;
+  /* Viền mỏng, nhạt hơn */
+  color: #ff007f;
+  box-shadow: 0 0 4px rgba(255, 0, 127, 0.4),
+    inset 0 0 4px rgba(255, 0, 127, 0.2);
+  /* Đổ bóng nhẹ nhàng hơn */
+}
+
+.read-more {
+  color: #0bd8b9;
+  cursor: pointer;
+  margin-left: 5px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.read-more:hover {
+  filter: brightness(1.2);
+}

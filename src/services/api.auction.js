@@ -1,7 +1,7 @@
 
 import { toast } from "react-toastify"
-import { apiWithFallback } from "../config/axios";
-import { pythonApiWithFallback } from "../config/axios";
+import { apiWithFallback,pythonApiWithFallback  } from "../config/axios";
+
 export const getAllAuctionOfMod = async () => {
     try {
     const response = await pythonApiWithFallback({
@@ -176,6 +176,35 @@ try {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error Approve/Reject auction");
+    return null;
+  }
+};
+export const checkIsJoinedAuction = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: `/api/auction/is-joined-auction`,
+      requiresAuth: true,
+    });
+    console.log("true or false let's find out" + response.data)
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      return response.data.data[0]; 
+    }
+  } catch (error) {
+    console.error("Check is joined auction failed:", error);
+    throw error;
+  }
+};
+export const getAllAuctions = async () => {
+    try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "api/auction/all?filter=default",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
     return null;
   }
 };

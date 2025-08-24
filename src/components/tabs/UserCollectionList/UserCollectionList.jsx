@@ -261,7 +261,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const filteredFavProducts = favProducts;
   const visiblefavProducts = filteredFavProducts.slice(0, visibleCount);
-  const isEnd = visibleCount >= (showProducts ? filteredProducts.length : collections.length) || visibleCount >= 16;
+  const isEnd = visibleCount >= (showProducts ? filteredProducts.length : collections.length);
 
   const handleShowProducts = async (collectionId) => {
     setSelectedCollectionId(collectionId);
@@ -813,7 +813,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
           ) : (
             <button
               className="userCollectionList-loadmore-button oxanium-semibold"
-              onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, 16, products.length))}
+              onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, products.length))}
             >
               Load more
             </button>
@@ -830,6 +830,8 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         title={modal.title}
         message={modal.message}
       />
+
+      {/* Host Auction request modal */}
       <HostAuctionModal
         isOpen={auctionModalOpen}
         onClose={() => setAuctionModalOpen(false)}

@@ -16,7 +16,6 @@ import AdminProductIcon from '../../../assets/Icon_line/Arhive.svg';
 import AdminAuctionIcon from '../../../assets/Icon_line/audit-01.svg';
 import AdminRevenueIcon from '../../../assets/Icon_line/estimate-01.svg';
 import AdminReportIcon from '../../../assets/Icon_line/file-unknown.svg';
-
 import SideCloseIcon from '../../../assets/Icon_line/sidebar-left.svg';
 import LogoutIcon from '../../../assets/Icon_line/Sign_out_squre.svg';
 

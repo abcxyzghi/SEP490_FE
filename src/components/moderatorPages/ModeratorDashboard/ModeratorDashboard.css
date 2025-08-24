@@ -1,0 +1,187 @@
+/* --- BIẾN MÀU SẮC CHỦ ĐẠO (CSS VARIABLES) --- */
+.dashboard-container {
+    --primary: #38f9d7;
+    --bg-dark: #181a20;
+    --bg-component: #23272f;
+    --text-light: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border: #334155;
+}
+
+/* --- STYLE CHUNG --- */
+.dashboard-container {
+    background-color: var(--bg-dark);
+    min-height: 100vh;
+    font-family: sans-serif;
+    padding: 1rem;
+}
+
+@media (min-width: 640px) {
+    .dashboard-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-container {
+        padding: 2rem;
+    }
+}
+
+/* --- HEADER --- */
+.dashboard-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-title {
+    color: var(--text-light);
+    font-size: 1.875rem;
+    font-weight: 700;
+}
+
+.dashboard-subtitle {
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.refresh-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+    background-color: rgba(56, 249, 215, 0.1);
+}
+
+.refresh-button:disabled {
+    opacity: 0.5;
+}
+
+/* --- STAT CARD --- */
+.stat-card {
+    background-color: var(--bg-component);
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    /* Nâng cấp 1: Viền dày và rõ hơn */
+    border-left: 5px solid var(--border-color);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    /* Nâng cấp 2: Hiệu ứng phát sáng mạnh và rõ hơn */
+    box-shadow: 0 0 25px 2px var(--border-color);
+    filter: brightness(1.1);
+}
+
+.stat-card-title {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.stat-card-count {
+    color: var(--text-light);
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+}
+
+.stat-card-icon {
+    opacity: 0.8;
+}
+
+/* --- BIỂU ĐỒ VÀ BẢNG --- */
+.chart-container,
+.table-container {
+    background-color: var(--bg-component);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.component-title {
+    color: var(--text-light);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* --- BẢNG BÁO CÁO --- */
+.reports-table {
+    width: 100%;
+    font-size: 0.875rem;
+    text-align: left;
+    color: var(--text-muted);
+}
+
+.reports-table thead {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-light);
+    background-color: var(--bg-dark);
+}
+
+.reports-table th,
+.reports-table td {
+    padding: 0.75rem 1.5rem;
+}
+
+.reports-table tbody tr {
+    border-bottom: 1px solid var(--border);
+}
+
+.reports-table tbody tr:hover {
+    background-color: #2a374a;
+}
+
+.reports-table .title-cell {
+    color: var(--text-light);
+    font-weight: 500;
+    max-width: 20rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.reports-table .details-link {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.reports-table .details-link:hover {
+    text-decoration: underline;
+}
+
+/* --- AVATAR --- */
+.avatar-placeholder {
+    height: 2.25rem;
+    width: 2.25rem;
+    border-radius: 9999px;
+    background-color: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-placeholder-text {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}

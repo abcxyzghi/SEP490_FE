@@ -179,7 +179,7 @@ export default function NavigationDropdownMenu() {
                 </div>
                 <span className="oxanium-semibold">{user.username}</span>
               </li>
-              <li
+              {/* <li
                 className="nav-sub-expand"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -199,7 +199,7 @@ export default function NavigationDropdownMenu() {
                   src={SubArrow}
                   alt="Submenu"
                 />
-              </li>
+              </li> */}
               <li
                 className="nav-sub-expand"
                 onClick={(e) => {

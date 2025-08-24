@@ -5,9 +5,24 @@
 }
 
 .MainP-content {
-  /* max-width: 1990px;
-  margin: 0 auto; */
-  flex: 1; /* take remaining space */
+  /* take remaining space */
+  flex: 1;
+}
+
+/* Special mode for ChatRoom */
+.MainP-container.MainP-chatroom-mode {
+  /* use dynamic viewport height (for modern browsers) */
+  height: 100dvh;
+  /* fall back height */
+  height: 100vh;
+}
+
+.MainP-content.MainP-chatroom-mode {
+  flex: 1 1 auto;
+  /* so child can flex to fill */
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
 }
 
 @media (min-width: 2000px) {

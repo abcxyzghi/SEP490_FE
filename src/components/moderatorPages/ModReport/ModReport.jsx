@@ -9,8 +9,14 @@ export default function ModReport() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [expandedReports, setExpandedReports] = useState({});
+
 
   const reportsPerPage = 3;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
 
   const fetchReports = async () => {
     const response = await getAllReport();
@@ -35,8 +41,17 @@ export default function ModReport() {
     fetchReports();
   }, []);
 
+  const toggleExpand = (id) => {
+    setExpandedReports((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   // Lọc + tìm kiếm
   const filteredReports = reports.filter((r) => {
+    const validIds = r.sellerId && r.userId;
+
     const searchMatch =
       r.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       r.sellerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -48,20 +63,24 @@ export default function ModReport() {
       statusFilter === "All"
         ? true
         : statusFilter === "Processed"
-        ? r.status
-        : !r.status;
+          ? r.status
+          : !r.status;
 
-    return searchMatch && statusMatch;
+    return searchMatch && statusMatch && validIds;
   });
+
+  const sortedReports = filteredReports.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   // Pagination
   const indexOfLastReport = currentPage * reportsPerPage;
   const indexOfFirstReport = indexOfLastReport - reportsPerPage;
-  const currentReports = filteredReports.slice(
+  const currentReports = sortedReports.slice(
     indexOfFirstReport,
     indexOfLastReport
   );
-  const totalPages = Math.ceil(filteredReports.length / reportsPerPage);
+  const totalPages = Math.ceil(sortedReports.length / reportsPerPage);
 
   const Pagination = () => (
     <div className="pagination">
@@ -85,9 +104,8 @@ export default function ModReport() {
 
 
   return (
-    <div className="mod-report-container">
-      <h2>List Report</h2>
-
+    <div className="mod-report-container oxanium-regular">
+      <h2 className="oxanium-bold">List Report</h2>
       {/* Thanh search + filter */}
       <div className="mod-filter-bar">
         <input
@@ -108,62 +126,110 @@ export default function ModReport() {
 
       {/* Card grid */}
       <div className="card-grid">
-        {currentReports
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .map((report) => (
-            <div className="report-card" key={report.id}>
-              <div className="report-header">
-                <span className="report-id">ID: {report.id.slice(0, 6)}...</span>
-                <span
-                  className={`report-status ${
-                    report.status ? "status-processed" : "status-pending"
+        {currentReports.map((report) => (
+          <div className="report-card" key={report.id}>
+            <div className="report-header">
+              <span className="report-id">ID: {report.id.slice(0, 6)}...</span>
+              <span
+                className={`report-status ${report.status ? "status-processed" : "status-pending"
                   }`}
-                >
-                  {report.status ? "Processed" : "Pending"}
-                </span>
-              </div>
-
-              <div className="report-body">
-                <p>
-                  <strong>Accuser:</strong> {report.userName || "Unknow"}
-                </p>
-                <p>
-                  <strong>The accused:</strong> {report.sellerName || "Unknow"}
-                </p>
-                <p>
-                  <strong>Product:</strong> {report.productName || "Unknow"}
-                </p>
-                <p>
-                  <strong>Title:</strong> {report.title}
-                </p>
-                <p>
-                  <strong>Description:</strong> {report.content}
-                </p>
-                <p>
-                  <strong>Create at:</strong>{" "}
-                  {moment(report.createdAt).format("DD/MM/YYYY HH:mm")}
-                </p>
-              </div>
-
-              <div className="report-footer">
-                {!report.status && (
-                  <button
-                    className="update-btn"
-                    onClick={() => handleUpdateStatus(report.id)}
-                  >
-                    ✅ Mark as processed
-                  </button>
-                )}
-              </div>
+              >
+                {report.status ? "Processed" : "Pending"}
+              </span>
             </div>
-          ))}
+
+            <div className="report-body">
+              {/* Sửa phần code ở đây: sử dụng sellProductId */}
+              {report.sellProductId ? (
+                <>
+                  <p className="report-type-tag product">
+                    <strong lassName="oxanium-bold">Reported Item:</strong> Product on sale
+                  </p>
+                  <p>
+                    <strong lassName="oxanium-bold">Accuser:</strong> {report.userName || "Unknown"}
+                  </p>
+                  <p>
+                    <strong lassName="oxanium-bold">Product Name:</strong> {report.productName || "Unknown"}
+                  </p>
+                  <p>
+                    <strong lassName="oxanium-bold">Seller:</strong> {report.sellerName || "Unknown"}
+                  </p>
+                  <p>
+                    <strong lassName="oxanium-bold">Title:</strong> {report.title}
+                  </p>
+                  <p>
+                    <strong>Description:</strong>{" "}
+                    {expandedReports[report.id] || report.content.length <= 60
+                      ? report.content
+                      : `${report.content.substring(0, 60)}... `}
+                    {report.content.length > 60 && (
+                      <span className="read-more" onClick={() => toggleExpand(report.id)}>
+                        {expandedReports[report.id] ? "Show less" : "Read more"}
+                      </span>
+                    )}
+                  </p>
+                  <p>
+                    <strong>Create at:</strong>{" "}
+                    {moment(report.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="report-type-tag seller">
+                    <strong>Reported Item:</strong> Seller
+                  </p>
+                  <p>
+                    <strong>Accuser:</strong> {report.userName || "Unknown"}
+                  </p>
+                  <p>
+                    <strong>Seller Name:</strong> {report.sellerName || "Unknown"}
+                  </p>
+                  <p>
+                    <strong>Title:</strong> {report.title}
+                  </p>
+                  <p>
+                    <strong>Description:</strong>{" "}
+                    {expandedReports[report.id] || report.content.length <= 60
+                      ? report.content
+                      : `${report.content.substring(0, 60)}... `}
+                    {report.content.length > 60 && (
+                      <span className="read-more" onClick={() => toggleExpand(report.id)}>
+                        {expandedReports[report.id] ? "Show less" : "Read more"}
+                      </span>
+                    )}
+                  </p>
+                  <p>
+                    <strong>Create at:</strong>{" "}
+                    {moment(report.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </p>
+                  <p>
+                    <strong></strong>
+                    <br></br>
+                  </p>
+                </>
+              )}
+            </div>
+
+            <div className="report-footer">
+              {!report.status && (
+                <button
+                  className="update-btn"
+                  onClick={() => handleUpdateStatus(report.id)}
+                >
+                  ✅ Mark as processed
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       {filteredReports.length === 0 && (
         <p style={{ textAlign: "center" }}>No reports found.</p>
       )}
 
-      {filteredReports.length > reportsPerPage && <Pagination />}
+      {sortedReports.length > reportsPerPage && <Pagination />}
+
     </div>
   );
 }

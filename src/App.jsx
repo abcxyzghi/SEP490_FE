@@ -60,99 +60,115 @@ function App() {
 
 
   return (
-    <AnimatedRoute>
-      <Routes>
-        <Route path="/" element={<MainPage />}>
-          {/* Public Routes */}
-          {publicRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
+    // <AnimatedRoute>
+    <Routes>
+      <Route path="/" element={<MainPage />}>
+        {/* Public Routes */}
+        {publicRoutes.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
 
-          {/* Private Routes */}
-          {privateRoutes.map((route) => {
-            const hasAccess = route.role
-              ? route.role.includes(userRole)
-              : Boolean(userRole);
-            return (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  hasAccess ? (
-                    route.element
-                  ) : (
-                    <Navigate to={PATH_NAME.NOTFOUND} replace />
-                  )
-                }
-              />
-            );
-          })}
-        </Route>
+        {/* Private Routes */}
+        {privateRoutes.map((route) => {
+          const hasAccess = route.role
+            ? route.role.includes(userRole)
+            : Boolean(userRole);
+          return (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                hasAccess ? (
+                  route.element
+                ) : (
+                  <Navigate to={PATH_NAME.NOTFOUND} replace />
+                )
+              }
+            />
+          );
+        })}
+      </Route>
 
-        {/* Moderator Routes */}
-        <Route element={<ModeratorPage />}>
-          {moderatorRoutes.map((route) => {
-            const hasAccess = route.role
-              ? route.role.includes(userRole)
-              : Boolean(userRole);
-            return (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  hasAccess ? (
-                    route.element
-                  ) : (
-                    <Navigate to={PATH_NAME.NOTFOUND} replace />
-                  )
-                }
-              />
-            );
-          })}
-        </Route>
+      {/* Moderator Routes */}
+      <Route element={<ModeratorPage />}>
+        {moderatorRoutes.map((route) => {
+          const hasAccess = route.role
+            ? route.role.includes(userRole)
+            : Boolean(userRole);
+          return (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                hasAccess ? (
+                  route.element
+                ) : (
+                  <Navigate to={PATH_NAME.NOTFOUND} replace />
+                )
+              }
+            />
+          );
+        })}
+      </Route>
 
-        {/* Admin Routes */}
-        <Route element={<AdminPage />}>
-          {adminRoutes.map((route) => {
-            const hasAccess = route.role
-              ? route.role.includes(userRole)
-              : Boolean(userRole);
-            return (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  hasAccess ? (
-                    route.element
-                  ) : (
-                    <Navigate to={PATH_NAME.NOTFOUND} replace />
-                  )
-                }
-              />
-            );
-          })}
-        </Route>
+      {/* Admin Routes */}
+      <Route element={<AdminPage />}>
+        {adminRoutes.map((route) => {
+          const hasAccess = route.role
+            ? route.role.includes(userRole)
+            : Boolean(userRole);
+          return (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                hasAccess ? (
+                  route.element
+                ) : (
+                  <Navigate to={PATH_NAME.NOTFOUND} replace />
+                )
+              }
+            />
+          );
+        })}
+      </Route>
 
-        {/* Top-Level Routes */}
-        <Route path={PATH_NAME.REGISTER} element={
-          user ? <Navigate to={PATH_NAME.HOMEPAGE} replace /> : <Registerpage />
-        } />
-
-        <Route path={PATH_NAME.LOGIN} element={
-          userRole
-            ? <Navigate to={
-              userRole === 'admin'
-                ? PATH_NAME.ADMIN_DASHBOARD
-                : userRole === 'mod'
-                  ? PATH_NAME.MODERATOR_DASHBOARD
-                  : PATH_NAME.HOMEPAGE
-            } replace />
-            : <Loginpage />
-        } />
-
-        <Route path={PATH_NAME.NOTFOUND} element={<NotFoundpage />} />
-      </Routes>
-    </AnimatedRoute>
+      {/* Top-Level Routes [WITH animation]*/}
+      <Route
+        path={PATH_NAME.REGISTER}
+        element={
+          <AnimatedRoute>
+            {user ? <Navigate to={PATH_NAME.HOMEPAGE} replace /> : <Registerpage />}
+          </AnimatedRoute>
+        }
+      />
+      <Route
+        path={PATH_NAME.LOGIN}
+        element={
+          <AnimatedRoute>
+            {userRole
+              ? <Navigate to={
+                userRole === 'admin'
+                  ? PATH_NAME.ADMIN_DASHBOARD
+                  : userRole === 'mod'
+                    ? PATH_NAME.MODERATOR_DASHBOARD
+                    : PATH_NAME.HOMEPAGE
+              } replace />
+              : <Loginpage />
+            }
+          </AnimatedRoute>
+        }
+      />
+      <Route
+        path={PATH_NAME.NOTFOUND}
+        element={
+          <AnimatedRoute>
+            <NotFoundpage />
+          </AnimatedRoute>
+        }
+      />
+    </Routes>
+    // </AnimatedRoute>
 
   )
 }
