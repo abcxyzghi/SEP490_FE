@@ -61,6 +61,7 @@
   font-size: 15px;
   color: #bbb;
 }
+
 /* Status badge */
 .adreport-badge {
   display: inline-block;
@@ -80,4 +81,61 @@
 .adreport-badge.no {
   background: linear-gradient(135deg, #ff416c, #ff4b2b);
   box-shadow: 0 0 10px rgba(255, 65, 108, 0.35);
+}
+
+/* --- User Info Display --- */
+.seller-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 180px;
+}
+
+/* adproduct-thumb có thể đã tồn tại, dùng cho avatar nhỏ */
+.seller-info .adproduct-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  /* Bo tròn cho avatar */
+  flex-shrink: 0;
+}
+
+.seller-info span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+/* --- Info Tag Styles --- */
+/* Các class tag này cũng có thể đã tồn tại từ component trước */
+.info-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.tag-payment {
+  background-color: #c0392b;
+}
+
+/* Đỏ cho Report Product */
+.tag-auction {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.product-tag-special {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  font-style: italic;
+  color: #f0f0f0;
+  background-color: #7f8c8d;
+  /* Màu xám trung tính */
+  border: 1px solid #95a5a6;
 }
