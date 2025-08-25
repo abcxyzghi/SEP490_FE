@@ -109,6 +109,7 @@
   margin: 2px;
   padding: 10px 12px;
   background: var(--dark-1-o50);
+  border: 1px solid var(--dark-1);
   color: var(--light-2);
   border-radius: 10px;
 }

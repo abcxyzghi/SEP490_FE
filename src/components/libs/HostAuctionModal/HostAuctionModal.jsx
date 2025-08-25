@@ -1,166 +1,436 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, InputNumber, DatePicker, Radio, Select } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import "./HostAuctionModal.css";
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Stepper,
+    Step,
+    StepLabel,
+    CircularProgress,
+    Box,
+    Typography,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
-import { fetchMyAuctionList } from "../../../services/api.auction";
+import utc from "dayjs/plugin/utc";
+import tz from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(tz);
 
-export default function HostAuctionModal({
-    isOpen,
-    onClose,
-    onSubmit,
-    loading,
-    form,
-    setForm,
-    mode,
-    setMode
-}) {
-    const [antdForm] = Form.useForm();
+import { newAuction, productOfAuction, fetchMyAuctionList } from "../../../services/api.auction";
+import MessageModal from "../MessageModal/MessageModal";
 
-    const [auctionOptions, setAuctionOptions] = useState([]);
+/* -------------------- Custom Step Connector (same pattern as ForgotPasswordDialog) -------------------- */
+import StepConnector, { stepConnectorClasses } from "@mui/material/StepConnector";
+
+const QontoConnector = styled(StepConnector)(({ theme }) => ({
+    [`&.${stepConnectorClasses.alternativeLabel}`]: {
+        top: 10,
+        left: "calc(-50% + 16px)",
+        right: "calc(50% + 16px)",
+    },
+    [`&.${stepConnectorClasses.active}`]: {
+        [`& .${stepConnectorClasses.line}`]: {
+            borderColor: "#784af4",
+        },
+    },
+    [`&.${stepConnectorClasses.completed}`]: {
+        [`& .${stepConnectorClasses.line}`]: {
+            borderColor: "#784af4",
+        },
+    },
+    [`& .${stepConnectorClasses.line}`]: {
+        borderColor: "#3b3b45",
+        borderTopWidth: 3,
+        borderRadius: 1,
+    },
+}));
+
+const QontoStepIconRoot = styled("div")(({ ownerState }) => ({
+    color: "#9ca3af",
+    display: "flex",
+    height: 22,
+    alignItems: "center",
+    ...(ownerState.active && {
+        color: "#784af4",
+    }),
+    "& .QontoStepIcon-completedIcon": {
+        color: "#784af4",
+        zIndex: 1,
+        fontSize: 18,
+    },
+    "& .QontoStepIcon-circle": {
+        width: 8,
+        height: 8,
+        borderRadius: "50%",
+        backgroundColor: "currentColor",
+    },
+}));
+
+function QontoStepIcon(props) {
+    const { active, completed } = props;
+    return (
+        <QontoStepIconRoot ownerState={{ active }}>
+            {completed ? <span className="QontoStepIcon-completedIcon">✓</span> : <div className="QontoStepIcon-circle" />}
+        </QontoStepIconRoot>
+    );
+}
+
+export default function HostAuctionModal({ open, onClose, productId, onSuccess }) {
+    const [activeStep, setActiveStep] = useState(0);
+    const nextLockRef = useRef(false);
+    const step1SnapshotRef = useRef(null);
+
+    // step1
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [startTime, setStartTime] = useState(""); // datetime-local value
+
+    // step2
+    const [quantity, setQuantity] = useState(1);
+    const [startingPrice, setStartingPrice] = useState(1000);
+
+    // internal
+    const [creating, setCreating] = useState(false);
+    const [fetchingLatest, setFetchingLatest] = useState(false);
+    const [assigning, setAssigning] = useState(false);
+    const [modal, setModal] = useState({ open: false, type: "default", title: "", message: "" });
+
+    const [createdAuctionId, setCreatedAuctionId] = useState(null);
+    const [createdAuctionObj, setCreatedAuctionObj] = useState(null);
+
+    const steps = ["Create auction", "Attach product"];
 
     useEffect(() => {
-        if (isOpen && mode === "addProduct") {
-            fetchMyAuctionList()
-                .then((res) => {
-
-
-                    if (res?.data?.length) {
-                        setAuctionOptions(
-                            res.data
-                                .filter(a => a.id)
-                                .map(a => ({
-                                    value: a.id,
-                                    label: `${a.title} — ${dayjs(a.start_time).format("YYYY-MM-DD HH:mm")}`
-                                }))
-                        );
-                    } else {
-                        console.warn("⚠️ No auction data found!");
-                    }
-                })
-                .catch((err) => {
-                    console.error("Failed to fetch auctions", err);
-                });
+        if (!open) {
+            setActiveStep(0);
+            setTitle("");
+            setDescription("");
+            setStartTime("");
+            setQuantity(1);
+            setStartingPrice(1000);
+            setCreating(false);
+            setFetchingLatest(false);
+            setAssigning(false);
+            setModal({ open: false, type: "default", title: "", message: "" });
+            setCreatedAuctionId(null);
+            setCreatedAuctionObj(null);
+            step1SnapshotRef.current = null;
+            nextLockRef.current = false;
         }
-    }, [isOpen, mode]);
+    }, [open]);
 
-    const handleFinish = (values) => {
-        let payload = {};
+    // fetchLatestAuction
+    const fetchLatestAuction = async (trustServerOrder = true) => {
+        setFetchingLatest(true);
+        try {
+            const res = await fetchMyAuctionList();
+            const raw = res?.data || res;
+            let items = [];
+            if (Array.isArray(raw)) items = raw;
+            else if (Array.isArray(raw.data)) items = raw.data;
+            else if (Array.isArray(raw.data?.data)) items = raw.data.data;
+            else if (Array.isArray(res?.data?.auctions)) items = res.data.auctions;
+            if (!items || items.length === 0) return null;
 
-        if (mode === "newAuction") {
-            payload = {
-                title: values.title,
-                description: values.description,
-                start_time: values.start_time
-                    ? values.start_time.toISOString()
-                    : null
-            };
-        } else {
-            payload = {
-                auction_session_id: values.auction_session_id,
-                quantity: values.quantity,
-                starting_price: values.starting_price
-            };
+            if (trustServerOrder) return items[items.length - 1];
+
+            const withTime = items.filter((a) => a?.start_time);
+            if (withTime.length) {
+                const latest = withTime.reduce((acc, cur) => {
+                    const ta = new Date(acc.start_time).getTime() || 0;
+                    const tc = new Date(cur.start_time).getTime() || 0;
+                    return tc > ta ? cur : acc;
+                }, withTime[0]);
+                return latest;
+            }
+            return items[items.length - 1];
+        } catch (err) {
+            console.error("fetchMyAuctionList error:", err);
+            return null;
+        } finally {
+            setFetchingLatest(false);
+        }
+    };
+
+    const displayTime = (isoLike) => {
+        const s = isoLike && String(isoLike).trim();
+        if (!s) return "-";
+        const parsed = /[+-]\d{2}:?\d{2}$|Z$/.test(s) ? dayjs(s) : dayjs.utc(s);
+        return parsed.tz(dayjs.tz.guess()).format("YYYY-MM-DD HH:mm");
+    };
+
+    // Guarded Next (create auction and fetch latest)
+    const handleNext = async () => {
+        setModal({ open: false, type: "default", title: "", message: "" });
+
+        if (nextLockRef.current) return;
+        nextLockRef.current = true;
+
+        try {
+            if (activeStep !== 0) return;
+
+            // validation
+            if (!title?.trim()) {
+                setModal({ open: true, type: "warning", title: "Missing Title", message: "Please enter auction title." });
+                return;
+            }
+            if (!description?.trim()) {
+                setModal({ open: true, type: "warning", title: "Missing Description", message: "Please enter auction description." });
+                return;
+            }
+            if (!startTime) {
+                setModal({ open: true, type: "warning", title: "Missing Start Time", message: "Please set a start time." });
+                return;
+            }
+
+            // if already created and inputs unchanged -> reuse
+            const snapshot = step1SnapshotRef.current;
+            const unchanged = snapshot && snapshot.title === title && snapshot.description === description && snapshot.startTime === startTime;
+            if (createdAuctionId && unchanged) {
+                setActiveStep(1);
+                return;
+            }
+
+            setCreating(true);
+            const iso = new Date(startTime).toISOString();
+            const createRes = await newAuction({
+                title: title.trim(),
+                description: description.trim(),
+                start_time: iso,
+            });
+
+            const fallbackId = createRes?.data?.id || createRes?.data?.auction_session_id || createRes?.data?.auctionId || null;
+
+            // fetch latest
+            const latest = await fetchLatestAuction(true);
+
+            let chosen = null;
+            if (latest && (latest.id || latest._id)) chosen = latest;
+            else if (fallbackId) chosen = createRes?.data || { id: fallbackId, title, start_time: iso };
+
+            if (!chosen) {
+                setModal({ open: true, type: "error", title: "Auction Error", message: "Created auction but not found. Try again." });
+                return;
+            }
+
+            const id = chosen.id || chosen._id;
+            setCreatedAuctionId(id);
+            setCreatedAuctionObj(chosen);
+
+            step1SnapshotRef.current = { title, description, startTime };
+
+            setActiveStep(1);
+        } catch (err) {
+            console.error("newAuction error", err);
+            setModal({ open: true, type: "error", title: "Auction Error", message: "Failed to create auction. Please try again." });
+        } finally {
+            setCreating(false);
+            nextLockRef.current = false;
+        }
+    };
+
+    const handleBack = () => {
+        setModal({ open: false, type: "default", title: "", message: "" });
+        if (activeStep === 1) setActiveStep(0);
+    };
+
+    const handleSubmitAssignment = async () => {
+        setModal({ open: false, type: "default", title: "", message: "" });
+
+        const auctionIdToUse = createdAuctionId;
+        if (!auctionIdToUse) {
+            setModal({ open: true, type: "error", title: "Auction Error", message: "Auction session ID not found. Please create auction again." });
+            return;
+        }
+        if (!productId) {
+            setModal({ open: true, type: "error", title: "Product Error", message: "Product ID missing. Please re-open modal from product list." });
+            return;
+        }
+        if (!quantity || quantity < 1) {
+            setModal({ open: true, type: "warning", title: "Invalid Quantity", message: "Quantity must be at least 1." });
+            return;
+        }
+        if (!startingPrice || startingPrice < 1000) {
+            setModal({ open: true, type: "warning", title: "Invalid Price", message: "Starting price must be at least 1,000 VND." });
+            return;
         }
 
-        onSubmit(payload);
+        try {
+            setAssigning(true);
+            const payload = {
+                product_id: productId,
+                auction_session_id: auctionIdToUse,
+                quantity,
+                starting_price: startingPrice,
+            };
+            const res = await productOfAuction(payload);
+
+            if (res && (res.status === 200 || res.status === 201 || res.data)) {
+                setModal({ open: true, type: "default", title: "Success", message: "Product assigned to auction successfully." });
+                if (typeof onSuccess === "function") onSuccess(res);
+                onClose();
+            } else {
+                setModal({ open: true, type: "error", title: "Assignment Error", message: "Assignment failed." });
+            }
+        } catch (err) {
+            console.error("productOfAuction error:", err);
+            setModal({ open: true, type: "error", title: "Assignment Error", message: "Failed to assign product to auction. Please try again." });
+        } finally {
+            setAssigning(false);
+        }
     };
 
     return (
-        <Modal
-            title="Host an Auction"
-            open={isOpen}
-            onCancel={onClose}
-            onOk={() => antdForm.submit()}
-            confirmLoading={loading}
-            okText="Submit"
-            cancelText="Cancel"
+        <Dialog
+            className="hostAuctionDialog-container oxanium-regular"
+            open={open}
+            onClose={onClose}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{ className: "hostAuctionDialog-animated-shadow" }}
         >
-            <Radio.Group
-                value={mode}
-                onChange={(e) => setMode(e.target.value)}
-                style={{ marginBottom: 16 }}
-            >
-                <Radio.Button value="newAuction">New Auction</Radio.Button>
-                <Radio.Button value="addProduct">Add Product in Auction</Radio.Button>
-            </Radio.Group>
+            <div className="card__border" />
+            <div className="hostAuctionDialog-box">
+                <div className='hostAuctionDialog-header'>
+                    <div className='hostAuctionDialog-title oxanium-semibold'>Host Product in Auction</div>
+                </div>
 
-            <Form
-                form={antdForm}
-                layout="vertical"
-                initialValues={{
-                    title: form.title,
-                    description: form.description,
-                    start_time: form.start_time ? dayjs(form.start_time) : null,
-                    quantity: form.quantity,
-                    starting_price: form.starting_price,
-                    auction_session_id: form.auction_session_id
-                }}
-                onValuesChange={(changed, all) => setForm(all)}
-                onFinish={handleFinish}
-            >
-                {mode === "newAuction" && (
-                    <>
-                        <Form.Item
-                            label="Auction Title"
-                            name="title"
-                            rules={[{ required: true, message: "Please enter a title" }]}
-                        >
-                            <Input placeholder="Enter auction title" />
-                        </Form.Item>
+                <DialogContent>
+                    <Stepper activeStep={activeStep} alternativeLabel connector={<QontoConnector />}>
+                        {steps.map((label, index) => (
+                            <Step key={label}>
+                                <StepLabel
+                                    StepIconComponent={QontoStepIcon}
+                                    sx={{
+                                        '& .MuiStepLabel-label': {
+                                            color: index === activeStep ? '#784af4 !important' : 'var(--light-2)',
+                                            fontWeight: index === activeStep ? 'oxanium-semibold' : 'oxanium-regular',
+                                        },
+                                    }}
+                                >
+                                    {label}
+                                </StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
 
-                        <Form.Item
-                            label="Description"
-                            name="description"
-                            rules={[{ required: true, message: "Please enter description" }]}
-                        >
-                            <Input.TextArea placeholder="Enter auction description" rows={3} />
-                        </Form.Item>
+                    <Box mt={3}>
+                        {activeStep === 0 && (
+                            <>
+                                <div className="hostAuctionDialog-control">
+                                    <label >Title: </label>
+                                    <input
+                                        name="title"
+                                        type="text"
+                                        placeholder="Auction Title"
+                                        className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                    />
+                                </div>
+                                <div className="hostAuctionDialog-control">
+                                    <label >Description: </label>
+                                    <textarea
+                                        name="description"
+                                        type="text"
+                                        placeholder="Description"
+                                        className="hostAuctionDialog-input h-22 max-h-30 oxanium-regular w-full"
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                    />
+                                </div>
+                                <div className="hostAuctionDialog-control">
+                                    <label >Start time: </label>
+                                    <input
+                                        name="startTime"
+                                        type="datetime-local"
+                                        placeholder="Start Time"
+                                        className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                    />
+                                </div>
+                                {/* <p className="hostAuctionDialog-note oxanium-regular">Note: times are local; they'll be sent to the server in ISO format.</p> */}
+                            </>
+                        )}
 
-                        <Form.Item
-                            label="Start Time"
-                            name="start_time"
-                            rules={[{ required: true, message: "Please select start time" }]}
-                        >
-                            <DatePicker
-                                showTime
-                                style={{ width: "100%" }}
-                                format="YYYY-MM-DD HH:mm"
-                            />
-                        </Form.Item>
-                    </>
-                )}
+                        {activeStep === 1 && (
+                            <>
+                                <Box mb={2}>
+                                    {fetchingLatest ? (
+                                        <Box display="flex" alignItems="center" gap={1} mt={1}>
+                                            <CircularProgress size={18} />
+                                            <p className="hostAuctionDialog-PrdAtt">Fetching latest auction...</p>
+                                        </Box>
+                                    ) : createdAuctionObj ? (
+                                        <Box mt={1}>
+                                            <p className="hostAuctionDialog-PrdAtt"><strong>Title:</strong> {createdAuctionObj.title}</p>
+                                            <p className="hostAuctionDialog-PrdAtt"><strong>Start date:</strong> {displayTime(createdAuctionObj.start_time)}</p>
+                                        </Box>
+                                    ) : (
+                                        <p className="hostAuctionDialog-note oxanium-regular">No auction found. You can go back and try again.</p>
+                                    )}
+                                </Box>
 
-                {mode === "addProduct" && (
-                    <>
+                                <Box display="flex" gap={2} mb={1}>
+                                    <div className="hostAuctionDialog-control">
+                                        <label >Quantity: </label>
+                                        <input
+                                            name="quantity"
+                                            type="number"
+                                            placeholder="Quantity"
+                                            className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                                            min={1}
+                                            value={quantity}
+                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                        />
+                                    </div>
+                                    <div className="hostAuctionDialog-control">
+                                        <label >Starting Price: </label>
+                                        <input
+                                            name="startingPrice"
+                                            type="number"
+                                            placeholder="Starting price (VND)"
+                                            className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                                            min={1000}
+                                            step={100}
+                                            value={startingPrice}
+                                            onChange={(e) => setStartingPrice(Number(e.target.value))}
+                                        />
+                                    </div>
+                                </Box>
 
-                        <Form.Item
-                            label="Auction Name"
-                            name="auction_session_id"
-                            rules={[{ required: true, message: "Please select auction session" }]}
-                        >
-                            <Select
-                                placeholder="Select auction session"
-                                options={auctionOptions}
-                                loading={!auctionOptions.length}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            label="Quantity"
-                            name="quantity"
-                            rules={[{ required: true, message: "Please enter quantity" }]}
-                        >
-                            <InputNumber min={1} style={{ width: "100%" }} />
-                        </Form.Item>
+                                {/* <p className="hostAuctionDialog-note oxanium-regular">The product will be assigned to the created auction with the specified quantity and starting price.</p> */}
+                            </>
+                        )}
+                    </Box>
+                </DialogContent>
 
-                        <Form.Item
-                            label="Starting Price"
-                            name="starting_price"
-                            rules={[{ required: true, message: "Please enter starting price" }]}
-                        >
-                            <InputNumber min={1000} step={100} style={{ width: "100%" }} />
-                        </Form.Item>
-                    </>
-                )}
-            </Form>
-        </Modal>
+                <MessageModal
+                    open={modal.open}
+                    onClose={() => setModal((p) => ({ ...p, open: false }))}
+                    type={modal.type}
+                    title={modal.title}
+                    message={modal.message} />
+
+                <DialogActions>
+                    <div className="hostAuctionDialog-Cancel-btn" onClick={onClose}>Cancel</div>
+                    {activeStep > 0 && <div className="hostAuctionDialog-Back-btn" onClick={handleBack}>Back</div>}
+                    {activeStep === 0 ? (
+                        <div className="hostAuctionDialog-Submit-btn" onClick={handleNext}>
+                            {creating ? "Please wait..." : "Next"}
+                        </div>
+                    ) : (
+                        <div className="hostAuctionDialog-Submit-btn" onClick={handleSubmitAssignment}>
+                            {assigning ? "Please wait..." : "Submit"}
+                        </div>
+                    )}
+                </DialogActions>
+            </div>
+        </Dialog>
     );
 }

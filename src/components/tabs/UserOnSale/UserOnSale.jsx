@@ -67,13 +67,18 @@ export default function UserOnSale({ products, productsLoading }) {
       setProductList(filtered);
     }
   }, [products]);
-  // --- cancel product handler ---
+
   const handleCancelSellProduct = async (sellProductId) => {
-    const result = await cancelSellProduct(sellProductId);
-    if (result) {
-
-      setProductList((prev) => prev.filter((p) => p.id !== sellProductId));
-
+    setLoadingBtnId(sellProductId);
+    try {
+      const result = await cancelSellProduct(sellProductId);
+      if (result) {
+        setProductList((prev) => prev.filter((p) => p.id !== sellProductId));
+      }
+    } catch (error) {
+      showModal("error", "Error", "Failed to cancel sale.");
+    } finally {
+      setLoadingBtnId(null);
     }
   };
 
@@ -98,6 +103,7 @@ export default function UserOnSale({ products, productsLoading }) {
   if (!user) {
     return null; // hoặc loading spinner
   }
+
   // --- Các hàm quản lý sản phẩm được thêm lại từ code cũ ---
   const handleToggleSell = async (product) => {
     if (!product.isSell && product.quantity <= 0) {
@@ -135,6 +141,11 @@ export default function UserOnSale({ products, productsLoading }) {
   };
 
   const handleOpenUpdate = async (product) => {
+    if (product.isSell) {
+      return showModal("warning", "Sale Status Active", "You need to halting your sale status to update the product info");
+    }
+    
+    setLoadingBtnId(product.id);
     try {
       const productWithDescription = await getProductOnSaleDetail(product.id);
       setSelectedProduct(product);
@@ -143,6 +154,8 @@ export default function UserOnSale({ products, productsLoading }) {
     } catch (error) {
       console.error(error);
       showModal("error", "Error", "Failed to fetch product details.");
+    } finally {
+      setLoadingBtnId(null);
     }
   };
 
@@ -171,8 +184,8 @@ export default function UserOnSale({ products, productsLoading }) {
     ) {
       showModal(
         "warning",
-        "Invalid Price Range",
-        "Price must be between 1,000 and 100,000,000."
+        "System Price Crunch",
+        "System can only store up to 1,000,000,000."
       );
       return;
     }
@@ -208,7 +221,7 @@ export default function UserOnSale({ products, productsLoading }) {
       handleCloseModal();
     } catch (error) {
       console.error("Update error:", error);
-      showModal("error", "Error", "Failed to save product changes.");
+      showModal("error", "Error", error || "Failed to save product changes.");
     }
   };
 
@@ -309,7 +322,23 @@ export default function UserOnSale({ products, productsLoading }) {
                 setDropdownStates({});
               }}
             >
-              {/* ... phần background và image không đổi */}
+              {isOwnerOfItem && (
+                <>
+                  {/* Quantity tag (top left, above sale status) */}
+                  <div className="userOnSale-tag-quantity oxanium-regular">
+                    In Stock: {item.quantity}
+                  </div>
+
+                  {/* Sale status tag (top right, below quantity) */}
+                  <div
+                    className={`userOnSale-tag-sale-status oxanium-regular ${item.isSell ? "on-sale" : "sale-halt"
+                      }`}
+                  >
+                    {item.isSell ? "On Sale" : "Sale Halt"}
+                  </div>
+                </>
+              )}
+              {/* ...existing card background and image... */}
               <div className="userOnSale-card-background">
                 <img
                   src={buildImageUrl(item.urlImage, useBackupImg)}
@@ -334,7 +363,7 @@ export default function UserOnSale({ products, productsLoading }) {
                   overflow: "hidden",
                 }}
               >
-                {/* ... phần toggle và slide content không đổi */}
+                {/* ...existing toggle... */}
                 <div className="userOnSale-card-toggle">
                   <img
                     src={DetailArrow}
@@ -350,11 +379,8 @@ export default function UserOnSale({ products, productsLoading }) {
                 <div
                   className="userOnSale-card-slide-content"
                   style={{
-                    transition:
-                      "transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s",
-                    transform: isExpanded
-                      ? "translateY(0)"
-                      : "translateY(30px)",
+                    transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s",
+                    transform: isExpanded ? "translateY(0)" : "translateY(30px)",
                     opacity: isExpanded ? 1 : 0,
                     pointerEvents: isExpanded ? "auto" : "none",
                   }}
@@ -368,12 +394,14 @@ export default function UserOnSale({ products, productsLoading }) {
                         <div className="userOnSale-card-price oxanium-bold">
                           {formatShortNumber(item.price)} VND
                         </div>
-                        <div className="userOnSale-card-quantity oxanium-bold">
-                          Qty: {item.quantity}
-                        </div>
+                        {!isOwnerOfItem && (
+                          <div className="userOnSale-card-quantity oxanium-bold">
+                            Qty: {item.quantity}
+                          </div>
+                        )}
                       </div>
                       {/* Thêm trạng thái bán */}
-                      {isOwnerOfItem ? (
+                      {/* {isOwnerOfItem ? (
                         <div
                           className={`oxanium-bold text-sm mb-2 ${item.isSell ? "text-green-400" : "text-red-400"
                             }`}
@@ -382,7 +410,7 @@ export default function UserOnSale({ products, productsLoading }) {
                         </div>
                       ) : (
                         ""
-                      )}
+                      )} */}
 
                       <div className="userOnSale-card-actions">
                         <button
@@ -430,13 +458,13 @@ export default function UserOnSale({ products, productsLoading }) {
                                   }`}
                                 onClick={() => handleToggleSell(item)}
                               >
-                                {item.isSell ? "Sale On" : "Sale Off"}
+                                {item.isSell ? "Sale Halt" : "Sale On"}
                               </div>
                               <div
                                 className={`userOnSale-dropdown-item oxanium-regular ${item.isSell ? "disabled" : ""
                                   }`}
                                 onClick={() =>
-                                  !item.isSell && handleOpenUpdate(item)
+                                  handleOpenUpdate(item)
                                 }
                               >
                                 Update Sale Product
@@ -445,7 +473,7 @@ export default function UserOnSale({ products, productsLoading }) {
                                 className={`userOnSale-dropdown-item oxanium-regular`}
                                 onClick={() => handleCancelSellProduct(item.id)}
                               >
-                                Cancel Product
+                                Stop Sale Permanently
                               </div>
                             </DropdownMenu>
                           </div>
@@ -484,22 +512,24 @@ export default function UserOnSale({ products, productsLoading }) {
       </div>
 
       {/* Load more */}
-      {isEnd ? (
-        <div className="userOnSale-end-content oxanium-semibold divider divider-warning">
-          End of content
-        </div>
-      ) : (
-        <button
-          className="userOnSale-loadmore-button oxanium-semibold"
-          onClick={() =>
-            setVisibleCount((count) =>
-              Math.min(count + PAGE_SIZE, products.length)
-            )
-          }
-        >
-          Load more
-        </button>
-      )}
+      {
+        isEnd ? (
+          <div className="userOnSale-end-content oxanium-semibold divider divider-warning">
+            End of content
+          </div>
+        ) : (
+          <button
+            className="userOnSale-loadmore-button oxanium-semibold"
+            onClick={() =>
+              setVisibleCount((count) =>
+                Math.min(count + PAGE_SIZE, products.length)
+              )
+            }
+          >
+            Load more
+          </button>
+        )
+      }
 
       {/* Message Modal */}
       <MessageModal
@@ -511,86 +541,94 @@ export default function UserOnSale({ products, productsLoading }) {
       />
 
       {/* --- Modal Cập nhật sản phẩm được thêm vào --- */}
-      {selectedProduct && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onMouseDown={handleCloseModal} // Đổi từ onClick
-        >
+      {
+        selectedProduct && (
           <div
-            className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md text-white"
-            onMouseDown={(e) => e.stopPropagation()} // Ngăn modal đóng khi tương tác bên trong
+            className="userOnSale-updatePrd-modal-overlay"
+            onMouseDown={handleCloseModal}
           >
-            <h3 className="text-xl oxanium-bold mb-4">Update Product</h3>
+            <div
+              className="userOnSale-updatePrd-modal-container"
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <div className="userOnSale-updatePrd-modal-box">
+                <h3 className="userOnSale-updatePrd-modal-header oxanium-bold">
+                  Update Product
+                </h3>
 
-            <div className="mb-4">
-              <label className="block mb-2 text-sm oxanium-semibold">
-                Description:
-              </label>
-              <textarea
-                value={editedDescription}
-                onChange={(e) => {
-                  let val = e.target.value;
-                  if (val.length > 300) val = val.slice(0, 300);
-                  setEditedDescription(val);
-                }}
-                rows={5}
-                minLength={10}
-                maxLength={300}
-                className="textarea textarea-bordered w-full bg-gray-700"
-              />
-              <div
-                style={{
-                  fontSize: "12px",
-                  color:
-                    editedDescription.trim().length < 10 ||
-                      editedDescription.trim().length > 300
-                      ? "red"
-                      : "#aaa",
-                }}
-              >
-                {`Description: ${editedDescription.trim().length
-                  }/300 characters. (Min: 10, Max: 300)`}
+                <div className="userOnSale-updatePrd-modal-field">
+                  <label className="oxanium-semibold">Description:</label>
+                  <textarea
+                    value={editedDescription}
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      if (val.length > 300) val = val.slice(0, 300);
+                      setEditedDescription(val);
+                    }}
+                    rows={5}
+                    minLength={10}
+                    maxLength={300}
+                    className="userOnSale-updatePrd-textarea"
+                  />
+                  <div
+                    className="userOnSale-updatePrd-helper-text oxanium-regular"
+                    style={{
+                      color:
+                        editedDescription.trim().length < 10 ||
+                          editedDescription.trim().length > 300
+                          ? "red"
+                          : "#aaa",
+                    }}
+                  >
+                    {`Description: ${editedDescription.trim().length}/300 characters. (Min: 10, Max: 300)`}
+                  </div>
+                </div>
+
+                <div className="userOnSale-updatePrd-modal-field">
+                  <label className="oxanium-semibold">Price (VND):</label>
+                  <input
+                    type="number"
+                    value={editedPrice}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setEditedPrice(val === "" ? "" : val);
+                    }}
+                    className="userOnSale-updatePrd-input"
+                  />
+                  <div
+                    className="userOnSale-updatePrd-helper-text oxanium-regular"
+                    style={{
+                      color:
+                        Number(editedPrice) < 1000 ||
+                          Number(editedPrice) > 100000000
+                          ? "red"
+                          : "#aaa",
+                    }}
+                  >
+                    Price must be between 1,000 VND and 100,000,000 VND
+                  </div>
+                </div>
+
+                <div className="userOnSale-updatePrd-modal-actions oxanium-regular">
+                  <button
+                    onClick={handleCloseModal}
+                    className="userOnSale-updatePrd-btn-cancel"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="userOnSale-updatePrd-btn-save"
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <div className="mb-6">
-              <label className="block mb-2 text-sm oxanium-semibold">
-                Price (VND):
-              </label>
-              <input
-                type="number"
-                value={editedPrice}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setEditedPrice(val === "" ? "" : val);
-                }}
-                className="input input-bordered w-full bg-gray-700"
-              />
-              <div
-                style={{
-                  fontSize: "12px",
-                  color:
-                    Number(editedPrice) < 1000 ||
-                      Number(editedPrice) > 100000000
-                      ? "red"
-                      : "#aaa",
-                }}
-              >
-                {`Price must be between 1,000 and 100,000,000`}
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4">
-              <button onClick={handleCloseModal} className="btn btn-ghost">
-                Cancel
-              </button>
-              <button onClick={handleSave} className="btn btn-primary">
-                Save Changes
-              </button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+
+    </div >
   );
 }

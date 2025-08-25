@@ -1,0 +1,135 @@
+.mobileDLink-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    margin-top: 30px;
+}
+
+.mobileDLink-container {
+    position: relative;
+    width: 90%;
+    max-width: 550px;
+    max-height: 80vh;
+    padding: 2.7rem 1.5rem 1.5rem 1.5rem;
+
+    background: rgba(25, 25, 25, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--dark-1);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    overflow-y: auto;
+    /* Firefox */
+    scrollbar-width: none;
+    /* IE / old Edge */
+    -ms-overflow-style: none;
+}
+
+/* Chrome, Edge, Safari */
+.mobileDLink-container::-webkit-scrollbar {
+    display: none;
+}
+
+.mobileDLink-close {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    padding: 3px;
+    font-size: 16px;
+    color: var(--light-4);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.mobileDLink-close:hover {
+    opacity: 0.85;
+}
+
+/*  --------------------------==================== Images ====================-------------------------- */
+.mobileDLink-qr-wrapper {
+    width: 400px;
+    height: 400px;
+    background-color: aliceblue;
+}
+
+.mobileDLink-qr img {
+    width: 100%;
+    transform: scale(1.3);
+}
+
+.mobileDLink-btwText {
+    background: linear-gradient(90deg, #6a00ff, #ffcc00);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+    text-align: center;
+}
+
+.mobileDLink-download {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.mobileDLink-download img {
+    width: 12rem;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    border-radius: 12px; /* make it smoother */
+    position: relative;
+    z-index: 1;
+}
+
+/* Gradient shadow effect */
+.mobileDLink-download::after {
+    content: "";
+    position: absolute;
+    inset: -2px; /* spread around */
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 230, 0, 0.4), rgba(234, 0, 255, 0.4));
+    filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.mobileDLink-download:hover::after {
+    opacity: 1;
+}
+
+.mobileDLink-download:hover img {
+    transform: scale(1.05);
+}
+
+.mobileDLink-download:active img {
+    transform: scale(0.99);
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .mobileDLink-qr-wrapper {
+        width: 320px;
+        height: 320px;
+    }
+
+    .mobileDLink-download img {
+        width: 10rem;
+    }
+}

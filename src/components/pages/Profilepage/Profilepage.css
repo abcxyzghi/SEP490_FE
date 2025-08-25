@@ -37,7 +37,7 @@
   flex-wrap: wrap;
 
   /* offset from banner + padding */
-  padding: 0rem 3.5rem 5.5rem;
+  padding: 0rem 3.5rem 3.5rem;
   border-bottom: 1px solid #444;
 }
 
@@ -111,6 +111,51 @@
   height: 1.1rem;
   filter: var(--lightSVG-1);
 }
+
+/* Medals wrapper */
+.profilepage-medals {
+  margin: 1rem 0 0 -14.5rem;
+  max-width: 220px;
+
+  overflow-x: auto;   /* allow horizontal scrolling */
+  overflow-y: hidden; /* hide vertical scroll */
+  white-space: nowrap; /* keep items in one row */
+  scrollbar-width: none; /* Firefox: hide scrollbar */
+}
+
+/* Hide scrollbar for Webkit (Chrome, Safari, Edge) */
+.profilepage-medals::-webkit-scrollbar {
+  display: none;
+}
+
+/* Medals list (scrolls horizontally) */
+.profilepage-medals-list {
+  display: inline-flex; /* horizontal flex instead of wrapping */
+  gap: 0.75rem;
+}
+
+/* Medal item */
+.profilepage-medals-item {
+  flex: 0 0 auto; /* prevent shrinking, stay fixed size */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Medal image */
+.profilepage-medals-image {
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Medal name text */
+/* .profilepage-medals-name {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  text-align: center;
+} */
 
 /*  --------------------------==================== RIGHT ====================-------------------------- */
 .profilepage-right {
@@ -540,6 +585,10 @@
 
 /* For screen width ≤ 345px */
 @media (max-width: 345px) {
+  .profilepage-medals-image {
+    width: 2.3rem;
+    height: 2.3rem;
+  }
 
   .profilepage-buttons,
   .profilepage-right-action {
