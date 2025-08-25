@@ -1,11 +1,15 @@
-import { toast } from "react-toastify";
-import api from "../config/axios";
+import { apiWithFallback } from "../config/axios";
 
-export const getCategories= async () => {
-    try{
-     const response = await api.get("category")
-     return response.data;
-    }catch(error){
-     toast.error(error.response.data)
-    }
- }
+export const getCatergory = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/Collection/get-all-collection",
+      requiresAuth: true, 
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi gọi getCatergory:", error);
+    throw error;
+  }
+};

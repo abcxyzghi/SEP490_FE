@@ -209,3 +209,17 @@ export const cancelSellProduct = async (sellProductId) => {
     return null;
   }
 };
+
+
+export const getAllProducts = async () => {
+  try {
+    const response = await apiWithFallback({
+      method: "get",
+      url: "/api/Product/get-product",
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
+  }
+}

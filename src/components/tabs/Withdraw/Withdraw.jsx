@@ -3,6 +3,7 @@ import './Withdraw.css';
 import { createWithdrawTransaction, getProfile } from "../../../services/api.user";
 import { fetchUserInfo } from "../../../services/api.auth";
 import MessageModal from "../../libs/MessageModal/MessageModal";
+import { checkIsJoinedAuction } from "../../../services/api.auction";
 
 export default function Withdraw() {
   const [amount, setAmount] = useState("");
@@ -46,6 +47,15 @@ export default function Withdraw() {
   }, []);
 
   const handleWithdraw = async () => {
+    const isJoined = await checkIsJoinedAuction();
+    if (isJoined) {
+      showModal(
+        "warning",
+        "Cannot Withdraw",
+        "You cannot withdraw while participating in an auction."
+      );
+      return; // dừng hàm nếu đã tham gia auction
+    }
     // Validate bank info
     if (!bankInfo || !bankInfo.bankId || !bankInfo.accountBankName || !bankInfo.banknumber) {
       return showModal("warning", "Missing Bank Info", "Please update your bank information before withdrawing.");
@@ -61,19 +71,27 @@ export default function Withdraw() {
       return showModal("warning", "Insufficient Balance", `Your withdraw amount exceeds your wallet balance (${walletBalance} VND).`);
     }
 
+
     setLoading(true);
 
     try {
       const res = await createWithdrawTransaction(Number(amount));
-      if (res) {
+      if (res.status) {
         showModal("default", "Withdraw Request Sent", "Your withdrawal request has been submitted successfully.");
         setAmount("");
       } else {
-        showModal("error", "Transaction Failed", "An error occurred while creating your withdrawal request.");
+        showModal(
+          "error",
+          "Transaction Failed",
+          res.error || res.data?.message || "An unknown error occurred."
+        );
       }
     } catch (error) {
-      console.log(error);
-      showModal("error", "System Error", "Please try again later.");
+      let serverMessage = error.message || "An unknown error occurred.";
+      if (error.response && error.response.data) {
+        serverMessage = error.response.data.error || error.response.data.message;
+      }
+      showModal("error", "Transaction Failed", serverMessage);
     } finally {
       setLoading(false);
     }

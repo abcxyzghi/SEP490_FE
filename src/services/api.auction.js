@@ -1,9 +1,9 @@
 
 import { toast } from "react-toastify"
-import { apiWithFallback,pythonApiWithFallback  } from "../config/axios";
+import { apiWithFallback, pythonApiWithFallback } from "../config/axios";
 
 export const getAllAuctionOfMod = async () => {
-    try {
+  try {
     const response = await pythonApiWithFallback({
       method: "get",
       url: "/api/auction/mod",
@@ -16,12 +16,12 @@ export const getAllAuctionOfMod = async () => {
   }
 };
 
-export const updateStatusAuction = async (id,status) => {
-try {
+export const updateStatusAuction = async (id, status) => {
+  try {
     const response = await apiWithFallback({
       method: "patch",
       url: `/api/AuctionSettlement/update-status-auction-session`,
-      data: { id, status },
+      params: { auctionSessionId: id, status },
       requiresAuth: true,
     });
     return response.data;
@@ -51,7 +51,7 @@ export const fetchAuctionListStart = async () => {
     const response = await pythonApiWithFallback({
       method: "get",
       url: "/api/auction/waiting",
-      requiresAuth: true, 
+      requiresAuth: true,
     });
 
     return response.data;
@@ -59,14 +59,14 @@ export const fetchAuctionListStart = async () => {
     console.error("Fetch auction list failed:", error);
     throw error;
   }
-}; 
+};
 
 export const fetchMyAuctionList = async () => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
       url: "/api/auction/me",
-      requiresAuth: true, 
+      requiresAuth: true,
     });
 
     return response.data;
@@ -120,14 +120,14 @@ export const productOfAuction = async (productData) => {
     console.error("Add product to auction failed:", error);
     throw error;
   }
-}; 
+};
 
 export const fetchJoinedAuctionList = async () => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
       url: "/api/auction/joined-history",
-      requiresAuth: true, 
+      requiresAuth: true,
     });
 
     return response.data;
@@ -135,14 +135,14 @@ export const fetchJoinedAuctionList = async () => {
     console.error("Fetch joined auction list failed:", error);
     throw error;
   }
-}; 
+};
 
 export const fetchAuctionWinner = async () => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
       url: "/api/auction/win-history",
-      requiresAuth: true, 
+      requiresAuth: true,
     });
 
     return response.data;
@@ -150,4 +150,61 @@ export const fetchAuctionWinner = async () => {
     console.error("Fetch joined auction list failed:", error);
     throw error;
   }
-}; 
+};
+
+export const getAllAuctionResultForMod = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/api/auction/auction-result",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
+  }
+};
+export const updateAuctionSettlement = async (auctionId) => {
+  try {
+    const response = await apiWithFallback({
+      method: "patch",
+      url: `/api/AuctionSettlement/update-status-auction-session/${auctionId}`,
+      params: { auctionId },
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error Approve/Reject auction");
+    return null;
+  }
+};
+export const checkIsJoinedAuction = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: `/api/auction/is-joined-auction`,
+      requiresAuth: true,
+    });
+    console.log("true or false let's find out" + response.data)
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      return response.data.data[0];
+    }
+  } catch (error) {
+    console.error("Check is joined auction failed:", error);
+    throw error;
+  }
+};
+export const getAllAuctions = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "api/auction/all?filter=default",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error fetching products on sale");
+    return null;
+  }
+};

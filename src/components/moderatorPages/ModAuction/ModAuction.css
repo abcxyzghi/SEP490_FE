@@ -1,97 +1,305 @@
-.mod-auction-container {
+/* === Main Container & Header === */
+.modauction-mod-container {
   padding: 20px;
-}
-.mod-auction-container h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: #0bd8b9;
-  text-shadow: 0 0 10px rgba(7, 160, 157, 0.567);
-}
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  background-color: #181a20;
+  min-height: 100vh;
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
 }
 
-.tab-btn {
-  padding: 8px 16px;
-  background: #e0e0e0;
+.modauction-mod-header {
+  margin-bottom: 24px;
+}
+
+.modauction-mod-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0bd8b9;
+  text-shadow: 0 0 10px rgba(11, 216, 185, 0.5);
+  margin-bottom: 8px;
+}
+
+.modauction-mod-subtitle {
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.modauction-mod-subtitle strong {
+  color: #ffcc00;
+  font-size: 1.1rem;
+}
+
+/* === Controls (Tabs, Search, Filters) === */
+.modauction-mod-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.modauction-mod-tabs {
+  display: flex;
+  gap: 10px;
+  background: #23272f;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.modauction-mod-tabs button {
+  padding: 8px 20px;
+  background: transparent;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
+  font-weight: 600;
+  color: #aaa;
+  transition: all 0.3s ease;
 }
 
-.tab-btn.active {
+.modauction-mod-tabs button.active {
   background: #0bb19e;
   color: white;
+  box-shadow: 0 0 15px rgba(11, 177, 158, 0.4);
 }
 
-.auction-card-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
+.modauction-mod-filters {
+  display: flex;
+  gap: 12px;
 }
 
-.auction-card {
-  background: white;
-  padding: 15px;
+/* UPDATE: Tăng chiều rộng thanh search */
+.modauction-mod-search {
+  width: 100%;
+  max-width: 450px;
+}
+
+.modauction-mod-search,
+.modauction-mod-select {
+  padding: 10px 16px;
+  background-color: #23272f;
+  border: 1px solid #444;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-}
-.auction-card:hover {
-  transform: translateY(-4px);
-}
-
-.status-approved {
-  color: green;
-  font-weight: bold;
-}
-.status-rejected {
-  color: red;
-  font-weight: bold;
-}
-.status-pending {
-  color: orange;
-  font-weight: bold;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
-.auction-actions {
-  margin-top: 10px;
+.modauction-mod-search:focus,
+.modauction-mod-select:focus {
+  border-color: #0bd8b9;
+  box-shadow: 0 0 10px rgba(11, 216, 185, 0.3);
+}
+
+/* === Table Styling === */
+.modauction-mod-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #23272f;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modauction-mod-table th,
+.modauction-mod-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #3a3f4b;
+}
+
+.modauction-mod-table th {
+  background: #181a20;
+  color: #0bd8b9;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.modauction-mod-table td {
+  vertical-align: middle;
+}
+
+.modauction-mod-time-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.modauction-mod-time-frame strong {
+  color: #aaa;
+}
+
+/* === Product Details Cell === */
+.modauction-mod-product-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.modauction-mod-product-cell__image {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #444;
+  flex-shrink: 0;
+}
+
+.modauction-mod-product-cell__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modauction-mod-product-cell__rarity {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.modauction-mod-product-cell__name {
+  font-weight: 600;
+  color: #fff;
+}
+
+.modauction-mod-product-cell__desc {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.expandable-text {
+  display: inline;
+}
+
+.expandable-toggle-btn {
+  background: none;
+  border: none;
+  color: #0bd8b9;
+  cursor: pointer;
+  padding: 0 0 0 5px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline;
+}
+
+/* Rarity Colors */
+/* .rarity-common { background-color: #555; }
+.rarity-uncommon { background-color: #27ae60; }
+.rarity-rare { background-color: #2980b9; }
+.rarity-epic { background-color: #8e44ad; }
+.rarity-legendary { background: linear-gradient(45deg, #f39c12, #f1c40f); } */
+
+/* === Badges & Actions === */
+.auction-mod-modauction-mod-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.auction-status-approved {
+  background-color: #27ae60;
+}
+
+.auction-status-rejected {
+  background-color: #c0392b;
+}
+
+.auction-status-pending {
+  background-color: #f39c12;
+}
+
+.auction-status-finished {
+  background-color: #3498db;
+}
+
+.modauction-mod-actions {
   display: flex;
   gap: 8px;
 }
 
-.btn-approve {
-  background: #4caf50;
-  color: white;
+.modauction-mod-btn-approve,
+.modauction-mod-btn-reject {
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 14px;
+  border-radius: 6px;
   cursor: pointer;
-}
-.btn-reject {
-  background: #f44336;
+  font-weight: 600;
   color: white;
+  transition: all 0.2s ease;
+}
+
+.modauction-mod-btn-approve {
+  background-color: #27ae60;
+}
+
+.modauction-mod-btn-approve:hover {
+  background-color: #2ecc71;
+}
+
+.modauction-mod-btn-reject {
+  background-color: #c0392b;
+}
+
+.modauction-mod-btn-reject:hover {
+  background-color: #e74c3c;
+}
+
+/* === Pagination & Messages === */
+.modauction-mod-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+.modauction-mod-pagination button {
+  padding: 8px 16px;
+  background: #2c2c2c;
+  color: #bbb;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 16px;
   cursor: pointer;
 }
 
-/* Hiệu ứng fade-in */
-.fade-in {
-  animation: fadeInUp 0.6s ease both;
+.modauction-mod-pagination button.active {
+  background: #0bb19e;
+  color: #fff;
 }
-@keyframes fadeInUp {
+
+.modauction-mod-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modauction-mod-message {
+  color: #aaa;
+  text-align: center;
+  padding: 40px;
+}
+
+/* === Animation === */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
+
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
