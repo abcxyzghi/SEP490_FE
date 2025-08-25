@@ -1,8 +1,7 @@
 import React from "react";
 import "./MobileDownLink.css";
 // import assets
-import QRcode from "../../../assets/mobileRedirect/QRcode_m2b.png";
-import QRcode2 from "../../../assets/mobileRedirect/QRcode_c2.svg";
+import QRcode2 from "../../../assets/mobileRedirect/qrcode_c2.svg";
 import AndroidBtn from "../../../assets/mobileRedirect/android-download.png";
 
 export default function MobileDownLink({ open, onClose }) {
