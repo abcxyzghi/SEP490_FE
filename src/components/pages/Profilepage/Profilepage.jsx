@@ -100,6 +100,7 @@ export default function Profilepage() {
 
     fetchMedals();
   }, [id, currentUserId]);
+
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -121,10 +122,21 @@ export default function Profilepage() {
         } else {
           setError("Profile not found");
         }
-        const data = await getRatingOfUser(id);
-        setRating(data.data);
+        // ⭐ Lấy rating, có fallback
+        try {
+          const ratingRes = await getRatingOfUser(id);
+          if (ratingRes?.status && ratingRes?.data !== null) {
+            setRating(ratingRes.data);
+          } else {
+            setRating(0); // fallback nếu không có rating
+          }
+        } catch (err) {
+          console.error("❌ Lỗi khi lấy rating của user:", err);
+          setRating(0); // fallback khi 400 hoặc exception
+        }
+
+        // Lấy sản phẩm on sale
         const productData = await getAllProductOnSaleOfUser(id);
-        console.log("Product Data", productData);
         if (productData && productData.data) {
           const count = productData.data.filter(
             (item) => item.isSell === true && item.quantity > 0
@@ -137,6 +149,7 @@ export default function Profilepage() {
         setLoading(false);
       }
     };
+
     // Always allow fetching other profiles, only block my profile if not logged in
     if (id || typeof currentUserId !== "undefined") {
       fetchProfile();
@@ -455,7 +468,7 @@ export default function Profilepage() {
                 </h1>
                 <p className="profilepage-joinTime oxanium-semibold">
                   {" "}
-                  Join <span className="oxanium-regular">{joinedDate}</span>
+                  Joined <span className="oxanium-regular">{joinedDate}</span>
                 </p>
               </div>
 
@@ -491,19 +504,11 @@ export default function Profilepage() {
                       className="profilepage-btn-message oxanium-semibold"
                       onClick={() => {
                         if (!user || !user.user_id) {
-                          showModal(
-                            "warning",
-                            "Unauthorized",
-                            "You need to log in to message."
-                          );
+                          showModal("warning", "Unauthorized", "You need to log in to message.");
                           return;
                         }
                         if (!id) {
-                          showModal(
-                            "warning",
-                            "Error",
-                            "No user found to message."
-                          );
+                          showModal("warning", "Error", "No user found to message.");
                           return;
                         }
                         navigate(`/chatroom/${id}`);
@@ -519,6 +524,35 @@ export default function Profilepage() {
                   </>
                 )}
               </div>
+
+              {/* Medals Section */}
+              <div className="profilepage-medals">
+                {medalsLoading ? (
+                  <div className="skeleton h-10 w-60 bg-gray-600/40 rounded" />
+                ) : medals.length > 0 ? (
+                  <div className="profilepage-medals-list">
+                    {medals.map((medal) => (
+                      <div
+                        key={medal.medalId}
+                        className="profilepage-medals-item"
+                      >
+                        <img
+                          src={buildImageUrl(medal.urlImage, useBackupImg)}
+                          onError={() => setUseBackupImg(true)}
+                          alt={medal.medalName}
+                          className="profilepage-medals-image"
+                        />
+                        {/* <span className="profilepage-medals-name">
+                          {medal.medalName}
+                        </span> */}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+
             </div>
 
             {/* Right section */}
@@ -532,11 +566,7 @@ export default function Profilepage() {
                     className="profilepage-btn-report oxanium-semibold"
                     onClick={() => {
                       if (!user || user.role !== "user") {
-                        showModal(
-                          "warning",
-                          "Unauthorized",
-                          "You're not permitted to execute this action"
-                        );
+                        showModal("warning", "Unauthorized", "You're not permitted to execute this action");
                         return;
                       }
                       setShowReportModal(true);
@@ -588,36 +618,9 @@ export default function Profilepage() {
 
                 <div className="profilepage-figurie-item">
                   <h3>Avg review</h3>
-                  <p>⭐ {rating}</p>
+                  <p>⭐ {rating ? rating.toFixed(1) : "0"}</p>
                 </div>
-                {/* Medals Section */}
-                <div className="profilepage-medals mt-4">
-                  <h3 className="oxanium-semibold">Achievements</h3>
-                  {medalsLoading ? (
-                    <p className="text-gray-400">Loading medals...</p>
-                  ) : medals.length > 0 ? (
-                    <div className="flex flex-wrap gap-3 mt-2">
-                      {medals.map((medal) => (
-                        <div
-                          key={medal.medalId}
-                          className="flex flex-col items-center"
-                        >
-                          <img
-                            src={buildImageUrl(medal.urlImage, useBackupImg)}
-                            onError={() => setUseBackupImg(true)}
-                            alt={medal.medalName}
-                            className="w-12 h-12 object-cover rounded-full"
-                          />
-                          <span className="text-xs mt-1 text-center">
-                            {medal.medalName}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-400">No medals yet</p>
-                  )}
-                </div>
+
               </div>
             </div>
           </div>
@@ -658,8 +661,13 @@ export default function Profilepage() {
                     className="profilepage-fllw-item oxanium-regular"
                   >
                     <Link
-                      to={Pathname("PROFILE").replace(":id", follower.userId)}
+                      to={Pathname("PROFILE").replace(":id", follower.followerId)}
                       className="profilepage-fllw-link"
+                      onClick={(e) => {
+                        // ignore if Ctrl+Click, Cmd+Click, or Middle click
+                        if (e.ctrlKey || e.metaKey || e.button === 1) return;
+                        setIsFollowModalOpen(false); // only close modal on plain left click
+                      }}
                     >
                       <img
                         src={buildImageUrl(follower.urlImage, useBackupImg)}
@@ -672,7 +680,7 @@ export default function Profilepage() {
                   </li>
                 ))
               ) : (
-                <li className="profilepage-fllw-empty">
+                <li className="profilepage-fllw-empty oxanium-regular">
                   Not followed by anyone
                 </li>
               )}
@@ -692,6 +700,11 @@ export default function Profilepage() {
                     <Link
                       to={Pathname("PROFILE").replace(":id", followed.userId)}
                       className="profilepage-fllw-link"
+                      onClick={(e) => {
+                        // ignore if Ctrl+Click, Cmd+Click, or Middle click
+                        if (e.ctrlKey || e.metaKey || e.button === 1) return;
+                        setIsFollowModalOpen(false); // only close modal on plain left click
+                      }}
                     >
                       <img
                         src={buildImageUrl(followed.urlImage, useBackupImg)}
@@ -704,7 +717,7 @@ export default function Profilepage() {
                   </li>
                 ))
               ) : (
-                <li className="profilepage-fllw-empty">
+                <li className="profilepage-fllw-empty oxanium-regular">
                   Not following anyone yet
                 </li>
               )}

@@ -6,7 +6,7 @@ import UserTheme from '../../tabs/UserTheme/UserTheme';
 import UserAchievements from '../../tabs/UserAchievements/UserAchievements';
 
 export default function Settingpage() {
-  const [activeTab, setActiveTab] = useState('Profile');
+  const [activeTab, setActiveTab] = useState('Profile Info');
 
   return (
     <div className='settingpage-container'>

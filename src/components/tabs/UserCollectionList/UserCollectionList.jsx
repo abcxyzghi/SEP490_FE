@@ -7,10 +7,11 @@ import { buildImageUrl } from '../../../services/api.imageproxy';
 import DetailArrow from '../../../assets/Icon_line/Chevron_Up.svg';
 import ThreeDots from '../../../assets/Icon_fill/Meatballs_menu.svg';
 import MessageModal from '../../libs/MessageModal/MessageModal';
+import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 import DropdownMenu from '../../libs/DropdownMenu/DropdownMenu';
 import SellFormModal from '../../libs/SellFormModal/SellFormModal';
-import { newAuction, productOfAuction } from '../../../services/api.auction';
 import HostAuctionModal from '../../libs/HostAuctionModal/HostAuctionModal';
+import { newAuction, productOfAuction } from '../../../services/api.auction';
 import { addFavourite, getFavoriteImages, getFavoriteList, removeFavourite } from '../../../services/api.favorites';
 
 const PAGE_SIZE = 8;
@@ -21,6 +22,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [loadingBtnId, setLoadingBtnId] = useState(null);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', onConfirm: null });
   const [dropdownStates, setDropdownStates] = useState({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -42,26 +44,41 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+
+  const showConfirmModal = (title, message, onConfirm = null) => {
+    setConfirmModal({ open: true, title, message, onConfirm });
+  };
+  const closeConfirmModal = () => {
+    setConfirmModal(prev => ({ ...prev, open: false }));
+  };
+
   const [auctionModalOpen, setAuctionModalOpen] = useState(false);
-  const [auctionForm, setAuctionForm] = useState({
-    title: "",
-    description: "",
-    start_time: "",
-    quantity: 1,
-    starting_price: 1000
-  });
-  const [auctionProduct, setAuctionProduct] = useState(null); // lưu sản phẩm đang host auction
-  const [auctionLoading, setAuctionLoading] = useState(false);
-  const [mode, setAuctionMode] = useState("newAuction"); // hoặc "addProduct"
-  const openAuctionModal = (product) => {
-    setAuctionProduct(product);
-    setAuctionForm({
-      title: "",
-      description: "",
-      start_time: "",
-      quantity: 1,
-      starting_price: 1000
-    });
+  // const [auctionForm, setAuctionForm] = useState({
+  //   title: "",
+  //   description: "",
+  //   start_time: "",
+  //   quantity: 1,
+  //   starting_price: 1000
+  // });
+  // const [auctionProduct, setAuctionProduct] = useState(null); // lưu sản phẩm đang host auction
+  // const [auctionLoading, setAuctionLoading] = useState(false);
+  // const [mode, setAuctionMode] = useState("newAuction"); // hoặc "addProduct"
+  // const openAuctionModal = (product) => {
+  //   setAuctionProduct(product);
+  //   setAuctionForm({
+  //     title: "",
+  //     description: "",
+  //     start_time: "",
+  //     quantity: 1,
+  //     starting_price: 1000
+  //   });
+  //   setAuctionModalOpen(true);
+  // };
+  const [auctionProductId, setAuctionProductId] = useState(null);
+
+  // replace previous openAuctionModal(product) with:
+  const openAuctionModal = (productId) => {
+    setAuctionProductId(productId);
     setAuctionModalOpen(true);
   };
   const [favImages, setFavImages] = useState([]);
@@ -73,6 +90,17 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const isEndFavs = Array.isArray(favImages) ? favVisibleCount >= favImages.length : true;
 
   const [productsLoading, setProductsLoading] = useState(false);
+
+  // Track which products have their isQuantityUpdateInc tag turned off
+  const [quantityUpdateIncOff, setQuantityUpdateIncOff] = useState({});
+
+  // Helper for rarity sort
+  const rarityOrder = { legendary: 0, epic: 1, rare: 2, uncommon: 3, common: 4 };
+  function sortByRarity(a, b) {
+    const aRank = rarityOrder[a.rarityName?.toLowerCase()] ?? 99;
+    const bRank = rarityOrder[b.rarityName?.toLowerCase()] ?? 99;
+    return aRank - bRank;
+  }
 
   useEffect(() => {
     const fetchFavImages = async () => {
@@ -152,12 +180,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         });
         console.log("productOfAuction API response:", productRes);
       }
-
-      alert("✅ Auction hosted successfully!");
+      showModal('default', 'Auction Request Sent', "Please wait for our moderater approve and you're ready to go!");
       setAuctionModalOpen(false);
     } catch (error) {
       console.error("handleHostAuction error:", error);
-      alert("Failed to host auction");
+      return showModal('error', 'Something wrong', "Failed to host auction");
     } finally {
       setAuctionLoading(false);
       console.log("handleHostAuction finished.");
@@ -173,12 +200,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       const res = await getFavoriteList();
       console.log("API getFavoriteList:", res);
 
-
       const favList = Array.isArray(res) ? res : res?.data || [];
 
       setFavourites(favList);
     } catch (err) {
-      console.error("Lỗi khi load danh sách yêu thích:", err);
+      console.error("Error loading Favourites", err);
       setFavourites([]); // tránh null
     } finally {
       setLoading(false);
@@ -186,14 +212,19 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   };
 
   const handleRemove = async (favId) => {
-    if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này khỏi danh sách yêu thích?")) return;
-    try {
-      await removeFavourite(favId);
-      setFavourites((prev) => prev.filter((item) => item.id !== favId));
-      await getFavoriteProductList();
-    } catch (err) {
-      console.error("Lỗi khi xóa:", err);
-    }
+    showConfirmModal(
+      "Remove Favorite",
+      "Are you sure you want to remove this product from your favorite list?",
+      async () => {
+        try {
+          await removeFavourite(favId);
+          setFavourites((prev) => prev.filter((item) => item.id !== favId));
+          await getFavoriteProductList();
+        } catch (err) {
+          console.error("Error removing favorite:", err);
+        }
+      }
+    );
   };
 
   useEffect(() => {
@@ -308,9 +339,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       return showModal('warning', 'Description length', "Description must be between 10 and 300 characters.");
     }
     // Validation: price between 1000 and 100000000
-    if (Number(sellForm.price) < 1000 || Number(sellForm.price) > 100000000) {
-      return showModal('warning', 'Price out of range', "Price must be between 1,000 and 100,000,000.");
-    }
+    // if (Number(sellForm.price) < 1000 || Number(sellForm.price) > 100000000) {
+    //   return showModal('warning', 'Price out of range', "Price must be between 1,000 and 100,000,000.");
+    // }
     // Validation: quantity must be > 0
     if (sellForm.quantity <= 0) {
       return showModal('warning', 'Invalid price input', "Quantity can't be lower than 0");
@@ -400,7 +431,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
           <div className="userCollectionList-card-list-container">
             {visibleCollections.length === 0 ? (
-              <div className="text-gray-500 mt-2">No collections found.</div>
+              <div className="text-gray-500 mt-2 oxanium-regular">No collections found.</div>
             ) : (
               <div className="userCollectionList-card-grid">
                 {visibleFavs.length === 0 ? (
@@ -672,7 +703,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
               // Chuẩn bị 2 list đã filter
               const primaryList = visibleProducts
                 .filter(p => (p.quantity ?? 0) > 0)
-                .map(p => ({ ...p, isFavorite: false }));
+                .map(p => ({ ...p, isFavorite: false }))
+                .sort(sortByRarity); // <-- sort by rarity
+
               const secondaryList = visiblefavProducts
                 .filter(p => (p.quantity ?? 0) > 0)
                 .map(p => ({ ...p, isFavorite: true }));
@@ -691,13 +724,40 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                     if (!anchorRefs.current) anchorRefs.current = {};
                     if (!anchorRefs.current[key]) anchorRefs.current[key] = React.createRef();
 
+                    // Tag logic
+                    const showQuantityUpdateIncTag = prod.isQuantityUpdateInc && !quantityUpdateIncOff[key];
+                    const showProductIsBlockTag = prod.product_isBlock;
+
                     return (
                       <div
                         key={key}
                         className={`userCollectionList-card-item ${isExpanded ? 'userCollectionList-card-item--expanded' : ''}`}
                         onMouseEnter={() => setExpandedCardIndex(key)}
                         onMouseLeave={() => { setExpandedCardIndex(null); setDropdownStates({}); }}
+                        onClick={() => {
+                          // Only toggle isQuantityUpdateInc tag if it's showing
+                          if (showQuantityUpdateIncTag) {
+                            setQuantityUpdateIncOff(prev => ({ ...prev, [key]: true }));
+                          }
+                        }}
                       >
+                        {/* product_isBlock tag (top left, always visible if true) */}
+                        {showProductIsBlockTag && (
+                          <div className="userCollectionList-tag-block oxanium-regular">
+                            System Banned
+                          </div>
+                        )}
+
+                        {/* isQuantityUpdateInc tag (top right, can be toggled off) */}
+                        {showQuantityUpdateIncTag && (
+                          <div
+                            className={`userCollectionList-tag-quantity-update oxanium-regular ${showProductIsBlockTag ? "with-block" : ""
+                              }`}
+                          >
+                            Collection Updated
+                          </div>
+                        )}
+
                         <div className="userCollectionList-card-background">
                           <img src={buildImageUrl(prod.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${prod.productName} background`} />
                         </div>
@@ -756,8 +816,13 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                                         isPrimary
                                           ? [
                                             { text: "Add to Favorite", action: () => handleAddFavourite(prod.id ?? prod.userProductId, prod.productName) },
-                                            { text: "Public to Sell", action: () => openSellModal(prod) },
-                                            { text: "Host an Auction", action: () => openAuctionModal(prod) },
+                                            // Hide "Public to Sell" and "Host an Auction" if product_isBlock is true
+                                            ...(!prod.product_isBlock
+                                              ? [
+                                                { text: "Public to Sell", action: () => openSellModal(prod) },
+                                                { text: "Host an Auction", action: () => openAuctionModal(prod.productId ?? prod.userProductId) }
+                                              ]
+                                              : [])
                                           ]
                                           : [
                                             { text: "Remove from Favorites", action: () => handleRemove(prod.id ?? prod.userProductId) },
@@ -831,16 +896,33 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         message={modal.message}
       />
 
+      {/* Confirm Modal */}
+      <ConfirmModal
+        open={confirmModal.open}
+        onClose={() => {
+          if (confirmModal.onCancel) confirmModal.onCancel();
+          closeConfirmModal();
+        }}
+        onConfirm={() => {
+          if (confirmModal.onConfirm) confirmModal.onConfirm();
+          closeConfirmModal();
+        }}
+        title={confirmModal.title}
+        message={confirmModal.message}
+      />
+
       {/* Host Auction request modal */}
       <HostAuctionModal
-        isOpen={auctionModalOpen}
+        open={auctionModalOpen}
         onClose={() => setAuctionModalOpen(false)}
-        onSubmit={handleHostAuction}
-        form={auctionForm}
-        setForm={setAuctionForm}
-        loading={auctionLoading}
-        mode={mode} // truyền thêm
-        setMode={setAuctionMode}
+        productId={auctionProductId}
+        onSuccess={(res) => {
+          // optional: refresh state, show message
+          showModal?.("default", "Auction Request Sent", "Please wait for moderator approval.");
+          setAuctionModalOpen(false);
+          // maybe trigger refreshOnSaleProducts or reload collection
+          // if (typeof refreshOnSaleProducts === "function") refreshOnSaleProducts();
+        }}
       />
 
     </>

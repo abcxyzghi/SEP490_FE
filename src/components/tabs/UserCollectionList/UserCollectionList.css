@@ -222,6 +222,50 @@
     cursor: pointer;
 }
 
+/* Block tag */
+.userCollectionList-tag-block {
+  position: absolute;
+  top: 8px;
+  left: 4px;
+  z-index: 10;
+  background: #c0392b;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Quantity update tag (default top = 8px) */
+.userCollectionList-tag-quantity-update {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  z-index: 10;
+  background: #f39c12;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* When block tag exists, push it down */
+.userCollectionList-tag-quantity-update.with-block {
+  top: 26px;
+}
+
+.userCollectionList-tag-block,
+.userCollectionList-tag-quantity-update {
+  cursor: default;
+  /* Vô hiệu kéo-thả */
+  -webkit-user-drag: none;
+  /* Vô hiệu bôi đen chọn văn bản */
+  user-select: none;
+}
+
 /*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
 .userCollectionList-card-title {
     text-align: left;

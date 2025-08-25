@@ -1,0 +1,70 @@
+/* Controls row */
+.auctionRoomList__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.auctionRoomList__controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auctionRoomList__sort-label {
+  color: var(--light-3);
+  font-size: 0.9rem;
+}
+
+.auctionRoomList__sort-select {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: var(--light-1);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* state blocks reuse existing state classes, keep them simple */
+.auctionRoomList__state {
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.auctionRoomList__state--loading { color: var(--light-2); }
+.auctionRoomList__state--error { color: #f87171;  }
+.auctionRoomList__state--empty { color: var(--light-3); }
+
+/* finance compact row */
+.auctionRoomList__finance-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--light-2);
+}
+
+.auctionRoomList__finance-item {
+  background: rgba(255, 255, 255, 0.082);
+  padding: 3px 6px;
+  border-radius: 8px;
+  min-width: 60px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.auctionRoomList__finance-start { color: #f3f4f6; }
+.auctionRoomList__finance-fee { color: #ffd700; }
+.auctionRoomList__finance-net { color: #a7f3d0; } /* green-ish for net income */
+
+.auctionRoomList__finance-sep {
+  color: var(--light-4);
+  font-weight: 700;
+}
+
+/* (rest of your card styles remain from earlier) */
