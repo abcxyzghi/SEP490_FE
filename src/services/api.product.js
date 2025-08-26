@@ -225,4 +225,18 @@ export const getAllProducts = async () => {
     toast.error(error.response?.data?.error || "Error fetching products on sale");
     return null;
   }
-}
+} 
+
+export const checknewupdatequantity = async (id) => {
+  try {
+    const response = await apiWithFallback({
+      method: "patch",
+      url: `/api/UserProduct/checked-new-update-quantity-user-product?id=${id}`,
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error.response?.data?.error || "Error checking new update quantity");
+    return null;
+  }
+};
