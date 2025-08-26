@@ -129,67 +129,67 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     setShowProducts(true);
   };
 
-  const handleHostAuction = async () => {
-    console.log("Starting handleHostAuction...");
-    console.log("mode:", mode);
-    console.log("auctionForm data:", auctionForm);
-    console.log("auctionProduct data:", auctionProduct);
+  // const handleHostAuction = async () => {
+  //   console.log("Starting handleHostAuction...");
+  //   console.log("mode:", mode);
+  //   console.log("auctionForm data:", auctionForm);
+  //   console.log("auctionProduct data:", auctionProduct);
 
-    if (!auctionProduct) {
-      console.warn("auctionProduct is missing, cannot proceed.");
-      return;
-    }
-    setAuctionLoading(true);
-    try {
-      if (mode === "newAuction") {
-        const startTimeISO = auctionForm.start_time?.toDate().toISOString();
-        console.log("Auction start time (ISO):", startTimeISO);
-        // 1️⃣ Tạo auction mới
-        console.log(" Sending newAuction request...");
-        const auctionRes = await newAuction({
-          title: auctionForm.title,
-          description: auctionForm.description,
-          start_time: startTimeISO
-        });
+  //   if (!auctionProduct) {
+  //     console.warn("auctionProduct is missing, cannot proceed.");
+  //     return;
+  //   }
+  //   setAuctionLoading(true);
+  //   try {
+  //     if (mode === "newAuction") {
+  //       const startTimeISO = auctionForm.start_time?.toDate().toISOString();
+  //       console.log("Auction start time (ISO):", startTimeISO);
+  //       // 1️⃣ Tạo auction mới
+  //       console.log(" Sending newAuction request...");
+  //       const auctionRes = await newAuction({
+  //         title: auctionForm.title,
+  //         description: auctionForm.description,
+  //         start_time: startTimeISO
+  //       });
 
-        console.log("📥 newAuction API response:", auctionRes);
+  //       console.log("📥 newAuction API response:", auctionRes);
 
-        const auctionSessionId =
-          auctionRes?.data?.id || auctionRes?.data?.auction_session_id;
-        console.log("🆔 auctionSessionId:", auctionSessionId);
+  //       const auctionSessionId =
+  //         auctionRes?.data?.id || auctionRes?.data?.auction_session_id;
+  //       console.log("🆔 auctionSessionId:", auctionSessionId);
 
-        if (!auctionSessionId) throw new Error(" Auction session ID not found");
+  //       if (!auctionSessionId) throw new Error(" Auction session ID not found");
 
-        // 2️⃣ Gán sản phẩm vào auction
-        console.log("Sending productOfAuction request...");
-        const productRes = await productOfAuction({
-          product_id: auctionProduct.productId,
-          auction_session_id: auctionSessionId,
-          quantity: auctionForm.quantity,
-          starting_price: auctionForm.starting_price
-        });
-        console.log("productOfAuction API response:", productRes);
+  //       // 2️⃣ Gán sản phẩm vào auction
+  //       console.log("Sending productOfAuction request...");
+  //       const productRes = await productOfAuction({
+  //         product_id: auctionProduct.productId,
+  //         auction_session_id: auctionSessionId,
+  //         quantity: auctionForm.quantity,
+  //         starting_price: auctionForm.starting_price
+  //       });
+  //       console.log("productOfAuction API response:", productRes);
 
-      } else if (mode === "addProduct") {
-        console.log("Sending productOfAuction request (existing auction)...");
-        const productRes = await productOfAuction({
-          product_id: auctionProduct.productId,
-          auction_session_id: auctionForm.auction_session_id,
-          quantity: auctionForm.quantity,
-          starting_price: auctionForm.starting_price
-        });
-        console.log("productOfAuction API response:", productRes);
-      }
-      showModal('default', 'Auction Request Sent', "Please wait for our moderater approve and you're ready to go!");
-      setAuctionModalOpen(false);
-    } catch (error) {
-      console.error("handleHostAuction error:", error);
-      return showModal('error', 'Something wrong', "Failed to host auction");
-    } finally {
-      setAuctionLoading(false);
-      console.log("handleHostAuction finished.");
-    }
-  };
+  //     } else if (mode === "addProduct") {
+  //       console.log("Sending productOfAuction request (existing auction)...");
+  //       const productRes = await productOfAuction({
+  //         product_id: auctionProduct.productId,
+  //         auction_session_id: auctionForm.auction_session_id,
+  //         quantity: auctionForm.quantity,
+  //         starting_price: auctionForm.starting_price
+  //       });
+  //       console.log("productOfAuction API response:", productRes);
+  //     }
+  //     showModal('default', 'Auction Request Sent', "Please wait for our moderater approve and you're ready to go!");
+  //     setAuctionModalOpen(false);
+  //   } catch (error) {
+  //     console.error("handleHostAuction error:", error);
+  //     return showModal('error', 'Something wrong', "Failed to host auction");
+  //   } finally {
+  //     setAuctionLoading(false);
+  //     console.log("handleHostAuction finished.");
+  //   }
+  // };
 
   useEffect(() => {
     fetchFavourites();
@@ -310,9 +310,9 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
     setProductsLoading(false);
     setShowProducts(true);
   };
-  const toggleDropdown = (idx) => {
-    setDropdownStates(prev => ({ ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}), [idx]: !prev[idx] }));
-  };
+  // const toggleDropdown = (idx) => {
+  //   setDropdownStates(prev => ({ ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}), [idx]: !prev[idx] }));
+  // };
 
   // Open sell modal
   const openSellModal = (product) => {
@@ -390,7 +390,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const handleAddFavourite = async (userProductId, productName) => {
     try {
       await addFavourite(userProductId);
-      console.log(`Đã thêm "${productName}" vào danh sách yêu thích`);
+      showModal(
+        'default',
+        'Success',
+        `Added "${productName}" to your favorites.`
+      );
     } catch (err) {
       console.error("Error adding to favorites:", err);
 
@@ -916,6 +920,8 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         open={auctionModalOpen}
         onClose={() => setAuctionModalOpen(false)}
         productId={auctionProductId}
+        collectionId={selectedCollectionId}
+
         onSuccess={(res) => {
           // optional: refresh state, show message
           showModal?.("default", "Auction Request Sent", "Please wait for moderator approval.");
