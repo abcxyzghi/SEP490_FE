@@ -1,30 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 
 // CSS và Assets
-import "./UserOnSale.css";
-import DetailArrow from "../../../assets/Icon_line/Chevron_Up.svg";
 import AddToCart from "../../../assets/Icon_fill/Bag_fill.svg";
 import ThreeDots from "../../../assets/Icon_fill/Meatballs_menu.svg";
+import DetailArrow from "../../../assets/Icon_line/Chevron_Up.svg";
+import "./UserOnSale.css";
 
 // API services
-import {
-  getProductOnSaleDetail,
-  TurnOnOffProductOnSale,
-  updateSellProduct,
-  cancelSellProduct
-} from "../../../services/api.product";
 import { addToCart } from "../../../services/api.cart";
 import { buildImageUrl } from "../../../services/api.imageproxy";
+import {
+  cancelSellProduct,
+  getProductOnSaleDetail,
+  TurnOnOffProductOnSale,
+  updateSellProduct
+} from "../../../services/api.product";
 
 // Redux
 import { addItemToCart } from "../../../redux/features/cartSlice";
 
 // Components
-import MessageModal from "../../libs/MessageModal/MessageModal";
-import DropdownMenu from "../../libs/DropdownMenu/DropdownMenu";
 import { PATH_NAME } from "../../../router/Pathname";
+import DropdownMenu from "../../libs/DropdownMenu/DropdownMenu";
+import MessageModal from "../../libs/MessageModal/MessageModal";
 
 const PAGE_SIZE = 8;
 
@@ -175,12 +175,11 @@ export default function UserOnSale({ products, productsLoading }) {
       );
       return;
     }
-
     if (
       !priceNum ||
       isNaN(priceNum) ||
       priceNum < 1000 ||
-      priceNum > 100000000
+      priceNum > 1000000000
     ) {
       showModal(
         "warning",
@@ -191,13 +190,21 @@ export default function UserOnSale({ products, productsLoading }) {
     }
 
     try {
-      // Gọi API cập nhật
-      await updateSellProduct({
+      const response = await updateSellProduct({
         id: selectedProduct.id,
         description: editedDescription,
         price: priceNum,
         updatedAt: new Date().toISOString(),
       });
+
+      if (response.errorCode === 400) {
+        showModal(
+          "warning",
+          "Server Price Crunch",
+          `${response.message}`
+        );
+        return;
+      }
 
       // Thành công thì cập nhật sản phẩm trong danh sách
       setProductList((prevList) =>
