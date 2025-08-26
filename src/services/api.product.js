@@ -1,4 +1,4 @@
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
 import { apiWithFallback } from "../config/axios";
 // export const getProduct = async () => {
 //    try{
@@ -153,7 +153,10 @@ export const updateSellProduct = async ({ id, description, price, updatedAt }) =
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error updating sell product");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 export const block_unblock_product = async (id) => {
