@@ -47,7 +47,10 @@ export const createComment = async ({ sellProductId, content }) => {
     toast.error(
       error.response?.data?.error || error.message || "Error creating comment"
     );
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };
 
@@ -66,7 +69,10 @@ export const createRate = async ({ sellProductId, rating }) => {
   } catch (error) {
     console.error(error);
     toast.error(error.response?.data?.error || error.message || "Error creating rating");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };
 

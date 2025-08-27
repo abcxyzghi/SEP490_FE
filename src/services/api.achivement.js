@@ -42,7 +42,10 @@ try {
     return response.data;
   } catch (error) {
     console.error("Update status medal failed:", error);
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 }
 export const getUserCollectionProgress = async () => {

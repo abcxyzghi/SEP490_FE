@@ -12,7 +12,10 @@ export const getAchievementDetail = async (collectionId) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching box detail");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };
 
@@ -34,7 +37,10 @@ export const createAchievement = async (collectionId,name_Achievement) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error creating collection");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };
 export const createRewardOfAchievement = async (collectionId, conditions, file, quantityBox) => {
@@ -60,6 +66,9 @@ export const createRewardOfAchievement = async (collectionId, conditions, file, 
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error creating reward");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };

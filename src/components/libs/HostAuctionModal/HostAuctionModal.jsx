@@ -232,7 +232,18 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
       setActiveStep(1);
     } catch (err) {
       console.error("newAuction error", err);
-      setModal({ open: true, type: "error", title: "Auction Error", message: "Failed to create auction. Please try again." });
+      // Check for specific error response from API
+      const apiError = err?.response?.data || err;
+      if (apiError && apiError.error === "multiple auction create has been restricted !") {
+        setModal({
+          open: true,
+          type: "error",
+          title: "Auction Restricted",
+          message: "You have create multiple auction please wait for moderator approval before create another one",
+        });
+      } else {
+        setModal({ open: true, type: "error", title: "Auction Error", message: "Failed to create auction. Please try again." });
+      }
     } finally {
       setCreating(false);
       nextLockRef.current = false;
