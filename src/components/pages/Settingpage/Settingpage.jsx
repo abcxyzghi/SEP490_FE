@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import './Settingpage.css'
+import { useState } from 'react';
 import SwitchTabs from '../../libs/SwitchTabs/SwitchTabs';
 import EditUserProfile from '../../tabs/EditUserProfile/EditUserProfile';
-import UserTheme from '../../tabs/UserTheme/UserTheme';
 import UserAchievements from '../../tabs/UserAchievements/UserAchievements';
+import UserTheme from '../../tabs/UserTheme/UserTheme';
+import './Settingpage.css';
 
 export default function Settingpage() {
   const [activeTab, setActiveTab] = useState('Profile Info');
@@ -28,7 +28,7 @@ export default function Settingpage() {
             {
               label: 'Collection Display ',
               content:
-                <UserAchievements /> // Display 3 badges and 6 cards on profile func
+                <UserAchievements />
             },
           ]}
           activeTab={activeTab}

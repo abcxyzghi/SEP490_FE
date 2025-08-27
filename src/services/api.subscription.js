@@ -44,7 +44,10 @@ export const followUser = async (userId) => {
     return response.data;
   } catch (error) {
     console.error("❌ Lỗi khi follow user:", error);
-    throw error;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 export const unfollowUser = async (userId) => {
@@ -59,6 +62,9 @@ export const unfollowUser = async (userId) => {
     return response.data;
   } catch (error) {
     console.error("❌ Lỗi khi unfollow user:", error);
-    throw error;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };

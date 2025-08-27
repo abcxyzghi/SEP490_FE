@@ -74,7 +74,10 @@ export const createNewMysteryBox = async (formData) => {
   } catch (error) {
     console.error('Error creating new mystery box:', error); // Log error details
     toast.error(error.response?.data?.error || "Error creating new mystery box");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
@@ -110,7 +113,10 @@ export const addProductForBox = async (boxId, products) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error adding products to box");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
