@@ -99,8 +99,9 @@ export default function UserSaleReport() {
         <XAxis
           dataKey="name"
           label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+          tick={{ fill: "white" }}
         />
-        <YAxis />
+        <YAxis tick={{ fill: "white" }} />
         <Tooltip />
         <Legend />
         <Bar
@@ -132,8 +133,9 @@ export default function UserSaleReport() {
           <XAxis
             dataKey="name"
             label={{ value: timeLabel, position: "insideBottom", offset: -5 }}
+            tick={{ fill: "white" }}
           />
-          <YAxis />
+          <YAxis tick={{ fill: "white" }} />
           <Tooltip
             formatter={(value) =>
               new Intl.NumberFormat("vi-VN", {
@@ -240,6 +242,7 @@ export default function UserSaleReport() {
   return (
     <>
       <div className="statistics-wrapper">
+        <h2 className="dashboard-title">📊 Seller Dashboard</h2>
         <div className="tab-buttons-chart">
           <button
             className={activeTab === "day" ? "active" : ""}
