@@ -15,6 +15,15 @@
   width: 100%;
   margin-bottom: 30px;
 }
+.dashboard-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  text-align: left; /* căn trái */
+  margin-bottom: 20px;
+  margin-left: 10px; /* tạo khoảng cách nhẹ từ mép trái */
+  padding-left: 20px;
+}
 
 .chart-title {
   text-align: center;
