@@ -45,7 +45,7 @@ export default function MessageModal({ open, onClose, type = 'default', title, m
         </DialogContent>
 
         <div className="messageDialog-footer oxanium-bold">
-          Click to continue
+          Click outside to close
         </div>
       </div>
     </Dialog>

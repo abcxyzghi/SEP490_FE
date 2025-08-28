@@ -4,6 +4,12 @@ import { fetchMyAuctionList, fetchJoinedAuctionList, fetchAuctionWinner } from "
 import { getCollectionDetail } from "../../../services/api.product";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import { getOtherProfile } from "../../../services/api.user";
+import * as HoverCard from "@radix-ui/react-hover-card";
+import { useNavigate, Link } from "react-router-dom";
+import { Pathname } from "../../../router/Pathname";
+import MessageModal from "../../libs/MessageModal/MessageModal";
+import ProfileHolder from "../../../assets/others/mmbAvatar.png";
+import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 
 export default function AuctionHistoryList() {
   const [myAuctions, setMyAuctions] = useState([]);
@@ -13,6 +19,13 @@ export default function AuctionHistoryList() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("my"); // 'my' | 'joined' | 'winners'
   const [error, setError] = useState(null);
+  const [sellerProfiles, setSellerProfiles] = useState({});
+  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  const navigate = useNavigate();
+
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
 
   useEffect(() => {
     const loadAuctions = async () => {
@@ -46,6 +59,23 @@ export default function AuctionHistoryList() {
 
         setMyAuctions(endedMyAuctions);
         setJoinedAuctions(joinedItems || []);
+
+        // Collect all seller_ids from both lists
+        const sellerIds = [
+          ...endedMyAuctions.map(a => a.seller_id).filter(Boolean),
+          ...joinedItems.map(a => a.seller_id).filter(Boolean)
+        ];
+        // Remove duplicates
+        const uniqueSellerIds = Array.from(new Set(sellerIds));
+        // Fetch all seller profiles
+        const profileResults = await Promise.all(
+          uniqueSellerIds.map(id => getOtherProfile(id))
+        );
+        const profileMap = {};
+        profileResults.forEach((res, idx) => {
+          if (res?.data) profileMap[uniqueSellerIds[idx]] = res.data;
+        });
+        setSellerProfiles(profileMap);
 
         // Enrich winners with product and profile details concurrently
         const enrichedWinners = await Promise.all(
@@ -120,25 +150,42 @@ export default function AuctionHistoryList() {
 
     return (
       <ul className="auctionHistoryList-list">
-        {myAuctions.map((auction) => (
-          <li key={auction.id || auction._id} className="auctionHistoryList-card">
-            <div className="auctionHistoryList-card-left">
-              <div className="auctionHistoryList-avatar-placeholder" aria-hidden />
-            </div>
-
-            <div className="auctionHistoryList-card-body">
-              <div className="auctionHistoryList-card-title">{auction.title}</div>
-              <div className="auctionHistoryList-card-desc">{auction.descripition}</div>
-
-              <div className="auctionHistoryList-card-row">
-                <div className="auctionHistoryList-finance">
-                  {fmtVND(auction.host_value)} <span className="auctionHistoryList-muted">• fee {auction.fee_charge}</span> <strong>{fmtVND(auction.incoming_value)}</strong>
-                </div>
-                <div className="auctionHistoryList-endtime">Ended: {new Date(auction.end_time).toLocaleString()}</div>
+        {myAuctions.map((auction) => {
+          const seller = sellerProfiles[auction.seller_id];
+          return (
+            <li key={auction.id || auction._id} className="auctionHistoryList-card">
+              <div className="auctionHistoryList-card-left">
+                <img
+                  src={
+                    seller?.profileImage
+                      ? buildImageUrl(seller.profileImage, useBackupImg)
+                      : ProfileHolder
+                  }
+                  onError={() => setUseBackupImg(true)}
+                  alt={seller?.username || "seller"}
+                  className="auctionHistoryList-avatar-img"
+                />
               </div>
-            </div>
-          </li>
-        ))}
+
+              <div className="auctionHistoryList-card-body">
+                <div className="auctionHistoryList-card-title">{auction.title}</div>
+                <div className="auctionHistoryList-card-desc">{auction.descripition}</div>
+                {seller && (
+                  <div className="auctionHistoryList-seller">
+                    <span className="auctionHistoryList-seller-name">by {seller.username}</span>
+                  </div>
+                )}
+
+                <div className="auctionHistoryList-card-row">
+                  <div className="auctionHistoryList-finance">
+                    {fmtVND(auction.host_value)} <span className="auctionHistoryList-muted">• fee {auction.fee_charge} •</span> <span className="auctionHistoryList-net">{fmtVND(auction.incoming_value)}</span>
+                  </div>
+                  <div className="auctionHistoryList-endtime">Ended: {new Date(auction.end_time).toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     );
   };
@@ -148,21 +195,95 @@ export default function AuctionHistoryList() {
 
     return (
       <ul className="auctionHistoryList-list">
-        {joinedAuctions.map((auction) => (
-          <li key={auction.id || auction._id} className="auctionHistoryList-card">
-            <div className="auctionHistoryList-card-left">
-              <div className="auctionHistoryList-avatar-small" aria-hidden />
-            </div>
-
-            <div className="auctionHistoryList-card-body">
-              <div className="auctionHistoryList-card-title">{auction.title}</div>
-              <div className="auctionHistoryList-card-desc">{auction.descripition}</div>
-              <div className="auctionHistoryList-card-row">
-                <div className="auctionHistoryList-endtime">Ends at: {new Date(auction.end_time).toLocaleString()}</div>
+        {joinedAuctions.map((auction) => {
+          const seller = sellerProfiles[auction.seller_id];
+          return (
+            <li key={auction.id || auction._id} className="auctionHistoryList-card">
+              <div className="auctionHistoryList-card-left">
+                <img
+                  src={
+                    seller?.profileImage
+                      ? buildImageUrl(seller.profileImage, useBackupImg)
+                      : ProfileHolder
+                  }
+                  onError={() => setUseBackupImg(true)}
+                  alt={seller?.username || "seller"}
+                  className="auctionHistoryList-avatar-img"
+                />
               </div>
-            </div>
-          </li>
-        ))}
+
+              <div className="auctionHistoryList-card-body">
+                <div className="auctionHistoryList-card-title">{auction.title}</div>
+                <div className="auctionHistoryList-card-desc">{auction.descripition}</div>
+                {seller && (
+                  <div className="auctionHistoryList-seller">
+                    <p className="auctionHistoryList-seller-name">by {" "}
+                      {/* reuse style from ExchangeHistory */}
+                      <span className="exchange-history-user-info">
+                        <HoverCard.Root>
+                          <HoverCard.Trigger asChild>
+                            <span>{seller.username}</span>
+                          </HoverCard.Trigger>
+                          <HoverCard.Content
+                            side="bottom" sideOffset={3} align="start"
+                            className="exchange-history-hovercard-content"
+                            forceMount
+                          >
+                            <div className="exchange-history-hovercard-inner">
+                              <img
+                                src={
+                                  seller?.profileImage
+                                    ? buildImageUrl(seller.profileImage, useBackupImg)
+                                    : ProfileHolder
+                                }
+                                onError={() => setUseBackupImg(true)}
+                                alt={seller?.username}
+                                className="exchange-history-hovercard-avatar"
+                              />
+                              <div className="flex flex-col items-start">
+                                <Link
+                                  to={Pathname("PROFILE").replace(":id", auction.seller_id)}
+                                  className="exchange-history-hovercard-name !mb-[1px]"
+                                >
+                                  {seller?.username}
+                                </Link>
+
+                                <button
+                                  // reuse style from Profilepage
+                                  className="profilepage-btn-message oxanium-semibold"
+                                  onClick={() => {
+                                    const targetId = auction.seller_id;
+
+                                    if (!targetId) {
+                                      showModal("warning", "Error", "No user found to message.");
+                                      return;
+                                    }
+
+                                    navigate(`/chatroom/${targetId}`);
+                                  }}
+                                >
+                                  <img
+                                    src={MessageIcon}
+                                    alt="Message"
+                                    className="profilepage-message-icon"
+                                  />
+                                  Message
+                                </button>
+                              </div>
+                            </div>
+                          </HoverCard.Content>
+                        </HoverCard.Root>
+                      </span>
+                    </p>
+                  </div>
+                )}
+                <div className="auctionHistoryList-card-row">
+                  <div className="auctionHistoryList-endtime">Ends at: {new Date(auction.end_time).toLocaleString()}</div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     );
   };
@@ -179,15 +300,11 @@ export default function AuctionHistoryList() {
           return (
             <li key={idx} className="auctionHistoryList-card auctionHistoryList-card--winner">
               <div className="auctionHistoryList-card-left">
-                {product?.urlImage ? (
-                  <img
-                    src={buildImageUrl(product.urlImage, useBackupImg)}
-                    onError={() => setUseBackupImg(true)}
-                    alt={product?.name || "product"}
-                    className="auctionHistoryList-product-img" />
-                ) : (
-                  <div className="auctionHistoryList-avatar-placeholder" />
-                )}
+                <img
+                  src={buildImageUrl(product.urlImage, useBackupImg)}
+                  onError={() => setUseBackupImg(true)}
+                  alt={product?.name || "product"}
+                  className="auctionHistoryList-product-img" />
               </div>
 
               <div className="auctionHistoryList-card-body">
@@ -196,32 +313,88 @@ export default function AuctionHistoryList() {
 
                 <div className="auctionHistoryList-subgrid">
                   <div>
-                    <div className="muted">Product</div>
+                    <div className="auctionHistoryList-head-subGrid">Product</div>
                     <div className="auctionHistoryList-mini">
                       <div className="auctionHistoryList-mini-name">{product?.name}</div>
-                      <div className="muted">Rarity: {product?.rarityName}</div>
+                      <div className="auctionHistoryList-muted">Rarity: {product?.rarityName}</div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="muted">Winner</div>
+                    <div className="auctionHistoryList-head-subGrid">Winner</div>
                     <div className="auctionHistoryList-mini">
                       <div className="auctionHistoryList-mini-name">{bidder?.username}</div>
-                      <div className="muted">{bidder?.email}</div>
+                      <div className="auctionHistoryList-muted">{bidder?.email}</div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="muted">Host</div>
-                    <div className="auctionHistoryList-mini">
-                      <div className="auctionHistoryList-mini-name">{hoster?.username}</div>
+                    <div>
+                      <div className="auctionHistoryList-head-subGrid">Host</div>
+                      <div className="auctionHistoryList-mini">
+                        <HoverCard.Root>
+                          <HoverCard.Trigger asChild>
+                            <div className="auctionHistoryList-mini-name cursor-pointer">
+                              {hoster?.username}
+                            </div>
+                          </HoverCard.Trigger>
+                          <HoverCard.Content
+                            side="bottom"
+                            sideOffset={1}
+                            align="start"
+                            className="exchange-history-hovercard-content"
+                            forceMount
+                          >
+                            <div className="exchange-history-hovercard-inner">
+                              <img
+                                src={
+                                  hoster?.profileImage
+                                    ? buildImageUrl(hoster.profileImage, useBackupImg)
+                                    : ProfileHolder
+                                }
+                                onError={() => setUseBackupImg(true)}
+                                alt={hoster?.username}
+                                className="exchange-history-hovercard-avatar"
+                              />
+                              <div className="flex flex-col items-start">
+                                <Link
+                                  to={Pathname("PROFILE").replace(":id", item.auction_result?.hoster_id)}
+                                  className="exchange-history-hovercard-name !mb-[1px]"
+                                >
+                                  {hoster?.username}
+                                </Link>
+
+                                <button
+                                  className="profilepage-btn-message oxanium-semibold"
+                                  onClick={() => {
+                                    const targetId = item.auction_result?.hoster_id;
+                                    if (!targetId) {
+                                      showModal("warning", "Error", "No user found to message.");
+                                      return;
+                                    }
+                                    navigate(`/chatroom/${targetId}`);
+                                  }}
+                                >
+                                  <img
+                                    src={MessageIcon}
+                                    alt="Message"
+                                    className="profilepage-message-icon"
+                                  />
+                                  Message
+                                </button>
+                              </div>
+                            </div>
+                          </HoverCard.Content>
+                        </HoverCard.Root>
+                      </div>
                     </div>
                   </div>
+
                 </div>
 
                 <div className="auctionHistoryList-card-row" style={{ marginTop: 10 }}>
                   <div className="auctionHistoryList-finance">
-                    Qty: {item.auction_result?.quantity} • Winning: {fmtVND(item.auction_result?.bidder_amount)} • Host Claim: {fmtVND(item.auction_result?.host_claim_amount)}
+                    <span className="auctionHistoryList-muted">Qty: {item.auction_result?.quantity} •</span> Winning: {fmtVND(item.auction_result?.bidder_amount)} <span className="auctionHistoryList-muted">• Host Claim: {fmtVND(item.auction_result?.host_claim_amount)}</span>
                   </div>
                   <div className="auctionHistoryList-endtime">Ended: {new Date(item.auction_info?.end_time).toLocaleString()}</div>
                 </div>
@@ -237,8 +410,6 @@ export default function AuctionHistoryList() {
     <div className="auctionHistoryList">
       <div className="auctionHistoryList__container">
         <header className="auctionHistoryList__header">
-          <h2 className="auctionHistoryList__title">Auction History</h2>
-
           <div className="auctionHistoryList__tabs" role="tablist" aria-label="Auction history tabs">
             <button
               role="tab"
@@ -281,6 +452,15 @@ export default function AuctionHistoryList() {
           )}
         </main>
       </div>
+
+      {/* Message Modal */}
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message}
+      />
     </div>
   );
 }
