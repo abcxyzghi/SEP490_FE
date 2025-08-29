@@ -5,14 +5,13 @@ import {
   rejectWithdrawRequest,
 } from "../../../services/api.transaction";
 import "./ModWithdrawRequest.css";
-import { toast } from "react-toastify";
 import moment from "moment";
 
 export default function ModWithdrawRequest() {
   const [withdrawRequests, setWithdrawRequests] = useState([]);
   const [activeTab, setActiveTab] = useState("Pending"); // pending | others
   const [banks, setBanks] = useState([]);
-
+  const [message, setMessage] = useState({ type: "", text: "" });
   // Fetch banks từ VietQR API
   const fetchBanks = async () => {
     try {
@@ -23,20 +22,19 @@ export default function ModWithdrawRequest() {
       }
     } catch (err) {
       console.error("Error fetch banks:", err);
-      toast.error("Không tải được danh sách ngân hàng");
+      setMessage({ type: "error", text: "Can't load banks list" });
     }
   };
 
   // Fetch withdraw requests
   const fetchWithdrawRequests = async () => {
     const res = await getAllWithdrawTransactionRequest();
-    console.log("Withdraw API response:", res); // 👈 Thêm dòng này
     if (res?.success || res?.status) {
-        setWithdrawRequests(res.data);
+      setWithdrawRequests(res.data);
     } else {
-        toast.error("Error loading withdraw requests");
+      setMessage({ type: "error", text: "Error loading withdraw requests" });
     }
-    };
+  };
 
 
   // Approve
@@ -45,35 +43,40 @@ export default function ModWithdrawRequest() {
     if (!transactionCode) return;
 
     const res = await acceptWithdrawRequest(transactionId, transactionCode);
-    if (res?.success) {
-    toast.success("Withdraw request accepted");
-    await fetchWithdrawRequests();
-    setTimeout(() => {
-        fetchWithdrawRequests();
-        }, 3000);
+    if (res?.success || res?.status) {
+      setMessage({ type: "success", text: "Withdraw request accepted" });
+      await fetchWithdrawRequests();
+      setTimeout(() => fetchWithdrawRequests(), 3000);
     } else {
-      toast.error("Failed to accept withdraw request");
+      setMessage({ type: "error", text: "Failed to accept withdraw request" });
     }
   };
 
   // Reject
   const handleRejectRequest = async (transactionId) => {
     const res = await rejectWithdrawRequest(transactionId);
-    if (res?.success) {
-      toast.success("Withdraw request rejected");
-    await fetchWithdrawRequests();
-    setTimeout(() => {
-        fetchWithdrawRequests();
-        }, 3000);
+    if (res?.success || res?.status) {
+      setMessage({ type: "success", text: "Withdraw request rejected" });
+      await fetchWithdrawRequests();
+      setTimeout(() => fetchWithdrawRequests(), 3000);
     } else {
-      toast.error("Failed to reject withdraw request");
+      setMessage({ type: "error", text: "Failed to reject withdraw request" });
     }
   };
 
   useEffect(() => {
     fetchBanks();
     fetchWithdrawRequests();
+    
   }, []);
+  useEffect(() => {
+  if (message.text) {
+    const timer = setTimeout(() => {
+      setMessage({ type: "", text: "" });
+    }, 3000);
+    return () => clearTimeout(timer);
+  }
+}, [message]);
 
   // lọc requests theo status
   const pendingRequests = withdrawRequests.filter(
@@ -179,6 +182,11 @@ const renderWithdrawRequestCard = (request) => {
   return (
     <div className="mod-withdraw-container">
       <h2>List Withdraw Request</h2>
+      {message.text && (
+        <div className={`message-banner ${message.type}`}>
+          {message.text}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="tabs">

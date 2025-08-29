@@ -138,3 +138,35 @@
     transform: translateY(0);
   }
 }
+.message-banner {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 20px 30px;          /* 👈 to hơn */
+  border-radius: 10px;
+  font-size: 20px;             /* 👈 chữ to hơn */
+  font-weight: bold;           /* 👈 chữ đậm */
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  z-index: 9999;
+  animation: fadeInOut 3s ease forwards;
+}
+
+.message-banner.success {
+  background-color: #4caf50;   /* xanh đậm */
+  color: white;
+  border: 2px solid #388e3c;
+}
+
+.message-banner.error {
+  background-color: #f44336;   /* đỏ đậm */
+  color: white;
+  border: 2px solid #b71c1c;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+  10% { opacity: 1; transform: translateY(0) scale(1); }
+  90% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+}
+

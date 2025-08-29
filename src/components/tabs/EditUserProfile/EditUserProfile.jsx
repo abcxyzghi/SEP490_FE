@@ -299,9 +299,9 @@ export default function EditUserProfile() {
     }
 
     // Phone number validation (only if there's something in the input)
-    if (form.phoneNumber.trim() && !/^\d{10}$/.test(form.phoneNumber.trim())) {
-      showModal('warning', 'Invalid phone number', 'Phone number must contain exactly 10 digits.');
-      return;
+    if (form.phoneNumber.trim() && !/^0\d{9}$/.test(form.phoneNumber.trim())) {
+       showModal('warning', 'Invalid phone number', 'Phone number must start with 0 and contain exactly 10 digits.');
+       return;
     }
 
     showConfirmModal(

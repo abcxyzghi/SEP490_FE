@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { getAllCollection, createCollection } from '../../../services/api.collection';
 import { buildImageUrl } from '../../../services/api.imageproxy';
@@ -62,8 +61,7 @@ export default function ModCollection() {
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [achievementDetail, setAchievementDetail] = useState(null);
-
-
+  const [useBackupImg, setUseBackupImg] = useState(false);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   // Form states
@@ -168,7 +166,6 @@ export default function ModCollection() {
       {/* --- Sidebar (Master View) --- */}
       <div className="mod-collection-sidebar">
         <h2 className="mod-collection-sidebar-title">Collections</h2>
-
         <form className="mod-collection-form" onSubmit={handleCreateCollection}>
           <input type="text" placeholder="Create new collection..." value={newCollectionName} onChange={(e) => setNewCollectionName(e.target.value)} />
           <button type="submit">+</button>
