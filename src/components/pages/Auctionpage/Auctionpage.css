@@ -9,3 +9,24 @@
     align-items: center;
     margin: 20px auto;
 }
+
+.auctionpage-header{
+    text-align: center;
+    color: var(--light-2);
+    margin-bottom: 2.3rem;
+}
+
+.auctionpage-title{
+    font-size: 3.2rem;
+    text-align: center;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;  /* Standard property for compatibility */
+    -moz-background-clip: text; /* Firefox */
+    -ms-background-clip: text; /* Internet Explorer */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: -6px;
+}
+
+.auctionpage-subtitle{
+    font-style: italic;
+}

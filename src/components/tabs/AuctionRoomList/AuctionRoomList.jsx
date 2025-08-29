@@ -229,7 +229,7 @@ export default function AuctionRoomList() {
                                     <span>{seller.username}</span>
                                   </HoverCard.Trigger>
                                   <HoverCard.Content
-                                    side="bottom" sideOffset={3} align="start"
+                                    side="top" sideOffset={3} align="start"
                                     className="exchange-history-hovercard-content"
                                     forceMount
                                   >
