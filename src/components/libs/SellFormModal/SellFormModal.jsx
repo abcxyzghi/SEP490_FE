@@ -11,7 +11,7 @@ export default function SellFormModal({
     loading,
     result,
     minDescLength = 0,
-    maxDescLength = 10000,
+    maxDescLength = 300,
     minPrice = 1000,
     maxPrice = 100000000,
     multilineDescription = false,
@@ -53,7 +53,7 @@ export default function SellFormModal({
                             </div>
 
                             <div className="sellModal-field">
-                                <label className='oxanium-regular'>Price (min {minPrice.toLocaleString()} and {maxPrice.toLocaleString()} max):</label>
+                                <label className='oxanium-regular'>Price (min {minPrice.toLocaleString()}VND and {maxPrice.toLocaleString()}VND max):</label>
                                 <input
                                     type="number"
                                     min={0}

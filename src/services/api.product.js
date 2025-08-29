@@ -1,4 +1,4 @@
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
 import { apiWithFallback } from "../config/axios";
 // export const getProduct = async () => {
 //    try{
@@ -57,7 +57,10 @@ export const getAllProductsOnSale = async () => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching products on sale");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 }
 
@@ -71,7 +74,10 @@ export const getProductOnSaleDetail = async (id) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching product detail");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 }
 
@@ -107,7 +113,10 @@ export const getCollectionDetail = async (id) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching product detail");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
@@ -137,7 +146,10 @@ export const TurnOnOffProductOnSale = async (id) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Lỗi bật/tắt bán sản phẩm");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
@@ -153,7 +165,10 @@ export const updateSellProduct = async ({ id, description, price, updatedAt }) =
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error updating sell product");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 export const block_unblock_product = async (id) => {
@@ -166,7 +181,10 @@ export const block_unblock_product = async (id) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error blocking/unblocking product");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 export const getAllProduct = async () => {
@@ -178,7 +196,10 @@ try {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching products on sale");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 export const createProduct = async (product) => {
@@ -192,7 +213,10 @@ export const createProduct = async (product) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error creating product");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 export const cancelSellProduct = async (sellProductId) => {
@@ -206,7 +230,10 @@ export const cancelSellProduct = async (sellProductId) => {
     return response.data;
   } catch (error) {
      toast.error(error.response?.data?.error || "Error remove product on sale");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
@@ -220,6 +247,26 @@ export const getAllProducts = async () => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error fetching products on sale");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
-}
+} 
+
+export const checknewupdatequantity = async (id) => {
+  try {
+    const response = await apiWithFallback({
+      method: "patch",
+      url: `/api/UserProduct/checked-new-update-quantity-user-product?id=${id}`,
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error.response?.data?.error || "Error checking new update quantity");
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
+  }
+};

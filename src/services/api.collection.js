@@ -27,6 +27,9 @@ export const createCollection = async (collectionName) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error creating collection");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };

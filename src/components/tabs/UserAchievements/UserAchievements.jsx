@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom"; // để lấy id từ URL
 import { getpublicmedalofuser } from "../../../services/api.achivement";
 import { buildImageUrl } from "../../../services/api.imageproxy";
-import { useParams } from "react-router-dom"; // để lấy id từ URL
 
 export default function UserAchievements() {
-  const { id } = useParams(); // id profile đang xem
+  const { id } = useParams();
   const [publicMedals, setPublicMedals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [useBackupImg, setUseBackupImg] = useState(false);
+  const user = useSelector((state) => state.auth.user);
 
-  useEffect(() => {
-  const fetchMedals = async () => {
+  const fetchMedals = useCallback(async (userId) => {
     try {
-      const res = await getpublicmedalofuser(id);
+      const res = await getpublicmedalofuser(userId);
       const medals = res?.data?.filter((m) => m.isPublic) || [];
       setPublicMedals(medals);
     } catch (err) {
@@ -22,14 +23,19 @@ export default function UserAchievements() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  if (id) {
-    fetchMedals();
-  }
-}, [id]);
+  useEffect(() => {
+    const tempId = user?.user_id;
+    if (id) {
+      fetchMedals(id);
+    } else if (tempId) {
+      fetchMedals(tempId);
+    }
+  }, [id]);
 
-  if (loading) return <div className="text-center p-4">Đang tải huy chương...</div>;
+  if (loading)
+    return <div className="text-center p-4">Đang tải huy chương...</div>;
   if (error) return <div className="text-center text-red-500 p-4">{error}</div>;
 
   return (
@@ -45,7 +51,7 @@ export default function UserAchievements() {
               className="flex flex-col items-center p-2 border rounded-lg shadow-sm hover:shadow-md transition"
             >
               <img
-                src={buildImageUrl(medal.urlImage, useBackupImg)} 
+                src={buildImageUrl(medal.urlImage, useBackupImg)}
                 onError={() => setUseBackupImg(true)}
                 alt="Medal"
                 className="w-16 h-16 object-cover rounded-full border"

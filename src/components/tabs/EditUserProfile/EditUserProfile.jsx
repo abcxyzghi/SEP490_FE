@@ -272,29 +272,36 @@ export default function EditUserProfile() {
         showModal('warning', 'Missing information', 'Please enter bank account holder name.');
         return;
       }
+      // Validate accountBankName: only letters and max 50 chars
+      const nameValue = form.accountBankName.trim();
+      if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(nameValue)) {
+        showModal('warning', 'Invalid name', 'Account holder name can only contain letters.');
+        return;
+      }
+      if (nameValue.length > 50) {
+        showModal('warning', 'Name too long', 'Account holder name must not exceed 50 characters.');
+        return;
+      }
       if (!form.bankNumber.trim()) {
         showModal('warning', 'Missing information', 'Please enter bank account number.');
         return;
       }
-      // if (form.phoneNumber.trim()) {
-      //   const phone = form.phoneNumber.trim();
-      //   if (!/^\d+$/.test(phone)) {
-      //     showModal('warning', 'Missing information', 'Please enter a valid phone number.');
-      //     return;
-      //   }
-      //   if (!/^0\d{9}$/.test(phone)) {
-      //     setMessage(
-      //       "Số điện thoại không hợp lệ. Phải có 10 chữ số và bắt đầu bằng số 0."
-      //     );
-      //     return;
-      //   }
-      // }
+      // Validate bankNumber: only digits and max 22 digits
+      const bankNumValue = form.bankNumber.trim();
+      if (!/^\d+$/.test(bankNumValue)) {
+        showModal('warning', 'Invalid account number', 'Bank account number must contain only digits.');
+        return;
+      }
+      if (bankNumValue.length > 22) {
+        showModal('warning', 'Account number too long', 'Bank account number must not exceed 22 digits.');
+        return;
+      }
     }
 
     // Phone number validation (only if there's something in the input)
-    if (form.phoneNumber.trim() && !/^\d{10}$/.test(form.phoneNumber.trim())) {
-      showModal('warning', 'Invalid phone number', 'Phone number must contain exactly 10 digits.');
-      return;
+    if (form.phoneNumber.trim() && !/^0\d{9}$/.test(form.phoneNumber.trim())) {
+       showModal('warning', 'Invalid phone number', 'Phone number must start with 0 and contain exactly 10 digits.');
+       return;
     }
 
     showConfirmModal(
@@ -485,11 +492,11 @@ export default function EditUserProfile() {
                   className="editUserProfile-input oxanium-regular"
                   placeholder="Account holder name"
                   value={form.accountBankName}
+                  maxLength={50}
                   onChange={(e) => {
-                    const cleanValue = e.target.value.replace(
-                      /[^a-zA-ZÀ-ỹ\s]/g,
-                      ""
-                    );
+                    // Only allow letters and spaces, max 50 chars
+                    let cleanValue = e.target.value.replace(/[^a-zA-ZÀ-ỹ\s]/g, "");
+                    if (cleanValue.length > 50) cleanValue = cleanValue.slice(0, 50);
                     setForm((prev) => ({
                       ...prev,
                       accountBankName: cleanValue,
@@ -502,8 +509,11 @@ export default function EditUserProfile() {
                   className="editUserProfile-input oxanium-regular"
                   placeholder="Account number"
                   value={form.bankNumber}
+                  maxLength={22}
                   onChange={(e) => {
-                    const numericValue = e.target.value.replace(/\D/g, "");
+                    // Only allow digits, max 22 digits
+                    let numericValue = e.target.value.replace(/\D/g, "");
+                    if (numericValue.length > 22) numericValue = numericValue.slice(0, 22);
                     setForm((prev) => ({ ...prev, bankNumber: numericValue }));
                   }}
                   style={{ marginTop: 10 }}

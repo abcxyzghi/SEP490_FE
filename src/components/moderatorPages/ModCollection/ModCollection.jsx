@@ -70,7 +70,6 @@ export default function ModCollection() {
   const [quantityBox, setQuantityBox] = useState("");
   const [newCollectionName, setNewCollectionName] = useState("");
 
-
   // Search and Pagination states
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,7 +106,6 @@ export default function ModCollection() {
   };
 
   const handleCreateAchievement = async () => {
-
     const name = prompt("Enter Achievement Name:");
     if (!name) return;
     try {
@@ -172,7 +170,6 @@ export default function ModCollection() {
           <input type="text" placeholder="Create new collection..." value={newCollectionName} onChange={(e) => setNewCollectionName(e.target.value)} />
           <button type="submit">+</button>
         </form>
-
 
         <div className="mod-collection-filters">
           <input type="text" className="mod-collection-search" placeholder="Search by topic..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />

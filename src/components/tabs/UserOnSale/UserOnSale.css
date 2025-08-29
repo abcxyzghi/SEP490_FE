@@ -114,6 +114,53 @@
   cursor: pointer;
 }
 
+/* Quantity tag */
+.userOnSale-tag-quantity {
+  position: absolute;
+  top: 6px;
+  left: 4px;
+  z-index: 10;
+  background: #34495e;
+  color: var(--light-1);
+  padding: 2px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Sale status base */
+.userOnSale-tag-sale-status {
+  position: absolute;
+  top: 28px;
+  right: 3px;
+  z-index: 10;
+  color: var(--light-1);
+  padding: 2px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Sale status variations */
+.userOnSale-tag-sale-status.on-sale {
+  background: #14ac51;
+}
+
+.userOnSale-tag-sale-status.sale-halt {
+  background: #e79e01;
+}
+
+.userOnSale-tag-quantity,
+.userOnSale-tag-sale-status {
+  cursor: default;
+  /* Vô hiệu kéo-thả */
+  -webkit-user-drag: none;
+  /* Vô hiệu bôi đen chọn văn bản */
+  user-select: none;
+}
+
 /*  --------------------------==================== Contain inside the bottom slide ====================--------------------------  */
 .userOnSale-card-title {
   text-align: left;
@@ -325,4 +372,133 @@
   /* Disable text selection */
   -webkit-touch-callout: none;
   /* Prevent text selection on iOS */
+}
+
+/*   --------------------------==================== Upadate Onsale product modal ====================--------------------------  */
+.userOnSale-updatePrd-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.userOnSale-updatePrd-modal-container {
+  --white: hsl(0, 0%, 100%);
+  --black: hsl(240, 15%, 9%);
+  --paragraph: hsl(0, 0%, 83%);
+  --line: hsl(240, 9%, 17%);
+  --primary: hsl(266, 92%, 58%);
+
+  position: relative;
+  max-height: 100vh;
+  width: 90%;
+  max-width: 570px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: var(--light-2);
+
+  padding: 20px 28px;
+  background-color: hsla(240, 15%, 9%, 1);
+  background-image: radial-gradient(at 88% 40%,
+      hsla(240, 15%, 9%, 1) 0px,
+      transparent 85%),
+    radial-gradient(at 49% 30%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 14% 26%, hsla(240, 15%, 9%, 1) 0px, transparent 85%),
+    radial-gradient(at 0% 64%, hsla(263, 93%, 56%, 1) 0px, transparent 85%),
+    radial-gradient(at 41% 94%, hsla(284, 100%, 84%, 1) 0px, transparent 85%),
+    radial-gradient(at 100% 99%, hsla(306, 100%, 57%, 1) 0px, transparent 85%);
+
+  border-radius: 1rem;
+  box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.25) inset;
+}
+
+.userOnSale-updatePrd-modal-box {
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* Hide scrollbar visually but keep scroll functionality */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.userOnSale-updatePrd-modal-header {
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.userOnSale-updatePrd-modal-field {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.userOnSale-updatePrd-textarea,
+.userOnSale-updatePrd-input {
+  width: 98%;
+  margin: 2px;
+  padding: 10px 12px;
+  background: var(--dark-1-o50);
+  border: 1px solid var(--dark-1);
+  color: var(--light-2);
+  border-radius: 10px;
+}
+
+.userOnSale-updatePrd-helper-text {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.userOnSale-updatePrd-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.userOnSale-updatePrd-btn-cancel,
+.userOnSale-updatePrd-btn-save {
+  font-weight: bold;
+  color: var(--light-3);
+  padding: 6px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.userOnSale-updatePrd-btn-cancel {
+  background: var(--light-3-o50);
+}
+
+.userOnSale-updatePrd-btn-save {
+  background-image: linear-gradient(0deg,
+      rgb(12, 248, 236) 0%,
+      rgba(197, 107, 240, 1) 100%);
+  border: 0;
+  box-shadow: inset 0 -2px 25px -4px var(--light-3);
+  transition: all 0.3s ease;
+}
+
+.userOnSale-updatePrd-btn-cancel:hover {
+  background: var(--light-4-o50);
+}
+
+.userOnSale-updatePrd-btn-save:hover {
+  background-image: linear-gradient(0deg,
+      rgba(12, 248, 236, 0.71) 0%,
+      rgba(198, 107, 240, 0.79) 100%);
+}
+
+.userOnSale-updatePrd-btn-save.disabled {
+  background: var(--light-2);
+  color: var(--light-4);
+  cursor: not-allowed;
+  box-shadow: none;
+  pointer-events: none;
+  opacity: 0.6;
 }

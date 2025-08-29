@@ -27,7 +27,10 @@ export const updateStatusAuction = async (id, status) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error Approve/Reject auction");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 }
 
@@ -176,7 +179,10 @@ export const updateAuctionSettlement = async (auctionId) => {
     return response.data;
   } catch (error) {
     toast.error(error.response?.data?.error || "Error Approve/Reject auction");
-    return null;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };
 export const checkIsJoinedAuction = async () => {
