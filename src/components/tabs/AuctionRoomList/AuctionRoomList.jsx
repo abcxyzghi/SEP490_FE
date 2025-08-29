@@ -135,7 +135,7 @@ export default function AuctionRoomList() {
       <div className="auctionRoomList__container">
         {/* Header */}
         <header className="auctionRoomList__header">
-          <h2 className="auctionRoomList__title">Auction Room List</h2>
+          {/* <h2 className="auctionRoomList__title">Auction Room List</h2> */}
 
           <div className="auctionRoomList__filter">
             <label className="auctionRoomList__filter-label">Filter:</label>
@@ -208,11 +208,10 @@ export default function AuctionRoomList() {
                   <div className="auctionRoomList__card-body">
                     <div className="auctionRoomList__card-head">
                       <div className="auctionRoomList__card-info">
-                        <h3 className="auctionRoomList__card-title">{auction.title}</h3>
-                        <p className="auctionRoomList__card-description">
-                          {auction.descripition}
-                        </p>
-
+                        <h3 className="auctionRoomList__card-title">
+                          <AuctionTextExpand text={auction.title} maxLength={60} className="auctionRoomList__card-title" />
+                        </h3>
+                        <AuctionTextExpand text={auction.descripition} maxLength={120} className="auctionRoomList__card-description" />
                       </div>
 
                       <div className="auctionRoomList__card-meta">
@@ -350,4 +349,25 @@ function getStatusLabelAndClass(status) {
     default:
       return { label: "Unidentified", classes: "bg-gray-600/20 text-gray-200 border border-gray-500" };
   }
+}
+
+function AuctionTextExpand({ text, maxLength = 60, className }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!text) return null;
+  const isLong = text.length > maxLength;
+  const displayText = expanded || !isLong ? text : text.slice(0, maxLength) + "...";
+  return (
+    <span className={className} style={{ wordBreak: 'break-word' }}>
+      {displayText}
+      {isLong && (
+        <button
+          className="auctionRoomList__seeMoreBtn"
+          type="button"
+          onClick={e => { e.stopPropagation(); setExpanded(v => !v); }}
+        >
+          {expanded ? "See less" : "See more"}
+        </button>
+      )}
+    </span>
+  );
 }

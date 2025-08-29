@@ -17,6 +17,7 @@ import {
   getAllCollectionOfProfile,
   getAllProductOfUserCollection,
 } from "../../../services/api.user";
+import { checknewupdatequantity } from "../../../services/api.product";
 import ConfirmModal from "../../libs/ConfirmModal/ConfirmModal";
 import DropdownMenu from "../../libs/DropdownMenu/DropdownMenu";
 import HostAuctionModal from "../../libs/HostAuctionModal/HostAuctionModal";
@@ -104,6 +105,21 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
   // Track which products have their isQuantityUpdateInc tag turned off
   const [quantityUpdateIncOff, setQuantityUpdateIncOff] = useState({});
+
+  // Only update state after successful API response so tag doesn't reappear
+  const handleCheckNewUpdateQuantity = async (userProductId, key) => {
+    try {
+      const res = await checknewupdatequantity(userProductId);
+      if (res && res.status) {
+        setQuantityUpdateIncOff((prev) => ({
+          ...prev,
+          [key]: true
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to check new update quantity", err);
+    }
+  };
 
   // Helper for rarity sort
   const rarityOrder = { legendary: 0, epic: 1, rare: 2, uncommon: 3, common: 4 };
@@ -723,7 +739,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                 <div className="userCollectionList-card-grid">
                   {listToRender.map((prod) => {
                     // uniqueKey (an toàn nếu product đã được normalize)
-                    const key = prod.userProductId ?? prod.id ?? prod.productId;
+                    const key =  prod.id ;
                     const isExpanded = expandedCardIndex === key;
                     const isDropdownOpen = !!dropdownStates[key];
 
@@ -744,7 +760,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                         onClick={() => {
                           // Only toggle isQuantityUpdateInc tag if it's showing
                           if (showQuantityUpdateIncTag) {
-                            setQuantityUpdateIncOff(prev => ({ ...prev, [key]: true }));
+                            if (prod.id) {
+                              handleCheckNewUpdateQuantity(prod.id, key);
+                            } else {
+                              console.warn("No userProductId found for product:", prod);
+                            }
                           }
                         }}
                       >
