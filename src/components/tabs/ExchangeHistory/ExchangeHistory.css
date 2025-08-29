@@ -74,8 +74,12 @@
 
 .exchange-history-toggle-sent-btn:hover,
 .exchange-history-toggle-received-btn:hover {
-  background: #333;
-  color: var(--light-1);
+  --text: #e6eef6;
+  --glass: rgba(255, 255, 255, 0.03);
+
+  color: var(--text);
+  background: var(--glass);
+  transform: scale(1.01);
 }
 
 .exchange-history-toggle-sent-btn.active,
@@ -298,7 +302,7 @@
   cursor: default;
 }
 
-.exchange-history-user-info{
+.exchange-history-user-info {
   text-decoration: underline;
   cursor: pointer;
 }
@@ -315,7 +319,7 @@
   border: 1px solid rgba(143, 143, 143, 0.3);
   z-index: 10;
   cursor: default;
-  
+
   /* Animation */
   transform-origin: var(--radix-hover-card-content-transform-origin);
   transition: opacity 0.25s ease, transform 0.25s ease;

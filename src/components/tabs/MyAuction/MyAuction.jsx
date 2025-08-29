@@ -97,9 +97,9 @@ export default function MyAuction() {
     return (
       <div className="auctionRoomList oxanium-regular">
         <div className="auctionRoomList__container">
-          <div className="auctionRoomList__controls">
+          {/* <div className="auctionRoomList__controls">
             <h2 className="auctionRoomList__title">My auction list</h2>
-          </div>
+          </div> */}
           <div className="auctionRoomList__grid">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="auctionRoomList__card">
@@ -144,9 +144,9 @@ export default function MyAuction() {
   return (
     <div className="auctionRoomList oxanium-regular">
       <div className="auctionRoomList__container">
-        <div className="auctionRoomList__controls">
+        {/* <div className="auctionRoomList__controls">
           <h2 className="auctionRoomList__title">My auction list</h2>
-        </div>
+        </div> */}
 
         <ul className="auctionRoomList__grid">
           {sortedAuctions.map((auction) => {
@@ -169,9 +169,10 @@ export default function MyAuction() {
                 <div className="auctionRoomList__card-body">
                   <div className="auctionRoomList__card-head">
                     <div className="auctionRoomList__card-info">
-                      <h3 className="auctionRoomList__card-title">{auction.title}</h3>
-                      <p className="auctionRoomList__card-description">{auction.descripition}</p>
-
+                      <h3 className="auctionRoomList__card-title">
+                        <AuctionTextExpand text={auction.title} maxLength={60} className="auctionRoomList__card-title" />
+                      </h3>
+                      <AuctionTextExpand text={auction.descripition} maxLength={60} className="auctionRoomList__card-description" />
                     </div>
 
                     <div className="auctionRoomList__card-meta">
@@ -272,4 +273,25 @@ function getStatusLabelAndClass(status) {
         classes: "bg-gray-600/20 text-gray-200 border-gray-500",
       };
   }
+}
+
+function AuctionTextExpand({ text, maxLength = 60, className }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!text) return null;
+  const isLong = text.length > maxLength;
+  const displayText = expanded || !isLong ? text : text.slice(0, maxLength) + "...";
+  return (
+    <span className={className} style={{ wordBreak: 'break-word' }}>
+      {displayText}
+      {isLong && (
+        <button
+          className="auctionRoomList__seeMoreBtn"
+          type="button"
+          onClick={e => { e.stopPropagation(); setExpanded(v => !v); }}
+        >
+          {expanded ? "See less" : "See more"}
+        </button>
+      )}
+    </span>
+  );
 }

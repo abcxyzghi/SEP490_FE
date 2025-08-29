@@ -63,8 +63,12 @@
 
 .report-history-product-toggle-btn:hover,
 .report-history-user-toggle-btn:hover {
-  background: #333;
-  color: var(--light-1);
+  --text: #e6eef6;
+  --glass: rgba(255, 255, 255, 0.03);
+
+  color: var(--text);
+  background: var(--glass);
+  transform: scale(1.01);
 }
 
 .report-history-product-toggle-btn.active,

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import './AuctionRoomList.css';
 import { useNavigate, Link } from "react-router-dom";
+import { Pathname } from "../../../router/Pathname";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import { fetchAuctionList } from "../../../services/api.auction";
 import { getOtherProfile } from "../../../services/api.user";
 import { useSelector } from "react-redux";
+import * as HoverCard from "@radix-ui/react-hover-card";
+import MessageModal from "../../libs/MessageModal/MessageModal";
 import MobileDownLink from "../../libs/MobileDownLink/MobileDownLink";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
+import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 
 export default function AuctionRoomList() {
   const user = useSelector((state) => state.auth.user);
@@ -18,6 +22,11 @@ export default function AuctionRoomList() {
   const [statusFilter, setStatusFilter] = useState("started"); // default: ongoing
   const { searchText = "" } = arguments[0] || {};
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
 
   const navigate = useNavigate();
 
@@ -126,7 +135,7 @@ export default function AuctionRoomList() {
       <div className="auctionRoomList__container">
         {/* Header */}
         <header className="auctionRoomList__header">
-          <h2 className="auctionRoomList__title">Auction Room List</h2>
+          {/* <h2 className="auctionRoomList__title">Auction Room List</h2> */}
 
           <div className="auctionRoomList__filter">
             <label className="auctionRoomList__filter-label">Filter:</label>
@@ -199,11 +208,10 @@ export default function AuctionRoomList() {
                   <div className="auctionRoomList__card-body">
                     <div className="auctionRoomList__card-head">
                       <div className="auctionRoomList__card-info">
-                        <h3 className="auctionRoomList__card-title">{auction.title}</h3>
-                        <p className="auctionRoomList__card-description">
-                          {auction.descripition}
-                        </p>
-
+                        <h3 className="auctionRoomList__card-title">
+                          <AuctionTextExpand text={auction.title} maxLength={60} className="auctionRoomList__card-title" />
+                        </h3>
+                        <AuctionTextExpand text={auction.descripition} maxLength={120} className="auctionRoomList__card-description" />
                       </div>
 
                       <div className="auctionRoomList__card-meta">
@@ -212,9 +220,64 @@ export default function AuctionRoomList() {
 
                         {seller && (
                           <div className="auctionRoomList__seller">
-                            <span className="auctionRoomList__seller-name">
-                              by {seller.username}
-                            </span>
+                            <p className="auctionHistoryList-seller-name mt-1 text-[0.9rem]">by {" "}
+                              {/* reuse style from ExchangeHistory */}
+                              <span className="exchange-history-user-info">
+                                <HoverCard.Root>
+                                  <HoverCard.Trigger asChild>
+                                    <span>{seller.username}</span>
+                                  </HoverCard.Trigger>
+                                  <HoverCard.Content
+                                    side="top" sideOffset={3} align="start"
+                                    className="exchange-history-hovercard-content"
+                                    forceMount
+                                  >
+                                    <div className="exchange-history-hovercard-inner">
+                                      <img
+                                        src={
+                                          seller?.profileImage
+                                            ? buildImageUrl(seller.profileImage, useBackupImg)
+                                            : ProfileHolder
+                                        }
+                                        onError={() => setUseBackupImg(true)}
+                                        alt={seller?.username}
+                                        className="exchange-history-hovercard-avatar"
+                                      />
+                                      <div className="flex flex-col items-start">
+                                        <Link
+                                          to={Pathname("PROFILE").replace(":id", auction.seller_id)}
+                                          className="exchange-history-hovercard-name !mb-[1px]"
+                                        >
+                                          {seller?.username}
+                                        </Link>
+
+                                        <button
+                                          // reuse style from Profilepage
+                                          className="profilepage-btn-message oxanium-semibold"
+                                          onClick={() => {
+                                            const targetId = auction.seller_id;
+
+                                            if (!targetId) {
+                                              showModal("warning", "Error", "No user found to message.");
+                                              return;
+                                            }
+
+                                            navigate(`/chatroom/${targetId}`);
+                                          }}
+                                        >
+                                          <img
+                                            src={MessageIcon}
+                                            alt="Message"
+                                            className="profilepage-message-icon"
+                                          />
+                                          Message
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </HoverCard.Content>
+                                </HoverCard.Root>
+                              </span>
+                            </p>
                           </div>
                         )}
                       </div>
@@ -255,6 +318,15 @@ export default function AuctionRoomList() {
 
         {/* Mobile link modal */}
         <MobileDownLink open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+        {/* Message Modal */}
+        <MessageModal
+          open={modal.open}
+          onClose={() => setModal(prev => ({ ...prev, open: false }))}
+          type={modal.type}
+          title={modal.title}
+          message={modal.message}
+        />
       </div>
     </div>
   );
@@ -277,4 +349,25 @@ function getStatusLabelAndClass(status) {
     default:
       return { label: "Unidentified", classes: "bg-gray-600/20 text-gray-200 border border-gray-500" };
   }
+}
+
+function AuctionTextExpand({ text, maxLength = 60, className }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!text) return null;
+  const isLong = text.length > maxLength;
+  const displayText = expanded || !isLong ? text : text.slice(0, maxLength) + "...";
+  return (
+    <span className={className} style={{ wordBreak: 'break-word' }}>
+      {displayText}
+      {isLong && (
+        <button
+          className="auctionRoomList__seeMoreBtn"
+          type="button"
+          onClick={e => { e.stopPropagation(); setExpanded(v => !v); }}
+        >
+          {expanded ? "See less" : "See more"}
+        </button>
+      )}
+    </span>
+  );
 }

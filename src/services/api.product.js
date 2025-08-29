@@ -258,7 +258,7 @@ export const checknewupdatequantity = async (id) => {
   try {
     const response = await apiWithFallback({
       method: "patch",
-      url: `/api/UserProduct/checked-new-update-quantity-user-product?id=${id}`,
+      url: `/api/UserProduct/checked-new-update-quantity-user-product?userProductId=${id}`,
       requiresAuth: true,
     });
     return response.data;

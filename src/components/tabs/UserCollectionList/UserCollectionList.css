@@ -427,3 +427,11 @@
     -webkit-touch-callout: none;
     /* Prevent text selection on iOS */
 }
+
+/* Fav icon */
+.userCollectionList-fav-icon{
+    width: 24px;
+    height: 24px;
+    filter: var(--fire_engine_red-SVGcolor);
+    margin-right: 6px;
+}

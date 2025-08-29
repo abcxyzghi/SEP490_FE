@@ -28,29 +28,19 @@
 .auctionHistoryList__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
     margin-bottom: 14px;
-}
-
-.auctionHistoryList__title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--text);
 }
 
 /* Tabs */
 .auctionHistoryList__tabs {
     display: flex;
-    gap: 8px;
 }
 
 .auctionHistoryList__tab {
     color: var(--muted);
     font-weight: 600;
     padding: 8px 12px;
-    border-radius: 10px;
     background: #2a2a2a;
     border: 1px solid rgba(255, 255, 255, 0.08);
     cursor: pointer;
@@ -58,6 +48,21 @@
 
     user-select: none;
     outline: none;
+}
+
+.auctionHistoryList__tab:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.auctionHistoryList__tab:nth-child(1) {
+    border-left: none;
+    border-right: none;
+}
+
+.auctionHistoryList__tab:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .auctionHistoryList__tab:hover {
@@ -123,38 +128,22 @@
 
 /* left column (avatar / product image placeholder) */
 .auctionHistoryList-card-left {
-    width: 76px;
-    flex: 0 0 76px;
+    width: 7.6rem;
+    flex: 0 0 7.6rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.auctionHistoryList-avatar-placeholder {
-    width: 64px;
-    height: 64px;
-    border-radius: 10px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-    border: 1px dashed rgba(255, 255, 255, 0.02);
-    /* tempo image */
-    background-image: url('../../../assets/others/mmbAvatar.png');
-    background-size: 64px 64px;
-    background-repeat: no-repeat;
+.auctionHistoryList-avatar-img {
+    width: 7.6rem;
+    height: 7.6rem;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #4b5563;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-/* small avatar */
-.auctionHistoryList-avatar-small {
-    width: 58px;
-    height: 58px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.02);
-     /* tempo image */
-    background-image: url('../../../assets/others/mmbAvatar.png');
-    background-size: 58px 58px;
-    background-repeat: no-repeat;
-}
-
-/* product image */
 .auctionHistoryList-product-img {
     width: 100%;
     height: auto;
@@ -182,6 +171,10 @@
     margin-bottom: 8px;
 }
 
+.auctionHistoryList-seller {
+    text-align: right;
+}
+
 /* row with finance / endtime */
 .auctionHistoryList-card-row {
     display: flex;
@@ -200,9 +193,14 @@
     font-size: 0.95rem;
 }
 
+.auctionHistoryList-net {
+    color: #a7f3d0;
+}
+
 .auctionHistoryList-endtime {
     color: var(--muted);
     font-size: 0.85rem;
+    margin-left: auto;
 }
 
 /* subgrid for winners */
@@ -213,7 +211,11 @@
     margin-top: 8px;
 }
 
-/* mini name */
+.auctionHistoryList-head-subGrid {
+    color: var(--secondary-1);
+    font-weight: 500;
+}
+
 .auctionHistoryList-mini-name {
     font-weight: 600;
     color: var(--text);
@@ -280,10 +282,6 @@
 @media (max-width: 420px) {
     .auctionHistoryList {
         padding: 12px;
-    }
-
-    .auctionHistoryList__title {
-        font-size: 1.2rem;
     }
 
     .auctionHistoryList__tab {
