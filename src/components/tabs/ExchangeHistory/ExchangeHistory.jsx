@@ -157,6 +157,15 @@ export default function ExchangeHistory() {
     setActionError(null);
     try {
       const res = await ExchangeAccept(id);
+       // Nếu API trả về lỗi
+    if (res?.errorCode === 400) {
+      showModal(
+        "error",
+        "Exchange Failed",
+        res?.message || "Failed to accept exchange request."
+      );
+      return;
+    }
 
       setConfirmModal({
         open: true,
@@ -171,8 +180,10 @@ export default function ExchangeHistory() {
       );
       // navigate(`/profilepage/${myId}`);
     } catch (err) {
-      setActionError("Accept failed");
-      showModal("error", "Error", "Accept error: " + err);
+      // setActionError("Accept failed");
+      // showModal("error", "Error", "Accept error: " + err);
+      const serverMessage = err?.response?.data?.message || "Failed to accept exchange request.";
+      showModal("error", "Error", serverMessage);
     } finally {
       setReceivedAction({ id: null, type: null });
     }
