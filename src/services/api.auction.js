@@ -33,7 +33,42 @@ export const updateStatusAuction = async (id, status) => {
     };
   }
 }
+export const cancelAuction = async (auctionId) => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "delete",
+      url: `/api/auction/auction-cancel`,
+      params: { auction_id: auctionId },
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error.response?.data?.error || "Error cancel auction");
+    return {
+      errorCode: error.response?.data?.error_code,
+      message: error.response?.data?.error
+    }
+  }
+};
 
+export const confirmAuction = async (auctionId) => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "post",
+      url: `/api/auction/confirmation`,
+      params: { auction_id: auctionId },
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    
+    console.error(error.response?.data?.error || "Error cancel auction");
+    return {
+      errorCode: error.response?.data?.error_code,
+      message: error.response?.data?.error
+    }
+  }
+};
 
 
 export const fetchAuctionList = async (filter = "started") => {

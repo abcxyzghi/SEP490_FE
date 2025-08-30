@@ -61,9 +61,23 @@
 .auctionRoomList__finance-start { color: #f3f4f6; }
 .auctionRoomList__finance-fee { color: #ffd700; }
 .auctionRoomList__finance-net { color: #a7f3d0; } /* green-ish for net income */
-
 .auctionRoomList__finance-sep {
   color: var(--light-4);
   font-weight: 700;
 }
 
+.auctionRoomList__deleteBtn {
+  padding: 6px 10px;
+  background-color: #e74c3c; /* đỏ */
+  border-radius: 8px;
+  border: none;
+  color: var(--light-1);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.auctionRoomList__deleteBtn:hover {
+  background-color: #c0392b; /* đỏ đậm hơn khi hover */
+  transform: scale(1.05);
+}
