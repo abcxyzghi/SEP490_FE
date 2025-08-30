@@ -364,6 +364,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
       setFavSnackbar({ open: true, message: `Added "${productName}" to your favorites.` });
     } catch (err) {
       console.error("Error adding to favorites:", err);
+      showModal('error', 'Error', err || `Failed to add "${productName}" to favorites.`);
     }
   };
 
