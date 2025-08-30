@@ -8,7 +8,7 @@ import { buildImageUrl } from '../../../services/api.imageproxy';
 import { Pathname } from '../../../router/Pathname';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import ConfirmNavigateModal from "../../libs/ConfirmNavigateModal/ConfirmNavigateModal";
-
+import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 export default function Exchangepage() {
   const { sellProductId } = useParams();
   const [product, setProduct] = useState(null);
@@ -30,7 +30,13 @@ export default function Exchangepage() {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
-
+  const [confirmBeforeSendModal, setConfirmBeforeSendModal] = useState({
+  open: false,
+  title: "",
+  message: "",
+  onConfirm: null,
+  onClose: null,
+});
   // Fetch product info
   useEffect(() => {
     async function fetchProduct() {
@@ -309,13 +315,25 @@ export default function Exchangepage() {
 
           {/* Collection Confirm button */}
           <button
-            className="exchangepage-confirm-btn oxanium-bold"
-            onClick={handleExchange}
-            disabled={selectedCards.length === 0 || isExchanging}
-          >
-            {isExchanging && <span className="loading loading-bars loading-md"></span>}
-            {isExchanging ? ' Processing...' : 'Confirm Exchange'}
-          </button>
+  className="exchangepage-confirm-btn oxanium-bold"
+  onClick={() =>
+    setConfirmBeforeSendModal({
+      open: true,
+      title: "Confirm Exchange",
+      message: "Are you sure you want to send this exchange request? You will be fully responsible for this transaction.",
+      onConfirm: () => {
+        setConfirmBeforeSendModal((prev) => ({ ...prev, open: false }));
+        handleExchange(); // Gọi hàm thực hiện gửi request thật sự
+      },
+      onClose: () =>
+        setConfirmBeforeSendModal((prev) => ({ ...prev, open: false })),
+    })
+  }
+  disabled={selectedCards.length === 0 || isExchanging}
+>
+  {isExchanging && <span className="loading loading-bars loading-md"></span>}
+  {isExchanging ? " Processing..." : "Confirm Exchange"}
+</button>
 
           {/* Collection Dropdown */}
           <div className="exchangepage-collection oxanium-regular">
@@ -397,7 +415,13 @@ export default function Exchangepage() {
         onConfirm={confirmModal.onConfirm}
         onCancel={confirmModal.onCancel}
       />
-
+      <ConfirmModal
+  open={confirmBeforeSendModal.open}
+  title={confirmBeforeSendModal.title}
+  message={confirmBeforeSendModal.message}
+  onConfirm={confirmBeforeSendModal.onConfirm}
+  onClose={confirmBeforeSendModal.onClose}
+/>
     </div>
   );
 }
