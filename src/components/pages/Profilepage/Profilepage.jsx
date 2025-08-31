@@ -275,7 +275,7 @@ export default function Profilepage() {
           {/*Show 3 skeleton tabs if viewing own profile, else 2 */}
           <div className="flex justify-center gap-4">
             {[
-              ...Array((id === currentUserId || !id) && currentUserId ? 3 : 2),
+              ...Array((id === currentUserId || !id) && currentUserId ? 3 : 1),
             ].map((_, i) => (
               <div
                 key={i}
@@ -319,10 +319,10 @@ export default function Profilepage() {
       },
     ]
     : [
-      {
-        label: "Collections",
-        content: <UserAchievements />,
-      },
+      // {
+      //   label: "Collections",
+      //   content: <UserAchievements />,
+      // },
       {
         label: "On Sale",
         content: (
@@ -526,32 +526,25 @@ export default function Profilepage() {
               </div>
 
               {/* Medals Section */}
-              <div className="profilepage-medals">
-                {medalsLoading ? (
-                  <div className="skeleton h-10 w-60 bg-gray-600/40 rounded" />
-                ) : medals.length > 0 ? (
+              {medalsLoading ? (
+                <div className="skeleton h-10 w-60 bg-gray-600/40 rounded" />
+              ) : medals.length > 0 ? (
+                <div className="profilepage-medals">
                   <div className="profilepage-medals-list">
                     {medals.map((medal) => (
-                      <div
-                        key={medal.medalId}
-                        className="profilepage-medals-item"
-                      >
+                      <div key={medal.medalId} className="profilepage-medals-item">
                         <img
                           src={buildImageUrl(medal.urlImage, useBackupImg)}
                           onError={() => setUseBackupImg(true)}
                           alt={medal.medalName}
                           className="profilepage-medals-image"
                         />
-                        {/* <span className="profilepage-medals-name">
-                          {medal.medalName}
-                        </span> */}
+                        {/* <span className="profilepage-medals-name">{medal.medalName}</span> */}
                       </div>
                     ))}
                   </div>
-                ) : (
-                  ""
-                )}
-              </div>
+                </div>
+              ) : null}
 
             </div>
 

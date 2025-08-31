@@ -1,0 +1,266 @@
+/* Container */
+.achievementpage-container {
+    min-height: 100%;
+    padding: 24px;
+    color: var(--light-2, #e6edf3);
+}
+
+/*  --------------------------==================== Generic section ====================--------------------------  */
+.achievementpage-section {
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+/* Titles */
+.achievementpage-title {
+    font-size: 2.2rem;
+    background: linear-gradient(#DC0FFF, #FFD721);
+    background-clip: text;
+    -moz-background-clip: text;
+    -ms-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 3px;
+}
+
+/* Empty state */
+.achievementpage-empty {
+    color: var(--light-5);
+    font-weight: 600;
+    padding: 12px;
+}
+
+/* --------------------------==================== Medals ====================-------------------------- */
+.achievementpage-medals-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.achievementpage-medal-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 20px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--light-3-o80);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    backdrop-filter: blur(6px);
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+}
+
+.achievementpage-medal-card:hover {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.664);
+}
+
+.achievementpage-medal-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.achievementpage-medal-btn {
+    padding: 6px 10px 5px 10px;
+    border-radius: 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.achievementpage-medal-btn:hover {
+    transform: scale(1.02);
+}
+
+.achievementpage-medal-btn:active {
+    transform: scale(0.99);
+}
+
+.achievementpage-medal-btn.is-public {
+    background: linear-gradient(90deg, #ffdf6b, #ffb86b);
+    color: var(--dark-5);
+}
+
+.achievementpage-medal-btn.is-private {
+    background: rgba(156, 163, 175, 0.18);
+    color: var(--light-4);
+}
+
+/* --------------------------==================== Achievements / Progress ====================-------------------------- */
+.achievementpage-achievements-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.achievementpage-achievement-card {
+    padding: 14px 14px 0 14px;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    border: 2px solid var(--dark-2-o80);
+}
+
+.achievementpage-achievement-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.achievementpage-collection-name {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--light-1);
+}
+
+/*  --------------------------==================== Progress wrapper (replaces inline wrapper) ====================--------------------------  */
+.achievementpage-progress-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.achievementpage-progress-wrap {
+    min-width: 1200px;
+    margin: 5rem 1rem;
+    padding: 0 20px;
+    position: relative;
+}
+
+/* Radix progress root (styled) */
+.achievementpage-radix-progress-root {
+    position: relative;
+    height: 10px;
+    border: 1px solid var(--dark-4-o90);
+    border-radius: 6px;
+    overflow: visible;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Filled indicator: width kept dynamic inline */
+.achievementpage-radix-progress-indicator {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd94a 0%, #b77bff 100%);
+    border-radius: 6px;
+    transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* --------------------------==================== Pin container (absolute inside progress root) ====================-------------------------- */
+.achievementpage-pin-container {
+    position: absolute;
+    top: -5px;
+    z-index: 2;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transform: translateX(0);
+    pointer-events: none;
+}
+
+/* Visual pin symbol */
+.achievementpage-pin-symbol {
+    font-size: 1.2rem;
+    color: #b77bff;
+    filter: none;
+    line-height: 1;
+    display: inline-block;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* Completed pin style */
+.pin-complete .achievementpage-pin-symbol,
+.achievementpage-pin-container.pin-complete .achievementpage-pin-symbol {
+    color: #ffd94a;
+    filter: drop-shadow(0 0 6px #ffd94a66);
+}
+
+/* Label under the pin */
+.achievementpage-pin-label {
+    margin-top: 9px;
+    text-align: center;
+    width: max-content;
+}
+
+/* --------------------------==================== Absolute image wrapper (above pin) ====================-------------------------- */
+.achievementpage-img-absolute {
+    position: absolute;
+    top: -60px;
+    z-index: 3;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Gift image */
+.achievementpage-gift-img {
+    width: 50px;
+    height: 50px;
+    padding: 1px;
+    border-radius: 8px;
+    border: 2px solid #b77bff;
+    box-shadow: none;
+    background: #18181b;
+    object-fit: cover;
+}
+
+/* Gift complete variant */
+.achieve-gift-complete {
+    border-color: #ffd94a;
+    box-shadow: 0 2px 12px #ffd94a55;
+    opacity: 0.65;
+}
+
+/* Check icon overlay above gift */
+.achievementpage-check-icon {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    z-index: 4;
+    pointer-events: none;
+    filter: var(--currency_digit-SVGcolor);
+}
+
+/* Labels under pins */
+.achievementpage-condition {
+    color: #f3f4f6;
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+}
+
+.achievementpage-status {
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+/* status colors */
+.achievementpage-status-complete {
+    background: linear-gradient(90deg, rgba(255, 223, 77, 0.14), rgba(139, 92, 246, 0.12));
+    color: #ffd94a;
+    border: 1px solid rgba(255, 223, 77, 0.08);
+}
+
+.achievementpage-status-incomplete {
+    background: rgba(255, 255, 255, 0.03);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/

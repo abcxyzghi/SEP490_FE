@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import './CartProductList.css';
+import { useNavigate, Link } from "react-router-dom";
+import { Pathname } from '../../../router/Pathname';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCartFromServer, clearCart, removeItemFromCart, updateQuantity } from '../../../redux/features/cartSlice';
 import { viewCart, clearAllCart, removeFromCart, updateCartQuantity } from '../../../services/api.cart';
@@ -17,6 +19,7 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
     const [isClearing, setIsClearing] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+    const navigate = useNavigate();
 
     const showModal = (type, title, message) => {
         setModal({ open: true, type, title, message });
@@ -40,6 +43,8 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
                             rarity: productItem.product.rateName,
                             type: 'product',
                             quantity: productItem.quantity || 1,
+                            username: productItem.product.username || 'Unknown',
+                            userId: productItem.product.userId || 'N/A',
                         });
                     });
                     dispatch(setCartFromServer(formattedItems));
@@ -255,6 +260,11 @@ export default function CartProductList({ searchText, priceRange, selectedRariti
                                                 <div className="cartpage-product-name">{item.name}</div>
                                                 <div className="cartpage-product-price">
                                                     {(item.price || 0).toLocaleString('vi-VN')} VND
+                                                </div>
+                                                <div className="cartpage-seller-name">From: {" "}
+                                                    <span onClick={() => navigate(Pathname("PROFILE").replace(":id", item.userId))}>
+                                                        {item.username}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>

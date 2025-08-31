@@ -144,6 +144,16 @@ input#cartpage-select-all-checkbox:checked {
   align-items: flex-end;
 }
 
+.cartpage-seller-name{
+  margin-left: 6px;
+  align-self: start;
+}
+
+.cartpage-seller-name:hover span{
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .cartpage-product-name {
   font-size: 20px;
   font-family: 'Oxanium', sans-serif;

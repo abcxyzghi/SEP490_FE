@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserBox.css';
@@ -131,23 +130,39 @@ export default function UserBox() {
                         </div>
                         <div className="userBox-card-quantity oxanium-bold">Qty: {item.quantity}</div>
                         <div className="userBox-card-actions">
-                          <button
-                            className="userBox-view-button"
-                            onClick={() => navigate(`/boxdetailpage/${item.boxId}`)}
-                          >
-                            <span className="userBox-view-button-text oleo-script-bold">View Detail</span>
-                          </button>
-                          <button
-                            className={`userBox-open-button oleo-script-bold ${openingBoxId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
-                            disabled={item.quantity === 0 || openingBoxId === item.id}
-                            onClick={() => handleOpenBox(item.id)}
-                          >
-                            {openingBoxId === item.id ? (
-                              <span className="loading loading-bars loading-md"></span>
-                            ) : (
-                              <span className="userBox-open-button-text oleo-script-bold">Open</span>
-                            )}
-                          </button>
+                          {item.id !== "689bfbe32519abfbfd4e0d80" ? (
+                            <>
+                              <button
+                                className="userBox-view-button"
+                                onClick={() => navigate(`/boxdetailpage/${item.boxId}`)}
+                              >
+                                <span className="userBox-view-button-text oleo-script-bold">View Detail</span>
+                              </button>
+                              <button
+                                className={`userBox-open-button oleo-script-bold ${openingBoxId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                                disabled={item.quantity === 0 || openingBoxId === item.id}
+                                onClick={() => handleOpenBox(item.id)}
+                              >
+                                {openingBoxId === item.id ? (
+                                  <span className="loading loading-bars loading-md"></span>
+                                ) : (
+                                  <span className="userBox-open-button-text oleo-script-bold">Open</span>
+                                )}
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              className={`userBox-open-button oleo-script-bold w-full ${openingBoxId === item.id ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                              disabled={item.quantity === 0 || openingBoxId === item.id}
+                              onClick={() => handleOpenBox(item.id)}
+                            >
+                              {openingBoxId === item.id ? (
+                                <span className="loading loading-bars loading-md"></span>
+                              ) : (
+                                <span className="userBox-open-button-text oleo-script-bold">Open</span>
+                              )}
+                            </button>
+                          )}
                         </div>
                       </>
                     )}

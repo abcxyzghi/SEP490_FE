@@ -66,6 +66,12 @@
   font-weight: 700;
 }
 
+.auctionRoomList__footer-actions{
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
 .auctionRoomList__deleteBtn {
   padding: 6px 10px;
   background-color: #e74c3c; /* đỏ */

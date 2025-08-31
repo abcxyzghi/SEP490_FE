@@ -1,0 +1,11 @@
+.userAchievement-container {
+    min-height: 100%;
+    padding: 7px 10px;
+    color: var(--light-2, #e6edf3);
+}
+
+.userAchievement-medals-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+}
