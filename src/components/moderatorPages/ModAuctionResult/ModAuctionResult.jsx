@@ -28,15 +28,15 @@ export default function ModAuctionResult() {
               ...auction,
               bidder: bidderRes?.data
                 ? {
-                    username: bidderRes.data.username,
-                    profileImage: bidderRes.data.profileImage,
-                  }
+                  username: bidderRes.data.username,
+                  profileImage: bidderRes.data.profileImage,
+                }
                 : null,
               hoster: hosterRes?.data
                 ? {
-                    username: hosterRes.data.username,
-                    profileImage: hosterRes.data.profileImage,
-                  }
+                  username: hosterRes.data.username,
+                  profileImage: hosterRes.data.profileImage,
+                }
                 : null,
             };
           } catch (err) {
@@ -45,7 +45,7 @@ export default function ModAuctionResult() {
           }
         })
       );
-
+      enrichedAuctions.reverse();
       setAuctionResults(enrichedAuctions);
     }
 

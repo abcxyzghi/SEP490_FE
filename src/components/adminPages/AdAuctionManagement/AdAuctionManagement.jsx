@@ -5,7 +5,7 @@ import { getAllAuctions } from '../../../services/api.auction';
 import { getOtherProfile } from '../../../services/api.user'; // Bạn cần import hàm này
 import { buildImageUrl } from '../../../services/api.imageproxy'; // Import hàm build image
 import ProfileIcon from '../../../assets/others/mmbAvatar.png';
-
+import moment from 'moment';
 // --- Component tái sử dụng: ExpandableDescription ---
 const ExpandableDescription = ({ text, maxLength = 100 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -92,8 +92,8 @@ export default function AdAuctionManagement() {
         }));
 
         // 6. Sắp xếp auctions theo thời gian bắt đầu gần nhất
-        enrichedAuctions.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
-
+        // enrichedAuctions.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+        enrichedAuctions.reverse();
         setAuctionsWithSellers(enrichedAuctions);
 
       } catch (err) {
@@ -207,8 +207,10 @@ export default function AdAuctionManagement() {
                     <td className="adproduct-description">
                       <ExpandableDescription text={auction.descripition} maxLength={100} />
                     </td>
-                    <td>{new Date(auction.start_time).toLocaleString('vi-VN')}</td>
-                    <td>{new Date(auction.end_time).toLocaleString('vi-VN')}</td>
+                    {/* <td>{new Date(auction.start_time).toLocaleString('vi-VN')}</td>
+                    <td>{new Date(auction.end_time).toLocaleString('vi-VN')}</td> */}
+                    <td>{moment.utc(auction.start_time).local().format('DD/MM/YYYY HH:mm')}</td>
+                    <td>{moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</td>
                     <td>
                       <span className={`adproduct-badge ${auction.status === 1 ? 'ok' : 'no'}`}>
                         {auction.status === 1 ? 'Approved' : 'Not Approved'}

@@ -129,6 +129,7 @@ export default function ModeratorDashboard() {
       const reports = reportsRes?.data || [];
       const pendingReports = reports.filter(r => r.status === false);
 
+      pendingReports.reverse();
       const top5PendingReports = pendingReports.slice(0, 5);
       const enrichedReports = await Promise.all(
         top5PendingReports.map(async (report) => {

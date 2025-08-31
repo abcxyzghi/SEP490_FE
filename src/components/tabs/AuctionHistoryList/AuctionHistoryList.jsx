@@ -10,6 +10,7 @@ import { Pathname } from "../../../router/Pathname";
 import MessageModal from "../../libs/MessageModal/MessageModal";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
+import moment from "moment";
 
 export default function AuctionHistoryList() {
   const [myAuctions, setMyAuctions] = useState([]);
@@ -57,7 +58,9 @@ export default function AuctionHistoryList() {
           }
         });
 
+        endedMyAuctions.reverse();
         setMyAuctions(endedMyAuctions);
+        joinedItems.reverse();
         setJoinedAuctions(joinedItems || []);
 
         // Collect all seller_ids from both lists
@@ -104,7 +107,7 @@ export default function AuctionHistoryList() {
             }
           })
         );
-
+        enrichedWinners.reverse();
         setWinners((enrichedWinners || []).filter((i) => i._enriched !== false));
       } catch (err) {
         console.error("Failed to load auctions:", err);
@@ -180,7 +183,7 @@ export default function AuctionHistoryList() {
                   <div className="auctionHistoryList-finance">
                     {fmtVND(auction.host_value)} <span className="auctionHistoryList-muted">• fee {auction.fee_charge} •</span> <span className="auctionHistoryList-net">{fmtVND(auction.incoming_value)}</span>
                   </div>
-                  <div className="auctionHistoryList-endtime">Ended: {new Date(auction.end_time).toLocaleString()}</div>
+                  <div className="auctionHistoryList-endtime">Ended: {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</div>
                 </div>
               </div>
             </li>
@@ -278,7 +281,7 @@ export default function AuctionHistoryList() {
                   </div>
                 )}
                 <div className="auctionHistoryList-card-row">
-                  <div className="auctionHistoryList-endtime">Ends at: {new Date(auction.end_time).toLocaleString()}</div>
+                  <div className="auctionHistoryList-endtime">Ends at: {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</div>
                 </div>
               </div>
             </li>
@@ -396,7 +399,11 @@ export default function AuctionHistoryList() {
                   <div className="auctionHistoryList-finance">
                     <span className="auctionHistoryList-muted">Qty: {item.auction_result?.quantity} •</span> Winning: {fmtVND(item.auction_result?.bidder_amount)} <span className="auctionHistoryList-muted">• Host Claim: {fmtVND(item.auction_result?.host_claim_amount)}</span>
                   </div>
-                  <div className="auctionHistoryList-endtime">Ended: {new Date(item.auction_info?.end_time).toLocaleString()}</div>
+                  <div className="auctionHistoryList-endtime">
+                    Ended: {item.auction_info?.end_time
+                      ? moment.utc(item.auction_info.end_time).local().format('DD/MM/YYYY HH:mm')
+                      : 'N/A'}
+                  </div>
                 </div>
               </div>
             </li>
