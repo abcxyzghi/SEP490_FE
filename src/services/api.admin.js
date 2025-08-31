@@ -185,3 +185,34 @@ export const GetAuctionSettlementById = async (id) => {
     throw error;
   }
 };
+
+// Get dashboard user stats (GET)
+export const getDashboardUserStats = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/py/api/admin/dashboard/user",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Fetch dashboard user stats failed:", error);
+    throw error;
+  }
+};
+
+// Get dashboard auction stats (GET)
+export const getDashboardAuctionStats = async () => {
+  try {
+    const response = await pythonApiWithFallback({
+      method: "get",
+      url: "/py/api/admin/dashboard/auction",
+      requiresAuth: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Fetch dashboard auction stats failed:", error);
+    throw error;
+  }
+};
+
