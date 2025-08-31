@@ -1,12 +1,28 @@
-
-import React, { useEffect, useState } from 'react';
-import { getDashboardUserStats, getDashboardAuctionStats } from '../../../services/api.admin';
+import React, { useEffect, useState } from "react";
+import {
+  getDashboardUserStats,
+  getDashboardAuctionStats,
+} from "../../../services/api.admin";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  XAxis,
+  YAxis,
+  Bar,
+} from "recharts";
 
 export default function AdminDashboard() {
   const [userStats, setUserStats] = useState(null);
   const [auctionStats, setAuctionStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const COLORS = ["#06b6d4", "#ec4899", "#f59e0b", "#10b981"]; // cyan, pink, amber, green
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -15,12 +31,12 @@ export default function AdminDashboard() {
       try {
         const [userRes, auctionRes] = await Promise.all([
           getDashboardUserStats(),
-          getDashboardAuctionStats()
+          getDashboardAuctionStats(),
         ]);
         setUserStats(userRes.data?.[0] || null);
         setAuctionStats(auctionRes.data?.[0] || null);
       } catch {
-        setError('Lỗi khi lấy dữ liệu thống kê');
+        setError("Error while fetching statistics");
       } finally {
         setLoading(false);
       }
@@ -28,65 +44,123 @@ export default function AdminDashboard() {
     fetchStats();
   }, []);
 
-  if (loading) return <div>Đang tải thống kê...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div style={{ color: "#fff" }}>Loading...</div>;
+  if (error) return <div style={{ color: "red" }}>{error}</div>;
 
+  const userData = userStats
+    ? [
+      { name: "Total User", value: userStats.total_user },
+      { name: "Moderator", value: userStats.total_moderator },
+      { name: "Active", value: userStats.total_active_user },
+      { name: "Banned", value: userStats.total_inactive_user },
+    ]
+    : [];
+
+
+
+  // const auctionTotalData = auctionStats
+  //   ? [
+  //     { name: "Total Auction", value: auctionStats.total_auction, fill: COLORS[0] },
+  //   ]
+  //   : [];
+
+  const auctionBreakdownData = auctionStats
+    ? [
+      { name: "Approved", value: auctionStats.total_approved_auction, fill: COLORS[1] },
+      { name: "Denied", value: auctionStats.total_denied_auction, fill: COLORS[2] },
+      { name: "Pending", value: auctionStats.total_pending_auction, fill: COLORS[3] },
+    ]
+    : [];
+
+  // Custom label để hiện số trực tiếp trên chart
+  const renderLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) / 2;
+    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="#fff"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={12}
+      >
+        {value}
+      </text>
+    );
+  };
   return (
-    <div>
-      <h2>Thống kê hệ thống</h2>
-      <div style={{ display: 'flex', gap: 32 }}>
-        {/* User Stats Chart */}
-        <div style={{ flex: 1, background: '#f5f5f5', padding: 24, borderRadius: 8 }}>
-          <h3>Thống kê User</h3>
-          {userStats ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 12 }}>
-              <tbody>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>Tổng user</td>
-                  <td style={{ padding: '8px' }}>{userStats.total_user}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>Tổng moderator</td>
-                  <td style={{ padding: '8px' }}>{userStats.total_moderator}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>User hoạt động</td>
-                  <td style={{ padding: '8px' }}>{userStats.total_active_user}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>User bị khóa</td>
-                  <td style={{ padding: '8px' }}>{userStats.total_inactive_user}</td>
-                </tr>
-              </tbody>
-            </table>
-          ) : <div>Không có dữ liệu user</div>}
-        </div>
+    <div style={{ color: "#fff" }}>
+      <h2 className="text-xl font-bold mb-4">System Statistics</h2>
+      <div style={{ display: "flex", gap: 32 }}>
+        {/* User Stats */}
+        <div
+          style={{
+            flex: 1,
+            background: "#1e1e2d",
+            padding: 24,
+            borderRadius: 16,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+          }}
+        >
+          <h3 className="mb-4">User Statistics</h3>
+          {userData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={userData}
+                layout="vertical"
+                margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
+              >
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" />
+                <Tooltip />
 
-        {/* Auction Stats Chart */}
-        <div style={{ flex: 1, background: '#f5f5f5', padding: 24, borderRadius: 8 }}>
-          <h3>Thống kê Auction</h3>
-          {auctionStats ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 12 }}>
-              <tbody>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>Tổng auction</td>
-                  <td style={{ padding: '8px' }}>{auctionStats.total_auction}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>Auction đã duyệt</td>
-                  <td style={{ padding: '8px' }}>{auctionStats.total_approved_auction}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>Auction bị từ chối</td>
-                  <td style={{ padding: '8px' }}>{auctionStats.total_denied_auction}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '8px', fontWeight: 'bold' }}>Auction chờ duyệt</td>
-                  <td style={{ padding: '8px' }}>{auctionStats.total_pending_auction}</td>
-                </tr>
-              </tbody>
-            </table>
-          ) : <div>Không có dữ liệu auction</div>}
+                <Bar dataKey="value" barSize={30}>
+                  {userData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div>No user data</div>
+          )}
+        </div>
+        {/* Auction Breakdown (Approved/Denied/Pending) */}
+        <div
+          style={{
+            flex: 1,
+            background: "#1e1e2d",
+            padding: 24,
+            borderRadius: 16,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+          }}
+        >
+          <h3 className="mb-4">Auction Breakdown</h3>
+          {auctionBreakdownData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={auctionBreakdownData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  dataKey="value"
+                  label={renderLabel}
+                >
+                  {auctionBreakdownData.map((entry, index) => (
+                    <Cell key={`cell-breakdown-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div>No auction breakdown data</div>
+          )}
         </div>
       </div>
     </div>
