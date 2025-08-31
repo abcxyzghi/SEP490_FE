@@ -13,7 +13,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Pathname } from "../../../router/Pathname";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
-
+import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
 export default function ExchangeHistory() {
   const [sent, setSent] = useState([]);
   const [received, setReceived] = useState([]);
@@ -31,6 +31,13 @@ export default function ExchangeHistory() {
     id: null,
     type: null,
   }); // {id, type: 'accept'|'reject'}
+  const [preAcceptModal, setPreAcceptModal] = useState({
+  open: false,
+  title: "",
+  message: "",
+  onConfirm: null,
+  onClose: null,
+});
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [selectedFeedbackExchangeId, setSelectedFeedbackExchangeId] = useState(null);
   const [selectedFeedbackList, setSelectedFeedbackList] = useState([]);
@@ -157,6 +164,15 @@ export default function ExchangeHistory() {
     setActionError(null);
     try {
       const res = await ExchangeAccept(id);
+       // Nếu API trả về lỗi
+    if (res?.errorCode === 400) {
+      showModal(
+        "error",
+        "Exchange Failed",
+        res?.message || "Failed to accept exchange request."
+      );
+      return;
+    }
 
       setConfirmModal({
         open: true,
@@ -171,8 +187,10 @@ export default function ExchangeHistory() {
       );
       // navigate(`/profilepage/${myId}`);
     } catch (err) {
-      setActionError("Accept failed");
-      showModal("error", "Error", "Accept error: " + err);
+      // setActionError("Accept failed");
+      // showModal("error", "Error", "Accept error: " + err);
+      const serverMessage = err?.response?.data?.message || "Failed to accept exchange request.";
+      showModal("error", "Error", serverMessage);
     } finally {
       setReceivedAction({ id: null, type: null });
     }
@@ -353,13 +371,28 @@ export default function ExchangeHistory() {
                     <div className="exchange-history-card-actions">
                       {/* Sent cancel */}
                       {view === 'sent' && req.status === 1 && (
-                        <button
-                          className="exchange-history-btn exchange-history-btn-cancel"
-                          onClick={() => handleCancel(req.id)}
-                          disabled={actionLoading === req.id}
-                        >
-                          {actionLoading === req.id ? <span className="loading loading-bars loading-md"></span> : 'Cancel request'}
-                        </button>
+                       <button
+  className="exchange-history-btn exchange-history-btn-cancel"
+  onClick={() =>
+    setPreAcceptModal({
+      open: true,
+      title: "Cancel Exchange Request",
+      message: "Are you sure you want to cancel this exchange request? This action cannot be undone.",
+      onConfirm: () => {
+        setPreAcceptModal((prev) => ({ ...prev, open: false }));
+        handleCancel(req.id);
+      },
+      onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
+    })
+  }
+  disabled={actionLoading === req.id}
+>
+  {actionLoading === req.id ? (
+    <span className="loading loading-bars loading-md"></span>
+  ) : (
+    "Cancel request"
+  )}
+</button>
                       )}
 
                       {/* Sent feedback */}
@@ -379,19 +412,48 @@ export default function ExchangeHistory() {
                       {view === 'received' && req.status === 1 && (
                         <>
                           <button
-                            className="exchange-history-btn exchange-history-btn-accept"
-                            onClick={() => handleAccept(req.id)}
-                            disabled={receivedAction.id === req.id && receivedAction.type === 'accept'}
-                          >
-                            {receivedAction.id === req.id && receivedAction.type === 'accept' ? <span className="loading loading-bars loading-md"></span> : 'Accept'}
-                          </button>
+  className="exchange-history-btn exchange-history-btn-accept"
+  onClick={() =>
+    setPreAcceptModal({
+      open: true,
+      title: "Confirm Exchange",
+      message: "Are you sure you want to accept this exchange? Once accepted, you are fully responsible for this transaction.",
+      onConfirm: () => {
+        setPreAcceptModal((prev) => ({ ...prev, open: false }));
+        handleAccept(req.id); // gọi thực thi trao đổi thật sự
+      },
+      onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
+    })
+  }
+  disabled={receivedAction.id === req.id && receivedAction.type === 'accept'}
+>
+  {receivedAction.id === req.id && receivedAction.type === 'accept'
+    ? <span className="loading loading-bars loading-md"></span>
+    : 'Accept'}
+</button>
                           <button
-                            className="exchange-history-btn exchange-history-btn-reject"
-                            onClick={() => handleReject(req.id)}
-                            disabled={receivedAction.id === req.id && receivedAction.type === 'reject'}
-                          >
-                            {receivedAction.id === req.id && receivedAction.type === 'reject' ? <span className="loading loading-bars loading-md"></span> : 'Reject'}
-                          </button>
+  className="exchange-history-btn exchange-history-btn-reject"
+  onClick={() =>
+    setPreAcceptModal({
+      open: true,
+      title: "Reject Exchange",
+      message: "Are you sure you want to reject this exchange request? This action cannot be undone.",
+      onConfirm: () => {
+        setPreAcceptModal((prev) => ({ ...prev, open: false }));
+        handleReject(req.id);
+      },
+      onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
+    })
+  }
+  disabled={receivedAction.id === req.id && receivedAction.type === "reject"}
+>
+  {receivedAction.id === req.id && receivedAction.type === "reject" ? (
+    <span className="loading loading-bars loading-md"></span>
+  ) : (
+    "Reject"
+  )}
+</button>
+
                         </>
                       )}
 
@@ -697,6 +759,13 @@ export default function ExchangeHistory() {
         onConfirm={confirmModal.onConfirm}
         onCancel={confirmModal.onCancel}
       />
+      <ConfirmModal
+  open={preAcceptModal.open}
+  title={preAcceptModal.title}
+  message={preAcceptModal.message}
+  onConfirm={preAcceptModal.onConfirm}
+  onClose={preAcceptModal.onClose}
+/>
 
     </div>
   );

@@ -85,7 +85,10 @@ export const ExchangeAccept = async (id) => {
     return response.data;
   } catch (error) {
     console.error(`Lỗi khi chấp nhận yêu cầu trao đổi với id ${id}:`, error);
-    throw error;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
@@ -100,7 +103,10 @@ export const ExchangeReject = async (id) => {
     return response.data;
   } catch (error) {
     console.error(`Lỗi khi từ chối yêu cầu trao đổi với id ${id}:`, error);
-    throw error;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };
 
@@ -115,6 +121,9 @@ export const ExchangeCancel = async (id) => {
     return response.data;
   } catch (error) {
     console.error(`Lỗi khi hủy yêu cầu trao đổi với id ${id}:`, error);
-    throw error;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    }
   }
 };

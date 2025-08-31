@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import './MyAuction.css';
-import { fetchMyAuctionList } from "../../../services/api.auction";
+import "./MyAuction.css";
+import {
+  cancelAuction,
+  confirmAuction,
+  fetchMyAuctionList,
+} from "../../../services/api.auction";
 import { getOtherProfile } from "../../../services/api.user";
 import { useSelector } from "react-redux";
 import { buildImageUrl } from "../../../services/api.imageproxy";
 import MobileDownLink from "../../libs/MobileDownLink/MobileDownLink";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
+import MessageModal from "../../libs/MessageModal/MessageModal";
 
 export default function MyAuction() {
   const user = useSelector((state) => state.auth.user);
@@ -16,45 +21,97 @@ export default function MyAuction() {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { searchText = "" } = arguments[0] || {};
+  const [modal, setModal] = useState({
+    open: false,
+    type: "default",
+    title: "",
+    message: "",
+  });
+  const showModal = (type, title, message) => {
+    setModal({ open: true, type, title, message });
+  };
+  const handleDeleteAuction = async (auctionId) => {
+    try {
+      const res = await cancelAuction(auctionId);
+      if (!res?.errorCode) {
+        showModal("default", "Success", "Auction cancelled successfully!");
+        fetchData();
+      } else {
+        showModal("error", "Failed", res.message || "Failed to cancel auction");
+      }
+    } catch (error) {
+      showModal(
+        "error",
+        "Error",
+        error.response?.data?.error ||
+          "Something went wrong while cancelling auction"
+      );
+    }
+  };
 
-  useEffect(() => {
+  const handleConfirm = async (auctionId) => {
+    try {
+      const res = await confirmAuction(auctionId);
+      console.log("confirmAuction response:", res);
+
+      const success = res?.success ?? res?.data?.success;
+
+      if (success) {
+        showModal("default", "Success", "Auction confirmed successfully!");
+        fetchData();
+      } else if (res.errorCode === 404) {
+        showModal('error', 'Error', 'No one has placed a bid!');
+        
+      } else if (res.errorCode === 403) {
+        showModal('error', 'Error', 'Auction still in progress');
+      } 
+    } catch (error) {
+      console.error("confirm error:", error);
+      showModal("error", "Error", error || "Failed to confirm auction.");
+    }
+  };
+
+  // Tạo hàm fetchData để tái sử dụng
+  const fetchData = async () => {
     if (!user) {
       setLoading(false);
       setError("");
       setAuctionList([]);
       return;
     }
-    const fetchData = async () => {
-      try {
-        const result = await fetchMyAuctionList();
-        const flattenedData = result.data.flat();
-        setAuctionList(flattenedData);
+    try {
+      const result = await fetchMyAuctionList();
+      const flattenedData = result.data.flat();
+      setAuctionList(flattenedData);
 
-        // Fetch seller profiles for each auction
-        const sellerIds = flattenedData.map((a) => a.seller_id).filter(Boolean);
-        const profilePromises = sellerIds.map((id) => getOtherProfile(id));
-        const profiles = await Promise.all(profilePromises);
-        const profileMap = {};
-        profiles.forEach((res, idx) => {
-          if (res?.status && res.data) {
-            profileMap[sellerIds[idx]] = res.data;
-          }
-        });
-        setSellerProfiles(profileMap);
-      } catch (err) {
-        setError("An error occurred while loading your auction list.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const sellerIds = flattenedData.map((a) => a.seller_id).filter(Boolean);
+      const profilePromises = sellerIds.map((id) => getOtherProfile(id));
+      const profiles = await Promise.all(profilePromises);
 
+      const profileMap = {};
+      profiles.forEach((res, idx) => {
+        if (res?.status && res.data) {
+          profileMap[sellerIds[idx]] = res.data;
+        }
+      });
+      setSellerProfiles(profileMap);
+    } catch (err) {
+      setError("An error occurred while loading your auction list.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Gọi fetchData khi component mount
+  useEffect(() => {
     fetchData();
   }, [user]);
 
   // one sort line (non-mutating)
   const sortedAuctionsRaw = [...auctionList].sort(
-    (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+    (a, b) =>
+      new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
   );
   // Filter auctions by searchText
   const sortedAuctions = sortedAuctionsRaw.filter((auction) => {
@@ -77,7 +134,6 @@ export default function MyAuction() {
       style: "decimal",
       maximumFractionDigits: 0,
     }).format(Number(v || 0)) + " VND";
-
 
   if (!user) {
     return (
@@ -152,7 +208,7 @@ export default function MyAuction() {
           {sortedAuctions.map((auction) => {
             const seller = sellerProfiles[auction.seller_id];
             return (
-              <li key={auction._id} className="auctionRoomList__card">
+              <li key={auction.id} className="auctionRoomList__card">
                 <div className="auctionRoomList__card-media">
                   <img
                     src={
@@ -170,9 +226,17 @@ export default function MyAuction() {
                   <div className="auctionRoomList__card-head">
                     <div className="auctionRoomList__card-info">
                       <h3 className="auctionRoomList__card-title">
-                        <AuctionTextExpand text={auction.title} maxLength={60} className="auctionRoomList__card-title" />
+                        <AuctionTextExpand
+                          text={auction.title}
+                          maxLength={60}
+                          className="auctionRoomList__card-title"
+                        />
                       </h3>
-                      <AuctionTextExpand text={auction.descripition} maxLength={60} className="auctionRoomList__card-description" />
+                      <AuctionTextExpand
+                        text={auction.descripition}
+                        maxLength={60}
+                        className="auctionRoomList__card-description"
+                      />
                     </div>
 
                     <div className="auctionRoomList__card-meta">
@@ -181,14 +245,19 @@ export default function MyAuction() {
 
                       {seller && (
                         <div className="auctionRoomList__seller">
-                          <span className="auctionRoomList__seller-name">by {seller.username}</span>
+                          <span className="auctionRoomList__seller-name">
+                            by {seller.username}
+                          </span>
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Compact finance row: StartPrice → Fee → Net */}
-                  <div className="auctionRoomList__finance-row" title="Start • Fee • Net">
+                  <div
+                    className="auctionRoomList__finance-row"
+                    title="Start • Fee • Net"
+                  >
                     <div className="auctionRoomList__finance-item auctionRoomList__finance-start">
                       {fmtVND(auction.host_value)}
                     </div>
@@ -204,19 +273,27 @@ export default function MyAuction() {
 
                   <div className="auctionRoomList__dates">
                     <div className="auctionRoomList__date-item">
-                      <span className="auctionRoomList__date-label">Start:</span>
-                      <span className="auctionRoomList__date-value">{new Date(auction.start_time).toLocaleString()}</span>
+                      <span className="auctionRoomList__date-label">
+                        Start:
+                      </span>
+                      <span className="auctionRoomList__date-value">
+                        {new Date(auction.start_time).toLocaleString()}
+                      </span>
                     </div>
 
                     <div className="auctionRoomList__date-item">
                       <span className="auctionRoomList__date-label">End:</span>
-                      <span className="auctionRoomList__date-value">{new Date(auction.end_time).toLocaleString()}</span>
+                      <span className="auctionRoomList__date-value">
+                        {new Date(auction.end_time).toLocaleString()}
+                      </span>
                     </div>
                   </div>
 
                   <div className="auctionRoomList__footer">
                     <div className="auctionRoomList__bid">
-                      {auction.current_bid ? `Current bid: ${fmtVND(auction.current_bid)}` : "No bid yet"}
+                      {auction.current_bid
+                        ? `Current bid: ${fmtVND(auction.current_bid)}`
+                        : "No bid yet"}
                     </div>
 
                     <button
@@ -225,6 +302,28 @@ export default function MyAuction() {
                     >
                       View detail
                     </button>
+                    {(auction.status === 0 || auction.status === -1) && (
+                      <button
+                        className="auctionRoomList__deleteBtn"
+                        onClick={() => handleDeleteAuction(auction.id)}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    {auction.status === 1 &&
+                      new Date(auction.end_time) <
+                        new Date(
+                          new Date().toLocaleString("en-US", {
+                            timeZone: "Asia/Ho_Chi_Minh",
+                          })
+                        ) && (
+                        <button
+                          className="auctionRoomList__deleteBtn"
+                          onClick={() => handleConfirm(auction.id)}
+                        >
+                          Confirm
+                        </button>
+                      )}
                   </div>
                 </div>
               </li>
@@ -233,7 +332,18 @@ export default function MyAuction() {
         </ul>
 
         {/* Mobile link modal */}
-        <MobileDownLink open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <MobileDownLink
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+
+        <MessageModal
+          open={modal.open}
+          onClose={() => setModal((prev) => ({ ...prev, open: false }))}
+          type={modal.type}
+          title={modal.title}
+          message={modal.message}
+        />
       </div>
     </div>
   );
@@ -279,15 +389,19 @@ function AuctionTextExpand({ text, maxLength = 60, className }) {
   const [expanded, setExpanded] = useState(false);
   if (!text) return null;
   const isLong = text.length > maxLength;
-  const displayText = expanded || !isLong ? text : text.slice(0, maxLength) + "...";
+  const displayText =
+    expanded || !isLong ? text : text.slice(0, maxLength) + "...";
   return (
-    <span className={className} style={{ wordBreak: 'break-word' }}>
+    <span className={className} style={{ wordBreak: "break-word" }}>
       {displayText}
       {isLong && (
         <button
           className="auctionRoomList__seeMoreBtn"
           type="button"
-          onClick={e => { e.stopPropagation(); setExpanded(v => !v); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded((v) => !v);
+          }}
         >
           {expanded ? "See less" : "See more"}
         </button>
