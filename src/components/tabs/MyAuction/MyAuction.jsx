@@ -11,6 +11,7 @@ import { buildImageUrl } from "../../../services/api.imageproxy";
 import MobileDownLink from "../../libs/MobileDownLink/MobileDownLink";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageModal from "../../libs/MessageModal/MessageModal";
+import moment from "moment";
 
 export default function MyAuction() {
   const user = useSelector((state) => state.auth.user);
@@ -281,14 +282,14 @@ export default function MyAuction() {
                         Start:
                       </span>
                       <span className="auctionRoomList__date-value">
-                        {new Date(auction.start_time).toLocaleString()}
+                        {moment.utc(auction.start_time).local().format('DD/MM/YYYY HH:mm')}
                       </span>
                     </div>
 
                     <div className="auctionRoomList__date-item">
                       <span className="auctionRoomList__date-label">End:</span>
                       <span className="auctionRoomList__date-value">
-                        {new Date(auction.end_time).toLocaleString()}
+                        {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}
                       </span>
                     </div>
                   </div>

@@ -11,6 +11,7 @@ import MessageModal from "../../libs/MessageModal/MessageModal";
 import MobileDownLink from "../../libs/MobileDownLink/MobileDownLink";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
+import moment from "moment";
 
 export default function AuctionRoomList() {
   const user = useSelector((state) => state.auth.user);
@@ -287,13 +288,13 @@ export default function AuctionRoomList() {
                       <div className="auctionRoomList__date-item">
                         <span className="auctionRoomList__date-label">Start:</span>
                         <span className="auctionRoomList__date-value">
-                          {formatDate(auction.start_time)}
+                          {moment.utc(auction.start_time).local().format('DD/MM/YYYY HH:mm')}
                         </span>
                       </div>
                       <div className="auctionRoomList__date-item">
                         <span className="auctionRoomList__date-label">End:</span>
                         <span className="auctionRoomList__date-value">
-                          {formatDate(auction.end_time)}
+                          {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}
                         </span>
                       </div>
                     </div>
