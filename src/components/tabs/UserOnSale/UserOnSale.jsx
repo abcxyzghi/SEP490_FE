@@ -293,7 +293,7 @@ export default function UserOnSale({ products, productsLoading }) {
 
   if (!productList || productList.length === 0) {
     return (
-      <div className="text-center text-gray-400 mt-6">No products on sale.</div>
+      <div className="text-center text-gray-400 my-6 oxanium-regular">No products on sale.</div>
     );
   }
   const visibleProducts = productList.slice(0, visibleCount);
@@ -309,7 +309,9 @@ export default function UserOnSale({ products, productsLoading }) {
   return (
     <div className="userOnSale-card-list-container">
       <div className="userOnSale-card-grid">
-        {visibleProducts.map((item, index) => {
+        {visibleProducts
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map((item, index) => {
           const isExpanded = expandedCardIndex === index;
           const isOwnerOfItem = user && user.user_id === item.userId;
           const isDropdownOpen = !!dropdownStates[index];

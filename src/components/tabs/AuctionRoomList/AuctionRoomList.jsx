@@ -215,12 +215,12 @@ export default function AuctionRoomList() {
                       </div>
 
                       <div className="auctionRoomList__card-meta">
-                        <StatusBadge status={auction.status} />
+                        <StatusBadge status={auction.status} start_time={auction.start_time} end_time={auction.end_time} />
                         {/* <div className="auctionRoomList__card-id">ID: {auction.id}</div> */}
 
                         {seller && (
                           <div className="auctionRoomList__seller">
-                            <p className="auctionHistoryList-seller-name mt-1 text-[0.9rem]">by {" "}
+                            <div className="auctionHistoryList-seller-name mt-1 text-[0.9rem]">by {" "}
                               {/* reuse style from ExchangeHistory */}
                               <span className="exchange-history-user-info">
                                 <HoverCard.Root>
@@ -277,7 +277,7 @@ export default function AuctionRoomList() {
                                   </HoverCard.Content>
                                 </HoverCard.Root>
                               </span>
-                            </p>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -332,10 +332,31 @@ export default function AuctionRoomList() {
   );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, start_time, end_time }) {
   // status: 0 waiting, 1 started, 2 ended
-  const { label, classes } = getStatusLabelAndClass(status);
-  return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${classes}`}>{label}</span>;
+  const now = Date.now();
+  let label, classes;
+  if (status === 1) {
+    const start = new Date(start_time).getTime();
+    const end = new Date(end_time).getTime();
+    if (now >= start && now <= end) {
+      label = "On Going";
+      classes = "bg-green-600/20 text-green-200 border border-green-500";
+    } else {
+      label = "Waiting";
+      classes = "bg-yellow-500/20 text-yellow-200 border border-yellow-600";
+    }
+  } else if (status === 0) {
+    label = "Waiting";
+    classes = "bg-yellow-500/20 text-yellow-200 border border-yellow-600";
+  } else if (status === -1) {
+    label = "Rejected";
+    classes = "bg-gray-600/20 text-gray-200 border border-gray-500";
+  } else {
+    label = "Unidentified";
+    classes = "bg-gray-600/20 text-gray-200 border border-gray-500";
+  }
+  return <span className={`px-2 py-0.5 rounded-full text-xs oxanium-regular ${classes}`}>{label}</span>;
 }
 
 function getStatusLabelAndClass(status) {

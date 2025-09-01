@@ -9,6 +9,7 @@ import { Pathname } from '../../../router/Pathname';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import ConfirmNavigateModal from "../../libs/ConfirmNavigateModal/ConfirmNavigateModal";
 import ConfirmModal from '../../libs/ConfirmModal/ConfirmModal';
+
 export default function Exchangepage() {
   const { sellProductId } = useParams();
   const [product, setProduct] = useState(null);
@@ -31,12 +32,12 @@ export default function Exchangepage() {
     setModal({ open: true, type, title, message });
   };
   const [confirmBeforeSendModal, setConfirmBeforeSendModal] = useState({
-  open: false,
-  title: "",
-  message: "",
-  onConfirm: null,
-  onClose: null,
-});
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+    onClose: null,
+  });
   // Fetch product info
   useEffect(() => {
     async function fetchProduct() {
@@ -57,39 +58,40 @@ export default function Exchangepage() {
     fetchProduct();
   }, [sellProductId]);
 
-  // Fetch all collections and products of each collection
-  useEffect(() => {
-    async function fetchCollectionsAndProducts() {
-      setLoadingUserProducts(true);
-      try {
-        if (!user || !user.user_id) {
-          setCollections([]);
-          setAllUserProducts([]);
-          return;
-        }
-
-        const collectionRes = await getCollectionOfProfile();
-        const collectionsData = collectionRes?.data || [];
-        setCollections(collectionsData);
-
-        let allProducts = [];
-        for (let col of collectionsData) {
-          const productRes = await getAllProductsOfCollection(col.id);
-          if (Array.isArray(productRes?.data)) {
-            allProducts = [
-              ...allProducts,
-              ...productRes.data.map((p) => ({ ...p, collectionId: col.id }))
-            ];
-          }
-        }
-        setAllUserProducts(allProducts);
-      } catch (err) {
+  // Move fetchCollectionsAndProducts outside useEffect for reuse
+  async function fetchCollectionsAndProducts() {
+    setLoadingUserProducts(true);
+    try {
+      if (!user || !user.user_id) {
         setCollections([]);
         setAllUserProducts([]);
+        return;
       }
-      setLoadingUserProducts(false);
-    }
 
+      const collectionRes = await getCollectionOfProfile();
+      const collectionsData = collectionRes?.data || [];
+      setCollections(collectionsData);
+
+      let allProducts = [];
+      for (let col of collectionsData) {
+        const productRes = await getAllProductsOfCollection(col.id);
+        if (Array.isArray(productRes?.data)) {
+          allProducts = [
+            ...allProducts,
+            ...productRes.data.map((p) => ({ ...p, collectionId: col.id }))
+          ];
+        }
+      }
+      setAllUserProducts(allProducts);
+    } catch (err) {
+      setCollections([]);
+      setAllUserProducts([]);
+    }
+    setLoadingUserProducts(false);
+  }
+
+  // In useEffect, replace fetchCollectionsAndProducts with the new function
+  useEffect(() => {
     fetchCollectionsAndProducts();
   }, [user]);
 
@@ -200,7 +202,7 @@ export default function Exchangepage() {
       };
       const res = await exchangeProduct(payload);
 
-      // showModal('default', 'Exchange sent', 'Your exchange request has been sent successfully! What you should do next is wait.');
+      // Show success modal with navigation option
       setConfirmModal({
         open: true,
         title: "Request sent!",
@@ -209,6 +211,15 @@ export default function Exchangepage() {
         onCancel: () => setConfirmModal({ ...confirmModal, open: false }),
       });
 
+      // Clear selected cards and refetch displayed products
+      setSelectedCards([]);
+      // Refetch all user products
+      if (typeof refetchUserProducts === 'function') {
+        refetchUserProducts();
+      } else {
+        // fallback: manually trigger fetchCollectionsAndProducts
+        fetchCollectionsAndProducts && fetchCollectionsAndProducts();
+      }
     } catch (err) {
       showModal('error', 'Oops!', 'Something went wrong in exchange process. Please try again later.');
     } finally {
@@ -315,25 +326,25 @@ export default function Exchangepage() {
 
           {/* Collection Confirm button */}
           <button
-  className="exchangepage-confirm-btn oxanium-bold"
-  onClick={() =>
-    setConfirmBeforeSendModal({
-      open: true,
-      title: "Confirm Exchange",
-      message: "Are you sure you want to send this exchange request? You will be fully responsible for this transaction.",
-      onConfirm: () => {
-        setConfirmBeforeSendModal((prev) => ({ ...prev, open: false }));
-        handleExchange(); // Gọi hàm thực hiện gửi request thật sự
-      },
-      onClose: () =>
-        setConfirmBeforeSendModal((prev) => ({ ...prev, open: false })),
-    })
-  }
-  disabled={selectedCards.length === 0 || isExchanging}
->
-  {isExchanging && <span className="loading loading-bars loading-md"></span>}
-  {isExchanging ? " Processing..." : "Confirm Exchange"}
-</button>
+            className="exchangepage-confirm-btn oxanium-bold"
+            onClick={() =>
+              setConfirmBeforeSendModal({
+                open: true,
+                title: "Confirm Exchange",
+                message: "Are you sure you want to send this exchange request? You will be fully responsible for this transaction.",
+                onConfirm: () => {
+                  setConfirmBeforeSendModal((prev) => ({ ...prev, open: false }));
+                  handleExchange(); // Gọi hàm thực hiện gửi request thật sự
+                },
+                onClose: () =>
+                  setConfirmBeforeSendModal((prev) => ({ ...prev, open: false })),
+              })
+            }
+            disabled={selectedCards.length === 0 || isExchanging}
+          >
+            {isExchanging && <span className="loading loading-bars loading-md"></span>}
+            {isExchanging ? " Processing..." : "Confirm Exchange"}
+          </button>
 
           {/* Collection Dropdown */}
           <div className="exchangepage-collection oxanium-regular">
@@ -415,13 +426,15 @@ export default function Exchangepage() {
         onConfirm={confirmModal.onConfirm}
         onCancel={confirmModal.onCancel}
       />
+
+      {/* Confirm action modal */}
       <ConfirmModal
-  open={confirmBeforeSendModal.open}
-  title={confirmBeforeSendModal.title}
-  message={confirmBeforeSendModal.message}
-  onConfirm={confirmBeforeSendModal.onConfirm}
-  onClose={confirmBeforeSendModal.onClose}
-/>
+        open={confirmBeforeSendModal.open}
+        title={confirmBeforeSendModal.title}
+        message={confirmBeforeSendModal.message}
+        onConfirm={confirmBeforeSendModal.onConfirm}
+        onClose={confirmBeforeSendModal.onClose}
+      />
     </div>
   );
 }

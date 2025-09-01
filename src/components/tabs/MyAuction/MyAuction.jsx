@@ -44,7 +44,7 @@ export default function MyAuction() {
         "error",
         "Error",
         error.response?.data?.error ||
-          "Something went wrong while cancelling auction"
+        "Something went wrong while cancelling auction"
       );
     }
   };
@@ -61,10 +61,10 @@ export default function MyAuction() {
         fetchData();
       } else if (res.errorCode === 404) {
         showModal('error', 'Error', 'No one has placed a bid!');
-        
+
       } else if (res.errorCode === 403) {
         showModal('error', 'Error', 'Auction still in progress');
-      } 
+      }
     } catch (error) {
       console.error("confirm error:", error);
       showModal("error", "Error", error || "Failed to confirm auction.");
@@ -139,7 +139,7 @@ export default function MyAuction() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 text-white oxanium-regular">
         <div className="bg-gray-800/80 p-8 rounded-xl shadow-lg text-center">
-          <h2 className="text-2xl font-semibold mb-2">My Auction List</h2>
+          <h2 className="text-2xl oxanium-semibold mb-2">My Auction List</h2>
           <p className="text-lg text-gray-300 mb-4">
             You must be logged in to view your auction list.
           </p>
@@ -240,7 +240,11 @@ export default function MyAuction() {
                     </div>
 
                     <div className="auctionRoomList__card-meta">
-                      <StatusBadge status={auction.status} />
+                      <StatusBadge
+                        status={auction.status}
+                        start_time={auction.start_time}
+                        end_time={auction.end_time}
+                      />
                       {/* <div className="auctionRoomList__card-id">ID: {auction._id}</div> */}
 
                       {seller && (
@@ -296,34 +300,36 @@ export default function MyAuction() {
                         : "No bid yet"}
                     </div>
 
-                    <button
-                      className="auctionRoomList__viewBtn"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      View detail
-                    </button>
-                    {(auction.status === 0 || auction.status === -1) && (
-                      <button
-                        className="auctionRoomList__deleteBtn"
-                        onClick={() => handleDeleteAuction(auction.id)}
-                      >
-                        Cancel
-                      </button>
-                    )}
-                    {auction.status === 1 &&
-                      new Date(auction.end_time) <
+                    <div className="auctionRoomList__footer-actions">
+                      {(auction.status === 0 || auction.status === -1) && (
+                        <button
+                          className="auctionRoomList__deleteBtn"
+                          onClick={() => handleDeleteAuction(auction.id)}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                      {auction.status === 1 &&
+                        new Date(auction.end_time) <
                         new Date(
                           new Date().toLocaleString("en-US", {
                             timeZone: "Asia/Ho_Chi_Minh",
                           })
                         ) && (
-                        <button
-                          className="auctionRoomList__deleteBtn"
-                          onClick={() => handleConfirm(auction.id)}
-                        >
-                          Confirm
-                        </button>
-                      )}
+                          <button
+                            className="auctionRoomList__deleteBtn"
+                            onClick={() => handleConfirm(auction.id)}
+                          >
+                            Confirm
+                          </button>
+                        )}
+                      <button
+                        className="auctionRoomList__viewBtn"
+                        onClick={() => setIsModalOpen(true)}
+                      >
+                        View detail
+                      </button>
+                    </div>
                   </div>
                 </div>
               </li>
@@ -349,40 +355,34 @@ export default function MyAuction() {
   );
 }
 
-function StatusBadge({ status }) {
-  const { label, classes } = getStatusLabelAndClass(status);
+function StatusBadge({ status, start_time, end_time }) {
+  const now = Date.now();
+  let label, classes;
+  if (status === 1) {
+    const start = new Date(start_time).getTime();
+    const end = new Date(end_time).getTime();
+    if (now >= start && now <= end) {
+      label = "On Going";
+      classes = "bg-green-600/20 text-green-200 border-green-500";
+    } else {
+      label = "Waiting";
+      classes = "bg-yellow-500/20 text-yellow-200 border-yellow-600";
+    }
+  } else if (status === 0) {
+    label = "Waiting to proceed";
+    classes = "bg-yellow-500/20 text-yellow-200 border-yellow-600";
+  } else if (status === -1) {
+    label = "Rejected";
+    classes = "bg-gray-600/20 text-gray-200 border-gray-500";
+  } else {
+    label = "Unidentified";
+    classes = "bg-gray-600/20 text-gray-200 border-gray-500";
+  }
   return (
-    <span
-      className={`px-2 py-0.5 rounded-full text-xs font-medium border ${classes}`}
-    >
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${classes}`}>
       {label}
     </span>
   );
-}
-
-function getStatusLabelAndClass(status) {
-  switch (status) {
-    case 0:
-      return {
-        label: "Waiting",
-        classes: "bg-yellow-500/20 text-yellow-200 border-yellow-600",
-      };
-    case 1:
-      return {
-        label: "On Going",
-        classes: "bg-green-600/20 text-green-200 border-green-500",
-      };
-    case -1:
-      return {
-        label: "Rejected",
-        classes: "bg-gray-600/20 text-gray-200 border-gray-500",
-      };
-    default:
-      return {
-        label: "Unidentified",
-        classes: "bg-gray-600/20 text-gray-200 border-gray-500",
-      };
-  }
 }
 
 function AuctionTextExpand({ text, maxLength = 60, className }) {
