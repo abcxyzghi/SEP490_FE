@@ -1,31 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./HostAuctionModal.css";
 import {
+  Box,
+  CircularProgress,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
-  TextField,
-  Stepper,
+  DialogContent,
   Step,
   StepLabel,
-  CircularProgress,
-  Box,
-  Typography,
+  Stepper
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import tz from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { useEffect, useRef, useState } from "react";
+import "./HostAuctionModal.css";
 dayjs.extend(utc);
 dayjs.extend(tz);
 
-import { newAuction, productOfAuction, fetchMyAuctionList } from "../../../services/api.auction";
+import { cancelAuction, fetchMyAuctionList, newAuction, productOfAuction } from "../../../services/api.auction";
 import MessageModal from "../MessageModal/MessageModal";
 
 /* -------------------- Custom Step Connector (same pattern as ForgotPasswordDialog) -------------------- */
 import StepConnector, { stepConnectorClasses } from "@mui/material/StepConnector";
-import { getCollectionDetail } from "../../../services/api.product";
 import { getAllProductOfUserCollection } from "../../../services/api.user";
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
@@ -165,6 +161,17 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
     return parsed.tz(dayjs.tz.guess()).format("YYYY-MM-DD HH:mm");
   };
 
+  const closeModal = async() => {
+     if (createdAuctionId) {
+        const tempResponse = await cancelAuction(createdAuctionId);
+        if (!tempResponse || tempResponse.message) {
+          setModal({ open: true, type: "error", title: "Cancel Auction Error", message: "Failed to cancel existing auction. Please try again." });
+          return;
+        }
+      }
+    onClose();
+  };
+
   // Guarded Next (create auction and fetch latest)
   const handleNext = async () => {
     setModal({ open: false, type: "default", title: "", message: "" });
@@ -194,11 +201,19 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
       }
 
       // if already created and inputs unchanged -> reuse
+      
       const snapshot = step1SnapshotRef.current;
       const unchanged = snapshot && snapshot.title === title && snapshot.description === description && snapshot.startTime === startTime;
-      if (createdAuctionId && unchanged) {
-        setActiveStep(1);
-        return;
+      if (createdAuctionId) {
+        if (unchanged) {
+            setActiveStep(1);
+            return;
+        }
+        const tempResponse = await cancelAuction(createdAuctionId);
+        if (!tempResponse || tempResponse.message) {
+          setModal({ open: true, type: "error", title: "Cancel Auction Error", message: "Failed to cancel existing auction. Please try again." });
+          return;
+        }
       }
 
       setCreating(true);
@@ -224,6 +239,8 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
       }
 
       const id = chosen.id || chosen._id;
+      console.log("Auction created:", id);
+      console.log("Latest auction fetched:", chosen);
       setCreatedAuctionId(id);
       setCreatedAuctionObj(chosen);
 
@@ -456,7 +473,7 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
           message={modal.message} />
 
         <DialogActions>
-          <div className="hostAuctionDialog-Cancel-btn" onClick={onClose}>Cancel</div>
+          <div className="hostAuctionDialog-Cancel-btn" onClick={closeModal}>Cancel</div>
           {activeStep > 0 && <div className="hostAuctionDialog-Back-btn" onClick={handleBack}>Back</div>}
           {activeStep === 0 ? (
             <div className="hostAuctionDialog-Submit-btn" onClick={handleNext}>
