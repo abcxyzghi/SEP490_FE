@@ -218,17 +218,17 @@ export default function AdRevenueReport() {
 
       <div className="revenue-summary-container">
         <div className="revenue-summary-card">
-          <h3>Net Transactions</h3>
+          <h3>Net User Fund Flow</h3>
           <p style={{ color: revenueSummary.netTransactions >= 0 ? '#2ecc71' : '#e74c3c' }}>{revenueSummary.netTransactions.toLocaleString()} VND</p>
         </div>
         <div className="revenue-summary-card">
           <h3>Total Fees</h3>
           <p style={{ color: '#3498db' }}>{revenueSummary.totalFees.toLocaleString()} VND</p>
         </div>
-        <div className="revenue-summary-card total">
+        {/* <div className="revenue-summary-card total">
           <h3>Overall Total</h3>
           <p>{revenueSummary.grandTotal.toLocaleString()} VND</p>
-        </div>
+        </div> */}
       </div>
 
       <div className="adproduct-tabs">
