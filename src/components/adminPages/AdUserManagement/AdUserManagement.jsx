@@ -27,11 +27,13 @@ export default function AdUserManagement() {
 
   const fetchUsers = useCallback(async () => {
     const res = await getAllUsers();
+    res.data.reverse();
     setAllUsers(res.data || []);
   }, []);
 
   const fetchModerators = useCallback(async () => {
     const res = await getAllModerators();
+    res.data.reverse();
     setAllModerators(res.data || []);
   }, []);
 

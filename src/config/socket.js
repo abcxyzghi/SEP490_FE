@@ -47,7 +47,7 @@ export function connectWebSocket(conversationId, myId, token, onMessage, onOpen,
   currentConversationId = conversationId;
   currentUserId = myId;
   currentToken = token;
-
+  //https://sep490-manga-mystery-box-pybe.onrender.com/py
   const wsUrl = `wss://api.mmb.io.vn/py/websocket/chatbox/${conversationId}/${myId}?token=${token}`;
 
   if (socket && (socket.readyState === WS_CONNECTING || socket.readyState === WS_CLOSING)) {

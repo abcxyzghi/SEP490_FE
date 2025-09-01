@@ -19,6 +19,7 @@ export default function ModProduct() {
   const fetchProducts = async () => {
     const res = await getAllProduct();
     if (res && Array.isArray(res.data)) {
+      res.data.reverse();
       setProducts(res.data);
     } else if (Array.isArray(res)) {
       setProducts(res);

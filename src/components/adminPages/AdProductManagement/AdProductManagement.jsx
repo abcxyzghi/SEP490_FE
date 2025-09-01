@@ -92,6 +92,7 @@ export default function AdProductManagement() {
           // Chỉ fetch lại nếu state rỗng để tránh gọi API không cần thiết
           if (allProducts.length === 0) {
             const res = await getAllProducts();
+            res.data.reverse();
             setAllProducts(res.data || []);
           }
         } else {
