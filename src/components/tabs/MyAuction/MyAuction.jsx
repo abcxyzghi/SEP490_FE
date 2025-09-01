@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./MyAuction.css";
 import {
   cancelAuction,
-  confirmAuction,
   fetchMyAuctionList,
 } from "../../../services/api.auction";
 import { getOtherProfile } from "../../../services/api.user";
@@ -50,27 +49,27 @@ export default function MyAuction() {
     }
   };
 
-  const handleConfirm = async (auctionId) => {
-    try {
-      const res = await confirmAuction(auctionId);
-      console.log("confirmAuction response:", res);
+  // const handleConfirm = async (auctionId) => {
+  //   try {
+  //     const res = await confirmAuction(auctionId);
+  //     console.log("confirmAuction response:", res);
 
-      const success = res?.success ?? res?.data?.success;
+  //     const success = res?.success ?? res?.data?.success;
 
-      if (success) {
-        showModal("default", "Success", "Auction confirmed successfully!");
-        fetchData();
-      } else if (res.errorCode === 404) {
-        showModal('error', 'Error', 'No one has placed a bid!');
+  //     if (success) {
+  //       showModal("default", "Success", "Auction confirmed successfully!");
+  //       fetchData();
+  //     } else if (res.errorCode === 404) {
+  //       showModal('error', 'Error', 'No one has placed a bid!');
 
-      } else if (res.errorCode === 403) {
-        showModal('error', 'Error', 'Auction still in progress');
-      }
-    } catch (error) {
-      console.error("confirm error:", error);
-      showModal("error", "Error", error || "Failed to confirm auction.");
-    }
-  };
+  //     } else if (res.errorCode === 403) {
+  //       showModal('error', 'Error', 'Auction still in progress');
+  //     }
+  //   } catch (error) {
+  //     console.error("confirm error:", error);
+  //     showModal("error", "Error", error || "Failed to confirm auction.");
+  //   }
+  // };
 
   // Tạo hàm fetchData để tái sử dụng
   const fetchData = async () => {
@@ -83,6 +82,7 @@ export default function MyAuction() {
     try {
       const result = await fetchMyAuctionList();
       const flattenedData = result.data.flat();
+      flattenedData.reverse()
       setAuctionList(flattenedData);
 
       const sellerIds = flattenedData.map((a) => a.seller_id).filter(Boolean);
@@ -310,7 +310,7 @@ export default function MyAuction() {
                           Cancel
                         </button>
                       )}
-                      {auction.status === 1 &&
+                      {/* {auction.status === 1 &&
                         new Date(auction.end_time) <
                         new Date(
                           new Date().toLocaleString("en-US", {
@@ -323,7 +323,7 @@ export default function MyAuction() {
                           >
                             Confirm
                           </button>
-                        )}
+                        )} */}
                       <button
                         className="auctionRoomList__viewBtn"
                         onClick={() => setIsModalOpen(true)}
@@ -365,9 +365,12 @@ function StatusBadge({ status, start_time, end_time }) {
     if (now >= start && now <= end) {
       label = "On Going";
       classes = "bg-green-600/20 text-green-200 border-green-500";
-    } else {
+    } else if (now < start) {
       label = "Waiting";
       classes = "bg-yellow-500/20 text-yellow-200 border-yellow-600";
+    } else if (now > end) {
+      label = "Finished";
+      classes = "bg-blue-500/20 text-blue-200 border-blue-600";
     }
   } else if (status === 0) {
     label = "Waiting to proceed";

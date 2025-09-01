@@ -49,12 +49,12 @@ export default function AuctionRoomList() {
           const started = await fetchAuctionList("started");
           const waiting = await fetchAuctionList("waiting");
           auctions = [
-            ...(started?.data?.data || []),
-            ...(waiting?.data?.data || [])
+            ...(started?.data?.data.sort((b, a) => new Date(b.start_time) - new Date(a.start_time)) || []),
+            ...(waiting?.data?.data.sort((b, a) => new Date(b.start_time) - new Date(a.start_time)) || [])
           ];
         } else {
           const result = await fetchAuctionList(statusFilter);
-          auctions = result?.data?.data || [];
+          auctions = result?.data?.data.sort((b, a) => new Date(b.start_time) - new Date(a.start_time)) || [];
         }
         setAuctionList({ data: { data: auctions } });
 

@@ -51,24 +51,24 @@ export const cancelAuction = async (auctionId) => {
   }
 };
 
-export const confirmAuction = async (auctionId) => {
-  try {
-    const response = await pythonApiWithFallback({
-      method: "post",
-      url: `/api/auction/confirmation`,
-      params: { auction_id: auctionId },
-      requiresAuth: true,
-    });
-    return response.data;
-  } catch (error) {
+// export const confirmAuction = async (auctionId) => {
+//   try {
+//     const response = await pythonApiWithFallback({
+//       method: "post",
+//       url: `/api/auction/confirmation`,
+//       params: { auction_id: auctionId },
+//       requiresAuth: true,
+//     });
+//     return response.data;
+//   } catch (error) {
     
-    console.error(error.response?.data?.error || "Error cancel auction");
-    return {
-      errorCode: error.response?.data?.error_code,
-      message: error.response?.data?.error
-    }
-  }
-};
+//     console.error(error.response?.data?.error || "Error cancel auction");
+//     return {
+//       errorCode: error.response?.data?.error_code,
+//       message: error.response?.data?.error
+//     }
+//   }
+// };
 
 
 export const fetchAuctionList = async (filter = "started") => {
