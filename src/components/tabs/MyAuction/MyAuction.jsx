@@ -82,7 +82,6 @@ export default function MyAuction() {
     try {
       const result = await fetchMyAuctionList();
       const flattenedData = result.data.flat();
-      flattenedData.reverse()
       setAuctionList(flattenedData);
 
       const sellerIds = flattenedData.map((a) => a.seller_id).filter(Boolean);
@@ -110,10 +109,7 @@ export default function MyAuction() {
   }, [user]);
 
   // one sort line (non-mutating)
-  const sortedAuctionsRaw = [...auctionList].sort(
-    (a, b) =>
-      new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-  );
+  const sortedAuctionsRaw = [...auctionList].reverse();
   // Filter auctions by searchText
   const sortedAuctions = sortedAuctionsRaw.filter((auction) => {
     if (!searchText) return true;
