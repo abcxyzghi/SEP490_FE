@@ -33,7 +33,7 @@ export default function RegisterForm({ showSnackbar = () => { } }) {
     };
 
     const validateUsername = (userName) =>
-        /^[a-zA-Z0-9_]{3,15}$/.test(userName);
+    /^[a-zA-Z0-9]{3,15}$/.test(userName);
 
     const validateEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -55,7 +55,7 @@ export default function RegisterForm({ showSnackbar = () => { } }) {
         if (!validateUsername(userName)) {
             setIsLoading(false);
             return showSnackbar(
-                'Username must be 3-15 characters and may contain letters, numbers and underscores.',
+                'Username must be 3-15 characters and may contain letters, numbers only.',
                 'warning'
             );
         }
