@@ -25,12 +25,13 @@ const cartSlice = createSlice({
   const incomingItems = action.payload;
 
   incomingItems.forEach((incomingItem) => {
-    const existingItem = state.items.find(
+    const existingIndex = state.items.findIndex(
       (item) => item.id === incomingItem.id && item.type === incomingItem.type
     );
 
-    if (existingItem) {
-      existingItem.quantity = incomingItem.quantity;
+    if (existingIndex !== -1) {
+      // Ghi đè toàn bộ dữ liệu bằng dữ liệu mới nhất
+      state.items[existingIndex] = { ...state.items[existingIndex], ...incomingItem };
     } else {
       state.items.push(incomingItem);
     }
