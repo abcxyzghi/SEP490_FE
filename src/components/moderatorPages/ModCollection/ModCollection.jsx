@@ -123,7 +123,7 @@ export default function ModCollection() {
 
   const handleAddReward = async (e) => {
     e.preventDefault();
-    if (!conditions || !quantityBox || !file) {
+    if (!conditions || !quantityBox) {
       toast.error("Please fill in all reward fields");
       return;
     }

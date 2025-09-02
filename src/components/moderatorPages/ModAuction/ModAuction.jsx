@@ -182,8 +182,8 @@ export default function ModAuction() {
                     </td>
                     <td>
                       <div className="modauction-mod-time-frame">
-                        <span><strong>Start:</strong> {moment.utc(auction.start_time).local().format("DD/MM/YYYY HH:mm")}</span>
-                        <span><strong>End:</strong> {moment.utc(auction.end_time).local().format("DD/MM/YYYY HH:mm")}</span>
+                        <span><strong>Start:</strong> {moment(auction.start_time).format("DD/MM/YYYY HH:mm")}</span>
+                        <span><strong>End:</strong> {moment(auction.end_time).format("DD/MM/YYYY HH:mm")}</span>
                       </div>
                     </td>
                     <td>{renderStatusBadge(auction)}</td>
