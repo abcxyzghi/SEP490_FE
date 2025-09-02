@@ -20,11 +20,11 @@ export default function Settingpage() {
               content:
                 <EditUserProfile />
             },
-            {
-              label: 'Themes',
-              content:
-                <UserTheme />
-            },
+            // {
+            //   label: 'Themes',
+            //   content:
+            //     <UserTheme />
+            // },
             {
               label: 'Collection Display ',
               content:

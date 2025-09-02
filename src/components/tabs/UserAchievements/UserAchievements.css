@@ -5,7 +5,27 @@
 }
 
 .userAchievement-medals-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: flex-start;
+}
+
+.userAchievement-medals-grid>* {
+    flex: 0 1 200px;
+}
+
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+/* -----------------======================= QUERY WOKE =======================------------------------*/
+/* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .userAchievement-medals-grid {
+        justify-content: flex-start;
+    }
+
+    .userAchievement-medals-grid>* {
+        flex: 0 1 160px;
+    }
 }
