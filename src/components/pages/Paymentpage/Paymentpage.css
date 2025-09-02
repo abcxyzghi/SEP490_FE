@@ -15,6 +15,7 @@
   font-weight: 500;
   color: #fff;
   background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(6px);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -40,4 +41,5 @@
   background: linear-gradient(135deg, #960BAF, #FFD700);
   color: #0b0b0b;
   font-weight: 700;
+  border: none;
 }

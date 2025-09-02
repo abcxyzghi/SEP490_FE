@@ -7,7 +7,6 @@
 
 /*  --------------------------==================== Generic section ====================--------------------------  */
 .achievementpage-section {
-    border-radius: 12px;
     padding: 18px;
     margin-bottom: 18px;
 }
@@ -32,9 +31,14 @@
 
 /* --------------------------==================== Medals ====================-------------------------- */
 .achievementpage-medals-grid {
-    display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: flex-start;
+}
+
+.achievementpage-medals-grid>* {
+    flex: 0 1 200px;
 }
 
 .achievementpage-medal-card {
@@ -43,8 +47,8 @@
     align-items: center;
     gap: 16px;
     padding: 20px 20px 16px;
-    border-radius: 10px;
-    border: 1px solid var(--light-3-o80);
+    border-radius: 8px;
+    border: 2px solid var(--dark-2-o90);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
     backdrop-filter: blur(6px);
     width: 100%;
@@ -112,7 +116,7 @@
 }
 
 .achievementpage-collection-name {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.3rem;
     color: var(--light-1);
 }
@@ -135,10 +139,10 @@
 .achievementpage-radix-progress-root {
     position: relative;
     height: 10px;
-    border: 1px solid var(--dark-4-o90);
+    border: 1px solid var(--dark-3-o90);
     border-radius: 6px;
     overflow: visible;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(0, 0, 0, 0.3);
 }
 
 /* Filled indicator: width kept dynamic inline */
@@ -264,3 +268,10 @@
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
 /* -----------------======================= QUERY WOKE =======================------------------------*/
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
+
+/* For screen width ≤ 480px */
+@media (max-width: 480px) {
+    .achievementpage-medals-grid>* {
+        flex: 0 1 160px;
+    }
+}
