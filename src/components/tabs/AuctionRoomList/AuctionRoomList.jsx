@@ -288,13 +288,13 @@ export default function AuctionRoomList() {
                       <div className="auctionRoomList__date-item">
                         <span className="auctionRoomList__date-label">Start:</span>
                         <span className="auctionRoomList__date-value">
-                          {moment.utc(auction.start_time).local().format('DD/MM/YYYY HH:mm')}
+                          {moment(auction.start_time).local().format('DD/MM/YYYY HH:mm')}
                         </span>
                       </div>
                       <div className="auctionRoomList__date-item">
                         <span className="auctionRoomList__date-label">End:</span>
                         <span className="auctionRoomList__date-value">
-                          {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}
+                          {moment(auction.end_time).local().format('DD/MM/YYYY HH:mm')}
                         </span>
                       </div>
                     </div>

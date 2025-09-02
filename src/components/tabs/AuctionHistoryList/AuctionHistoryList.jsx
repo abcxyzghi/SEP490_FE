@@ -183,7 +183,7 @@ export default function AuctionHistoryList() {
                   <div className="auctionHistoryList-finance">
                     {fmtVND(auction.host_value)} <span className="auctionHistoryList-muted">• fee {auction.fee_charge} •</span> <span className="auctionHistoryList-net">{fmtVND(auction.incoming_value)}</span>
                   </div>
-                  <div className="auctionHistoryList-endtime">Ended: {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</div>
+                  <div className="auctionHistoryList-endtime">Ended: {moment(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</div>
                 </div>
               </div>
             </li>
@@ -281,7 +281,7 @@ export default function AuctionHistoryList() {
                   </div>
                 )}
                 <div className="auctionHistoryList-card-row">
-                  <div className="auctionHistoryList-endtime">Ends at: {moment.utc(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</div>
+                  <div className="auctionHistoryList-endtime">Ends at: {moment(auction.end_time).local().format('DD/MM/YYYY HH:mm')}</div>
                 </div>
               </div>
             </li>
@@ -401,7 +401,7 @@ export default function AuctionHistoryList() {
                   </div>
                   <div className="auctionHistoryList-endtime">
                     Ended: {item.auction_info?.end_time
-                      ? moment.utc(item.auction_info.end_time).local().format('DD/MM/YYYY HH:mm')
+                      ? moment(item.auction_info.end_time).local().format('DD/MM/YYYY HH:mm')
                       : 'N/A'}
                   </div>
                 </div>
