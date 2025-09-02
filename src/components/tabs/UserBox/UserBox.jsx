@@ -173,8 +173,8 @@ export default function UserBox() {
           })}
       </div>
 
-      {boxes.length === 0 && (
-        <div className="text-center text-gray-400 mt-6">No boxes to display yet.</div>
+      {(boxes.length === 0 || boxes.every(item => item.quantity === 0)) && (
+        <div className="text-center text-gray-400 mt-6 oxanium-regular">No boxes to display.</div>
       )}
 
       {isEnd ? (
