@@ -88,7 +88,7 @@ export default function MobileDownLink({ open, onClose }) {
                     {/* Download Button */}
                     <div className="mobileDLink-download">
                         <a
-                            href="https://expo.dev/accounts/minhtruong123a/projects/SEP490_FE_mobile/builds/9e8efc8c-a6af-40c7-9714-d65d9c02621d"
+                            href="https://expo.dev/accounts/minhtruong123a/projects/SEP490_FE_mobile/builds/97177622-c7fd-482c-b6dc-e42fb14db8c6"
                             target="_blank"
                             rel="noopener noreferrer"
                         >

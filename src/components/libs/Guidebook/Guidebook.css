@@ -12,8 +12,9 @@
 /* --------------------------==================== Modal container with dark blur glass effect ====================--------------------------   */
 .guidebook-container {
     position: relative;
-    width: 90%;
-    max-width: 500px;
+    width: 100%;
+    max-width: 760px;
+    height: auto;
     padding: 1.5rem;
     border-radius: 12px;
     border: 1px solid var(--dark-1);
@@ -55,7 +56,7 @@
 .guidebook-image {
     margin-top: 1rem;
     width: 100%;
-    height: 200px;
+    height: 45vh;
     object-fit: contain;
     border-radius: 4px;
     margin-bottom: 1rem;
