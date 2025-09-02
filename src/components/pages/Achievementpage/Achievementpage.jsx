@@ -86,6 +86,15 @@ export default function Achievementpage() {
     }
   };
 
+  // Compute percent based on achievement.count vs highest dto.conditions
+  const getAchievementProgress = (achievement) => {
+    const { count = 0, dtos = [] } = achievement;
+    const maxCondition = dtos.length ? Math.max(...dtos.map(d => Number(d.conditions) || 0)) : 0;
+    if (!maxCondition) return 0;
+    return Math.min(100, Math.round((count / maxCondition) * 100));
+  };
+
+
   if (loading) {
     return (
       <div className="achievementpage-container">
@@ -191,24 +200,13 @@ export default function Achievementpage() {
         ) : (
           <div className="achievementpage-achievements-stack oxanium-regular">
             {progress.map((achievement) => {
-              const total = achievement.dtos.length;
-              const lastCondition = achievement.dtos[total - 1]?.conditions ?? 0;
-              const completedCondition = achievement.dtos
-                .filter((dto) => dto.isComplete)
-                .reduce((sum, dto) => sum + dto.conditions, 0);
-
-              // Progress based on max condition only:
-              const maxCondition = lastCondition > 0 ? lastCondition : 1;
-              const percent = Math.min(
-                100,
-                Math.round((completedCondition / maxCondition) * 100)
-              );
+              const percent = getAchievementProgress(achievement);
 
               return (
                 <article key={achievement.id} className="achievementpage-achievement-card">
                   <header className="achievementpage-achievement-header">
                     <h2 className="achievementpage-collection-name">
-                      {achievement.collectionName}
+                      {achievement.collectionName} ({achievement.count})
                     </h2>
 
                     <div className="achievementpage-progress-scroll">
@@ -220,7 +218,7 @@ export default function Achievementpage() {
                         >
                           <Progress.Indicator
                             className="achievementpage-radix-progress-indicator"
-                            style={{ width: `${percent}%` }} /* keep width dynamic */
+                            style={{ width: `${percent}%` }}
                           />
 
                           {/* Pins (position left dynamic) */}
