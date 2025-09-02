@@ -181,13 +181,9 @@ export default function ModAuction() {
                     </td>
                     <td>
                       <div className="modauction-mod-time-frame">
-<<<<<<< Updated upstream
                         <span><strong>Start:</strong> {moment(auction.start_time).format("DD/MM/YYYY HH:mm")}</span>
                         <span><strong>End:</strong> {moment(auction.end_time).format("DD/MM/YYYY HH:mm")}</span>
-=======
-                        <span><strong>Start:</strong> {moment(auction.start_time).local().format("DD/MM/YYYY HH:mm")}</span>
-                        <span><strong>End:</strong> {moment(auction.end_time).local().format("DD/MM/YYYY HH:mm")}</span>
->>>>>>> Stashed changes
+
                       </div>
                     </td>
                     <td>{renderStatusBadge(auction)}</td>
