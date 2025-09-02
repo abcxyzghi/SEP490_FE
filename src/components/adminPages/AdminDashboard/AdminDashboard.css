@@ -1,0 +1,234 @@
+.admindashboard-container {
+    background-color: #121212;
+    color: #ffffff;
+    padding: 32px;
+    /* Tăng padding để thoáng hơn */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- Header & Controls --- */
+.admindashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.admindashboard-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.admindashboard-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admindashboard-live-clock {
+    background-color: #2c2c2c;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f5f5f5;
+    border: 1px solid #444;
+}
+
+.admindashboard-refresh-btn {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #fa81b4, #f7778c, #fb9c6d);
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.admindashboard-refresh-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(255, 118, 136, 0.6);
+}
+
+.admindashboard-refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* --- Cards & Charts --- */
+.admindashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+}
+
+.admindashboard-grid.summary {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.admindashboard-grid.full-width {
+    grid-template-columns: 1fr;
+}
+
+.admindashboard-card,
+.admindashboard-chart-container {
+    background-color: #1e1e1e;
+    padding: 24px;
+    border-radius: 10px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.admindashboard-card-title {
+    color: #bbb;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.admindashboard-card-value {
+    font-size: 22px;
+    /* SỬA LỖI: Giảm size chữ để vừa với số lớn */
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    /* SỬA LỖI: Ngăn xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần bị tràn */
+    text-overflow: ellipsis;
+    /* Hiển thị ... nếu vẫn bị tràn */
+}
+
+/* --- Filter Buttons --- */
+.admindashboard-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.admindashboard-chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.admindashboard-filter-group {
+    display: flex;
+    gap: 8px;
+}
+
+.admindashboard-filter-btn {
+    padding: 6px 16px;
+    background: #2c2c2c;
+    color: #bbb;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admindashboard-filter-btn:hover {
+    background: #3a3a3a;
+    color: #ffffff;
+}
+
+.admindashboard-filter-btn.active {
+    background: linear-gradient(135deg, #fa81b4, #f7778c, #fb9c6d);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(255, 118, 136, 0.6);
+}
+
+/* --- Bảng Hoạt động Gần đây --- */
+.admindashboard-recent-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admindashboard-recent-table th,
+.admindashboard-recent-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+    white-space: nowrap;
+}
+
+.admindashboard-recent-table th {
+    color: #bbb;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.admindashboard-recent-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admindashboard-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.admindashboard-tag.deposit {
+    background-color: rgba(86, 171, 47, 0.3);
+    border: 1px solid #56ab2f;
+}
+
+.admindashboard-tag.withdraw {
+    background-color: rgba(255, 75, 43, 0.3);
+    border: 1px solid #ff4b2b;
+}
+
+.admindashboard-tag.fee {
+    background-color: rgba(52, 152, 219, 0.3);
+    border: 1px solid #3498db;
+}
+
+
+/* --- Sửa lỗi Tooltip và Text trên Chart --- */
+.admindashboard-custom-tooltip {
+    background-color: #2c2c2c;
+    border: 1px solid #555;
+    /* Sáng hơn 1 chút */
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #f5f5f5;
+    /* Sáng hơn */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.admindashboard-tooltip-label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ffffff;
+    /* Luôn là màu trắng */
+}
+
+.recharts-legend-item-text {
+    color: #bbb !important;
+}
+
+.recharts-text {
+    fill: #bbb !important;
+}
+
+/* --- Status Text --- */
+.admindashboard-status {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #888;
+}
+
+.admindashboard-status.error {
+    color: #ff4b2b;
+}

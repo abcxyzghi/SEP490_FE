@@ -79,7 +79,7 @@ export default function AdminSidebar() {
     { path: Pathname('ADMIN_USERS'), label: 'User Management', defaultIcon: AdminUserIcon },
     { path: Pathname('ADMIN_PRODUCT'), label: 'Product Management', defaultIcon: AdminProductIcon },
     { path: Pathname('ADMIN_AUCTION'), label: 'Auction Management', defaultIcon: AdminAuctionIcon },
-    { path: Pathname('ADMIN_REVENUE'), label: 'Revenue Management', defaultIcon: AdminRevenueIcon },
+    { path: Pathname('ADMIN_REVENUE'), label: 'Transaction Management', defaultIcon: AdminRevenueIcon },
     { path: Pathname('ADMIN_REPORT'), label: 'Report Management', defaultIcon: AdminReportIcon },
   ];
 
