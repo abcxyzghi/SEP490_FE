@@ -63,28 +63,36 @@ export default function Achievementpage() {
   }, []);
 
   const handleToggleStatus = async (userRewardId) => {
-    try {
-      setUpdatingId(userRewardId);
-      const res = await updateStatusAuction(userRewardId);
-      if (res?.status) {
-        setMedals((prev) =>
-          prev.map((medal) =>
-            medal.userRewardId === userRewardId
-              ? { ...medal, isPublic: !medal.isPublic }
-              : medal
-          )
-        );
-        showModal('default', 'Update Successful', `Medal is now ${res.data.isPublic ? "publicly displayed" : "private"}`);
-      } else {
-        showModal('error', 'Update Failed', 'Failed to update status');
-      }
-    } catch (err) {
-      console.error(err);
-      showModal('error', 'Update Error', 'An error occurred while updating status');
-    } finally {
-      setUpdatingId(null);
+  try {
+    setUpdatingId(userRewardId);
+    const res = await updateStatusAuction(userRewardId);
+
+    if (res?.status) {
+      setMedals((prev) =>
+        prev.map((medal) => {
+          if (medal.userRewardId === userRewardId) {
+            const newStatus = !medal.isPublic;
+            // Hiển thị modal ngay khi đổi status
+            showModal(
+              'default',
+              'Update Successful',
+              `Medal is now ${newStatus ? "publicly displayed" : "private"}`
+            );
+            return { ...medal, isPublic: newStatus };
+          }
+          return medal;
+        })
+      );
+    } else {
+      showModal('error', 'Update Failed', 'Failed to update status');
     }
-  };
+  } catch (err) {
+    console.error(err);
+    showModal('error', 'Update Error', 'An error occurred while updating status');
+  } finally {
+    setUpdatingId(null);
+  }
+};
 
   // Compute percent based on achievement.count vs highest dto.conditions
   const getAchievementProgress = (achievement) => {
