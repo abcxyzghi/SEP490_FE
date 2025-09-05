@@ -34,7 +34,7 @@ export default function UserSaleReport() {
   const [comments, setComments] = useState([]);
   const [selectedProductName, setSelectedProductName] = useState(null);
   const [selectedProductRating, setSelectedProductRating] = useState(null);
-
+  const [useBackupImg, setUseBackupImg] = useState(false);
   useEffect(() => {
     const fetchUserSale = async () => {
       try {
@@ -329,7 +329,8 @@ export default function UserSaleReport() {
                   {comments.map((comment, index) => (
                     <li key={index} className="product-comment-item">
                       <img
-                        src={buildImageUrl(comment.profileImage)}
+                        src={buildImageUrl(comment.profileImage, useBackupImg)}
+                        onError={() => setUseBackupImg(true)}
                         alt={comment.username}
                         className="product-comment-avatar"
                       />
