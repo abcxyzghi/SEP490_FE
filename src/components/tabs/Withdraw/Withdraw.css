@@ -86,7 +86,7 @@
 }
 
 .withdrawTab-btn:hover:not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(-0.5px);
     opacity: 0.95;
 }
 

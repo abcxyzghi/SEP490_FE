@@ -20,7 +20,7 @@ export default function UserTheme() {
         return (
           <div
             key={key}
-            className={`user-theme-preview-card${isActive ? " user-theme-active" : ""}`}
+            className={`user-theme-preview-card${isActive ? " user-theme-active" : ""} oxanium-semibold`}
             style={{
               border: isActive ? "3px solid #22c55e" : undefined,
               boxShadow: isActive ? "0 0 0 2px #bbf7d0" : undefined,

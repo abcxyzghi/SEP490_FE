@@ -149,7 +149,7 @@ export default function AuctionHistoryList() {
   };
 
   const renderMyAuctions = () => {
-    if (!myAuctions.length) return <div className="auctionHistoryList-empty">No ended auctions found.</div>;
+    if (!myAuctions.length) return <div className="auctionHistoryList-empty oleo-script-regular">No ended auction.</div>;
 
     return (
       <ul className="auctionHistoryList-list">
@@ -194,7 +194,7 @@ export default function AuctionHistoryList() {
   };
 
   const renderJoinedAuctions = () => {
-    if (!joinedAuctions.length) return <div className="auctionHistoryList-empty">No joined auctions found.</div>;
+    if (!joinedAuctions.length) return <div className="auctionHistoryList-empty oleo-script-regular">No joined auction.</div>;
 
     return (
       <ul className="auctionHistoryList-list">
@@ -292,7 +292,7 @@ export default function AuctionHistoryList() {
   };
 
   const renderWinners = () => {
-    if (!winners.length) return <div className="auctionHistoryList-empty">No winners found.</div>;
+    if (!winners.length) return <div className="auctionHistoryList-empty oleo-script-regular">No win auction.</div>;
 
     return (
       <ul className="auctionHistoryList-list">

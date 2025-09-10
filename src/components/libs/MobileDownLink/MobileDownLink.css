@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.85);
-    cursor: zoom-out;
+    /* cursor: zoom-out; */
 }
 
 /* container for the big image */
@@ -21,6 +21,7 @@
     border-radius: 10px;
     background-color: aliceblue;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    cursor: zoom-out;
 }
 
 .mobileDLink-expandedImg-img {
@@ -30,7 +31,6 @@
     display: block;
     border-radius: 8px;
     object-fit: contain;
-    cursor: zoom-out;
 }
 
 /*  --------------------------==================== Main modal ====================-------------------------- */
@@ -95,11 +95,11 @@
 
 /*  --------------------------==================== Header ====================-------------------------- */
 .mobileDLink-header {
-    margin-bottom: 1rem;
+    text-align: center;
+    /* margin-bottom: 1rem; */
 }
 
 .mobileDLink-header h2 {
-    text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     background: linear-gradient(90deg, #6a00ff, #ffcc00);
@@ -110,6 +110,10 @@
 
 .mobileDLink-header p {
     font-size: 0.87rem;
+}
+
+.mobileDLink-btwText {
+    text-align: center;
 }
 
 /*  --------------------------==================== Images ====================-------------------------- */
@@ -141,7 +145,8 @@
 .mobileDLink-qr img:hover {
     filter: blur(0.5px);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px); /* for Safari */
+    -webkit-backdrop-filter: blur(12px);
+    /* for Safari */
 }
 
 

@@ -248,7 +248,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
 
   // Check for error after loading
   if (error) {
-    return <div className="text-red-500 text-center mt-6">{error}</div>;
+    return <div className="userCollectionList-errMessage oleo-script-regular">{error}</div>;
   }
 
   // Pagination for collections
@@ -399,7 +399,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         <>
           <div className="userCollectionList-card-list-container">
             {visibleCollections.length === 0 ? (
-              <div className="text-gray-500 mt-2 oxanium-regular">No collections found.</div>
+              <div className="userCollectionList-empty oleo-script-regular">No collection shown.</div>
             ) : (
               <div className="userCollectionList-card-grid">
                 {visibleFavs.length === 0 ? (
@@ -665,7 +665,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
               ))}
             </div>
           ) : visibleProducts.length === 0 && visiblefavProducts.length === 0 ? (
-            <div className="text-gray-500 mt-2">This collection is empty.</div>
+            <div className="userCollectionList-empty oleo-script-regular">This collection is empty.</div>
           ) : (
             (() => {
               // Chuẩn bị 2 list đã filter

@@ -8,8 +8,8 @@ import LeftArrow from '../../../assets/Icon_line/Arrow_Left_LG.svg'
 
 const rarityColors = {
     Legendary: '#FFD700',
-    Epic: '#A915C6',
-    Rare: '#4169E1',
+    Epic: '#c318e6ff',
+    Rare: '#4a75f5ff',
     Uncommon: '#32CD32',
     Common: '#A9A9A9',
 };

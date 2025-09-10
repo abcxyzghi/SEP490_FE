@@ -151,7 +151,7 @@ export default function Achievementpage() {
   }
 
   if (error) {
-    return <div className="text-red-500 text-center p-4 oxanium-regular">{error}</div>;
+    return <div className="achievementpage-errMessage oleo-script-regular">{error}</div>;
   }
 
   return (
@@ -161,7 +161,7 @@ export default function Achievementpage() {
         <h1 className="achievementpage-title oleo-script-bold">Medal Display</h1>
 
         {medals.length === 0 ? (
-          <div className="achievementpage-empty oxanium-regular border rounded-lg">No medals</div>
+          <div className="achievementpage-empty oleo-script-regular">No medals</div>
         ) : (
           <div className="achievementpage-medals-grid">
             {medals.map((medal) => (
@@ -196,7 +196,7 @@ export default function Achievementpage() {
         <h1 className="achievementpage-title oleo-script-bold">Collection Progress</h1>
 
         {progress.length === 0 ? (
-          <div className="achievementpage-empty oxanium-regular min-h-16 border rounded-lg">No progress</div>
+          <div className="achievementpage-empty oleo-script-regular">No progress</div>
         ) : (
           <div className="achievementpage-achievements-stack oxanium-regular">
             {progress.map((achievement) => {

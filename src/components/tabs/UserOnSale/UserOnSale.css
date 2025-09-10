@@ -5,6 +5,7 @@
   gap: 20px;
   padding: 30px;
   width: 100%;
+  min-height: 300px;
   max-height: 700px;
   overflow-y: auto;
   /* Hide scrollbar */
@@ -19,7 +20,18 @@
   /* Chrome, Safari, Opera */
 }
 
+/*  --------------------------==================== Empty message ====================-------------------------- */
+.userOnSale-empty {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #aaa;
 
+    margin: auto;
+    padding: 2rem;
+    border: 1px dashed #444;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.8);
+}
 
 /*  --------------------------==================== Main container (not include 'Load more' button) ====================-------------------------- */
 .userOnSale-card-grid {

@@ -101,6 +101,7 @@
 .productdetailP-info-content {
     --tabMain_bg: rgba(13, 19, 33, 0.795);
     background-color: var(--tabMain_bg);
+    backdrop-filter: blur(3px);
     flex: 3;
     width: 100%;
     border-radius: 8px;
@@ -544,6 +545,7 @@
     width: 40%;
     margin: 1rem 0 2rem 1%;
     background: var(--dark-1-o70);
+    backdrop-filter: blur(1px);
     border: 1px solid #e5e7eb;
     border-radius: 16px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -656,6 +658,68 @@
 .productdetailP-seller-btn-outline:active,
 .productdetailP-seller-btn-outfill:active {
     transform: scale(0.99);
+}
+
+/* --------------------------==================== Report modal ====================--------------------------*/
+.report-modal-header {
+  /* color: var(--light-2); */
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #6a00ff, #ffcc00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.report-modal-input,
+.report-modal-textarea {
+  width: 98%;
+  margin: 10px 2px;
+  padding: 10px 12px;
+  background: var(--dark-2-o50);
+  color: var(--light-2);
+  border-radius: 10px;
+}
+
+.report-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.report-modal-actions button {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.report-modal-actions button:first-child {
+  background: var(--light-3-o50);
+  color: var(--light-3);
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.report-modal-actions button:first-child:hover {
+  background: var(--light-4-o50);
+}
+
+.report-modal-actions button:last-child {
+  background-image: var(--purpleGr-buyBtn);
+  border: 0;
+  box-shadow: inset 0 -2px 25px -4px var(--light-3);
+  color: var(--light-3);
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.report-modal-actions button:last-child:hover {
+  background-image: var(--purpleGr-buyBtnOnhover);
 }
 
 .productdetailP-buyDropdown-container,

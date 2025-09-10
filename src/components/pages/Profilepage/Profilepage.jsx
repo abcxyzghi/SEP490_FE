@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { React, useEffect, useState, useCallback } from "react";
 import "./Profilepage.css";
-import { Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert, Dialog } from "@mui/material";
 import Particles from "../../libs/Particles/Particles";
 import MessageModal from "../../libs/MessageModal/MessageModal";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -223,9 +223,9 @@ export default function Profilepage() {
 
   if (loading || isLoading)
     return (
-      <div className="w-full sm:px-2 ">
+      <div className="w-full">
         {/* Banner skeleton */}
-        <div className="w-full h-52 skeleton rounded-none bg-gray-700/30" />
+        <div className="w-full h-60 skeleton rounded-none backdrop-blur-md shadow-[inset_0_-50px_80px_rgba(0,0,0,0.7)] bg-gray-700/30" />
 
         {/* Profile Info Skeleton */}
         <div className="profilepage-wrapper">
@@ -289,11 +289,11 @@ export default function Profilepage() {
     );
 
   if (error)
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+    return <div className="profilepage-errMessage oxanium-regular">{error}</div>;
 
   if (!profile)
     return (
-      <div className="text-center mt-10 text-gray-400">
+      <div className="text-center mt-10 text-gray-400 oxanium-regular">
         No profile data found.
       </div>
     );
@@ -621,103 +621,112 @@ export default function Profilepage() {
       </div>
 
       {/* Modal Followers / Following */}
-      {isFollowModalOpen && (
-        <div
-          className="profilepage-fllw-modal-overlay"
+      <Dialog
+        open={isFollowModalOpen}
+        onClose={() => setIsFollowModalOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+          },
+          "& .MuiDialog-paper": {
+            background: "rgba(25, 25, 25, 0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--dark-1)",
+            borderRadius: "12px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+            padding: "1.5rem",
+          },
+        }}
+      >
+        {/* Close Button */}
+        <button
+          className="profilepage-fllw-close-btn"
           onClick={() => setIsFollowModalOpen(false)}
         >
-          <div
-            className="profilepage-fllw-modal"
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
-          >
-            {/* Close Button */}
-            <button
-              className="profilepage-fllw-close-btn"
-              onClick={() => setIsFollowModalOpen(false)}
-            >
-              ⨉
-            </button>
+          ⨉
+        </button>
 
-            <h2 className="profilepage-fllw-title oleo-script-bold">
-              Followers & Following
-            </h2>
+        <h2 className="profilepage-fllw-title oleo-script-bold">
+          Followers & Following
+        </h2>
 
-            {/* Followers List */}
-            <h4 className="profilepage-fllw-section-title oxanium-semibold">
-              Followers
-            </h4>
-            <ul className="profilepage-fllw-list">
-              {followers.length > 0 ? (
-                followers.map((follower) => (
-                  <li
-                    key={`follower-${follower.followerId}`}
-                    className="profilepage-fllw-item oxanium-regular"
-                  >
-                    <Link
-                      to={Pathname("PROFILE").replace(":id", follower.followerId)}
-                      className="profilepage-fllw-link"
-                      onClick={(e) => {
-                        // ignore if Ctrl+Click, Cmd+Click, or Middle click
-                        if (e.ctrlKey || e.metaKey || e.button === 1) return;
-                        setIsFollowModalOpen(false); // only close modal on plain left click
-                      }}
-                    >
-                      <img
-                        src={buildImageUrl(follower.urlImage, useBackupImg)}
-                        onError={() => setUseBackupImg(true)}
-                        alt={follower.followerName}
-                        className="profilepage-fllw-avatar"
-                      />
-                      <span>{follower.followerName}</span>
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <li className="profilepage-fllw-empty oxanium-regular">
-                  Not followed by anyone
-                </li>
-              )}
-            </ul>
+        {/* Followers List */}
+        <h4 className="profilepage-fllw-section-title oxanium-semibold">
+          Followers
+        </h4>
+        <ul className="profilepage-fllw-list">
+          {followers.length > 0 ? (
+            followers.map((follower) => (
+              <li
+                key={`follower-${follower.followerId}`}
+                className="profilepage-fllw-item oxanium-regular"
+              >
+                <Link
+                  to={Pathname("PROFILE").replace(":id", follower.followerId)}
+                  className="profilepage-fllw-link"
+                  onClick={(e) => {
+                    // ignore if Ctrl+Click, Cmd+Click, or Middle click
+                    if (e.ctrlKey || e.metaKey || e.button === 1) return;
+                    setIsFollowModalOpen(false); // only close modal on plain left click
+                  }}
+                >
+                  <img
+                    src={buildImageUrl(follower.urlImage, useBackupImg)}
+                    onError={() => setUseBackupImg(true)}
+                    alt={follower.followerName}
+                    className="profilepage-fllw-avatar"
+                  />
+                  <span>{follower.followerName}</span>
+                </Link>
+              </li>
+            ))
+          ) : (
+            <li className="profilepage-fllw-empty oxanium-regular">
+              Not followed by anyone
+            </li>
+          )}
+        </ul>
 
-            {/* Following List */}
-            <h4 className="profilepage-fllw-section-title oxanium-semibold">
-              Following
-            </h4>
-            <ul className="profilepage-fllw-list">
-              {following.length > 0 ? (
-                following.map((followed) => (
-                  <li
-                    key={`following-${followed.followerId}`}
-                    className="profilepage-fllw-item oxanium-regular"
-                  >
-                    <Link
-                      to={Pathname("PROFILE").replace(":id", followed.userId)}
-                      className="profilepage-fllw-link"
-                      onClick={(e) => {
-                        // ignore if Ctrl+Click, Cmd+Click, or Middle click
-                        if (e.ctrlKey || e.metaKey || e.button === 1) return;
-                        setIsFollowModalOpen(false); // only close modal on plain left click
-                      }}
-                    >
-                      <img
-                        src={buildImageUrl(followed.urlImage, useBackupImg)}
-                        onError={() => setUseBackupImg(true)}
-                        alt={followed.userName}
-                        className="profilepage-fllw-avatar"
-                      />
-                      <span>{followed.userName}</span>
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <li className="profilepage-fllw-empty oxanium-regular">
-                  Not following anyone yet
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
-      )}
+        {/* Following List */}
+        <h4 className="profilepage-fllw-section-title oxanium-semibold">
+          Following
+        </h4>
+        <ul className="profilepage-fllw-list">
+          {following.length > 0 ? (
+            following.map((followed) => (
+              <li
+                key={`following-${followed.followerId}`}
+                className="profilepage-fllw-item oxanium-regular"
+              >
+                <Link
+                  to={Pathname("PROFILE").replace(":id", followed.userId)}
+                  className="profilepage-fllw-link"
+                  onClick={(e) => {
+                    // ignore if Ctrl+Click, Cmd+Click, or Middle click
+                    if (e.ctrlKey || e.metaKey || e.button === 1) return;
+                    setIsFollowModalOpen(false); // only close modal on plain left click
+                  }}
+                >
+                  <img
+                    src={buildImageUrl(followed.urlImage, useBackupImg)}
+                    onError={() => setUseBackupImg(true)}
+                    alt={followed.userName}
+                    className="profilepage-fllw-avatar"
+                  />
+                  <span>{followed.userName}</span>
+                </Link>
+              </li>
+            ))
+          ) : (
+            <li className="profilepage-fllw-empty oxanium-regular">
+              Not following anyone yet
+            </li>
+          )}
+        </ul>
+      </Dialog>
 
       {/* Tabs switcher */}
       <div className="tabs-switcher-section"
@@ -732,45 +741,58 @@ export default function Profilepage() {
       </div>
 
       {/* Report modal */}
-      {showReportModal && (
-        <div className="report-modal-overlay">
-          <div className="report-modal-container">
-            <div className="report-modal-box">
-              <h3 className="report-modal-header oleo-script-bold">
-                Report this account
-              </h3>
-              <input
-                type="text"
-                placeholder="Title"
-                className="oxanium-regular"
-                value={reportTitle}
-                onChange={(e) => setReportTitle(e.target.value)}
-              />
-              <textarea
-                placeholder="Content"
-                className="oxanium-regular"
-                value={reportContent}
-                onChange={(e) => setReportContent(e.target.value)}
-              />
-              <div className="report-modal-actions oxanium-bold">
-                <button onClick={() => setShowReportModal(false)}>
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSubmitReport}
-                  disabled={reportSubmitting}
-                >
-                  {reportSubmitting ? (
-                    <span className="loading loading-bars loading-md"></span>
-                  ) : (
-                    "Submit report"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
+      <Dialog
+        open={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        fullWidth
+        maxWidth="xs"
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+          },
+          "& .MuiDialog-paper": {
+            background: "rgba(25, 25, 25, 0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--dark-1)",
+            borderRadius: "12px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+            padding: "1.5rem",
+          },
+        }}
+      >
+        <h3 className="report-modal-header oleo-script-bold">
+          Report this account
+        </h3>
+        <input
+          type="text"
+          placeholder="Title"
+          className='report-modal-input oxanium-regular'
+          value={reportTitle}
+          onChange={(e) => setReportTitle(e.target.value)}
+        />
+        <textarea
+          placeholder="Content"
+          className='report-modal-textarea oxanium-regular'
+          value={reportContent}
+          onChange={(e) => setReportContent(e.target.value)}
+        />
+        <div className="report-modal-actions oxanium-bold">
+          <button onClick={() => setShowReportModal(false)}>
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmitReport}
+            disabled={reportSubmitting}
+          >
+            {reportSubmitting ? (
+              <span className="loading loading-bars loading-md"></span>
+            ) : (
+              "Submit report"
+            )}
+          </button>
         </div>
-      )}
+      </Dialog>
 
       {/* Success copy profile link snackbar */}
       <Snackbar

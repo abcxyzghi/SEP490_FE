@@ -78,7 +78,7 @@ export default function UserAchievements() {
   }
 
   if (error) {
-    return <div className="text-red-500 text-center p-4 oxanium-regular">{error}</div>;
+    return <div className="achievementpage-errMessage oleo-script-regular">{error}</div>;
   }
 
   return (
@@ -88,7 +88,7 @@ export default function UserAchievements() {
         <h1 className="achievementpage-title oleo-script-bold">Medal Display</h1>
 
         {medals.length === 0 ? (
-          <div className="achievementpage-empty oxanium-regular border rounded-lg">No medals</div>
+          <div className="achievementpage-empty oleo-script-regular">No medals</div>
         ) : (
           <div className="userAchievement-medals-grid">
             {medals.map((medal) => (
