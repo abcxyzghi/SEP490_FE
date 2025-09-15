@@ -1,68 +1,69 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import theme1 from "../assets/pageBG/theme/Alone-Camille.gif";
+import theme2 from "../assets/pageBG/theme/Animated-Pixel Art-by-Kirokaze.gif";
+import theme3 from "../assets/pageBG/theme/hikikomori.gif";
+import theme4 from "../assets/pageBG/theme/Megapolis-rain.gif";
+import theme5 from "../assets/pageBG/theme/Pixel-Art-collection-late 2016-Jason-Tammemagi.gif";
+import theme6 from "../assets/pageBG/theme/sea-moon.gif";
+import theme7 from "../assets/pageBG/theme/Smoking-Joe.gif";
+import theme8 from "../assets/pageBG/theme/The-Chainsmokers-feat_Blink182.gif";
+import theme9 from "../assets/pageBG/theme/Train-station.gif";
 
 // Theme backgrounds for multiple themes
 const themes = {
-    // Default theme (use CSS variable)
-    default: { background: "var(--page-mainBG)" },
+    default: { background: "var(--page-mainBG)" },  // Default theme (use CSS variable)
 
-    // GIF themes
-    aloneCamille: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/Alone-Camille.gif",
-    },
-    streetRain: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/Pixel-Art-collection-late%202016-Jason-Tammemagi.gif",
-    },
-    roadRide: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/Animated-Pixel%20Art-by-Kirokaze.gif",
-    },
-    seaMoon: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/sea-moon.gif",
-    },
-    cozyHome: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/hikikomori.gif",
-    },
-    trainStation: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/Train-station.gif",
-    },
-    megapolisRain: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/Megapolis-rain.gif",
-    },
-    catByCurtain: {
-        background: "https://ik.imagekit.io/vbvs3wes4/themes/The-Chainsmokers-feat_Blink182.gif",
-    },
+    aloneCamille: { background: theme1 },
+    roadRide: { background: theme2 },
+    cozyHome: { background: theme3 },
+    megapolisRain: { background: theme4 },
+    streetRain: { background: theme5 },
+    seaMoon: { background: theme6 },
+    smokingJoe: { background: theme7 },
+    catByCurtain: { background: theme8 },
+    trainStation: { background: theme9 },
 };
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-    // Default theme: always 'default' on first load
-    const getDefaultTheme = () => "default";
-    const [theme, setTheme] = useState(getDefaultTheme());
+    const themeKeys = Object.keys(themes);
 
+    // Read from localStorage first, fallback to "default"
+    const getInitialTheme = () => {
+        const stored = localStorage.getItem("app-theme");
+        return stored && themeKeys.includes(stored) ? stored : "default";
+    };
+
+    const [theme, setTheme] = useState(getInitialTheme);
+
+    // Apply theme changes to <html>
     useEffect(() => {
         const bg = themes[theme]?.background || "var(--page-mainBG)";
-        const target = document.documentElement; // apply to <html>, not just body
+        const target = document.documentElement;
 
-        target.style.backgroundImage = bg.startsWith("http")
-            ? `url(${bg})`
-            : "none";
-        target.style.backgroundColor = !bg.startsWith("http")
-            ? bg
-            : "var(--page-mainBG)";
-        target.style.backgroundSize = bg.startsWith("http")
-            ? "cover"
-            : "initial";
+        const isGif = typeof bg === "string" && bg.endsWith(".gif");
+
+        target.style.backgroundImage = isGif ? `url(${bg})` : "none";
+        target.style.backgroundColor = !isGif ? bg : "var(--page-mainBG)";
+        target.style.backgroundSize = isGif ? "cover" : "initial";
         target.style.backgroundRepeat = "no-repeat";
         target.style.backgroundPosition = "center";
         target.style.backgroundAttachment = "fixed"; // keep static when scrolling
+
+        // Persist selection to localStorage
+        localStorage.setItem("app-theme", theme);
     }, [theme]);
 
-    const getMedia = (themeKey = theme, mediaKey = 'background') => {
-        if (!themes[themeKey]) return '';
-        return themes[themeKey][mediaKey] || '';
+    // 🔧 reset function for logout
+    const resetTheme = () => {
+        setTheme("default");
+        localStorage.removeItem("app-theme");
     };
 
-    const themeKeys = Object.keys(themes);
+    const getMedia = (themeKey = theme, mediaKey = "background") => {
+        return themes[themeKey]?.[mediaKey] || "";
+    };
 
     const toggleTheme = () => {
         const currentIdx = themeKeys.indexOf(theme);
@@ -71,9 +72,7 @@ export function ThemeProvider({ children }) {
     };
 
     return (
-        <ThemeContext.Provider
-            value={{ theme, setTheme, toggleTheme, getMedia, themeKeys }}
-        >
+        <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, getMedia, themeKeys, resetTheme }}>
             {children}
         </ThemeContext.Provider>
     );
