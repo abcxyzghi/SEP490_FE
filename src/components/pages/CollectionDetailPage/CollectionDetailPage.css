@@ -1,4 +1,4 @@
-/* Go back button */
+/*   --------------------------==================== Go back button ====================--------------------------  */
 .collection-detail-header-btn {
     display: flex;
     gap: 10px;
@@ -8,6 +8,7 @@
 
     width: fit-content;
     background: var(--light-3-o50);
+    box-shadow: inset 0 -50px 80px rgba(0, 0, 0, 0.3);
     color: var(--light-3);
     font-size: 1.2rem;
     padding: 6px 16px;
@@ -25,13 +26,13 @@
     padding-left: 12px;
 }
 
-/* Main content section */
+/*   --------------------------==================== Main content section ====================--------------------------  */
 .collection-detail-container {
     padding: 0 40px 40px 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--light-1);
     min-height: 80vh;
 }
 
@@ -39,7 +40,8 @@
     display: flex;
     gap: 24px;
     align-items: center;
-    background: var(--dark-4, #1e1e1e);
+    background: var(--dark-4-o80);
+    backdrop-filter: blur(8px);
     padding: 24px;
     border-radius: 12px;
     border: 1px solid var(--light-2, #cccccc20);
@@ -47,7 +49,7 @@
     width: 100%;
 }
 
-/* Image section */
+/*   --------------------------==================== Image section ====================--------------------------  */
 .collection-detail-image-wrapper {
     position: relative;
     width: 360px;
@@ -82,13 +84,13 @@
     transition: transform 0.3s ease;
 }
 
-/* Info section */
+/*   --------------------------==================== Info section ====================--------------------------  */
 .collection-detail-info-wrapper {
     flex: 1;
-    border: 1px solid var(--light-2, #cccccc40);
+    border: 1px solid var(--light-2);
     padding: 16px 24px;
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .collection-detail-info-title {

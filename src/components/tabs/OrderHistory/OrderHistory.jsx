@@ -3,7 +3,7 @@ import { getOrderHistory } from '../../../services/api.order';
 import { createRate, getAllRatingsBySellProduct } from '../../../services/api.comment';
 import "./OrderHistory.css";
 import { useSelector } from 'react-redux';
-import Rating from '@mui/material/Rating';
+import { Dialog, Rating, } from "@mui/material";
 import MessageModal from '../../libs/MessageModal/MessageModal';
 import Arrow_Right from "../../../assets/Icon_line/Arrow_Right_LG.svg";
 
@@ -236,7 +236,11 @@ export default function OrderHistory() {
                       {/* Fee notice for Sold product */}
                       {order.type === "ProductSell" && (
                         <p className="order-history-productFee oxanium-regular">
-                          Product <span>{(order.transactionFeeRate * 100).toFixed(0)}%</span> fee has been applied
+                          Product{" "}
+                          <span>{(order.transactionFeeRate * 100).toFixed(0)}%</span> fee applied to original{" "}
+                          {`${formatFullWithDots(
+                            Math.round(order.totalAmount / (1 - order.transactionFeeRate))
+                          )} VND`}
                         </p>
                       )}
                     </div>
@@ -269,60 +273,72 @@ export default function OrderHistory() {
       )}
 
       {/* Rating Modal */}
-      {isModalOpen && (
-        <div className="rating-modal-order-overlay">
-          <div className="rating-modal-container">
-            <div class="card__border"></div>
-            <div className="rating-modal-box">
-              <h3 className="rating-modal-order-title oxanium-bold">Rate Your Purchase</h3>
-              {selectedProductId && (
-                <p className="rating-modal-order-subtitle oleo-script-regular">
-                  {orders.find(o => o.sellProductId === selectedProductId)?.productName ||
-                    orders.find(o => o.sellProductId === selectedProductId)?.boxName ||
-                    "N/A"}{" "}
-                  from{" "}
-                  {orders.find(o => o.sellProductId === selectedProductId)?.sellerUsername}
-                </p>
-              )}
+      <Dialog
+        open={isModalOpen}
+        // onClose={() => setIsModalOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+          },
+          "& .MuiDialog-paper": {
+            background: "rgba(25, 25, 25, 0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--dark-1)",
+            borderRadius: "12px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+            padding: "1.5rem",
+          },
+        }}
+      >
+        <h3 className="rating-modal-order-title oleo-script-bold">Rate Your Purchase</h3>
+        {selectedProductId && (
+          <p className="rating-modal-order-subtitle oleo-script-regular">
+            {orders.find(o => o.sellProductId === selectedProductId)?.productName ||
+              orders.find(o => o.sellProductId === selectedProductId)?.boxName ||
+              "N/A"}{" "}
+            from{" "}
+            {orders.find(o => o.sellProductId === selectedProductId)?.sellerUsername}
+          </p>
+        )}
 
-              <>
-                {/* MUI Rating */}
-                <div className="rating-section">
-                  <Rating
-                    name="product-rating"
-                    value={rating}
-                    onChange={(e, newValue) => setRating(newValue)}
-                    precision={1}
-                    size="large"
-                    sx={{
-                      fontSize: { xs: '0.7rem', sm: '1rem', md: '2rem', lg: '3rem' },
-                      '& .MuiRating-iconFilled': { color: '#FFD700' },
-                      '& .MuiRating-iconEmpty': { color: '#666666' },
-                    }}
-                  />
-                </div>
-
-                <div className="rating-modal-order-actions">
-                  <button className="rating-modal-btn-cancel oxanium-regular" onClick={() => setIsModalOpen(false)}>
-                    Cancel
-                  </button>
-                  <button
-                    className="rating-modal-btn-submit oxanium-bold"
-                    onClick={handleSaveRating}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <span className="loading loading-bars loading-md"></span>
-                    ) : (
-                      "Submit rating"
-                    )}
-                  </button>
-                </div>
-              </>
-            </div>
+        <>
+          {/* MUI Rating */}
+          <div className="rating-modal-section">
+            <Rating
+              name="product-rating"
+              value={rating}
+              onChange={(e, newValue) => setRating(newValue)}
+              precision={1}
+              size="large"
+              sx={{
+                fontSize: { xs: '0.7rem', sm: '1rem', md: '2rem', lg: '2.5rem' },
+                '& .MuiRating-iconFilled': { color: '#FFD700' },
+                '& .MuiRating-iconEmpty': { color: '#666666' },
+              }}
+            />
           </div>
-        </div>
-      )}
+
+          <div className="rating-modal-order-actions">
+            <button className="rating-modal-btn-cancel oxanium-regular" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </button>
+            <button
+              className="rating-modal-btn-submit oxanium-bold"
+              onClick={handleSaveRating}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading loading-bars loading-md"></span>
+              ) : (
+                "Submit rating"
+              )}
+            </button>
+          </div>
+        </>
+      </Dialog>
 
       {/* Message Modal */}
       <MessageModal

@@ -175,7 +175,7 @@ export default function MyAuction() {
 
   if (error)
     return (
-      <div className="auctionRoomList__state auctionRoomList__state--error oxanium-regular">
+      <div className="auctionRoomList__state auctionRoomList__error oxanium-regular">
         {error}
       </div>
     );
@@ -185,9 +185,9 @@ export default function MyAuction() {
       <div className="auctionRoomList oxanium-regular">
         <div className="auctionRoomList__container">
           <div className="auctionRoomList__controls">
-            <h2 className="auctionRoomList__title">My auction list</h2>
+            {/* <h2 className="auctionRoomList__title">My auction list</h2> */}
           </div>
-          <div className="auctionRoomList__state auctionRoomList__state--empty oxanium-regular">
+          <div className="auctionRoomList__state auctionRoomList__empty oxanium-regular">
             No auctions available
           </div>
         </div>

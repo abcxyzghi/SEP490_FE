@@ -64,10 +64,11 @@
 .report-history-product-toggle-btn:hover,
 .report-history-user-toggle-btn:hover {
   --text: #e6eef6;
-  --glass: rgba(255, 255, 255, 0.03);
+  --glass: rgba(255, 255, 255, 0.3);
 
   color: var(--text);
   background: var(--glass);
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.3);
   transform: scale(1.01);
 }
 

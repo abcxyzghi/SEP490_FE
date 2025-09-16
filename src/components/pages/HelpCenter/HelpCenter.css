@@ -41,14 +41,14 @@
     align-items: center;
     padding: 1rem;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--dark-5-o80);
     backdrop-filter: blur(12px);
     cursor: pointer;
     transition: background 0.1s ease-in-out;
 }
 
 .helpCenter-card:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .helpCenter-card-icon {

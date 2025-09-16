@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { persistor } from "../../../redux/store";
+import { useTheme } from "../../../context/ThemeContext";
 import "./NavigationDropdownMenu.css";
 // Importing profile menu assets
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
@@ -36,6 +37,7 @@ export default function NavigationDropdownMenu() {
     user.profile_image ? buildImageUrl(user.profile_image, useBackupImg) : ProfileHolder
   );
   const [errorImgCount, setErrorImgCount] = useState(0);
+  const { resetTheme } = useTheme();
 
   // Fetch user info on open (if not already loaded)
   useEffect(() => {
@@ -98,6 +100,8 @@ export default function NavigationDropdownMenu() {
   };
 
   const handleLogout = async () => {
+    resetTheme();
+    
     // Clear Redux memory state
     dispatch(logout());
     dispatch(clearCart());

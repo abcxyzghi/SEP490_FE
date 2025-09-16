@@ -12,7 +12,7 @@ import { getAllRatingsBySellProduct } from '../../../services/api.comment';
 import { Pathname, PATH_NAME } from '../../../router/Pathname';
 import { createReport } from '../../../services/api.user';
 import { buildImageUrl } from '../../../services/api.imageproxy';
-import Rating from '@mui/material/Rating';
+import { Dialog, Rating, } from "@mui/material";
 import CommentSection from '../../libs/CommentSection/CommentSection';
 import MessageModal from '../../libs/MessageModal/MessageModal';
 //import asset
@@ -115,15 +115,15 @@ export default function ProductDetailpage() {
 
   // Handle instant pay
   const handlePayInstant = async () => {
-     const isJoined = await checkIsJoinedAuction();
-        if (isJoined) {
-          showModal(
-            "warning",
-            "Cannot Withdraw",
-            "You cannot buy instant while participating in an auction."
-          );
-          return;
-        }
+    const isJoined = await checkIsJoinedAuction();
+    if (isJoined) {
+      showModal(
+        "warning",
+        "Cannot Withdraw",
+        "You cannot buy instant while participating in an auction."
+      );
+      return;
+    }
     // Prevent unsigned user commit action
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
@@ -442,37 +442,53 @@ export default function ProductDetailpage() {
               </button>
             </div>
 
-            {/* Product Report Modal //  Reuse component style from Profilepage.css */}
-            {showReportModal && (
-              <div className="report-modal-overlay">
-                <div className="report-modal-container">
-                  <div className="report-modal-box">
-                    <h3 className='report-modal-header oleo-script-bold'>Report this product</h3>
-                    <input
-                      type="text"
-                      placeholder="Title"
-                      value={reportTitle}
-                      onChange={e => setReportTitle(e.target.value)}
-                    />
-                    <textarea
-                      placeholder="Content"
-                      value={reportContent}
-                      onChange={e => setReportContent(e.target.value)}
-                    />
-                    <div className="report-modal-actions oxanium-bold">
-                      <button onClick={() => setShowReportModal(false)}>Cancel</button>
-                      <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
-                        {reportSubmitting ?
-                          <span className="loading loading-bars loading-md"></span>
-                          :
-                          'Submit report'
-                        }
-                      </button>
-                    </div>
-                  </div>
-                </div>
+            {/* Product Report Modal */}
+            <Dialog
+              open={showReportModal}
+              onClose={() => setShowReportModal(false)}
+              fullWidth
+              maxWidth="xs"
+              sx={{
+                "& .MuiBackdrop-root": {
+                  backgroundColor: "rgba(0,0,0,0.8)",
+                  backdropFilter: "blur(6px)",
+                },
+                "& .MuiDialog-paper": {
+                  background: "rgba(25, 25, 25, 0.7)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid var(--dark-1)",
+                  borderRadius: "12px",
+                  boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+                  padding: "1.5rem",
+                },
+              }}
+            >
+              <h3 className='report-modal-header oleo-script-bold'>Report this product</h3>
+              <input
+                type="text"
+                placeholder="Title"
+                className='report-modal-input oxanium-regular'
+                value={reportTitle}
+                onChange={e => setReportTitle(e.target.value)}
+              />
+              <textarea
+                placeholder="Content"
+                className='report-modal-textarea oxanium-regular'
+                value={reportContent}
+                onChange={e => setReportContent(e.target.value)}
+              />
+              <div className="report-modal-actions oxanium-bold">
+                <button onClick={() => setShowReportModal(false)}>Cancel</button>
+                <button onClick={handleSubmitProductReport} disabled={reportSubmitting}>
+                  {reportSubmitting ?
+                    <span className="loading loading-bars loading-md"></span>
+                    :
+                    'Submit report'
+                  }
+                </button>
               </div>
-            )}
+            </Dialog>
+
           </div>
 
           {/* Title + Price + Stock quantity*/}
@@ -675,39 +691,52 @@ export default function ProductDetailpage() {
             </button>
           </div>
 
-          {/* User Report Modal //  Reuse component style from Profilepage.css */}
-          {showUserReportModal && (
-            <div className="report-modal-overlay">
-              <div className="report-modal-container">
-                <div className="report-modal-box">
-                  <h3 className='report-modal-header oleo-script-bold'>Report this account</h3>
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    className='oxanium-regular'
-                    value={userReportTitle}
-                    onChange={e => setUserReportTitle(e.target.value)}
-                  />
-                  <textarea
-                    placeholder="Content"
-                    className='oxanium-regular'
-                    value={userReportContent}
-                    onChange={e => setUserReportContent(e.target.value)}
-                  />
-                  <div className="report-modal-actions oxanium-bold">
-                    <button onClick={() => setShowUserReportModal(false)}>Cancel</button>
-                    <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
-                      {userReportSubmitting ?
-                        <span className="loading loading-bars loading-md"></span>
-                        :
-                        'Submit report'
-                      }
-                    </button>
-                  </div>
-                </div>
-              </div>
+          {/* User Report Modal */}
+          <Dialog
+            open={showUserReportModal}
+            onClose={() => setShowUserReportModal(false)}
+            fullWidth
+            maxWidth="xs"
+            sx={{
+              "& .MuiBackdrop-root": {
+                backgroundColor: "rgba(0,0,0,0.8)",
+                backdropFilter: "blur(6px)",
+              },
+              "& .MuiDialog-paper": {
+                background: "rgba(25, 25, 25, 0.7)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid var(--dark-1)",
+                borderRadius: "12px",
+                boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+                padding: "1.5rem",
+              },
+            }}
+          >
+            <h3 className='report-modal-header oleo-script-bold'>Report this account</h3>
+            <input
+              type="text"
+              placeholder="Title"
+              className='report-modal-input oxanium-regular'
+              value={userReportTitle}
+              onChange={e => setUserReportTitle(e.target.value)}
+            />
+            <textarea
+              placeholder="Content"
+              className='report-modal-textarea oxanium-regular'
+              value={userReportContent}
+              onChange={e => setUserReportContent(e.target.value)}
+            />
+            <div className="report-modal-actions oxanium-bold">
+              <button onClick={() => setShowUserReportModal(false)}>Cancel</button>
+              <button onClick={handleSubmitUserReport} disabled={userReportSubmitting}>
+                {userReportSubmitting ?
+                  <span className="loading loading-bars loading-md"></span>
+                  :
+                  'Submit report'
+                }
+              </button>
             </div>
-          )}
+          </Dialog>
         </div>
       </div>
 

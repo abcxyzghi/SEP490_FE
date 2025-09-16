@@ -274,10 +274,10 @@
 }
 
 /* Apply global style */
-body {
+/* body {
   margin: 0;
   background-color: var(--page-mainBG);
-}
+} */
 
 html {
   scrollbar-width: thin;

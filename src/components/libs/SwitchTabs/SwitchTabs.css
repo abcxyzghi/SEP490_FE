@@ -19,7 +19,8 @@
 
 .switchTabs-tabbar {
     display: flex;
-    background: var(--dark-2-o90);
+    background: var(--dark-2-o80);
+    backdrop-filter: blur(2px);
     border-radius: 16px 16px 0 0;
     gap: 8px;
 }
@@ -39,20 +40,49 @@
 }
 
 .switchTabs-content-container {
-    flex: 1;
-    width: 100%;
-    max-width: 1300px;
-    min-width: 280px;
-    height: 1000px;
-    /* Enables scrolling within the container */
-    overflow-y: auto;
-    /* Must be 4-char alpha-hex make gradient border work */
-    border: 2px solid #0000;
-    /* padding: 20px; */
-    border-radius: 8px;
-    background:
-        linear-gradient(var(--tabMain_bg), var(--tabMain_bg)) padding-box,
-        linear-gradient(#FFD721, #DC0FFF) border-box;
+  position: relative; /* Needed for pseudo positioning */
+  flex: 1;
+  width: 100%;
+  max-width: 1300px;
+  min-width: 280px;
+  height: 1000px;
+  border-radius: 8px;
+  z-index: 0; /* keep it below pseudo border */
+  overflow-y: auto;
+
+  /* Dark glass blur effect inside | translucent dark*/
+  background: rgba(15, 15, 15, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.switchTabs-content-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Gradient border via pseudo */
+.switchTabs-content-container::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* full size */
+  border-radius: 8px;
+  padding: 2px; /* thickness of border */
+  background: linear-gradient( #FFD721, #DC0FFF);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none; /* let clicks pass through */
+  z-index: 2;
 }
 
 

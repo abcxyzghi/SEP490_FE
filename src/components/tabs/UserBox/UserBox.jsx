@@ -78,7 +78,7 @@ export default function UserBox() {
   }
 
   if (error) {
-    return <div className="text-red-500 text-center mt-6">{error}</div>;
+    return <div className="userBox-errMessage oleo-script-regular">{error}</div>; 
   }
 
   const visibleBoxes = boxes.slice(0, visibleCount);
@@ -174,14 +174,14 @@ export default function UserBox() {
       </div>
 
       {(boxes.length === 0 || boxes.every(item => item.quantity === 0)) && (
-        <div className="text-center text-gray-400 mt-6 oxanium-regular">No boxes to display.</div>
+        <div className="userBox-empty oleo-script-regular">No boxes to display.</div>
       )}
 
-      {isEnd ? (
+      {isEnd && !(visibleBoxes.filter(item => item.quantity > 0).length === 0) ? (
         <div className="userBox-end-content oxanium-semibold divider divider-warning">
           End of content
         </div>
-      ) : (
+      ) : !isEnd && (
         <button
           className="userBox-loadmore-button oxanium-semibold"
           onClick={() => setVisibleCount(count => Math.min(count + PAGE_SIZE, boxes.length))}

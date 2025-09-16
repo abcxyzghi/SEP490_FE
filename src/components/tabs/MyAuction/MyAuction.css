@@ -29,15 +29,12 @@
 
 /* state blocks reuse existing state classes, keep them simple */
 .auctionRoomList__state {
-  min-height: 40vh;
+  max-width: 260px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  margin: auto;
 }
-.auctionRoomList__state--loading { color: var(--light-2); }
-.auctionRoomList__state--error { color: #f87171;  }
-.auctionRoomList__state--empty { color: var(--light-3); }
 
 /* finance compact row */
 .auctionRoomList__finance-row {

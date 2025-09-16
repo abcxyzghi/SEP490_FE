@@ -6,7 +6,7 @@ import { buildImageUrl } from "../../../services/api.imageproxy";
 import { getBuyer, getReceive, ExchangeAccept, ExchangeReject, ExchangeCancel } from "../../../services/api.exchange";
 import { createFeedback, getFeedbackOfSellProduct } from "../../../services/api.feedback";
 import * as HoverCard from "@radix-ui/react-hover-card";
-import Rating from '@mui/material/Rating';
+import { Dialog, Rating,} from "@mui/material";
 import MessageModal from "../../libs/MessageModal/MessageModal";
 import ConfirmNavigateModal from "../../libs/ConfirmNavigateModal/ConfirmNavigateModal";
 import { useNavigate, Link } from "react-router-dom";
@@ -32,12 +32,12 @@ export default function ExchangeHistory() {
     type: null,
   }); // {id, type: 'accept'|'reject'}
   const [preAcceptModal, setPreAcceptModal] = useState({
-  open: false,
-  title: "",
-  message: "",
-  onConfirm: null,
-  onClose: null,
-});
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+    onClose: null,
+  });
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [selectedFeedbackExchangeId, setSelectedFeedbackExchangeId] = useState(null);
   const [selectedFeedbackList, setSelectedFeedbackList] = useState([]);
@@ -164,15 +164,15 @@ export default function ExchangeHistory() {
     setActionError(null);
     try {
       const res = await ExchangeAccept(id);
-       // Nếu API trả về lỗi
-    if (res?.errorCode === 400) {
-      showModal(
-        "error",
-        "Exchange Failed",
-        res?.message || "Failed to accept exchange request."
-      );
-      return;
-    }
+      // Nếu API trả về lỗi
+      if (res?.errorCode === 400) {
+        showModal(
+          "error",
+          "Exchange Failed",
+          res?.message || "Failed to accept exchange request."
+        );
+        return;
+      }
 
       setConfirmModal({
         open: true,
@@ -318,7 +318,7 @@ export default function ExchangeHistory() {
     );
   }
 
-  if (error) return <div className="text-red-500 mt-10 text-center text-lg oxanium-regular">{error}</div>;
+  if (error) return <div className="exchange-history-errMessage oleo-script-regular">{error}</div>;
 
   return (
     <div className="exchange-history-container">
@@ -348,7 +348,7 @@ export default function ExchangeHistory() {
         {/* List wrapper */}
         <div className="exchange-history-list oxanium-regular">
           {(view === 'sent' ? sent : received).length === 0 ? (
-            <div className="exchange-history-empty">No {view === 'sent' ? 'sent' : 'received'} requests.</div>
+            <div className="exchange-history-empty oleo-script-regular">No {view === 'sent' ? 'sent' : 'received'} requests.</div>
           ) : (
             (view === 'sent' ? sent : received)
               .sort((a, b) => new Date(b.datetime) - new Date(a.datetime)) // sort latest date first
@@ -371,28 +371,28 @@ export default function ExchangeHistory() {
                     <div className="exchange-history-card-actions">
                       {/* Sent cancel */}
                       {view === 'sent' && req.status === 1 && (
-                       <button
-  className="exchange-history-btn exchange-history-btn-cancel"
-  onClick={() =>
-    setPreAcceptModal({
-      open: true,
-      title: "Cancel Exchange Request",
-      message: "Are you sure you want to cancel this exchange request? This action cannot be undone.",
-      onConfirm: () => {
-        setPreAcceptModal((prev) => ({ ...prev, open: false }));
-        handleCancel(req.id);
-      },
-      onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
-    })
-  }
-  disabled={actionLoading === req.id}
->
-  {actionLoading === req.id ? (
-    <span className="loading loading-bars loading-md"></span>
-  ) : (
-    "Cancel request"
-  )}
-</button>
+                        <button
+                          className="exchange-history-btn exchange-history-btn-cancel"
+                          onClick={() =>
+                            setPreAcceptModal({
+                              open: true,
+                              title: "Cancel Exchange Request",
+                              message: "Are you sure you want to cancel this exchange request? This action cannot be undone.",
+                              onConfirm: () => {
+                                setPreAcceptModal((prev) => ({ ...prev, open: false }));
+                                handleCancel(req.id);
+                              },
+                              onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
+                            })
+                          }
+                          disabled={actionLoading === req.id}
+                        >
+                          {actionLoading === req.id ? (
+                            <span className="loading loading-bars loading-md"></span>
+                          ) : (
+                            "Cancel request"
+                          )}
+                        </button>
                       )}
 
                       {/* Sent feedback */}
@@ -412,47 +412,47 @@ export default function ExchangeHistory() {
                       {view === 'received' && req.status === 1 && (
                         <>
                           <button
-  className="exchange-history-btn exchange-history-btn-accept"
-  onClick={() =>
-    setPreAcceptModal({
-      open: true,
-      title: "Confirm Exchange",
-      message: "Are you sure you want to accept this exchange? Once accepted, you are fully responsible for this transaction.",
-      onConfirm: () => {
-        setPreAcceptModal((prev) => ({ ...prev, open: false }));
-        handleAccept(req.id); // gọi thực thi trao đổi thật sự
-      },
-      onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
-    })
-  }
-  disabled={receivedAction.id === req.id && receivedAction.type === 'accept'}
->
-  {receivedAction.id === req.id && receivedAction.type === 'accept'
-    ? <span className="loading loading-bars loading-md"></span>
-    : 'Accept'}
-</button>
+                            className="exchange-history-btn exchange-history-btn-accept"
+                            onClick={() =>
+                              setPreAcceptModal({
+                                open: true,
+                                title: "Confirm Exchange",
+                                message: "Are you sure you want to accept this exchange? Once accepted, you are fully responsible for this transaction.",
+                                onConfirm: () => {
+                                  setPreAcceptModal((prev) => ({ ...prev, open: false }));
+                                  handleAccept(req.id); // gọi thực thi trao đổi thật sự
+                                },
+                                onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
+                              })
+                            }
+                            disabled={receivedAction.id === req.id && receivedAction.type === 'accept'}
+                          >
+                            {receivedAction.id === req.id && receivedAction.type === 'accept'
+                              ? <span className="loading loading-bars loading-md"></span>
+                              : 'Accept'}
+                          </button>
                           <button
-  className="exchange-history-btn exchange-history-btn-reject"
-  onClick={() =>
-    setPreAcceptModal({
-      open: true,
-      title: "Reject Exchange",
-      message: "Are you sure you want to reject this exchange request? This action cannot be undone.",
-      onConfirm: () => {
-        setPreAcceptModal((prev) => ({ ...prev, open: false }));
-        handleReject(req.id);
-      },
-      onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
-    })
-  }
-  disabled={receivedAction.id === req.id && receivedAction.type === "reject"}
->
-  {receivedAction.id === req.id && receivedAction.type === "reject" ? (
-    <span className="loading loading-bars loading-md"></span>
-  ) : (
-    "Reject"
-  )}
-</button>
+                            className="exchange-history-btn exchange-history-btn-reject"
+                            onClick={() =>
+                              setPreAcceptModal({
+                                open: true,
+                                title: "Reject Exchange",
+                                message: "Are you sure you want to reject this exchange request? This action cannot be undone.",
+                                onConfirm: () => {
+                                  setPreAcceptModal((prev) => ({ ...prev, open: false }));
+                                  handleReject(req.id);
+                                },
+                                onClose: () => setPreAcceptModal((prev) => ({ ...prev, open: false })),
+                              })
+                            }
+                            disabled={receivedAction.id === req.id && receivedAction.type === "reject"}
+                          >
+                            {receivedAction.id === req.id && receivedAction.type === "reject" ? (
+                              <span className="loading loading-bars loading-md"></span>
+                            ) : (
+                              "Reject"
+                            )}
+                          </button>
 
                         </>
                       )}
@@ -484,7 +484,7 @@ export default function ExchangeHistory() {
                     {/* Request exchange products */}
                     <div className="exchange-history-products-wrapper">
                       {/* User name and hover info */}
-                      <p className="exchange-history-user-name">
+                      <div className="exchange-history-user-name">
                         From:{" "}
                         <span className={`${view === "sent" ? "" : "exchange-history-user-info"}`}>
                           {view === "sent" ? (
@@ -544,7 +544,7 @@ export default function ExchangeHistory() {
                             </HoverCard.Root>
                           )}
                         </span>
-                      </p>
+                      </div>
 
                       <div className="exchange-history-products">
                         {req.products?.map((p) => (
@@ -643,102 +643,126 @@ export default function ExchangeHistory() {
 
 
       {/* [POST] Feedback Modal */}
-      {isModalOpen && (
-        <div className="exchange-feedback-modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div
-            className="exchange-feedback-modal oxanium-regular"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button className="exchange-feedback-close-btn" onClick={() => setIsModalOpen(false)}>⨉</button>
+      <Dialog
+        open={isModalOpen}
+        // onClose={() => setIsModalOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+          },
+          "& .MuiDialog-paper": {
+            background: "rgba(25, 25, 25, 0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--dark-1)",
+            borderRadius: "12px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+            padding: "1.5rem",
+          },
+        }}
+      >
+        {/* Close Button */}
+        <button className="exchange-feedback-close-btn" onClick={() => setIsModalOpen(false)}>⨉</button>
 
-            <h2 className="exchange-feedback-title oleo-script-bold">Leave Feedback</h2>
+        <h2 className="exchange-feedback-title oleo-script-bold">Leave Feedback</h2>
 
-            <textarea
-              className="exchange-feedback-textarea"
-              placeholder="Feedback on this exchange..."
-              value={feedbackContent}
-              onChange={(e) => setFeedbackContent(e.target.value)}
-            />
+        <textarea
+          className="exchange-feedback-textarea oxanium-regular"
+          placeholder="Feedback on this exchange..."
+          value={feedbackContent}
+          onChange={(e) => setFeedbackContent(e.target.value)}
+        />
 
-            <div className="exchange-feedback-rating">
-              <label>Rating:</label>
-              <Rating
-                name="feedback-rating"
-                value={feedbackRating}
-                onChange={(e, newValue) => setFeedbackRating(newValue)}
-                precision={1}
-                // max={5}
-                size="small"
-                sx={{
-                  fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem', lg: '1.5rem' },
-                  '& .MuiRating-iconFilled': { color: '#FFD700' },
-                  '& .MuiRating-iconEmpty': { color: '#666666' },
-                }}
-              />
-            </div>
+        <div className="exchange-feedback-rating oxanium-regular">
+          <label>Rating:</label>
+          <Rating
+            name="feedback-rating"
+            value={feedbackRating}
+            onChange={(e, newValue) => setFeedbackRating(newValue)}
+            precision={1}
+            // max={5}
+            size="small"
+            sx={{
+              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem', lg: '1.5rem' },
+              '& .MuiRating-iconFilled': { color: '#FFD700' },
+              '& .MuiRating-iconEmpty': { color: '#666666' },
+            }}
+          />
+        </div>
 
-            <div className="exchange-feedback-actions">
-              {/* <button
+        <div className="exchange-feedback-actions oxanium-regular">
+          {/* <button
                 className="exchange-feedback-btn exchange-feedback-btn-cancel"
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel
               </button> */}
-              <button
-                className="exchange-feedback-btn exchange-feedback-btn-submit"
-                onClick={handleSubmitFeedback}
-                disabled={feedbackLoading}
-              >
-                {feedbackLoading ? <span className="loading loading-bars loading-md"></span> : "Submit"}
-              </button>
-            </div>
-          </div>
+          <button
+            className="exchange-feedback-btn exchange-feedback-btn-submit"
+            onClick={handleSubmitFeedback}
+            disabled={feedbackLoading}
+          >
+            {feedbackLoading ? <span className="loading loading-bars loading-md"></span> : "Submit"}
+          </button>
         </div>
-      )}
+      </Dialog>
 
       {/* [GET] Feedback Modal */}
-      {isFeedbackModalOpen && (
-        <div className="exchange-feedback-modal-overlay" onClick={() => setIsFeedbackModalOpen(false)}>
-          <div
-            className="exchange-feedback-modal oxanium-regular"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button className="exchange-feedback-close-btn" onClick={() => setIsFeedbackModalOpen(false)}>⨉</button>
+      <Dialog
+        open={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+          },
+          "& .MuiDialog-paper": {
+            background: "rgba(25, 25, 25, 0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--dark-1)",
+            borderRadius: "12px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+            padding: "1.5rem",
+          },
+        }}
+      >
+        {/* Close Button */}
+        <button className="exchange-feedback-close-btn" onClick={() => setIsFeedbackModalOpen(false)}>⨉</button>
 
-            <h2 className="exchange-feedback-title oleo-script-bold">Feedbacks</h2>
+        <h2 className="exchange-feedback-title oleo-script-bold">Feedbacks</h2>
 
-            {selectedFeedbackList.length === 0 ? (
-              <div className="exchange-feedback-empty">No feedback available.</div>
-            ) : (
-              <ul className="exchange-feedback-list">
-                {selectedFeedbackList.map((fb, idx) => (
-                  <li key={idx} className="exchange-feedback-item">
-                    <div className="flex justify-between align-center mb-4">
-                      <div><b>From:</b> {fb.userName}</div>
-                      <div className="exchange-feedback-rating-view">
-                        <Rating
-                          value={fb.rating}
-                          readOnly
-                          precision={1}
-                          max={5}
-                          size="small"
-                          sx={{
-                            fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem', lg: '1.5rem' },
-                            '& .MuiRating-iconFilled': { color: '#FFD700' },
-                            '& .MuiRating-iconEmpty': { color: '#666666' },
-                          }} />
-                      </div>
-                    </div>
-                    <div><b>Comment:</b> <p>{fb.content}</p></div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      )}
+        {selectedFeedbackList.length === 0 ? (
+          <div className="exchange-feedback-empty oxanium-regular">No feedback available.</div>
+        ) : (
+          <ul className="exchange-feedback-list oxanium-regular">
+            {selectedFeedbackList.map((fb, idx) => (
+              <li key={idx} className="exchange-feedback-item">
+                <div className="flex justify-between align-center mb-4">
+                  <div><b>From:</b> {fb.userName}</div>
+                  <div className="exchange-feedback-rating-view">
+                    <Rating
+                      value={fb.rating}
+                      readOnly
+                      precision={1}
+                      max={5}
+                      size="small"
+                      sx={{
+                        fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem', lg: '1.5rem' },
+                        '& .MuiRating-iconFilled': { color: '#FFD700' },
+                        '& .MuiRating-iconEmpty': { color: '#666666' },
+                      }} />
+                  </div>
+                </div>
+                <div><b>Comment:</b> <p>{fb.content}</p></div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Dialog>
 
       {/* Message Modal */}
       <MessageModal
@@ -759,13 +783,15 @@ export default function ExchangeHistory() {
         onConfirm={confirmModal.onConfirm}
         onCancel={confirmModal.onCancel}
       />
+
+      {/* Pre-confirm modal for accept/cancel/reject */}
       <ConfirmModal
-  open={preAcceptModal.open}
-  title={preAcceptModal.title}
-  message={preAcceptModal.message}
-  onConfirm={preAcceptModal.onConfirm}
-  onClose={preAcceptModal.onClose}
-/>
+        open={preAcceptModal.open}
+        title={preAcceptModal.title}
+        message={preAcceptModal.message}
+        onConfirm={preAcceptModal.onConfirm}
+        onClose={preAcceptModal.onClose}
+      />
 
     </div>
   );

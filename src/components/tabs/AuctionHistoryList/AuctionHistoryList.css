@@ -5,7 +5,7 @@
     --muted: #9aa0a6;
     --text: #e6eef6;
 
-    --glass: rgba(255, 255, 255, 0.03);
+    --glass: rgba(255, 255, 255, 0.3);
 }
 
 /* Container */
@@ -13,7 +13,8 @@
     min-height: 100%;
     color: var(--text);
     padding: 22px;
-    font-family: "Oxanium", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    min-height: 500px;
+    font-family: "Oxanium", sans-serif;
 }
 
 /* inner panel */
@@ -68,6 +69,7 @@
 .auctionHistoryList__tab:hover {
     color: var(--text);
     background: var(--glass);
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.3);
     transform: scale(1.01);
 }
 
@@ -94,9 +96,17 @@
 }
 
 .auctionHistoryList-empty {
-    color: var(--muted);
-    padding: 18px;
     text-align: center;
+    font-size: 1.2rem;
+    color: var(--light-4);
+
+    max-width: 260px;
+    margin: 100px auto;
+    padding: 2rem;
+    border: 1px dashed #444;
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 /* --------------------------==================== Auction History card list ====================--------------------------    */
