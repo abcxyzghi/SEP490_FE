@@ -3,8 +3,9 @@ import './AuctionRoomList.css';
 import { useNavigate, Link } from "react-router-dom";
 import { Pathname } from "../../../router/Pathname";
 import { buildImageUrl } from "../../../services/api.imageproxy";
-import { fetchAuctionList } from "../../../services/api.auction";
+import { fetchAuctionList, Top5bidAuction } from "../../../services/api.auction";
 import { getOtherProfile } from "../../../services/api.user";
+import { getCollectionDetail } from "../../../services/api.product"
 import { useSelector } from "react-redux";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import MessageModal from "../../libs/MessageModal/MessageModal";
@@ -14,6 +15,8 @@ import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 import moment from "moment";
 
 export default function AuctionRoomList() {
+  // State lưu thông tin collection cho từng product_id
+  const [collectionDetails, setCollectionDetails] = useState({});
   const user = useSelector((state) => state.auth.user);
   const [auctionList, setAuctionList] = useState([]);
   const [sellerProfiles, setSellerProfiles] = useState({});
@@ -24,13 +27,21 @@ export default function AuctionRoomList() {
   const { searchText = "" } = arguments[0] || {};
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modal, setModal] = useState({ open: false, type: 'default', title: '', message: '' });
+  // Top 5 bids state: { [auctionId]: [{...bid, profile: {...}}] }
+  const [topBids, setTopBids] = useState({});
+  // State to control top bids visibility per auction
+  const [showTopBids, setShowTopBids] = useState({});
 
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
 
   const navigate = useNavigate();
-
+  const fmtVND = (v) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0,
+    }).format(Number(v || 0)) + " VND";
   // Only fetch if user is logged in
   useEffect(() => {
     if (!user) {
@@ -45,12 +56,12 @@ export default function AuctionRoomList() {
       try {
         let auctions = [];
         if (statusFilter === "all") {
-          // Combine started and waiting
-          const started = await fetchAuctionList("started");
-          const waiting = await fetchAuctionList("waiting");
+          // Combine default and waiting
+          const _default = await fetchAuctionList("default");
+          // const waiting = await fetchAuctionList("waiting");
           auctions = [
-            ...(started?.data?.data.sort((b, a) => new Date(b.start_time) - new Date(a.start_time)) || []),
-            ...(waiting?.data?.data.sort((b, a) => new Date(b.start_time) - new Date(a.start_time)) || [])
+            ...(_default?.data?.data.filter(item => new Date(item.end_time) < new Date()).sort((a, b) => new Date(b.start_time) - new Date(a.start_time)) || [])
+            // ...(waiting?.data?.data.sort((a, b) => new Date(b.start_time) - new Date(a.start_time)) || [])
           ];
         } else {
           const result = await fetchAuctionList(statusFilter);
@@ -69,6 +80,60 @@ export default function AuctionRoomList() {
           }
         });
         setSellerProfiles(profileMap);
+
+        // Fetch collection details for each auction (product_id)
+        const collectionDetailMap = {};
+        for (const auction of auctions) {
+          if (auction.product_id) {
+            try {
+              const res = await getCollectionDetail(auction.product_id);
+              if (res?.status && res.data) {
+                collectionDetailMap[auction.product_id] = {
+                  urlImage: res.data.urlImage || '',
+                  rarityName: res.data.rarityName || '',
+                };
+              }
+            } catch (err) {
+              // skip on error
+            }
+          }
+        }
+        setCollectionDetails(collectionDetailMap);
+
+        // Top 5 bids for each auction
+        const bidsMap = {};
+        for (const auction of auctions) {
+          if (!auction.auction_id) {
+            console.warn('Auction missing auction_id:', auction);
+            bidsMap[auction.auction_id || 'unknown'] = [];
+            continue;
+          }
+          try {
+            const bidRes = await Top5bidAuction(auction.auction_id);
+            if (bidRes?.success && Array.isArray(bidRes.data)) {
+              // Get unique bidder ids
+              const bidderIds = [...new Set(bidRes.data.slice(0, 5).map(b => b.bidder_id))];
+              const bidderProfiles = await Promise.all(bidderIds.map(id => getOtherProfile(id)));
+              const bidderProfileMap = {};
+              bidderProfiles.forEach((res, idx) => {
+                if (res?.status && res.data) {
+                  bidderProfileMap[bidderIds[idx]] = res.data;
+                }
+              });
+              // Attach profile to each bid
+              bidsMap[auction.auction_id] = bidRes.data.slice(0, 5).map(bid => ({
+                ...bid,
+                profile: bidderProfileMap[bid.bidder_id] || {},
+              }));
+            } else {
+              bidsMap[auction.auction_id] = [];
+            }
+          } catch (err) {
+            console.warn('Top5bidAuction error for auction', auction.auction_id, err);
+            bidsMap[auction.auction_id] = [];
+          }
+        }
+        setTopBids(bidsMap);
       } catch (err) {
         setError("An error occurred while loading auction rooms.");
         console.error(err);
@@ -78,6 +143,13 @@ export default function AuctionRoomList() {
     };
     fetchData();
   }, [statusFilter, user]);
+  // Toggle top bids visibility per auction
+  const handleToggleTopBids = (auctionId) => {
+    setShowTopBids((prev) => ({
+      ...prev,
+      [auctionId]: !prev[auctionId],
+    }));
+  };
 
   // helpers
   const formatDate = (iso) => {
@@ -95,7 +167,7 @@ export default function AuctionRoomList() {
     const seller = sellerProfiles[auction.seller_id];
     const username = seller?.username || "";
     const title = auction.title || "";
-    const desc = auction.descripition || "";
+    const desc = auction.description || "";
     const q = searchText.toLowerCase();
     return (
       username.toLowerCase().includes(q) ||
@@ -145,7 +217,7 @@ export default function AuctionRoomList() {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="auctionRoomList__filter-select"
             >
-              <option value="all">All</option>
+              <option value="all">End</option>
               <option value="started">On going</option>
               <option value="waiting">Waiting</option>
             </select>
@@ -189,126 +261,285 @@ export default function AuctionRoomList() {
           <ul className="auctionRoomList__grid">
             {auctions.map((auction) => {
               const seller = sellerProfiles[auction.seller_id];
+              const bids = topBids[auction.auction_id] || [];
+              // Lấy collectionDetail từ product_id
+              const collectionDetail = auction.product_id ? collectionDetails[auction.product_id] || {} : {};
+              // Filter unique bidder_id, keep highest bid_amount for each
+              const uniqueBidsMap = {};
+              bids.forEach(bid => {
+                if (!uniqueBidsMap[bid.bidder_id] || bid.bid_amount > uniqueBidsMap[bid.bidder_id].bid_amount) {
+                  uniqueBidsMap[bid.bidder_id] = bid;
+                }
+              });
+              const uniqueBids = Object.values(uniqueBidsMap).sort((a, b) => b.bid_amount - a.bid_amount);
               return (
-                <li key={auction.id} className="auctionRoomList__card">
-                  {/* Left media (image) */}
-                  <div className="auctionRoomList__card-media">
-                    <img
-                      src={
-                        seller?.profileImage
-                          ? buildImageUrl(seller.profileImage, useBackupImg)
-                          : ProfileHolder
-                      }
-                      onError={() => setUseBackupImg(true)}
-                      alt={seller?.username || "seller"}
-                      className="auctionRoomList__card-media-img"
-                    />
-                  </div>
+                <li key={auction.auction_id} className="auctionRoomList__card" style={{ display: "flex", flexDirection: "column" }}>
+                  <div style={{ display: "flex", flexDirection: "row", width: "100%", gap: "12px", }}>
+                    <div className="auctionRoomList__card-media">
+                      <img
+                        src={
+                          seller?.profileImage
+                            ? buildImageUrl(seller.profileImage, useBackupImg)
+                            : ProfileHolder
+                        }
+                        onError={() => setUseBackupImg(true)}
+                        alt={seller?.username || "seller"}
+                        className="auctionRoomList__card-media-img"
+                      />
+                    </div>
 
-                  {/* Right body */}
-                  <div className="auctionRoomList__card-body">
-                    <div className="auctionRoomList__card-head">
-                      <div className="auctionRoomList__card-info">
-                        <h3 className="auctionRoomList__card-title">
-                          <AuctionTextExpand text={auction.title} maxLength={60} className="auctionRoomList__card-title" />
-                        </h3>
-                        <AuctionTextExpand text={auction.descripition} maxLength={120} className="auctionRoomList__card-description" />
-                      </div>
+                    <div className="auctionRoomList__card-body">
+                      <div className="auctionRoomList__card-head">
+                        <div className="auctionRoomList__card-info">
+                          <h3 className="auctionRoomList__card-title">
+                            <AuctionTextExpand text={auction.title} maxLength={60} className="auctionRoomList__card-title" />
+                          </h3>
+                          <AuctionTextExpand text={auction.description} maxLength={120} className="auctionRoomList__card-description" />
+                        </div>
 
-                      <div className="auctionRoomList__card-meta">
-                        <StatusBadge status={auction.status} start_time={auction.start_time} end_time={auction.end_time} />
-                        {/* <div className="auctionRoomList__card-id">ID: {auction.id}</div> */}
+                        <div className="auctionRoomList__card-meta">
+                          <StatusBadge status={auction.status} start_time={auction.start_time} end_time={auction.end_time} />
+                          {/* <div className="auctionRoomList__card-id">ID: {auction.id}</div> */}
 
-                        {seller && (
-                          <div className="auctionRoomList__seller">
-                            <div className="auctionHistoryList-seller-name mt-1 text-[0.9rem]">by {" "}
-                              {/* reuse style from ExchangeHistory */}
-                              <span className="exchange-history-user-info">
-                                <HoverCard.Root>
-                                  <HoverCard.Trigger asChild>
-                                    <span>{seller.username}</span>
-                                  </HoverCard.Trigger>
-                                  <HoverCard.Content
-                                    side="top" sideOffset={3} align="start"
-                                    className="exchange-history-hovercard-content"
-                                    forceMount
-                                  >
-                                    <div className="exchange-history-hovercard-inner">
-                                      <img
-                                        src={
-                                          seller?.profileImage
-                                            ? buildImageUrl(seller.profileImage, useBackupImg)
-                                            : ProfileHolder
-                                        }
-                                        onError={() => setUseBackupImg(true)}
-                                        alt={seller?.username}
-                                        className="exchange-history-hovercard-avatar"
-                                      />
-                                      <div className="flex flex-col items-start">
-                                        <Link
-                                          to={Pathname("PROFILE").replace(":id", auction.seller_id)}
-                                          className="exchange-history-hovercard-name !mb-[1px]"
-                                        >
-                                          {seller?.username}
-                                        </Link>
+                          {seller && (
+                            <div className="auctionRoomList__seller">
+                              <div className="auctionHistoryList-seller-name mt-1 text-[0.9rem]">by {" "}
+                                {/* reuse style from ExchangeHistory */}
+                                <span className="exchange-history-user-info">
+                                  <HoverCard.Root>
+                                    <HoverCard.Trigger asChild>
+                                      <span>{seller.username}</span>
+                                    </HoverCard.Trigger>
+                                    <HoverCard.Content
+                                      side="top" sideOffset={3} align="start"
+                                      className="exchange-history-hovercard-content"
+                                      forceMount
+                                    >
+                                      <div className="exchange-history-hovercard-inner">
+                                        <img
+                                          src={
+                                            seller?.profileImage
+                                              ? buildImageUrl(seller.profileImage, useBackupImg)
+                                              : ProfileHolder
+                                          }
+                                          onError={() => setUseBackupImg(true)}
+                                          alt={seller?.username}
+                                          className="exchange-history-hovercard-avatar"
+                                        />
+                                        <div className="flex flex-col items-start">
+                                          <Link
+                                            to={Pathname("PROFILE").replace(":id", auction.seller_id)}
+                                            className="exchange-history-hovercard-name !mb-[1px]"
+                                          >
+                                            {seller?.username}
+                                          </Link>
 
-                                        <button
-                                          // reuse style from Profilepage
-                                          className="profilepage-btn-message oxanium-semibold"
-                                          onClick={() => {
-                                            const targetId = auction.seller_id;
+                                          <button
+                                            // reuse style from Profilepage
+                                            className="profilepage-btn-message oxanium-semibold"
+                                            onClick={() => {
+                                              const targetId = auction.seller_id;
 
-                                            if (!targetId) {
-                                              showModal("warning", "Error", "No user found to message.");
-                                              return;
-                                            }
+                                              if (!targetId) {
+                                                showModal("warning", "Error", "No user found to message.");
+                                                return;
+                                              }
 
-                                            navigate(`/chatroom/${targetId}`);
-                                          }}
-                                        >
-                                          <img
-                                            src={MessageIcon}
-                                            alt="Message"
-                                            className="profilepage-message-icon"
-                                          />
-                                          Message
-                                        </button>
+                                              navigate(`/chatroom/${targetId}`);
+                                            }}
+                                          >
+                                            <img
+                                              src={MessageIcon}
+                                              alt="Message"
+                                              className="profilepage-message-icon"
+                                            />
+                                            Message
+                                          </button>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </HoverCard.Content>
-                                </HoverCard.Root>
-                              </span>
+                                    </HoverCard.Content>
+                                  </HoverCard.Root>
+                                </span>
+                              </div>
                             </div>
-                          </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="auctionRoomList__dates">
+                        <div className="auctionRoomList__date-item">
+                          <span className="auctionRoomList__date-label">Start:</span>
+                          <span className="auctionRoomList__date-value">
+                            {moment(auction.start_time).local().format('DD/MM/YYYY HH:mm')}
+                          </span>
+                        </div>
+                        <div className="auctionRoomList__date-item">
+                          <span className="auctionRoomList__date-label">End:</span>
+                          <span className="auctionRoomList__date-value">
+                            {moment(auction.end_time).local().format('DD/MM/YYYY HH:mm')}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Thông tin collection: urlImage và rarityName */}
+                      <div className="auctionRoomList__collectionInfo" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                        {typeof collectionDetail.urlImage === 'string' && collectionDetail.urlImage.trim() !== '' ? (
+                          <img
+                            src={buildImageUrl(collectionDetail.urlImage, useBackupImg)}
+                            onError={() => setUseBackupImg(true)}
+                            alt={collectionDetail.rarityName || 'Product'}
+                            style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover', border: '1px solid #333' }}
+                          />
+                        ) : (
+                          <span style={{ color: '#f55', fontSize: 12 }}>No image</span>
                         )}
-                      </div>
-                    </div>
-
-                    <div className="auctionRoomList__dates">
-                      <div className="auctionRoomList__date-item">
-                        <span className="auctionRoomList__date-label">Start:</span>
-                        <span className="auctionRoomList__date-value">
-                          {moment(auction.start_time).local().format('DD/MM/YYYY HH:mm')}
+                        <span style={{ fontSize: 14, color: '#aaf', fontWeight: 500 }}>
+                          Rarity: {typeof collectionDetail.rarityName === 'string' && collectionDetail.rarityName.trim() !== '' ? collectionDetail.rarityName : <span style={{ color: '#f55' }}>Not found</span>}
                         </span>
                       </div>
-                      <div className="auctionRoomList__date-item">
-                        <span className="auctionRoomList__date-label">End:</span>
-                        <span className="auctionRoomList__date-value">
-                          {moment(auction.end_time).local().format('DD/MM/YYYY HH:mm')}
-                        </span>
+                      {/* Hiển thị các trường quantity, auction_current_amount, transaction_fee_percent, host_obtain_amount */}
+                      <div className="auctionRoomList__financial">
+                        <div className="auctionRoomList__financial-item">
+                          <span className="auctionRoomList__financial-label">Quantity:</span>
+                          <span className="auctionRoomList__financial-value">{auction.quantity ?? '-'}</span>
+                        </div>
+                        <div className="auctionRoomList__financial-item">
+                          <span className="auctionRoomList__financial-label">Current Amount:</span>
+                          <span className="auctionRoomList__financial-value">{auction.auction_current_amount !== undefined ? fmtVND(auction.auction_current_amount) : '-'}</span>
+                        </div>
+                        <div className="auctionRoomList__financial-item">
+                          <span className="auctionRoomList__financial-label">Transaction Fee (%):</span>
+                          <span className="auctionRoomList__financial-value">{auction.transaction_fee_percent ?? '-'}</span>
+                        </div>
+                        <div className="auctionRoomList__financial-item">
+                          <span className="auctionRoomList__financial-label">Host Obtain Amount:</span>
+                          <span className="auctionRoomList__financial-value">{auction.host_obtain_amount !== undefined ? fmtVND(auction.host_obtain_amount) : '-'}</span>
+                        </div>
+                      </div>
+
+                      <div className="auctionRoomList__footer">
+                        {/* <div className="auctionRoomList__bid">
+                          {auction.current_bid ? `Current bid: ${auction.current_bid}` : "No bid yet"}
+                        </div> */}
+                        <button
+                          className="auctionRoomList__viewBtn"
+                          onClick={() => setIsModalOpen(true)}
+                        >
+                          View detail
+                        </button>
                       </div>
                     </div>
+                  </div>
+                  {/* Top 5 bids section */}
+                  <div className="order-history-expand mt-3" style={{ width: "100%", display: "flex", flexDirection: "row", gap: "12px", }}>
+                    <div className="auctionRoomList__card-media">
+                      <div
+                        style={{
+                          width: "8.6rem",
+                          height: 0,
+                          backgroundColor: "transparent",
+                        }}
+                      />
+                    </div>
 
-                    <div className="auctionRoomList__footer">
-                      <div className="auctionRoomList__bid">
-                        {auction.current_bid ? `Current bid: ${auction.current_bid}` : "No bid yet"}
-                      </div>
-                      <button
-                        className="auctionRoomList__viewBtn"
-                        onClick={() => setIsModalOpen(true)}
-                      >
-                        View detail
-                      </button>
+                    <div className="auctionRoomList__card-body">
+                      {bids.length > 0 && (
+                        <div style={{ marginTop: 12 }}>
+                          <button
+                            style={{
+                              background: "#2a2e38",
+                              border: "1px solid #444",
+                              padding: "6px 14px",
+                              borderRadius: 6,
+                              fontSize: 14,
+                              cursor: "pointer",
+                              color: "#fff",
+                              transition: "all 0.2s",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = "#3a3f4b";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "#2a2e38";
+                            }}
+                            onClick={() => handleToggleTopBids(auction.auction_id)}
+                          >
+                            {showTopBids[auction.auction_id] ? "Hide top 5 bids" : "Show top 5 bids"}
+                          </button>
+
+                          {showTopBids[auction.auction_id] && (
+                            <div style={{ marginTop: 10 }}>
+                              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                                {uniqueBids.map((bid, idx) => (
+                                  <li
+                                    key={bid._id || idx}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      padding: "8px 10px",
+                                      borderBottom: "1px solid #333",
+                                      fontSize: 14,
+                                      gap: 12,
+                                      color: "#ddd",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.background = "#242833";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.background = "transparent";
+                                    }}
+                                  >
+                                    <img
+                                      src={
+                                        bid.profile?.profileImage
+                                          ? buildImageUrl(bid.profile.profileImage, useBackupImg)
+                                          : ProfileHolder
+                                      }
+                                      onError={() => setUseBackupImg(true)}
+                                      alt={bid.profile?.username || "bidder"}
+                                      style={{
+                                        width: 32,
+                                        height: 32,
+                                        borderRadius: "50%",
+                                        marginRight: 8,
+                                      }}
+                                    />
+                                    <span
+                                      style={{
+                                        flex: 1,
+                                        fontWeight: 500,
+                                        color: "#fff",
+                                      }}
+                                    >
+                                      {bid.profile?.username || "Unknown"}
+                                    </span>
+                                    <span
+                                      style={{
+                                        minWidth: 100,
+                                        textAlign: "right",
+                                        fontWeight: 600,
+                                        color: "#4da6ff",
+                                      }}
+                                    >
+                                      {fmtVND(bid.bid_amount)}
+                                    </span>
+                                    <span
+                                      style={{
+                                        minWidth: 140,
+                                        textAlign: "right",
+                                        color: "#aaa",
+                                        fontSize: 13,
+                                      }}
+                                    >
+                                      {moment(bid.bid_time).local().format("DD/MM/YYYY HH:mm")}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </li>
@@ -343,7 +574,11 @@ function StatusBadge({ status, start_time, end_time }) {
     if (now >= start && now <= end) {
       label = "On Going";
       classes = "bg-green-600/20 text-green-200 border border-green-500";
-    } else {
+    } else if (now > end) {
+      label = "Finished";
+      classes = "bg-blue-500/20 text-blue-200 border-blue-600";
+   }
+    else {
       label = "Waiting";
       classes = "bg-yellow-500/20 text-yellow-200 border border-yellow-600";
     }
