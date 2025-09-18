@@ -240,7 +240,7 @@ export const getAllAuctions = async () => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
-      url: "api/auction/all?filter=default",
+      url: "api/auction/all/extend?filter=default",
       requiresAuth: true,
     });
     return response.data;
