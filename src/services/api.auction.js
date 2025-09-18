@@ -75,7 +75,7 @@ export const fetchAuctionList = async (filter = "started") => {
   try {
     const response = await pythonApiWithFallback({
       method: "get",
-      url: `/api/auction/all?filter=${filter}`,
+      url: `/api/auction/all/extend?filter=${filter}`,
       requiresAuth: true,
     });
     return response; // mảng 1 chiều
@@ -249,3 +249,40 @@ export const getAllAuctions = async () => {
     return null;
   }
 };
+
+  // Call auction bid API
+  export const Top5bidAuction = async (auctionId) => {
+    try {
+      const response = await pythonApiWithFallback({
+        method: "get",
+        url: "api/auction/bid",
+        params: { auction_id: auctionId },
+        requiresAuth: true,
+      });
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Error placing bid");
+      return {
+        errorCode: error.response?.data?.error_code,
+        message: error.response?.data?.error
+      };
+    }
+  };
+
+  export const AuctionProductDetail = async (auctionId) => {
+    try {
+      const response = await pythonApiWithFallback({
+        method: "get",
+        url: "api/auction/product",
+        params: { auction_id: auctionId },
+        requiresAuth: true,
+      });
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Error placing bid");
+      return {
+        errorCode: error.response?.data?.error_code,
+        message: error.response?.data?.error
+      };
+    }
+  };
