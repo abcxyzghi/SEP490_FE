@@ -38,30 +38,36 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
     return num.toString();
   };
 
- useEffect(() => {
-  const fetchBoxes = async () => {
-    try {
-      const result = await getAllMysteryBoxes();
-      if (result && result.status) {
-        // 👉 Filter chỉ lấy box có status === 1
-        console.log(result)
-        const activeBoxes = result.data.filter(box => box.status === 1);
-        setBoxes(activeBoxes);
-        console.log("test active boxes",activeBoxes )
-        setError(null);
-      } else {
+  useEffect(() => {
+    const fetchBoxes = async () => {
+      try {
+        const result = await getAllMysteryBoxes();
+        if (result && result.status) {
+          // 👉 Filter chỉ lấy box có status === 1
+          console.log("Boxes", result)
+          const now = new Date();
+          const activeBoxes = result.data.filter(
+            (box) =>
+              box.status === 1 &&
+              box.quantity > 0 &&
+              new Date(box.end_time) > now
+          );
+          setBoxes(activeBoxes);
+          console.log("test active boxes", activeBoxes)
+          setError(null);
+        } else {
+          setBoxes([]);
+          setError('Failed to load mystery boxes.');
+        }
+      } catch {
         setBoxes([]);
         setError('Failed to load mystery boxes.');
       }
-    } catch {
-      setBoxes([]);
-      setError('Failed to load mystery boxes.');
-    }
-    setLoading(false);
-  };
+      setLoading(false);
+    };
 
-  fetchBoxes();
-}, []);
+    fetchBoxes();
+  }, []);
 
 
 

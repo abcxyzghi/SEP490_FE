@@ -67,7 +67,7 @@ export default function AdProductManagement() {
   // State gốc
   const [allProducts, setAllProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
-
+  const [useBackupImg, setUseBackupImg] = useState(false);
   // State cho việc tìm kiếm và lọc
   const [productSearchTerm, setProductSearchTerm] = useState("");
   const [selectedRarity, setSelectedRarity] = useState("all");
@@ -255,6 +255,8 @@ export default function AdProductManagement() {
                 <th>Product ID</th>
                 <th>Collection</th>
                 <th>Rarity</th>
+                <th>Quantity</th>
+                <th>Current Quantity</th>
                 <th>Description</th>
                 <th>Status</th>
               </tr>
@@ -265,7 +267,8 @@ export default function AdProductManagement() {
                   <td>
                     {product.urlImage ? (
                       <img
-                        src={buildImageUrl(product.urlImage, product.urlImage)}
+                        src={buildImageUrl(product.urlImage, useBackupImg)}
+                        onError={() => setUseBackupImg(true)}
                         alt={product.name}
                         className="adproduct-thumb"
                       />
@@ -281,6 +284,8 @@ export default function AdProductManagement() {
                       {product.rarityName || 'N/A'}
                     </span>
                   </td>
+                  <td>{product.quantity || 0}</td>
+                  <td>{product.quantityCurrent || 0}</td>
                   <td className="adproduct-description">
                     <ExpandableDescription text={product.description} maxLength={100} />
                   </td>

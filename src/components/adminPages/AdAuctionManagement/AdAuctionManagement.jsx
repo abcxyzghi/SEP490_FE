@@ -11,7 +11,7 @@ import { getCollectionDetail } from '../../../services/api.product';
 // --- Component tái sử dụng: ExpandableDescription ---
 const ExpandableDescription = ({ text, maxLength = 100 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
 
   // Sửa lỗi: API trả về 'descripition' thay vì 'description'
   const safeText = text || '';
@@ -72,7 +72,7 @@ export default function AdAuctionManagement() {
   const [bidsDetail, setBidsDetail] = useState([]);
   const [auctionDetail, setAuctionDetail] = useState(null);
 
-  const handleViewDetail = async (auctionId, productId) => {
+  const handleViewDetail = async (auctionId, productId, startTime, endTime) => {
     console.log("Auction ID:", auctionId, "Product ID:", productId);
     try {
       setLoadingDetail(true);
@@ -110,14 +110,21 @@ export default function AdAuctionManagement() {
 
       const auctionFromList = currentAuctions.find(a => a.auction_id === auctionId);
       console.log("Check price", auctionDetailRes.data)
-      // Xử lý collection detail + auction detail (gộp dữ liệu)
-      if (collectionRes?.status) {
+      // Gộp các trường từ collection và auction detail, ưu tiên auctionDetailRes.data[0]
+      if (collectionRes?.status && auctionDetailRes?.data?.[0]) {
+        const auctionData = auctionDetailRes.data[0];
         setAuctionDetail({
           ...collectionRes.data,
-          starting_price: auctionDetailRes?.data?.[0]?.starting_price ?? null, // thêm starting price
+          ...auctionData,
+          host_username: auctionFromList?.host_username,
+          title: auctionFromList?.title,
+          description: auctionFromList?.description,
+          starting_price: auctionData.starting_price ?? null,
           auction_current_amount: auctionFromList?.auction_current_amount,
           transaction_fee_percent: auctionFromList?.transaction_fee_percent,
           host_obtain_amount: auctionFromList?.host_obtain_amount,
+          start_time: startTime,
+          end_time: endTime
         });
       } else {
         setAuctionDetail(null);
@@ -294,10 +301,11 @@ export default function AdAuctionManagement() {
                       <ExpandableDescription text={auction.description} maxLength={100} />
                     </td>
                     <td>
-                      {moment.utc(auction.start_time).local().format("DD/MM/YYYY HH:mm")}
+                      {moment(auction.start_time).format("DD/MM/YYYY HH:mm")}
+
                     </td>
                     <td>
-                      {moment.utc(auction.end_time).local().format("DD/MM/YYYY HH:mm")}
+                      {moment(auction.end_time).format("DD/MM/YYYY HH:mm")}
                     </td>
                     <td>
                       <span
@@ -311,7 +319,7 @@ export default function AdAuctionManagement() {
                     <td>
                       <button
                         className="adproduct-action-btn"
-                        onClick={() => handleViewDetail(auction.auction_id, auction.product_id)}
+                        onClick={() => handleViewDetail(auction.auction_id, auction.product_id, auction.start_time, auction.end_time)}
                       >
                         View Detail
                       </button>
@@ -332,6 +340,7 @@ export default function AdAuctionManagement() {
             open={isModalOpen}
             onCancel={() => setIsModalOpen(false)}
             width={700}
+            className="custom-auction-modal"
             footer={[
               <Button
                 key="close"
@@ -355,54 +364,49 @@ export default function AdAuctionManagement() {
                 {auctionDetail && (
                   <>
                     {console.log("Auction detail:", auctionDetail)}
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 16,
-                        marginBottom: 20,
-                        alignItems: "flex-start",
-                      }}
-                    >
-                      <img
-                        src={auctionDetail.urlImage ? buildImageUrl(auctionDetail.urlImage, useBackupImg) : ProfileHolder}
-                        onError={() => setUseBackupImg(true)}
-                        alt={auctionDetail.title}
-                        style={{
-                          width: 120,
-                          height: 120,
-                          objectFit: "cover",
-                          borderRadius: 8,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                        }}
-                      />
-                      <div>
-                        <h3 style={{ margin: 0 }}>{auctionDetail.title}</h3>
-                        <p style={{ margin: "6px 0", color: "#666" }}>
-                          {auctionDetail.description}
+                    <div className="auction-detail-header">
+                      <div className="auction-detail-img-wrap">
+                        <img
+                          src={auctionDetail.urlImage ? buildImageUrl(auctionDetail.urlImage, useBackupImg) : ProfileHolder}
+                          onError={() => setUseBackupImg(true)}
+                          alt={auctionDetail.title}
+                          className="auction-detail-img"
+                        />
+                      </div>
+                      <div className="auction-detail-info">
+                        <h2 className="auction-title">Title: {auctionDetail.title}</h2>
+                        <p className="auction-host">
+                          Hosted by <span>{auctionDetail.host_username}</span>
                         </p>
-                        <p style={{ margin: "6px 0", color: "#666" }}>
-                          Rarity: {auctionDetail.rarityName}
-                        </p>
+                        <p className="auction-desc">Description : {auctionDetail.description}</p>
+                        <span className="auction-rarity">Rarity: {auctionDetail.rarityName}</span>
 
-                        <p style={{ margin: "6px 0", color: "#999" }}>
-                          Start:{" "}
-                          {moment(auctionDetail.start_time)
-                            .local()
-                            .format("DD/MM/YYYY HH:mm")}
-                          <br />
-                          End:{" "}
-                          {moment(auctionDetail.end_time)
-                            .local()
-                            .format("DD/MM/YYYY HH:mm")}
-                        </p>
-                        <p style={{ margin: "6px 0", fontWeight: 500 }}>
-                          Starting Price: {fmtVND(auctionDetail.starting_price)}
-                        </p>
-                        <p><strong>Current Amount:</strong> {fmtVND(auctionDetail.auction_current_amount)}</p>
-                        <p><strong>Transaction Fee (%):</strong> {auctionDetail.transaction_fee_percent}%</p>
-                        <p><strong>Host Obtain Amount:</strong> {fmtVND(auctionDetail.host_obtain_amount)}</p>
+                        <div className="auction-time-card">
+                          <p>🕒 Start: {moment(auctionDetail.start_time).format("DD/MM/YYYY HH:mm")}</p>
+                          <p>⌛ End: {moment(auctionDetail.end_time).format("DD/MM/YYYY HH:mm")}</p>
+                        </div>
+
+                        <div className="auction-price-cards">
+                          <div className="price-item">
+                            <span>Starting Price</span>
+                            <strong>{fmtVND(auctionDetail.starting_price)}</strong>
+                          </div>
+                          <div className="price-item highlight">
+                            <span>Current Amount</span>
+                            <strong>{fmtVND(auctionDetail.auction_current_amount)}</strong>
+                          </div>
+                          <div className="price-item">
+                            <span>Transaction Fee</span>
+                            <strong>{auctionDetail.transaction_fee_percent}%</strong>
+                          </div>
+                          <div className="price-item">
+                            <span>Host Obtain</span>
+                            <strong>{fmtVND(auctionDetail.host_obtain_amount)}</strong>
+                          </div>
+                        </div>
                       </div>
                     </div>
+
                   </>
                 )}
 
@@ -410,20 +414,26 @@ export default function AdAuctionManagement() {
                 <h4 style={{ marginBottom: 10 }}>Participant</h4>
                 {bidsDetail.length > 0 ? (
                   <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {bidsDetail.map((bid, idx) => (
-                      <li
-                        key={bid._id || idx}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "10px 0",
-                          borderBottom: "1px solid #eee",
-                          fontSize: 14,
-                          gap: 12,
-                        }}
-                      >
-                        <img
-                            src={bid.profile?.profileImage ? buildImageUrl(bid.profile.profileImage, useBackupImg) : ProfileHolder}
+                    {[...bidsDetail]
+                      .sort((a, b) => new Date(b.bid_time) - new Date(a.bid_time))
+                      .map((bid, idx) => (
+                        <li
+                          key={bid._id || idx}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "10px 0",
+                            borderBottom: "1px solid #eee",
+                            fontSize: 14,
+                            gap: 12,
+                          }}
+                        >
+                          <img
+                            src={
+                              bid.profile?.profileImage
+                                ? buildImageUrl(bid.profile.profileImage, useBackupImg)
+                                : ProfileHolder
+                            }
                             onError={() => setUseBackupImg(true)}
                             alt={bid.profile?.username || "bidder"}
                             style={{
@@ -433,17 +443,17 @@ export default function AdAuctionManagement() {
                               objectFit: "cover",
                             }}
                           />
-                        <span style={{ flex: 1, fontWeight: 500 }}>
-                          {bid.profile?.username || "Unknown"}
-                        </span>
-                        <span style={{ minWidth: 110, textAlign: "right", fontWeight: 600 }}>
-                          {fmtVND(bid.bid_amount)}
-                        </span>
-                        <span style={{ minWidth: 150, textAlign: "right", color: "#888" }}>
-                          {moment(bid.bid_time).local().format("DD/MM/YYYY HH:mm")}
-                        </span>
-                      </li>
-                    ))}
+                          <span style={{ flex: 1, fontWeight: 500 }}>
+                            {bid.profile?.username || "Unknown"}
+                          </span>
+                          <span style={{ minWidth: 110, textAlign: "right", fontWeight: 600 }}>
+                            {fmtVND(bid.bid_amount)}
+                          </span>
+                          <span style={{ minWidth: 150, textAlign: "right", color: "#888" }}>
+                            {moment(bid.bid_time).format("DD/MM/YYYY HH:mm")}
+                          </span>
+                        </li>
+                      ))}
                   </ul>
                 ) : (
                   <p>No bids found.</p>
