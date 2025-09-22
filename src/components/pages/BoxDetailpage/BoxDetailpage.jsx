@@ -99,7 +99,7 @@ export default function BoxDetailpage() {
   const decreaseQuantity = () => {
     setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // không giảm dưới 1
   };
-  
+
   // if (!box || box.status !== 1) {
   // return <div className="text-center mt-10 text-red-500">Box not found or unavailable.</div>;
   // }
@@ -164,15 +164,15 @@ export default function BoxDetailpage() {
   //   }
   // };
   const handlePayInstant = async () => {
-     const isJoined = await checkIsJoinedAuction();
-        if (isJoined) {
-          showModal(
-            "warning",
-            "Cannot Withdraw",
-            "You cannot buy instant while participating in an auction."
-          );
-          return;
-        }
+    const isJoined = await checkIsJoinedAuction();
+    if (isJoined) {
+      showModal(
+        "warning",
+        "Cannot Withdraw",
+        "You cannot buy instant while participating in an auction."
+      );
+      return;
+    }
     if (!user || user.role !== 'user') {
       return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
     }
@@ -204,7 +204,15 @@ export default function BoxDetailpage() {
     }
   };
 
+  if (!box || box.status !== 1) {
+    return <div className="text-center mt-10 text-red-500">Box not found or unavailable on the system.</div>;
+  }
 
+  // thêm validation
+  const now = new Date();
+  if (box.quantity <= 0 || (box.end_time && new Date(box.end_time) < now)) {
+    return <div className="text-center mt-10 text-red-500">This box is out of stock or has expired.</div>;
+  }
   return (
 
     <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
