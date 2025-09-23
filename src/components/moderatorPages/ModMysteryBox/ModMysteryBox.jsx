@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { getAllMysteryBoxes, getMysteryBoxDetail, createNewMysteryBox, addProductForBox } from '../../../services/api.mysterybox';
 import { getAllCollection } from '../../../services/api.collection';
 import { buildImageUrl } from '../../../services/api.imageproxy';
-import { Modal, Upload, Button, Select } from 'antd';
+import { Modal, Upload, Button, Select, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { toast } from 'react-toastify';
+import dayjs from "dayjs";
 import './ModMysteryBox.css';
 import { getAllProduct } from '../../../services/api.product';
 
@@ -31,6 +32,9 @@ export default function ModMysteryBox() {
     description: '',
     price: '',
     totalProduct: '',
+    quantity: '',
+    start_time: '',
+    end_time: '',
     collectionTopicId: '',
     imageUrl: null,
   });
@@ -210,6 +214,7 @@ export default function ModMysteryBox() {
         if (productsResponse && productsResponse.status) {
           const filteredProducts = productsResponse.data.filter(
             (product) => product.collectionId === collection.id
+                        && (product.status === 0 || product.status === 1 || product.status === 2 || product.status === 4)
           );
           setProductList(filteredProducts.map((product) => ({
           ...product,
@@ -268,6 +273,12 @@ export default function ModMysteryBox() {
                 <div className="mod-mysterybox-card-info">
                   <span className="mod-mysterybox-card-label">Created:</span> <span className="mod-mysterybox-card-value">{box.createdAt ? new Date(box.createdAt).toLocaleDateString() : 'N/A'}</span>
                 </div>
+                <div className="mod-mysterybox-card-info">
+                  <span className="mod-mysterybox-card-label">Start time:</span> <span className="mod-mysterybox-card-value">{box.start_time ? new Date(box.start_time).toLocaleDateString() : 'N/A'}</span>
+                </div>
+                <div className="mod-mysterybox-card-info">
+                  <span className="mod-mysterybox-card-label">End time:</span> <span className="mod-mysterybox-card-value">{box.end_time ? new Date(box.end_time).toLocaleDateString() : 'N/A'}</span>
+                </div>
               </div>
               <div className="mod-mysterybox-card-actions">
                 <button
@@ -315,7 +326,9 @@ export default function ModMysteryBox() {
             })()}
             <p className="mod-mysterybox-detail-description">{selectedBox.mysteryBoxDescription}</p>
             <p className="mod-mysterybox-detail-price">Price: {selectedBox.mysteryBoxPrice} VNĐ</p>
-            <p className="mod-mysterybox-detail-created">Created: {new Date(selectedBox.createdAt).toLocaleDateString()}</p>
+            <p className="mod-mysterybox-detail-created">Start time: {new Date(selectedBox.start_time).toLocaleDateString()}</p>
+            <p className="mod-mysterybox-detail-created">End time: {new Date(selectedBox.end_time).toLocaleDateString()}</p>
+
             <h3 className="mod-mysterybox-detail-products-title">Products:</h3>
             <div className="mod-mysterybox-detail-products">
               {selectedBox.products.map((product) => {
@@ -378,6 +391,38 @@ export default function ModMysteryBox() {
             placeholder="Total Product"
             value={newBoxData.totalProduct}
             onChange={(e) => setNewBoxData({ ...newBoxData, totalProduct: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder='Quantity'
+            value={newBoxData.quantity}
+            onChange={(e) => setNewBoxData({ ...newBoxData, quantity: e.target.value })}
+          />
+          <DatePicker
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            style={{ width: "100%", marginBottom: "16px" }}
+            placeholder='Start Time'
+            value={newBoxData.start_time ? dayjs(newBoxData.start_time) : null}
+            onChange={(value) =>
+              setNewBoxData({
+                ...newBoxData,
+                start_time: value ? value.toISOString() : null,
+              })
+            }
+          />
+          <DatePicker
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            style={{ width: "100%", marginBottom: "16px" }}
+            placeholder="End Time"
+            value={newBoxData.end_time ? dayjs(newBoxData.end_time) : null}
+            onChange={(value) =>
+              setNewBoxData({
+                ...newBoxData,
+                end_time: value ? value.toISOString() : null,
+              })
+            }
           />
           <Select
             placeholder="Select Collection"

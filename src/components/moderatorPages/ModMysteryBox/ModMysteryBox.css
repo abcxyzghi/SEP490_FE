@@ -427,8 +427,11 @@
   border-radius: 12px;
 }
 
+/* Style chung cho input, textarea, select, DatePicker */
 .mod-mysterybox-create-form input,
-.mod-mysterybox-create-form textarea {
+.mod-mysterybox-create-form textarea,
+.mod-mysterybox-create-form select,
+.mod-mysterybox-create-form .ant-picker {
   padding: 15px;
   font-size: 1rem;
   border: 1px solid #38f9d7;
@@ -437,12 +440,22 @@
   color: #ffffff;
 }
 
+/* Focus effect */
 .mod-mysterybox-create-form input:focus,
-.mod-mysterybox-create-form textarea:focus {
+.mod-mysterybox-create-form textarea:focus,
+.mod-mysterybox-create-form select:focus,
+.mod-mysterybox-create-form .ant-picker-focused {
   outline: none;
   border-color: #ff00cc;
   box-shadow: 0 0 0 2px #ff00cc44;
 }
+
+/* Nếu muốn text placeholder cũng có màu */
+.mod-mysterybox-create-form input::placeholder,
+.mod-mysterybox-create-form textarea::placeholder {
+  color: #fcfcfc;
+}
+
 .mod-mysterybox-create-modal input[type='checkbox'] {
   accent-color: #38f9d7;
 }

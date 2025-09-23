@@ -79,8 +79,8 @@
 .rarity-epic,
 .rarity-legendary {
   font-weight: bold;
-  font-size: 1.1rem;
-  padding: 4px 12px;
+  font-size: 1rem;
+  padding: 4px 8px;
   border-radius: 8px;
   display: inline-block;
   position: relative;
@@ -306,6 +306,71 @@
   background: rgba(56, 249, 215, 0.3) !important; /* xanh lá với opacity 30% */
   color: #38f9d7 !important;
   border-color: #38f9d7 !important;
+}
+/* ===== STATUS STYLES ===== */
+.status-normal,
+.status-limit,
+.status-using,
+.status-using-limit,
+.status-reuse,
+.status-out-limit {
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  color: #fff;
+  text-align: center;
+  min-width: 90px;
+}
+
+/* Normal - xanh dương nhẹ */
+.status-normal {
+  background-color: #2563eb; /* xanh dương */
+  box-shadow: 0 0 8px #3b82f6aa;
+}
+
+/* Limit - cam */
+.status-limit {
+  background-color: #f97316; /* cam */
+  box-shadow: 0 0 8px #fb923caa;
+}
+
+/* Using - vàng */
+.status-using {
+  background-color: #eab308; /* vàng */
+  box-shadow: 0 0 8px #facc15aa;
+}
+
+/* Using Limit - tím */
+.status-using-limit {
+  background-color: #9333ea; /* tím */
+  box-shadow: 0 0 8px #a855f7aa;
+  animation: pulseUsingLimit 2.5s infinite ease-in-out;
+}
+
+/* Reuse - xanh lá */
+.status-reuse {
+  background-color: #22c55e; /* xanh lá */
+  box-shadow: 0 0 8px #4ade80aa;
+}
+
+/* Out Limit - đỏ */
+.status-out-limit {
+  background-color: #dc2626; /* đỏ */
+  box-shadow: 0 0 8px #ef4444aa;
+  animation: pulseOutLimit 2.5s infinite ease-in-out;
+}
+
+/* Hiệu ứng nhấn mạnh */
+@keyframes pulseUsingLimit {
+  0%, 100% { box-shadow: 0 0 8px 2px #a855f7; }
+  50% { box-shadow: 0 0 16px 4px #9333ea; }
+}
+
+@keyframes pulseOutLimit {
+  0%, 100% { box-shadow: 0 0 8px 2px #ef4444; }
+  50% { box-shadow: 0 0 16px 4px #dc2626; }
 }
 
 
