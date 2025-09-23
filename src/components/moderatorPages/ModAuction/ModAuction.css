@@ -230,7 +230,8 @@
 }
 
 .modauction-mod-btn-approve,
-.modauction-mod-btn-reject {
+.modauction-mod-btn-reject,
+.modauction-mod-btn-view-detail {
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
@@ -240,11 +241,13 @@
   transition: all 0.2s ease;
 }
 
-.modauction-mod-btn-approve {
+.modauction-mod-btn-approve,
+.modauction-mod-btn-view-detail {
   background-color: #27ae60;
 }
 
-.modauction-mod-btn-approve:hover {
+.modauction-mod-btn-approve:hover,
+.modauction-mod-btn-view-detail:hover {
   background-color: #2ecc71;
 }
 
