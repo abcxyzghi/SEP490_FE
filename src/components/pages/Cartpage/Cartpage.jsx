@@ -133,10 +133,16 @@ export default function Cartpage() {
               });
             if (result?.status) boughtCount++;
             else { 
-            showModal("error", "Purchase Failed", result?.error || `Mystery box '${item.name}' is no longer available and has been removed from your cart.` );
-            await removeFromCart({ mangaBoxId: item.id });
-            dispatch(removeItemFromCart({ id: item.id, type: "box" }));
-          }
+              // Check for 400 error specifically
+              if (result?.errorCode === 400) {
+                console.error("Error 400:", result.message);
+                showModal("error", "Purchase Failed", result.message || "Invalid quantity - Quantity must be greater than zero");
+              } else {
+                showModal("error", "Purchase Failed", result?.error || result?.message || `Mystery box '${item.name}' is no longer available and has been removed from your cart.`);
+              }
+              await removeFromCart({ mangaBoxId: item.id });
+              dispatch(removeItemFromCart({ id: item.id, type: "box" }));
+            }
         }
           } else {
             // đủ số lượng thì mua luôn 
@@ -146,10 +152,16 @@ export default function Cartpage() {
             });
             if (result?.status) boughtCount++;
             else { 
-            showModal("error", "Purchase Failed", result?.error || `Mystery box '${item.name}' is no longer available and has been removed from your cart.` );
-            await removeFromCart({ mangaBoxId: item.id });
-            dispatch(removeItemFromCart({ id: item.id, type: "box" }));
-          }
+              // Check for 400 error specifically
+              if (result?.errorCode === 400) {
+                console.error("Error 400:", result.message);
+                showModal("error", "Purchase Failed", result.message || "Invalid quantity - Quantity must be greater than zero");
+              } else {
+                showModal("error", "Purchase Failed", result?.error || result?.message || `Mystery box '${item.name}' is no longer available and has been removed from your cart.`);
+              }
+              await removeFromCart({ mangaBoxId: item.id });
+              dispatch(removeItemFromCart({ id: item.id, type: "box" }));
+            }
           }
         }
 
@@ -181,10 +193,16 @@ export default function Cartpage() {
               });
               if (result?.status) boughtCount++;
               else {
-              showModal("error","Purchase Failed",result?.error || `Product '${item.name}' is no longer available and has been removed from your cart.`);
-              await removeFromCart({ sellProductId: item.id });
-              dispatch(removeItemFromCart({ id: item.id, type: "product" }));
-           }
+                // Check for 400 error specifically
+                if (result?.errorCode === 400) {
+                  console.error("Error 400:", result.message);
+                  showModal("error", "Purchase Failed", result.message || "Invalid quantity - Quantity must be greater than 0");
+                } else {
+                  showModal("error", "Purchase Failed", result?.error || result?.message || `Product '${item.name}' is no longer available and has been removed from your cart.`);
+                }
+                await removeFromCart({ sellProductId: item.id });
+                dispatch(removeItemFromCart({ id: item.id, type: "product" }));
+              }
           }
           } else {
             // đủ số lượng thì mua luôn
@@ -193,11 +211,17 @@ export default function Cartpage() {
               quantity: item.quantity,
             });
             if (result?.status) boughtCount++;
-           else {
-           showModal("error","Purchase Failed",result?.error || `Product '${item.name}' is no longer available and has been removed from your cart.`);
-           await removeFromCart({ sellProductId: item.id });
-           dispatch(removeItemFromCart({ id: item.id, type: "product" }));
-          }
+            else {
+              // Check for 400 error specifically
+              if (result?.errorCode === 400) {
+                console.error("Error 400:", result.message);
+                showModal("error", "Purchase Failed", result.message || "Invalid quantity - Quantity must be greater than 0");
+              } else {
+                showModal("error", "Purchase Failed", result?.error || result?.message || `Product '${item.name}' is no longer available and has been removed from your cart.`);
+              }
+              await removeFromCart({ sellProductId: item.id });
+              dispatch(removeItemFromCart({ id: item.id, type: "product" }));
+            }
           }
         }
       }

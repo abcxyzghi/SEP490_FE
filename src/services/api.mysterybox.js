@@ -41,13 +41,11 @@ export const buyMysteryBox = async ({ mangaBoxId, quantity }) => {
 
     return response.data;
   } catch (error) {
-    const backendError = error.response?.data || {
-      status: false,
-      error: "Unexpected error occurred.",
-      errorCode: 500,
+    toast.error(error.response?.data?.error || "Error buying mystery box");
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
     };
-    toast.error(backendError.error || "Error buying product on sale");
-    return backendError;
   }
 };
 
