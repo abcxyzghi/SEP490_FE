@@ -271,6 +271,9 @@ export default function ModMysteryBox() {
                   <span className="mod-mysterybox-card-label">Price:</span> <span className="mod-mysterybox-card-value">{box.mysteryBoxPrice?.toLocaleString() || 'N/A'} VNĐ</span>
                 </div>
                 <div className="mod-mysterybox-card-info">
+                  <span className="mod-mysterybox-card-label">Quantity:</span> <span className="mod-mysterybox-card-value">{box.quantity || 'N/A'} Boxes</span>
+                </div>
+                <div className="mod-mysterybox-card-info">
                   <span className="mod-mysterybox-card-label">Created:</span> <span className="mod-mysterybox-card-value">{box.createdAt ? new Date(box.createdAt).toLocaleDateString() : 'N/A'}</span>
                 </div>
                 <div className="mod-mysterybox-card-info">
