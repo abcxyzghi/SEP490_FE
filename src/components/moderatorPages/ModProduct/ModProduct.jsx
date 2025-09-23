@@ -5,7 +5,9 @@ import { getAllProduct, createProduct } from '../../../services/api.product';
 import { buildImageUrl } from '../../../services/api.imageproxy';
 import { block_unblock_product } from '../../../services/api.product';
 import { getAllCollection } from '../../../services/api.collection';
+import { Tooltip, Image } from "antd";
 import './ModProduct.css';
+import FormItem from 'antd/es/form/FormItem';
 
 export default function ModProduct() {
   const [useBackupImg, setUseBackupImg] = useState(false);
@@ -57,6 +59,12 @@ export default function ModProduct() {
       formData.append('RarityName', values.rarityName);
       formData.append('Description', values.description);
       formData.append('CollectionId', values.CollectionId);
+      if (values.quantity === 0){
+        formData.append('Quantity', -1);
+      } else{
+        formData.append('Quantity', values.quantity);
+      }
+      formData.append('Status', values.status);
       if (values.UrlImage && values.UrlImage.length > 0) {
         formData.append('UrlImage', values.UrlImage[0].originFileObj);
       }
@@ -83,10 +91,25 @@ export default function ModProduct() {
       key: 'urlImage',
       render: url => {
         const imgUrl = buildImageUrl(url, useBackupImg);
-        return <img src={imgUrl} onError={() => setUseBackupImg(true)} alt="product" style={{ width: 240 }} />
+        return <Image src={imgUrl} onError={() => setUseBackupImg(true)} alt="product" style={{ width: 240, borderRadius: 8, objectFit: "cover", cursor: "pointer"  }} preview={{ mask: "Click to Preview" }} />
       }
     },
-    { title: 'Description', dataIndex: 'description', key: 'description', className: 'description-cell' },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      width: 250,
+      render: (text) => (
+        <Tooltip title={text}>
+          <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "inline-block", maxWidth: "220px" }}>
+            {text}
+          </span>
+        </Tooltip>
+      ),
+    },
+    { title: 'Quantity', dataIndex: 'quantity', key: 'quantity', sorter: (a, b) => a.quantity - b.quantity, render: qty => (qty === -1 ? 'Unlimited' : qty) },
+    { title: 'Quantity Current', dataIndex: 'quantityCurrent', key: 'quantityCurrent', sorter: (a, b) => a.quantityCurrent - b.quantityCurrent, render: qty => (qty === -1 ? 'Unlimited' : qty) },
+
     {
       title: 'Rarity', dataIndex: 'rarityName', key: 'rarityName', sorter: (a, b) => a.rarityName.localeCompare(b.rarityName),
       filters: [
@@ -107,6 +130,33 @@ export default function ModProduct() {
         // Viết hoa chữ cái đầu
         const rarityLabel = rarity ? rarity.charAt(0).toUpperCase() + rarity.slice(1) : '';
         return <span className={className}>{rarityLabel}</span>;
+      }
+    },
+    { title: 'CreateAt', dataIndex: 'createAt', key: 'createAt', render: date => new Date(date).toLocaleString() },
+    { title: 'Status', dataIndex: 'status', key: 'status', sorter: (a, b) => a.status - b.status,
+      filters: [
+        { text: 'Normal', value: 0 },
+        { text: 'Limit', value: 1 },
+        { text: 'Using ', value: 2 },
+        { text: 'Using Limit ', value: 3 },
+        { text: 'Reuse', value: 4 },
+        { text: 'Out Limit', value: -1 },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: status => {
+        let className = 'status-normal';
+        if(status === 1) className = 'status-limit';
+        else if(status === 2) className = 'status-using';
+        else if(status === 3) className = 'status-using-limit';
+        else if(status === 4) className = 'status-reuse';
+        else if(status === -1) className = 'status-out-limit';
+        const statusLabel = status === 0 ? 'Normal' :
+          status === 1 ? 'Limit' :
+          status === 2 ? 'Using' :
+          status === 3 ? 'Using Limit' :
+          status === 4 ? 'Reuse' :
+          status === -1 ? 'Out Limit' : 'Unknown';
+        return <span className={className}>{statusLabel}</span>;
       }
     },
     {
@@ -139,6 +189,7 @@ export default function ModProduct() {
           dataSource={products}
           columns={columns}
           rowKey="productId"
+          tableLayout="fixed"
         />
       </div>
       <Modal
@@ -189,9 +240,29 @@ export default function ModProduct() {
             <Input.TextArea allowClear autoComplete="off" rows={3} />
           </Form.Item>
 
-          <Form.Item name="CollectionId" label="Collection" rules={[{ required: true, message: 'Please must choose a collectioncollection' }]}>
+          <Form.Item name="CollectionId" label="Collection" rules={[{ required: true, message: 'Please must choose a collection' }]}>
             <Select allowClear options={collections.map(c => ({ value: c.id, label: c.topic }))} showSearch optionFilterProp="label" placeholder="Choose a collection" notFoundContent={collections.length === 0 ? 'There are no collections' : null} />
           </Form.Item>
+
+          <FormItem
+          name= "quantity"
+          label="Quantity">
+            <Input type='number' min={1} max={1000} defaultValue={0} />
+          </FormItem>
+
+          <FormItem
+          name= "status"
+          label="Status"
+          rules={[{ required: true, message: 'Please must choose a status' }]}>
+            <Select
+              allowClear
+              autoFocus
+              options={[
+                { value: 0, label: 'Normal' },
+                { value: 1, label: 'Limit' },
+              ]}
+            />
+          </FormItem>
           <Form.Item
             name="UrlImage"
             label="Product's Image"
