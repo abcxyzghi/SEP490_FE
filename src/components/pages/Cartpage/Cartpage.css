@@ -13,14 +13,14 @@
 
 
 /* Main container inside tab (which used by both CartBoxList and CartProductList */
-.cartpage-card-grid-wrapper{
+.cartpage-card-grid-wrapper {
   max-height: 700px;
   overflow-y: auto;
-    /* Hide scrollbar */
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE and Edge */
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
 }
 
 .cartpage-card-grid {
@@ -144,12 +144,12 @@ input#cartpage-select-all-checkbox:checked {
   align-items: flex-end;
 }
 
-.cartpage-seller-name{
+.cartpage-seller-name {
   margin-left: 6px;
   align-self: start;
 }
 
-.cartpage-seller-name:hover span{
+.cartpage-seller-name:hover span {
   text-decoration: underline;
   cursor: pointer;
 }
@@ -169,10 +169,37 @@ input#cartpage-select-all-checkbox:checked {
 }
 
 .cartpage-product-price {
-  font-size: 20px;
-  color: #FFFFFF;
+  --prizeText-color: rgb(208, 255, 226);
+  font-size: 1.05rem;
   font-weight: 500;
+  color: var(--prizeText-color);
   font-family: 'Oxanium', sans-serif;
+  text-shadow:
+    1px 1px rgb(33, 163, 7),
+    1px 2px rgb(33, 163, 7),
+    1px 3px rgb(33, 163, 7);
+  filter: drop-shadow(3px 2px 2px rgb(33, 163, 7));
+}
+
+.cartpage-product-info {
+  font-size: 12px;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.4;
+  color: #aaa;
+  /* xám nhạt đồng bộ */
+}
+
+.cartpage-product-available {
+  font-weight: 500;
+  color: #ddd;
+}
+
+.cartpage-product-countdown {
+  color: #bbb;
+  font-style: italic;
 }
 
 .cartpage-quantity {

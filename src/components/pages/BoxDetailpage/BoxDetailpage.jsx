@@ -20,6 +20,20 @@ import moment from 'moment/moment';
 
 
 export default function BoxDetailpage() {
+  // Helper to calculate days left
+  const getDaysLeft = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const now = new Date();
+    if (!start || !end) return '';
+    if (now < startDate) {
+      const diff = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
+      return `${diff} day${diff !== 1 ? 's' : ''} until start`;
+    }
+    if (now > endDate) return 'Ended';
+    const diff = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+    return `${diff} day${diff !== 1 ? 's' : ''} left`;
+  };
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
   const { id } = useParams();
@@ -268,18 +282,12 @@ export default function BoxDetailpage() {
 
             {/* Quantity in stock */}
             <p className="boxdetailP-box-stock oxanium-regular">
-              Quantity in stock: <span className="oxanium-bold">{box.quantity}</span>
+              Available in stock: <span className="oxanium-bold">{box.quantity}</span>
             </p>
 
-            <p className="boxdetailP-box-time start">
-              <span className="icon">🕒</span>
-              Start: {moment(box.start_time).format("DD/MM/YYYY HH:mm")}
-            </p>
-
-            <p className="boxdetailP-box-time end">
-              <span className="icon">⌛</span>
-              End: {moment(box.end_time).format("DD/MM/YYYY HH:mm")}
-            </p>
+            <div className="boxdetailP-box-countdown oxanium-regular">
+              {getDaysLeft(box.start_time, box.end_time)}
+            </div>
           </div>
 
 

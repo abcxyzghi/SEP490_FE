@@ -123,12 +123,23 @@
   white-space: normal; /* allow wrapping */
 }
 
+.boxList-sub-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
 
 .boxList-card-price {
   color: var(--primary-2);
   margin-top: 4px;
   font-size: 16px;
   text-align: left;
+}
+
+.boxList-card-quantity {
+  color: var(--dark-3);
+  font-size: 12px;
 }
 
 
