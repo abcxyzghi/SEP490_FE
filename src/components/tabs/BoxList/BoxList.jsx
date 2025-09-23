@@ -154,7 +154,12 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
           name: box.mysteryBoxName,
           price: box.mysteryBoxPrice,
           image: box.urlImage,
-          quantity: 1
+          quantity: 1,
+
+          // Thêm các trường mới
+          availableQuantity: box.quantity,
+          startTime: box.start_time,
+          endTime: box.end_time
         }));
       }
       showModal('default', 'Success', 'Successfully added to cart!');
@@ -212,6 +217,12 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                       <div className="boxList-card-title oxanium-bold">
                         {item.mysteryBoxName}
                         {/* {truncate(item.mysteryBoxName, 30)} */}
+                      </div>
+
+                      <div className="boxList-card-quantity oxanium-semibold">Quantity: {item.quantity}</div>
+                      <div className="boxList-card-time oxanium-regular">
+                        <div>Start: {new Date(item.start_time).toLocaleDateString()}</div>
+                        <div>End: {new Date(item.end_time).toLocaleDateString()}</div>
                       </div>
                       <div className="boxList-card-price oxanium-bold">{formatShortNumber(item.mysteryBoxPrice)} VND</div>
                       <div className="boxList-card-actions">

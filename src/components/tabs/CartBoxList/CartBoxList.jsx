@@ -39,6 +39,11 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
               price: boxItem.box.mysteryBoxPrice,
               type: 'box',
               quantity: boxItem.quantity || 1,
+
+              // Thêm các thông tin mới từ API
+              availableQuantity: boxItem.box.quantity, // Số lượng còn lại của box
+              startTime: boxItem.box.start_time,
+              endTime: boxItem.box.end_time,
             });
           });
           dispatch(setCartFromServer(formattedItems));
@@ -252,18 +257,38 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
                         <div className="cartpage-product-price">
                           {(item.price || 0).toLocaleString('vi-VN')} VND
                         </div>
+                        {/* Thêm thông tin quantity, start_time, end_time */}
+                        <div className="cartpage-product-info oxanium-regular">
+                          <div className="cartpage-product-available">
+                            Available: {item.availableQuantity || 0}
+                          </div>
+                          <div className="cartpage-product-start">
+                            Start: {item.startTime ? new Date(item.startTime).toLocaleDateString() : 'N/A'}
+                          </div>
+                          <div className="cartpage-product-end">
+                            End: {item.endTime ? new Date(item.endTime).toLocaleDateString() : 'N/A'}
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
                   <div className="cartpage-quantity">
                     <button
-                      onClick={() => handleQuantityChange(item, (item.quantity || 1) - 1)}
+                      onClick={() =>
+                        handleQuantityChange(item, Math.max((item.quantity || 1) - 1))
+                      }
                     >
                       <img src={ReduceQuantity} style={{ width: "20px", height: "20px" }} alt="-" />
                     </button>
-                    <span className='oxanium-regular'>{item.quantity || 1}</span>
+                    <span className="oxanium-regular">{item.quantity || 1}</span>
                     <button
-                      onClick={() => handleQuantityChange(item, (item.quantity || 1) + 1)}
+                      onClick={() =>
+                        handleQuantityChange(
+                          item,
+                          Math.min((item.quantity || 1) + 1, item.availableQuantity || 0)
+                        )
+                      }
                     >
                       <img src={AddQuantity} style={{ width: "20px", height: "20px" }} alt="+" />
                     </button>

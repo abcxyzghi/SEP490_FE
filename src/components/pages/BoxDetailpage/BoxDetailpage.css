@@ -428,3 +428,35 @@
         height: 200px;
     }
 }
+
+
+.boxdetailP-box-stock {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #cccccc; /* xám nhạt để cân đối */
+}
+
+.boxdetailP-box-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #bbbbbb;
+  margin-top: 4px;
+}
+
+.boxdetailP-box-time:first-of-type {
+  margin-top: 6px;
+}
+
+.boxdetailP-box-time .icon {
+  font-size: 16px;
+}
+
+.boxdetailP-box-time.start {
+  color: #facc15; /* vàng cho start */
+}
+
+.boxdetailP-box-time.end {
+  color: #fb7185; /* đỏ hồng cho end */
+}

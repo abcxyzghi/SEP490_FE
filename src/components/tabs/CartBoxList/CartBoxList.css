@@ -1,0 +1,23 @@
+.cartpage-product-info {
+  font-size: 12px;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #aaa; /* xám nhạt đồng bộ */
+}
+
+.cartpage-product-info div {
+  line-height: 1.4;
+}
+
+.cartpage-product-available {
+  font-weight: 500;
+  color: #ddd; /* sáng hơn một chút cho Available */
+}
+
+.cartpage-product-start,
+.cartpage-product-end {
+  color: #bbb; /* xám trung tính */
+  font-style: italic;
+}
