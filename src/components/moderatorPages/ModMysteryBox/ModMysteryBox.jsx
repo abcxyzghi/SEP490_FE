@@ -459,12 +459,12 @@ export default function ModMysteryBox() {
           onCancel={() => setIsAddProductModalVisible(false)}
           onOk={() => {
             console.log("onOk được gọi");
-            console.log("📦 Selected Box ID:", selectedBoxId);
-            console.log("📋 Product List:", productList);
+            console.log("Selected Box ID:", selectedBoxId);
+            console.log("Product List:", productList);
             const selectedProducts = productList.filter(
               (product) => product.selected && !isNaN(product.chance) && product.chance > 0
             );
-            console.log("✅ Selected Products:", selectedProducts);
+            console.log("Selected Products:", selectedProducts);
             if (selectedProducts.length === 0) {
               toast.error('Vui lòng chọn ít nhất một sản phẩm và tỷ lệ.');
               return;
@@ -473,7 +473,7 @@ export default function ModMysteryBox() {
               productId: product.productId,
               chance: product.chance,
             }));
-            console.log("📦 Products with Chances:", productsWithChances);
+            console.log("Products with Chances:", productsWithChances);
             handleAddProduct(selectedBoxId, productsWithChances);
             setIsAddProductModalVisible(false);
           }}
@@ -493,7 +493,7 @@ export default function ModMysteryBox() {
                   value={value}
                   onChange={(e) => {
                     const inputValue = Number(e.target.value.replace(',', '.')) || 0;
-                    const lowercaseRarity = rarity.toLowerCase(); // 👈 đảm bảo key là lowercase
+                    const lowercaseRarity = rarity.toLowerCase();
 
                     setRarityRatios(prev => ({
                       ...prev,
@@ -522,7 +522,7 @@ export default function ModMysteryBox() {
                 });
 
                 Object.entries(groupedByRarity).forEach(([rarity, group]) => {
-                  const ratio = rarityRatios[rarity]; // 🔍 giờ chắc chắn tồn tại
+                  const ratio = rarityRatios[rarity]; 
                   if (!ratio || group.length === 0) return;
 
                   const perItemChance = ratio;
