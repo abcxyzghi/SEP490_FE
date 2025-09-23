@@ -16,6 +16,7 @@ import MessageModal from '../../libs/MessageModal/MessageModal';
 import AddQuantity from "../../../assets/Icon_line/add-01.svg";
 import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
 import { checkIsJoinedAuction } from '../../../services/api.auction';
+import moment from 'moment/moment';
 
 
 export default function BoxDetailpage() {
@@ -173,36 +174,60 @@ export default function BoxDetailpage() {
       );
       return;
     }
-    if (!user || user.role !== 'user') {
-      return showModal('warning', 'Unauthorized', "You're not permitted to execute this action");
+    if (!user || user.role !== "user") {
+      return showModal(
+        "warning",
+        "Unauthorized",
+        "You're not permitted to execute this action"
+      );
     }
 
-    if (user.wallet_amount < box.mysteryBoxPrice) {
-      return showModal('warning', 'Currency Crunch', 'You do not have enough currency');
+    if (user.wallet_amount < box.mysteryBoxPrice * quantity) {
+      return showModal(
+        "warning",
+        "Currency Crunch",
+        "You do not have enough currency"
+      );
     }
 
     setLoadingBtn(true);
     try {
-      const result = await buyMysteryBox({ mangaBoxId: box.id, quantity: quantity });
+      const result = await buyMysteryBox({ mangaBoxId: box.id, quantity });
       if (result?.status) {
-        const token = localStorage.getItem('token');
+        // ✅ update user info
+        const token = localStorage.getItem("token");
         if (token) {
           const res = await fetchUserInfo(token);
           if (res.status && res.data) {
             dispatch(setUser(res.data));
           }
         }
-        showModal('default', 'Success', result.data?.message || 'Box purchased successfully!');
+
+        // ✅ update local quantity in stock
+        setBox((prev) => ({
+          ...prev,
+          quantity: prev.quantity - quantity, // trừ số lượng vừa mua
+        }));
+
+        // ✅ reset input về 1 (hoặc để nguyên tuỳ bạn)
+        setQuantity(1);
+
+        showModal(
+          "default",
+          "Success",
+          result.data?.message || "Box purchased successfully!"
+        );
       } else {
-        showModal('error', 'Error', result?.error || 'Purchase failed.');
+        showModal("error", "Error", result?.error || "Purchase failed.");
       }
     } catch (error) {
-      showModal('error', 'Oops!', 'Something went wrong while purchasing.');
+      showModal("error", "Oops!", "Something went wrong while purchasing.");
       console.error(error);
     } finally {
       setLoadingBtn(false);
     }
   };
+
 
   if (!box || box.status !== 1) {
     return <div className="text-center mt-10 text-red-500">Box not found or unavailable on the system.</div>;
@@ -213,6 +238,7 @@ export default function BoxDetailpage() {
   if (box.quantity <= 0 || (box.end_time && new Date(box.end_time) < now)) {
     return <div className="text-center mt-10 text-red-500">This box is out of stock or has expired.</div>;
   }
+
   return (
 
     <div className="boxdetailP-container mx-auto my-21 px-4 sm:px-8 md:px-12 lg:px-22">
@@ -232,27 +258,41 @@ export default function BoxDetailpage() {
         {/* <div className="boxdetailP-divider"></div> */}
 
         <div className="boxdetailP-info-content">
+
           {/* Title + Price + Quantity + Buy button */}
           <div className="boxdetailP-info-wrapper mb-10">
             <h1 className="boxdetailP-box-title oleo-script-bold">{box.mysteryBoxName}</h1>
-            <p className="boxdetailP-box-prize oxanium-bold">{`${formatFullWithDots(box.mysteryBoxPrice)} VND`}</p>
+            <p className="boxdetailP-box-prize oxanium-bold">
+              {`${formatFullWithDots(box.mysteryBoxPrice)} VND`}
+            </p>
 
-            {/* Add calculated prize when qunatity goes up */}
+            {/* Quantity in stock */}
+            <p className="boxdetailP-box-stock oxanium-regular">
+              Quantity in stock: <span className="oxanium-bold">{box.quantity}</span>
+            </p>
 
+            <p className="boxdetailP-box-time start">
+              <span className="icon">🕒</span>
+              Start: {moment(box.start_time).format("DD/MM/YYYY HH:mm")}
+            </p>
+
+            <p className="boxdetailP-box-time end">
+              <span className="icon">⌛</span>
+              End: {moment(box.end_time).format("DD/MM/YYYY HH:mm")}
+            </p>
           </div>
+
 
           <div className="boxdetailP-quantyNbuy-container">
             <div className="boxdetailP-quantity-measure">
               <div
                 className="boxdetailP-quantity-iconWrapper-left"
-                onClick={decreaseQuantity}
+                onClick={() => {
+                  if (!moment(box.end_time).isBefore(moment())) decreaseQuantity();
+                }}
                 style={{ cursor: "pointer" }}
               >
-                <img
-                  src={ReduceQuantity}
-                  alt="-"
-                  className="boxdetailP-quantity-icon"
-                />
+                <img src={ReduceQuantity} alt="-" className="boxdetailP-quantity-icon" />
               </div>
 
               <div className="boxdetailP-quantity-text oxanium-regular">
@@ -260,35 +300,45 @@ export default function BoxDetailpage() {
                 <input
                   type="number"
                   min={1}
+                  max={box.quantity}   // giới hạn trực tiếp input
                   step={1}
                   value={quantity}
                   onChange={(e) => {
                     const value = parseInt(e.target.value, 10);
-                    setQuantity(isNaN(value) || value < 1 ? 1 : value);
-                    // setQuantity(isNaN(value) || value < 1 ? 1 : Math.min(value, 99));   // Limit to max 99
+                    if (isNaN(value) || value < 1) {
+                      setQuantity(1);
+                    } else if (value > box.quantity) {
+                      setQuantity(box.quantity);
+                    } else {
+                      setQuantity(value);
+                    }
                   }}
                   className="boxdetailP-quantity-input"
+                  disabled={moment(box.end_time).isBefore(moment())}
                 />
               </div>
 
               <div
                 className="boxdetailP-quantity-iconWrapper-right"
-                onClick={increaseQuantity}
+                onClick={() => {
+                  if (!moment(box.end_time).isBefore(moment()) && quantity < box.quantity) {
+                    increaseQuantity();
+                  }
+                }}
                 style={{ cursor: "pointer" }}
               >
-                <img
-                  src={AddQuantity}
-                  alt="+"
-                  className="boxdetailP-quantity-icon"
-                />
+                <img src={AddQuantity} alt="+" className="boxdetailP-quantity-icon" />
               </div>
             </div>
 
             <div className="boxdetailP-buyDropdown-container" ref={menuRef}>
               <button
-                className={`boxdetailP-buyNow-button oxanium-bold ${loadingBtn ? 'opacity-70 cursor-not-allowed disabled' : ''}`}
+                className={`boxdetailP-buyNow-button oxanium-bold ${loadingBtn || moment(box.end_time).isBefore(moment())
+                  ? 'opacity-70 cursor-not-allowed disabled'
+                  : ''
+                  }`}
                 onClick={() => setIsOpen(prev => !prev)}
-                disabled={loadingBtn}
+                disabled={loadingBtn || moment(box.end_time).isBefore(moment())}
               >
                 {loadingBtn ? (
                   <span className="loading loading-bars loading-md"></span>

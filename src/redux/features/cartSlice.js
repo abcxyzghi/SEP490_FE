@@ -17,8 +17,27 @@ const cartSlice = createSlice({
 
   if (existing) {
     existing.quantity += action.payload.quantity || 1;
+    // Cập nhật thông tin mới nếu có
+    if (existing.type === 'box' && action.payload.availableQuantity !== undefined) {
+      existing.availableQuantity = action.payload.availableQuantity;
+    }
+    if (action.payload.startTime !== undefined) {
+      existing.startTime = action.payload.startTime;
+    }
+    if (action.payload.endTime !== undefined) {
+      existing.endTime = action.payload.endTime;
+    }
   } else {
-    state.items.push(action.payload);
+    const newItem = {
+      ...action.payload,
+      startTime: action.payload.startTime || null,
+      endTime: action.payload.endTime || null,
+    };
+    // Chỉ thêm availableQuantity nếu là box
+    if (action.payload.type === 'box') {
+      newItem.availableQuantity = action.payload.availableQuantity || 0;
+    }
+    state.items.push(newItem);
   }
 },
    setCartFromServer: (state, action) => {
@@ -30,10 +49,29 @@ const cartSlice = createSlice({
     );
 
     if (existingIndex !== -1) {
-      // Ghi đè toàn bộ dữ liệu bằng dữ liệu mới nhất
-      state.items[existingIndex] = { ...state.items[existingIndex], ...incomingItem };
+      // Ghi đè toàn bộ dữ liệu bằng dữ liệu mới nhất, bao gồm cả các trường mới
+      state.items[existingIndex] = { 
+        ...state.items[existingIndex], 
+        ...incomingItem,
+        // Đảm bảo các trường mới được cập nhật
+        startTime: incomingItem.startTime || null,
+        endTime: incomingItem.endTime || null,
+      };
+      // Chỉ thêm availableQuantity nếu là box
+      if (incomingItem.type === 'box') {
+        state.items[existingIndex].availableQuantity = incomingItem.availableQuantity || 0;
+      }
     } else {
-      state.items.push(incomingItem);
+      const newItem = {
+        ...incomingItem,
+        startTime: incomingItem.startTime || null,
+        endTime: incomingItem.endTime || null,
+      };
+      // Chỉ thêm availableQuantity nếu là box
+      if (incomingItem.type === 'box') {
+        newItem.availableQuantity = incomingItem.availableQuantity || 0;
+      }
+      state.items.push(newItem);
     }
   });
 },
