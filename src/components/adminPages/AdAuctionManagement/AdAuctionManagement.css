@@ -217,8 +217,8 @@
   flex-shrink: 0;
 }
 .auction-detail-img {
-  width: 140px;
-  height: 140px;
+  width: 200px;
+  height: auto;
   object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.6);
@@ -233,6 +233,16 @@
   font-weight: 800;
   margin: 0;
 color:white;
+}
+
+.auction-name {
+  margin: 6px 0;
+  font-size: 16px;
+  color: #5dade2;
+  font-weight: 600;
+}
+.auction-name span {
+  color: #fff;
 }
 
 .auction-host {
