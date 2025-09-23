@@ -336,7 +336,6 @@ export default function AdAuctionManagement() {
             onPageChange={setCurrentPage}
           />
           <Modal
-            title={auctionDetail ? auctionDetail.title : "Auction Detail"}
             open={isModalOpen}
             onCancel={() => setIsModalOpen(false)}
             width={700}
@@ -375,6 +374,11 @@ export default function AdAuctionManagement() {
                       </div>
                       <div className="auction-detail-info">
                         <h2 className="auction-title">Title: {auctionDetail.title}</h2>
+                        {auctionDetail.name && (
+                          <p className="auction-name">
+                            Product Name: <span>{auctionDetail.name}</span>
+                          </p>
+                        )}
                         <p className="auction-host">
                           Hosted by <span>{auctionDetail.host_username}</span>
                         </p>
