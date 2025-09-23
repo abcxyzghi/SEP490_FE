@@ -52,9 +52,16 @@ export default function UserBox() {
         setOpenResult({ ...res.data, boxId }); // Inject boxId
         setBoxes(prev => prev.map(box => box.id === boxId ? { ...box, quantity: box.quantity - 1 } : box));
       } else {
-        setOpenResult({ error: 'Failed to open box' });
+        // Check for 400 error specifically
+        if (res.errorCode === 400) {
+          console.error("Error 400:", res.message);
+          setOpenResult({ error: res.message || "Invalid request - cannot open box" });
+        } else {
+          setOpenResult({ error: res.message || 'Failed to open box' });
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error("Error opening box:", error);
       setOpenResult({ error: 'Error opening box' });
     }
     setOpeningBoxId(null);
