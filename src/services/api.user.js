@@ -103,7 +103,10 @@ export const openUserBox = async (userBoxId) => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi mở hộp:", error);
-    throw error;
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
   }
 };
 
