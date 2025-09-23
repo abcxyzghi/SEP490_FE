@@ -102,9 +102,10 @@
 
 /* media container (left) */
 .auctionRoomList__card-media {
+  margin-top: 1.8rem;
   flex: 0 0 auto;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
 }
 
@@ -133,11 +134,11 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1.2rem;
-  margin-bottom: 1rem;
 }
 
 /* info column */
 .auctionRoomList__card-info {
+  margin-top: 1.8rem;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -164,6 +165,18 @@
     line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical; */
+}
+
+.auctionRoomList__quantity{
+  margin-top: 4px;
+  font-size: 14px;
+  color: #f5c518;
+}
+
+.auctionRoomList__starting-price{
+  margin-top: 4px;
+  font-size: 14px;
+  color: #4da6ff;
 }
 
 /* seller small text */
@@ -205,8 +218,8 @@
 /* footer row */
 .auctionRoomList__footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  /* align-items: center; */
+  justify-content: right;
   gap: 12px;
   margin-top: 4px;
 }
@@ -253,6 +266,14 @@
   text-decoration: underline;
 }
 
+.auctionRoomList__topBid{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+  gap: 8px;
+}
+
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
 /* -----------------======================= QUERY WOKE =======================------------------------*/
 /* -----------------==================== RESPONSIVE STYLES =======================------------------------*/
@@ -294,7 +315,6 @@
   }
 
   .auctionRoomList__card-head {
-    margin-bottom: 0.6rem;
     gap: 8px;
   }
 
@@ -357,7 +377,6 @@
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
-    margin-bottom: 0.5rem;
   }
 
   /* force meta to sit below title instead of side */
