@@ -286,7 +286,7 @@ export default function ModAuction() {
           </table>
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           <Modal
-            title={auctionDetail ? auctionDetail.title : "Auction Detail"}
+            // title={auctionDetail ? auctionDetail.title : "Auction Detail"}
             open={isModalOpen}
             onCancel={() => setIsModalOpen(false)}
             width={700}
