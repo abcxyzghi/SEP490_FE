@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { getAllAuctionOfMod, updateStatusAuction } from "../../../services/api.auction";
+import { getAllAuctionOfMod, updateStatusAuction, AuctionProductDetail, Top5bidAuction, getAllAuctions } from "../../../services/api.auction";
 import { getCollectionDetail } from "../../../services/api.product";
+import { getOtherProfile } from '../../../services/api.user';
 import { buildImageUrl } from "../../../services/api.imageproxy";
+import ProfileHolder from "../../../assets/others/mmbAvatar.png";
+import ProfileIcon from '../../../assets/others/mmbAvatar.png';
+import { Button, Modal, Spin } from 'antd';
 import "./ModAuction.css";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -41,6 +45,12 @@ export default function ModAuction() {
   const [rarityFilter, setRarityFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bidsDetail, setBidsDetail] = useState([]);
+  const [auctionDetail, setAuctionDetail] = useState(null);
+  const [useBackupImg, setUseBackupImg] = useState(false);
 
   const fetchAuctions = useCallback(async () => {
     setLoading(true);
@@ -95,7 +105,71 @@ export default function ModAuction() {
       toast.error("Update status failed, please try again later");
     }
   };
-
+  const handleViewDetail = async (auctionId, productId, startTime, endTime) => {
+      console.log("Auction ID:", auctionId, "Product ID:", productId);
+      try {
+        setLoadingDetail(true);
+        setIsModalOpen(true);
+  
+        // Gọi song song 3 API: top 5 bids, collection detail, auction detail
+        const [bidsRes, collectionRes, auctionDetailRes] = await Promise.all([
+          Top5bidAuction(auctionId),
+          getCollectionDetail(productId),
+          AuctionProductDetail(auctionId), // thêm API này
+        ]);
+  
+        // Xử lý bids
+        if (bidsRes?.success && Array.isArray(bidsRes.data)) {
+          const bidderIds = [...new Set(bidsRes.data.map((b) => b.bidder_id))];
+          const bidderProfiles = await Promise.all(
+            bidderIds.map((id) => getOtherProfile(id))
+          );
+  
+          const bidderProfileMap = {};
+          bidderProfiles.forEach((res, idx) => {
+            if (res?.status && res.data) {
+              bidderProfileMap[bidderIds[idx]] = res.data;
+            }
+          });
+  
+          const bids = bidsRes.data.map((bid) => ({
+            ...bid,
+            profile: bidderProfileMap[bid.bidder_id] || {},
+          }));
+          setBidsDetail(bids);
+        } else {
+          setBidsDetail([]);
+        }
+  
+        const auctionFromList = currentAuctions.find(a => a.auction_id === auctionId);
+        console.log("Check price", auctionDetailRes.data)
+        // Gộp các trường từ collection và auction detail, ưu tiên auctionDetailRes.data[0]
+        if (collectionRes?.status && auctionDetailRes?.data?.[0]) {
+          const auctionData = auctionDetailRes.data[0];
+          setAuctionDetail({
+            ...collectionRes.data,
+            ...auctionData,
+            host_username: auctionFromList?.host_username,
+            title: auctionFromList?.title,
+            description: auctionFromList?.description,
+            starting_price: auctionData.starting_price ?? null,
+            auction_current_amount: auctionFromList?.auction_current_amount,
+            transaction_fee_percent: auctionFromList?.transaction_fee_percent,
+            host_obtain_amount: auctionFromList?.host_obtain_amount,
+            start_time: startTime,
+            end_time: endTime
+          });
+        } else {
+          setAuctionDetail(null);
+        }
+      } catch (err) {
+        console.error("Failed to load detail", err);
+        setBidsDetail([]);
+        setAuctionDetail(null);
+      } finally {
+        setLoadingDetail(false);
+      }
+    };
   useEffect(() => { fetchAuctions(); }, [fetchAuctions]);
 
   const filteredAuctions = useMemo(() => {
@@ -132,6 +206,11 @@ export default function ModAuction() {
       default: return <span className="auction-mod-modauction-mod-badge auction-status-pending">Pending</span>;
     }
   };
+  const fmtVND = (v) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0,
+    }).format(Number(v || 0)) + " VND";
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -192,8 +271,11 @@ export default function ModAuction() {
                         <div className="modauction-mod-actions">
                           <button className="modauction-mod-btn-approve" onClick={() => handleUpdateStatus(auction.auction_id, 1)}>Approve</button>
                           <button className="modauction-mod-btn-reject" onClick={() => handleUpdateStatus(auction.auction_id, -1)}>Reject</button>
+                          <button className="modauction-mod-btn-view-detail" onClick={() => handleViewDetail(auction.auction_id, auction.product_id, auction.start_time, auction.end_time)}>View Detail</button>
                         </div>
-                      ) : (<span>—</span>)}
+                      ) : (<div className="modauction-mod-actions">
+                          <button className="modauction-mod-btn-view-detail" onClick={() => handleViewDetail(auction.auction_id, auction.product_id, auction.start_time, auction.end_time)}>View Detail</button>
+                        </div>)}
                     </td>
                   </tr>
                 ))
@@ -203,6 +285,132 @@ export default function ModAuction() {
             </tbody>
           </table>
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          <Modal
+                      title={auctionDetail ? auctionDetail.title : "Auction Detail"}
+                      open={isModalOpen}
+                      onCancel={() => setIsModalOpen(false)}
+                      width={700}
+                      className="custom-auction-modal"
+                      footer={[
+                        <Button
+                          key="close"
+                          className="adproduct-action-btn"
+                          style={{
+                            background: "linear-gradient(135deg, #ff416c, #ff4b2b)",
+                            border: "none",
+                          }}
+                          onClick={() => setIsModalOpen(false)}
+                        >
+                          Close
+                        </Button>,
+                      ]}
+                    >
+                      {loadingDetail ? (
+                        <div style={{ textAlign: "center", padding: "20px 0" }}>
+                          <Spin />
+                        </div>
+                      ) : (
+                        <>
+                          {auctionDetail && (
+                            <>
+                              {console.log("Auction detail:", auctionDetail)}
+                              <div className="auction-detail-header">
+                                <div className="auction-detail-img-wrap">
+                                  <img
+                                    src={auctionDetail.urlImage ? buildImageUrl(auctionDetail.urlImage, useBackupImg) : ProfileHolder}
+                                    onError={() => setUseBackupImg(true)}
+                                    alt={auctionDetail.title}
+                                    className="auction-detail-img"
+                                  />
+                                </div>
+                                <div className="auction-detail-info">
+                                  <h2 className="auction-title">Title: {auctionDetail.title}</h2>
+                                  <p className="auction-host">
+                                    Hosted by <span>{auctionDetail.host_username}</span>
+                                  </p>
+                                  <p className="auction-desc">Description : {auctionDetail.description}</p>
+                                  <span className="auction-rarity">Rarity: {auctionDetail.rarityName}</span>
+          
+                                  <div className="auction-time-card">
+                                    <p>Start: {moment(auctionDetail.start_time).format("DD/MM/YYYY HH:mm")}</p>
+                                    <p>End: {moment(auctionDetail.end_time).format("DD/MM/YYYY HH:mm")}</p>
+                                  </div>
+          
+                                  <div className="auction-price-cards">
+                                    <div className="price-item">
+                                      <span>Starting Price</span>
+                                      <strong>{fmtVND(auctionDetail.starting_price)}</strong>
+                                    </div>
+                                    <div className="price-item highlight">
+                                      <span>Current Amount</span>
+                                      <strong>{fmtVND(auctionDetail.auction_current_amount)}</strong>
+                                    </div>
+                                    <div className="price-item">
+                                      <span>Transaction Fee</span>
+                                      <strong>{auctionDetail.transaction_fee_percent}%</strong>
+                                    </div>
+                                    <div className="price-item">
+                                      <span>Host Obtain</span>
+                                      <strong>{fmtVND(auctionDetail.host_obtain_amount)}</strong>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+          
+                            </>
+                          )}
+          
+          
+                          <h4 style={{ marginBottom: 10 }}>Participant</h4>
+                          {bidsDetail.length > 0 ? (
+                            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                              {[...bidsDetail]
+                                .sort((a, b) => new Date(b.bid_time) - new Date(a.bid_time))
+                                .map((bid, idx) => (
+                                  <li
+                                    key={bid._id || idx}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      padding: "10px 0",
+                                      borderBottom: "1px solid #eee",
+                                      fontSize: 14,
+                                      gap: 12,
+                                    }}
+                                  >
+                                    <img
+                                      src={
+                                        bid.profile?.profileImage
+                                          ? buildImageUrl(bid.profile.profileImage, useBackupImg)
+                                          : ProfileHolder
+                                      }
+                                      onError={() => setUseBackupImg(true)}
+                                      alt={bid.profile?.username || "bidder"}
+                                      style={{
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: "50%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                    <span style={{ flex: 1, fontWeight: 500 }}>
+                                      {bid.profile?.username || "Unknown"}
+                                    </span>
+                                    <span style={{ minWidth: 110, textAlign: "right", fontWeight: 600 }}>
+                                      {fmtVND(bid.bid_amount)}
+                                    </span>
+                                    <span style={{ minWidth: 150, textAlign: "right", color: "#888" }}>
+                                      {moment(bid.bid_time).format("DD/MM/YYYY HH:mm")}
+                                    </span>
+                                  </li>
+                                ))}
+                            </ul>
+                          ) : (
+                            <p>No bids found.</p>
+                          )}
+                        </>
+                      )}
+                    </Modal>
         </>
       )}
     </div>
