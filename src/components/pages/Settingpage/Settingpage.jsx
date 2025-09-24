@@ -26,7 +26,7 @@ export default function Settingpage() {
                 <UserTheme />
             },
             {
-              label: 'Collection Display ',
+              label: 'Medal Display ',
               content:
                 <UserAchievements />
             },

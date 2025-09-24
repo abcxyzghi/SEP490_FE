@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
-import FavoriteIcon from "../../../assets/Icon_fill/Favorite_fill.svg";
 import ThreeDots from "../../../assets/Icon_fill/Meatballs_menu.svg";
 import DetailArrow from "../../../assets/Icon_line/Chevron_Up.svg";
 import {
@@ -27,8 +24,7 @@ import "./UserCollectionList.css";
 
 const PAGE_SIZE = 8;
 
-export default function UserCollectionList({ refreshOnSaleProducts }) {
-  const [favSnackbar, setFavSnackbar] = useState({ open: false, message: "" });
+export default function UserCollectionList({ refreshOnSaleProducts, onShowFavSnackbar = () => {} }) {
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [useBackupImg, setUseBackupImg] = useState(false);
@@ -87,10 +83,12 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   //   setAuctionModalOpen(true);
   // };
   const [auctionProductId, setAuctionProductId] = useState(null);
+  const [auctionProductName, setAuctionProductName] = useState("");
 
   // replace previous openAuctionModal(product) with:
-  const openAuctionModal = (productId) => {
+  const openAuctionModal = (productId, productName) => {
     setAuctionProductId(productId);
+    setAuctionProductName(productName || "");
     setAuctionModalOpen(true);
   };
   const [favImages, setFavImages] = useState([]);
@@ -361,10 +359,11 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
   const handleAddFavourite = async (userProductId, productName) => {
     try {
       await addFavourite(userProductId);
-      setFavSnackbar({ open: true, message: `Added "${productName}" to your favorites.` });
+      onShowFavSnackbar(`Added "${productName}" to your favorites.`);
     } catch (err) {
-      console.error("Error adding to favorites:", err);
-      showModal('error', 'Error', err || `Failed to add "${productName}" to favorites.`);
+      // console.error("Error adding to favorites:", err);
+      const errorMsg = typeof err === 'string' ? err : (err?.message || `Failed to add "${productName}" to favorites.`);
+      showModal('error', 'Error adding to favorites', errorMsg);
     }
   };
 
@@ -793,7 +792,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
                                             ...(!prod.product_isBlock
                                               ? [
                                                 { text: "Public to Sell", action: () => openSellModal(prod) },
-                                                { text: "Host an Auction", action: () => openAuctionModal(prod.productId ?? prod.userProductId) }
+                                                { text: "Host an Auction", action: () => openAuctionModal(prod.productId ?? prod.userProductId, prod.productName) }
                                               ]
                                               : [])
                                           ]
@@ -873,34 +872,6 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         message={modal.message}
       />
 
-      {/* Favorite Snackbar */}
-      <Snackbar
-        open={favSnackbar.open}
-        autoHideDuration={3500}
-        onClose={() => setFavSnackbar((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-      >
-        <Alert
-          icon={<img src={FavoriteIcon} alt="Favorite" className="userCollectionList-fav-icon" />}
-          onClose={() => setFavSnackbar((prev) => ({ ...prev, open: false }))}
-          severity="success"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-
-            width: "100%",
-            background: "#ffe4ef",
-            fontFamily: '"Oxanium", sans-serif',
-            color: "var(--dark-3)",
-            fontWeight: 500,
-            boxShadow: "0 2px 8px rgba(215,38,96,0.08)",
-            border: "1px solid #f8bbd0"
-          }}
-        >
-          {favSnackbar.message}
-        </Alert>
-      </Snackbar>
 
       {/* Confirm Modal */}
       <ConfirmModal
@@ -923,6 +894,7 @@ export default function UserCollectionList({ refreshOnSaleProducts }) {
         onClose={() => setAuctionModalOpen(false)}
         productId={auctionProductId}
         collectionId={selectedCollectionId}
+        product={{ name: auctionProductName }}
         onSuccess={(res) => {
           // optional: refresh state, show message
           showModal?.("default", "Auction Request Sent", "Please wait for moderator approval.");

@@ -47,7 +47,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
 
     // Stepper logic
     // Connector
-    const QontoConnector = styled(StepConnector)(( theme ) => ({
+    const QontoConnector = styled(StepConnector)((theme) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
             top: 10,
             left: 'calc(-50% + 16px)',
@@ -71,7 +71,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
     }));
 
     // Step Icon
-    const QontoStepIconRoot = styled('div')(({  theme,  ownerState }) => ({
+    const QontoStepIconRoot = styled('div')(({ theme, ownerState }) => ({
         color: '#eaeaf0',
         display: 'flex',
         height: 22,
@@ -282,7 +282,8 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                                     sx={{
                                         '& .MuiStepLabel-label': {
                                             color: index === activeStep ? '#784af4 !important' : 'var(--light-2)',
-                                            fontWeight: index === activeStep ? 'oxanium-semibold' : 'oxanium-regular',
+                                            fontWeight: index === activeStep ? '600' : '400',
+                                            fontFamily: "Oxanium, sans-serif",
                                         },
                                     }}
                                 >
@@ -413,7 +414,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                     />
-                                    <IconButton className="register-toggle-icon" sx={{color: 'var(--light-2)'}} onClick={() => setShowPassword(!showPassword)} size="small">
+                                    <IconButton className="register-toggle-icon" sx={{ color: 'var(--light-2)' }} onClick={() => setShowPassword(!showPassword)} size="small">
                                         {showPassword ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
                                 </div>
@@ -427,7 +428,7 @@ export default function ForgotPasswordDialog({ open, onClose }) {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                     />
-                                    <IconButton className="register-toggle-icon" sx={{color: 'var(--light-2)'}} onClick={() => setShowConfirm(!showConfirm)} size="small">
+                                    <IconButton className="register-toggle-icon" sx={{ color: 'var(--light-2)' }} onClick={() => setShowConfirm(!showConfirm)} size="small">
                                         {showConfirm ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
                                 </div>

@@ -1,4 +1,4 @@
-.sellModal-overlay {
+/* .sellModal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
@@ -46,9 +46,7 @@
   max-height: 80vh;
   overflow-y: auto;
 
-  /* Hide scrollbar visually but keep scroll functionality */
   scrollbar-width: none;
-  /* Firefox */
 }
 
 .sellModal-border {
@@ -57,7 +55,7 @@
   border-radius: 20px;
   pointer-events: none;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
-}
+} */
 
 .sellModal-close {
   position: absolute;
@@ -105,7 +103,7 @@
 }
 
 .sellModal-input {
-  width: 98%;
+  width: 100%;
   margin: 2px;
   padding: 10px 12px;
   background: var(--dark-1-o50);

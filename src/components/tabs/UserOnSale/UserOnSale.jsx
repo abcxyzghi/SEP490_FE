@@ -23,6 +23,7 @@ import { addItemToCart } from "../../../redux/features/cartSlice";
 
 // Components
 import { PATH_NAME } from "../../../router/Pathname";
+import { Dialog } from "@mui/material";
 import DropdownMenu from "../../libs/DropdownMenu/DropdownMenu";
 import MessageModal from "../../libs/MessageModal/MessageModal";
 
@@ -535,93 +536,106 @@ export default function UserOnSale({ products, productsLoading }) {
       />
 
       {/* --- Modal Cập nhật sản phẩm được thêm vào --- */}
-      {
-        selectedProduct && (
-          <div
-            className="userOnSale-updatePrd-modal-overlay"
-            onMouseDown={handleCloseModal}
-          >
-            <div
-              className="userOnSale-updatePrd-modal-container"
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              <div className="userOnSale-updatePrd-modal-box">
-                <h3 className="userOnSale-updatePrd-modal-header oxanium-bold">
-                  Update Product
-                </h3>
-
-                <div className="userOnSale-updatePrd-modal-field">
-                  <label className="oxanium-semibold">Description:</label>
-                  <textarea
-                    value={editedDescription}
-                    onChange={(e) => {
-                      let val = e.target.value;
-                      if (val.length > 300) val = val.slice(0, 300);
-                      setEditedDescription(val);
-                    }}
-                    rows={5}
-                    minLength={10}
-                    maxLength={300}
-                    className="userOnSale-updatePrd-textarea"
-                  />
-                  <div
-                    className="userOnSale-updatePrd-helper-text oxanium-regular"
-                    style={{
-                      color:
-                        editedDescription.trim().length < 10 ||
-                          editedDescription.trim().length > 300
-                          ? "red"
-                          : "#aaa",
-                    }}
-                  >
-                    {`Description: ${editedDescription.trim().length}/300 characters. (Min: 10, Max: 300)`}
-                  </div>
-                </div>
-
-                <div className="userOnSale-updatePrd-modal-field">
-                  <label className="oxanium-semibold">Price (VND):</label>
-                  <input
-                    type="number"
-                    value={editedPrice}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setEditedPrice(val === "" ? "" : val);
-                    }}
-                    className="userOnSale-updatePrd-input"
-                  />
-                  <div
-                    className="userOnSale-updatePrd-helper-text oxanium-regular"
-                    style={{
-                      color:
-                        Number(editedPrice) < 1000 ||
-                          Number(editedPrice) > 100000000
-                          ? "red"
-                          : "#aaa",
-                    }}
-                  >
-                    Price must be between 1,000 VND and 100,000,000 VND
-                  </div>
-                </div>
-
-                <div className="userOnSale-updatePrd-modal-actions oxanium-regular">
-                  <button
-                    onClick={handleCloseModal}
-                    className="userOnSale-updatePrd-btn-cancel"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="userOnSale-updatePrd-btn-save"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            </div>
+      <Dialog
+        open={selectedProduct}
+        // onClose={handleCloseModal}
+        fullWidth
+        maxWidth="sm"
+        sx={{
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+          },
+          "& .MuiDialog-paper": {
+            background: "rgba(25, 25, 25, 0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid var(--dark-1)",
+            borderRadius: "12px",
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+            padding: "1.5rem",
+            color: "var(--light-3)",
+          },
+        }}
+      >
+        <div className="userOnSale-updatePrd-modal-header">
+        <h3 className="userOnSale-updatePrd-modal-title oxanium-bold">
+          Update Product
+        </h3>
+        {selectedProduct && (
+          <div className="userOnSale-updatePrd-modal-productname oleo-script-regular">
+            {selectedProduct.name}
           </div>
-        )
-      }
+        )}
+        </div>
+
+        <div className="userOnSale-updatePrd-modal-field">
+          <label className="oxanium-regular">Description:</label>
+          <textarea
+            value={editedDescription}
+            onChange={(e) => {
+              let val = e.target.value;
+              if (val.length > 300) val = val.slice(0, 300);
+              setEditedDescription(val);
+            }}
+            rows={5}
+            minLength={10}
+            maxLength={300}
+            className="userOnSale-updatePrd-textarea"
+          />
+          <div
+            className="userOnSale-updatePrd-helper-text oxanium-regular"
+            style={{
+              color:
+                editedDescription.trim().length < 10 ||
+                  editedDescription.trim().length > 300
+                  ? "red"
+                  : "#888",
+            }}
+          >
+            {`Description: ${editedDescription.trim().length}/300 characters. (Min: 10, Max: 300)`}
+          </div>
+        </div>
+
+        <div className="userOnSale-updatePrd-modal-field">
+          <label className="oxanium-regular">Price (VND):</label>
+          <input
+            type="number"
+            value={editedPrice}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEditedPrice(val === "" ? "" : val);
+            }}
+            className="userOnSale-updatePrd-input"
+          />
+          <div
+            className="userOnSale-updatePrd-helper-text oxanium-regular"
+            style={{
+              color:
+                Number(editedPrice) < 1000 ||
+                  Number(editedPrice) > 100000000
+                  ? "red"
+                  : "#888",
+            }}
+          >
+            Price must be between 1,000 VND and 100,000,000 VND
+          </div>
+        </div>
+
+        <div className="userOnSale-updatePrd-modal-actions oxanium-regular">
+          <button
+            onClick={handleCloseModal}
+            className="userOnSale-updatePrd-btn-cancel"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="userOnSale-updatePrd-btn-save"
+          >
+            Save Changes
+          </button>
+        </div>
+      </Dialog>
 
     </div >
   );
