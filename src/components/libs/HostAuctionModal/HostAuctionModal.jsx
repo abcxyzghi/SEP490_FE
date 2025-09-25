@@ -157,8 +157,13 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
   const displayTime = (isoLike) => {
     const s = isoLike && String(isoLike).trim();
     if (!s) return "-";
-    const parsed = /[+-]\d{2}:?\d{2}$|Z$/.test(s) ? dayjs(s) : dayjs.utc(s);
-    return parsed.tz(dayjs.tz.guess()).format("YYYY-MM-DD HH:mm");
+    let parsed;
+    if (s.endsWith("Z") || /[+-]\d{2}:?\d{2}$/.test(s)) {
+      parsed = dayjs.utc(s).tz("Asia/Ho_Chi_Minh");
+    } else {
+      parsed = dayjs(s);
+    }
+    return parsed.format("YYYY-MM-DD HH:mm");
   };
 
   const closeModal = async () => {
