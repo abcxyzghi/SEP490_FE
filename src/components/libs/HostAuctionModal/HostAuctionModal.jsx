@@ -77,7 +77,7 @@ function QontoStepIcon(props) {
   );
 }
 
-export default function HostAuctionModal({ open, onClose, productId, onSuccess, collectionId }) {
+export default function HostAuctionModal({ open, onClose, productId, onSuccess, collectionId, product }) {
   const [activeStep, setActiveStep] = useState(0);
   const nextLockRef = useRef(false);
   const step1SnapshotRef = useRef(null);
@@ -161,14 +161,14 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
     return parsed.tz(dayjs.tz.guess()).format("YYYY-MM-DD HH:mm");
   };
 
-  const closeModal = async() => {
-     if (createdAuctionId) {
-        const tempResponse = await cancelAuction(createdAuctionId);
-        if (!tempResponse || tempResponse.message) {
-          setModal({ open: true, type: "error", title: "Cancel Auction Error", message: "Failed to cancel existing auction. Please try again." });
-          return;
-        }
+  const closeModal = async () => {
+    if (createdAuctionId) {
+      const tempResponse = await cancelAuction(createdAuctionId);
+      if (!tempResponse || tempResponse.message) {
+        setModal({ open: true, type: "error", title: "Cancel Auction Error", message: "Failed to cancel existing auction. Please try again." });
+        return;
       }
+    }
     onClose();
   };
 
@@ -201,13 +201,13 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
       }
 
       // if already created and inputs unchanged -> reuse
-      
+
       const snapshot = step1SnapshotRef.current;
       const unchanged = snapshot && snapshot.title === title && snapshot.description === description && snapshot.startTime === startTime;
       if (createdAuctionId) {
         if (unchanged) {
-            setActiveStep(1);
-            return;
+          setActiveStep(1);
+          return;
         }
         const tempResponse = await cancelAuction(createdAuctionId);
         if (!tempResponse || tempResponse.message) {
@@ -340,152 +340,176 @@ export default function HostAuctionModal({ open, onClose, productId, onSuccess, 
   };
   return (
     <Dialog
-      className="hostAuctionDialog-container oxanium-regular"
       open={open}
-      onClose={onClose}
-      maxWidth="sm"
+      // onClose={onClose}
       fullWidth
-      PaperProps={{ className: "hostAuctionDialog-animated-shadow" }}
+      maxWidth="sm"
+      sx={{
+        "& .MuiBackdrop-root": {
+          backgroundColor: "rgba(0,0,0,0.8)",
+          backdropFilter: "blur(6px)",
+        },
+        "& .MuiDialog-paper": {
+          background: "rgba(25, 25, 25, 0.7)",
+          backdropFilter: "blur(8px)",
+          border: "1px solid var(--dark-1)",
+          borderRadius: "12px",
+          boxShadow: "0 0 20px rgba(255, 255, 255, 0.05)",
+          padding: "1.5rem",
+          color: "var(--light-4)",
+          fontFamily: "Oxanium, sans-serif"
+        },
+      }}
     >
-      <div className="card__border" />
-      <div className="hostAuctionDialog-box">
-        <div className='hostAuctionDialog-header'>
-          <div className='hostAuctionDialog-title oxanium-semibold'>Host Product in Auction</div>
-        </div>
+      {/* Close button */}
+      <button className="sellModal-close" onClick={onClose} aria-label="Close">
+        &times;
+      </button>
 
-        <DialogContent>
-          <Stepper activeStep={activeStep} alternativeLabel connector={<QontoConnector />}>
-            {steps.map((label, index) => (
-              <Step key={label}>
-                <StepLabel
-                  StepIconComponent={QontoStepIcon}
-                  sx={{
-                    '& .MuiStepLabel-label': {
-                      color: index === activeStep ? '#784af4 !important' : 'var(--light-2)',
-                      fontWeight: index === activeStep ? 'oxanium-semibold' : 'oxanium-regular',
-                    },
-                  }}
-                >
-                  {label}
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-
-          <Box mt={3}>
-            {activeStep === 0 && (
-              <>
-                <div className="hostAuctionDialog-control">
-                  <label >Title: </label>
-                  <input
-                    name="title"
-                    type="text"
-                    placeholder="Auction Title"
-                    className="hostAuctionDialog-input h-12 oxanium-regular w-full"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
-                <div className="hostAuctionDialog-control">
-                  <label >Description: </label>
-                  <textarea
-                    name="description"
-                    type="text"
-                    placeholder="Description"
-                    className="hostAuctionDialog-input h-22 max-h-30 oxanium-regular w-full"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-                <div className="hostAuctionDialog-control">
-                  <label >Start time: </label>
-                  <input
-                    name="startTime"
-                    type="datetime-local"
-                    placeholder="Start Time"
-                    className="hostAuctionDialog-input h-12 oxanium-regular w-full"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    min={getMinDateTime()}
-                  />
-                </div>
-                {/* <p className="hostAuctionDialog-note oxanium-regular">Note: times are local; they'll be sent to the server in ISO format.</p> */}
-              </>
-            )}
-
-            {activeStep === 1 && (
-              <>
-                <Box mb={2}>
-                  {fetchingLatest ? (
-                    <Box display="flex" alignItems="center" gap={1} mt={1}>
-                      <CircularProgress size={18} />
-                      <p className="hostAuctionDialog-PrdAtt">Fetching latest auction...</p>
-                    </Box>
-                  ) : createdAuctionObj ? (
-                    <Box mt={1}>
-                      <p className="hostAuctionDialog-PrdAtt"><strong>Title:</strong> {createdAuctionObj.title}</p>
-                      <p className="hostAuctionDialog-PrdAtt"><strong>Start date:</strong> {displayTime(createdAuctionObj.start_time)}</p>
-                    </Box>
-                  ) : (
-                    <p className="hostAuctionDialog-note oxanium-regular">No auction found. You can go back and try again.</p>
-                  )}
-                </Box>
-
-                <Box display="flex" gap={2} mb={1}>
-                  <div className="hostAuctionDialog-control">
-                    <label >Quantity: </label>
-                    <input
-                      name="quantity"
-                      type="number"
-                      placeholder="Quantity"
-                      className="hostAuctionDialog-input h-12 oxanium-regular w-full"
-                      min={1}
-                      value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="hostAuctionDialog-control">
-                    <label >Starting Price: </label>
-                    <input
-                      name="startingPrice"
-                      type="number"
-                      placeholder="Starting price (VND)"
-                      className="hostAuctionDialog-input h-12 oxanium-regular w-full"
-                      min={1000}
-                      step={100}
-                      value={startingPrice}
-                      onChange={(e) => setStartingPrice(Number(e.target.value))}
-                    />
-                  </div>
-                </Box>
-
-                {/* <p className="hostAuctionDialog-note oxanium-regular">The product will be assigned to the created auction with the specified quantity and starting price.</p> */}
-              </>
-            )}
-          </Box>
-        </DialogContent>
-
-        <MessageModal
-          open={modal.open}
-          onClose={() => setModal((p) => ({ ...p, open: false }))}
-          type={modal.type}
-          title={modal.title}
-          message={modal.message} />
-
-        <DialogActions>
-          <div className="hostAuctionDialog-Cancel-btn" onClick={closeModal}>Cancel</div>
-          {activeStep > 0 && <div className="hostAuctionDialog-Back-btn" onClick={handleBack}>Back</div>}
-          {activeStep === 0 ? (
-            <div className="hostAuctionDialog-Submit-btn" onClick={handleNext}>
-              {creating ? "Please wait..." : "Next"}
-            </div>
-          ) : (
-            <div className="hostAuctionDialog-Submit-btn" onClick={handleSubmitAssignment}>
-              {assigning ? "Please wait..." : "Submit"}
-            </div>
-          )}
-        </DialogActions>
+      {/* Header */}
+      <div className="hostAuctionDialog-header">
+        <div className="hostAuctionDialog-title oxanium-bold">Host product auction request form</div>
+        {product?.name && (
+          <div className="hostAuctionDialog-subtitle oleo-script-regular">
+            {product.name}
+          </div>
+        )}
       </div>
+
+      <DialogContent>
+        <Stepper activeStep={activeStep} alternativeLabel connector={<QontoConnector />}>
+          {steps.map((label, index) => (
+            <Step key={label}>
+              <StepLabel
+                StepIconComponent={QontoStepIcon}
+                sx={{
+                  '& .MuiStepLabel-label': {
+                    color: index === activeStep ? '#784af4 !important' : 'var(--light-2)',
+                    fontWeight: index === activeStep ? '600' : '400',
+                    fontFamily: "Oxanium, sans-serif",
+                  },
+                }}
+              >
+                {label}
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+
+        <Box mt={3}>
+          {activeStep === 0 && (
+            <>
+              <div className="hostAuctionDialog-control">
+                <label >Title: </label>
+                <input
+                  name="title"
+                  type="text"
+                  placeholder="Auction Title"
+                  className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+              <div className="hostAuctionDialog-control">
+                <label >Description: </label>
+                <textarea
+                  name="description"
+                  type="text"
+                  placeholder="Description"
+                  className="hostAuctionDialog-input h-22 max-h-30 oxanium-regular w-full"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+              <div className="hostAuctionDialog-control">
+                <label >Start time: </label>
+                <input
+                  name="startTime"
+                  type="datetime-local"
+                  placeholder="Start Time"
+                  className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  min={getMinDateTime()}
+                />
+              </div>
+              {/* <p className="hostAuctionDialog-note oxanium-regular">Note: times are local; they'll be sent to the server in ISO format.</p> */}
+            </>
+          )}
+
+          {activeStep === 1 && (
+            <>
+              <Box mb={2}>
+                {fetchingLatest ? (
+                  <Box display="flex" alignItems="center" gap={1} mt={1}>
+                    <CircularProgress size={18} />
+                    <p className="hostAuctionDialog-PrdAtt">Fetching latest auction...</p>
+                  </Box>
+                ) : createdAuctionObj ? (
+                  <Box mt={1}>
+                    <p className="hostAuctionDialog-PrdAtt"><strong>Title:</strong> {createdAuctionObj.title}</p>
+                    <p className="hostAuctionDialog-PrdAtt"><strong>Start date:</strong> {displayTime(createdAuctionObj.start_time)}</p>
+                  </Box>
+                ) : (
+                  <p className="hostAuctionDialog-note oxanium-regular">No auction found. You can go back and try again.</p>
+                )}
+              </Box>
+
+              <Box display="flex" gap={2} mb={1}>
+                <div className="hostAuctionDialog-control">
+                  <label >Quantity: </label>
+                  <input
+                    name="quantity"
+                    type="number"
+                    placeholder="Quantity"
+                    className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                    min={1}
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                  />
+                </div>
+                <div className="hostAuctionDialog-control">
+                  <label >Starting Price: </label>
+                  <input
+                    name="startingPrice"
+                    type="number"
+                    placeholder="Starting price (VND)"
+                    className="hostAuctionDialog-input h-12 oxanium-regular w-full"
+                    min={1000}
+                    step={100}
+                    value={startingPrice}
+                    onChange={(e) => setStartingPrice(Number(e.target.value))}
+                  />
+                </div>
+              </Box>
+
+              {/* <p className="hostAuctionDialog-note oxanium-regular">The product will be assigned to the created auction with the specified quantity and starting price.</p> */}
+            </>
+          )}
+        </Box>
+      </DialogContent>
+
+      <MessageModal
+        open={modal.open}
+        onClose={() => setModal((p) => ({ ...p, open: false }))}
+        type={modal.type}
+        title={modal.title}
+        message={modal.message} />
+
+      <DialogActions>
+        <div className="hostAuctionDialog-Cancel-btn" onClick={closeModal}>Cancel</div>
+        {activeStep > 0 && <div className="hostAuctionDialog-Back-btn" onClick={handleBack}>Back</div>}
+        {activeStep === 0 ? (
+          <div className="hostAuctionDialog-Submit-btn" onClick={handleNext}>
+            {creating ? "Please wait..." : "Next"}
+          </div>
+        ) : (
+          <div className="hostAuctionDialog-Submit-btn" onClick={handleSubmitAssignment}>
+            {assigning ? "Please wait..." : "Submit"}
+          </div>
+        )}
+      </DialogActions>
+
     </Dialog>
   );
 }

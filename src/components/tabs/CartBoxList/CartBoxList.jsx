@@ -10,6 +10,20 @@ import AddQuantity from "../../../assets/Icon_line/add-01.svg";
 import ReduceQuantity from "../../../assets/Icon_line/remove-01.svg";
 
 export default function CartBoxList({ searchText, priceRange, onSelectedItemsChange }) {
+  // Helper to calculate days left
+  const getDaysLeft = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const now = new Date();
+    if (!start || !end) return '';
+    if (now < startDate) {
+      const diff = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
+      return `${diff} day${diff !== 1 ? 's' : ''} until start`;
+    }
+    if (now > endDate) return 'Ended';
+    const diff = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+    return `${diff} day${diff !== 1 ? 's' : ''} left`;
+  };
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items || []);
   const [loading, setLoading] = useState(true);
@@ -262,11 +276,8 @@ export default function CartBoxList({ searchText, priceRange, onSelectedItemsCha
                           <div className="cartpage-product-available">
                             Available: {item.availableQuantity || 0}
                           </div>
-                          <div className="cartpage-product-start">
-                            Start: {item.startTime ? new Date(item.startTime).toLocaleDateString() : 'N/A'}
-                          </div>
-                          <div className="cartpage-product-end">
-                            End: {item.endTime ? new Date(item.endTime).toLocaleDateString() : 'N/A'}
+                          <div className="cartpage-product-countdown">
+                            {getDaysLeft(item.startTime, item.endTime)}
                           </div>
                         </div>
 

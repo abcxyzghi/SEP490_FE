@@ -131,6 +131,12 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.auctionHistoryList-card-wrapper {
+    width: 100%;
+    display: flex;
+    gap: 18px;
+}
+
 /* winner modifier */
 .auctionHistoryList-card--winner {
     border: 1px solid rgba(138, 86, 255, 0.12);
@@ -139,7 +145,7 @@
 /* left column (avatar / product image placeholder) */
 .auctionHistoryList-card-left {
     width: 7.6rem;
-    flex: 0 0 7.6rem;
+    flex: 0 0 9.6rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -169,10 +175,24 @@
     flex-direction: column;
 }
 
+.auctionHistoryList-card-bodyCut {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.auctionHistoryList-card-body-left,
+.auctionHistoryList-card-body-right {
+    display: flex;
+    flex-direction: column;
+    /* gap: 1px; */
+}
+
 .auctionHistoryList-card-title {
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 4px;
+    /* margin-bottom: 4px; */
 }
 
 .auctionHistoryList-card-desc {
@@ -181,8 +201,26 @@
     margin-bottom: 8px;
 }
 
+.auctionHistoryList-quantity {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #f5c518;
+}
+
+.auctionHistoryList-startPrice {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #4da6ff;
+}
+
 .auctionHistoryList-seller {
     text-align: right;
+    margin-bottom: 6px;
+}
+
+.auctionHistoryList-seller-name{
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 /* row with finance / endtime */
@@ -191,7 +229,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    margin-top: 6px;
+    margin-top: auto;
 }
 
 .auctionHistoryList-finance {
@@ -253,8 +291,8 @@
     }
 
     .auctionHistoryList-card-left {
-        width: 64px;
-        flex: 0 0 64px;
+        width: 7.6rem;
+        flex: 0 0 7.6rem;
     }
 }
 
@@ -290,6 +328,10 @@
 
 /* Ultra small (<=420px) */
 @media (max-width: 420px) {
+    .auctionHistoryList-card-wrapper {
+        flex-direction: column;
+    }
+
     .auctionHistoryList {
         padding: 12px;
     }

@@ -36,6 +36,7 @@ import FollowedIcon from "../../../assets/Icon_line/User_Check.svg";
 import EditProfileIcon from "../../../assets/Icon_line/User_Card_ID.svg";
 import ReportIcon from "../../../assets/Icon_line/warning-error.svg";
 import CopyLinkIcon from "../../../assets/Icon_line/link_alt.svg";
+import FavoriteIcon from "../../../assets/Icon_fill/Favorite_fill.svg";
 
 export default function Profilepage() {
   const { id } = useParams();
@@ -64,6 +65,7 @@ export default function Profilepage() {
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
   };
+  const [favSnackbar, setFavSnackbar] = useState({ open: false, message: "" });
   const [rating, setRating] = useState(null);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
@@ -221,6 +223,11 @@ export default function Profilepage() {
     }
   }, [id, currentUserId, fetchProducts]);
 
+  // Handler to show favorite snackbar from child
+  const handleShowFavSnackbar = (message) => {
+    setFavSnackbar({ open: true, message });
+  };
+
   if (loading || isLoading)
     return (
       <div className="w-full">
@@ -309,7 +316,7 @@ export default function Profilepage() {
       },
       {
         label: "Collections",
-        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} />,
+        content: <UserCollectionList refreshOnSaleProducts={fetchProducts} onShowFavSnackbar={handleShowFavSnackbar} />,
       },
       {
         label: "On Sale",
@@ -823,6 +830,34 @@ export default function Profilepage() {
           sx={{ width: "100%" }}
         >
           Following successfully!
+        </Alert>
+      </Snackbar>
+
+      {/* Favorite Snackbar for UserCollectionList */}
+      <Snackbar
+        open={favSnackbar.open}
+        autoHideDuration={3500}
+        onClose={() => setFavSnackbar((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          icon={<img src={FavoriteIcon} alt="Favorite" className="userCollectionList-fav-icon" />}
+          onClose={() => setFavSnackbar((prev) => ({ ...prev, open: false }))}
+          severity="success"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            background: "#ffe4ef",
+            fontFamily: '"Oxanium", sans-serif',
+            color: "var(--dark-3)",
+            fontWeight: 500,
+            boxShadow: "0 2px 8px rgba(215,38,96,0.08)",
+            border: "1px solid #f8bbd0"
+          }}
+        >
+          {favSnackbar.message}
         </Alert>
       </Snackbar>
 

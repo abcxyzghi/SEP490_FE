@@ -337,33 +337,16 @@ export default function MyAuction() {
                           className="auctionRoomList__card-description"
                         />
                         {/* Always render quantity, show fallback if missing */}
-                        <div className="auctionRoomList__quantity" style={{ marginTop: 4, fontSize: 14, color: '#f5c518' }}>
+                        <div className="auctionRoomList__quantity">
                           Quantity: {typeof auctionDetail.quantity !== 'undefined' ? auctionDetail.quantity : <span style={{ color: '#f55' }}>Not found</span>}
                         </div>
                         {/* Hiển thị starting_price từ AuctionProductDetail */}
-                        <div className="auctionRoomList__starting-price" style={{ marginTop: 4, fontSize: 14, color: '#4da6ff' }}>
+                        <div className="auctionRoomList__starting-price">
                           {typeof auctionDetail.starting_price === 'number' && auctionDetail.starting_price > 0
                             ? `Starting Price: ${fmtVND(auctionDetail.starting_price)}`
                             : <span style={{ color: '#f55' }}>Starting Price: Not found</span>}
                         </div>
-                        {/* Always render urlImage and rarityName, fallback if missing */}
-                        <div className="auctionRoomList__collection" style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-                          {/* Debug: show raw urlImage and rarityName values */}
 
-                          {typeof collectionDetail.urlImage === 'string' && collectionDetail.urlImage.trim() !== '' ? (
-                            <img
-                              src={buildImageUrl(collectionDetail.urlImage, useBackupImg)}
-                              onError={() => setUseBackupImg(true)}
-                              alt={collectionDetail.rarityName || 'Product'}
-                              style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover', border: '1px solid #333' }}
-                            />
-                          ) : (
-                            <span style={{ color: '#f55', fontSize: 12 }}>No image</span>
-                          )}
-                          <span style={{ fontSize: 14, color: '#aaf', fontWeight: 500 }}>
-                            Rarity: {typeof collectionDetail.rarityName === 'string' && collectionDetail.rarityName.trim() !== '' ? collectionDetail.rarityName : <span style={{ color: '#f55' }}>Not found</span>}
-                          </span>
-                        </div>
                       </div>
 
                       <div className="auctionRoomList__card-meta">
@@ -381,6 +364,25 @@ export default function MyAuction() {
                             </span>
                           </div>
                         )}
+
+                        {/* Always render urlImage and rarityName, fallback if missing */}
+                        <div className="auctionRoomList__collection" >
+                          {/* Debug: show raw urlImage and rarityName values */}
+
+                          {typeof collectionDetail.urlImage === 'string' && collectionDetail.urlImage.trim() !== '' ? (
+                            <img
+                              src={buildImageUrl(collectionDetail.urlImage, useBackupImg)}
+                              onError={() => setUseBackupImg(true)}
+                              alt={collectionDetail.rarityName || 'Product'}
+                              style={{ width: 60, height: 'auto', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <span style={{ color: '#f55', fontSize: 12 }}>No image</span>
+                          )}
+                          {/* <span style={{ fontSize: 14, color: '#aaf', textAlign: 'center', fontWeight: 500 }}>
+                            Rarity: {typeof collectionDetail.rarityName === 'string' && collectionDetail.rarityName.trim() !== '' ? collectionDetail.rarityName : <span style={{ color: '#f55' }}>Not found</span>}
+                          </span> */}
+                        </div>
                       </div>
                     </div>
 
@@ -463,120 +465,112 @@ export default function MyAuction() {
 
                   </div>
                 </div>
-                <div className="order-history-expand mt-3" style={{ width: "100%", display: "flex", flexDirection: "row", gap: "12px", }}>
-                  <div className="auctionRoomList__card-media">
-                    <div
-                      style={{
-                        width: "8.6rem",
-                        height: 0,
-                        backgroundColor: "transparent",
-                      }}
-                    />
-                  </div>
 
-                  <div className="auctionRoomList__card-body">
+                {/* Top 5 bids section */}
+                <div className="order-history-expand mt-3" style={{ width: "100%" }}>
+                  {bids.length > 0 && (
+                    <div className="auctionRoomList__topBid" style={{ marginTop: 12 }}>
+                      <button
+                        style={{
+                          width: "30%",
+                          margin: "0 auto",
+                          background: "#2a2e38", // nền tối cho button
+                          border: "1px solid #444",
+                          padding: "6px 14px",
+                          borderRadius: 6,
+                          fontSize: 14,
+                          cursor: "pointer",
+                          color: "#fff",
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "#3a3f4b";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "#2a2e38";
+                        }}
+                        onClick={() => handleToggleTopBids(auction.id)}
+                      >
+                        {showTopBids[auction.id] ? "Hide top 5 bids" : "Show top 5 bids"}
+                      </button>
 
-                    {bids.length > 0 && (
-                      <div style={{ marginTop: 12 }}>
-                        <button
-                          style={{
-                            background: "#2a2e38", // nền tối cho button
-                            border: "1px solid #444",
-                            padding: "6px 14px",
-                            borderRadius: 6,
-                            fontSize: 14,
-                            cursor: "pointer",
-                            color: "#fff",
-                            transition: "all 0.2s",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "#3a3f4b";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = "#2a2e38";
-                          }}
-                          onClick={() => handleToggleTopBids(auction.id)}
-                        >
-                          {showTopBids[auction.id] ? "Hide top 5 bids" : "Show top 5 bids"}
-                        </button>
-
-                        {showTopBids[auction.id] && (
-                          <div style={{ marginTop: 10 }}>
-                            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                              {uniqueBids.map((bid, idx) => (
-                                <li
-                                  key={bid._id || idx}
+                      {showTopBids[auction.id] && (
+                        <div style={{ marginTop: 10 }}>
+                          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                            {uniqueBids.map((bid, idx) => (
+                              <li
+                                key={bid._id || idx}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  padding: "8px 10px",
+                                  borderRadius: 6,
+                                  borderBottom: "1px solid #333",
+                                  fontSize: 14,
+                                  gap: 12,
+                                  color: "#ddd",
+                                  cursor: "default",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#31333b63";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = "transparent";
+                                }}
+                              >
+                                <img
+                                  src={
+                                    bid.profile?.profileImage
+                                      ? buildImageUrl(bid.profile.profileImage, useBackupImg)
+                                      : ProfileHolder
+                                  }
+                                  onError={() => setUseBackupImg(true)}
+                                  alt={bid.profile?.username || "bidder"}
                                   style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    padding: "8px 10px",
-                                    borderBottom: "1px solid #333",
-                                    fontSize: 14,
-                                    gap: 12,
-                                    color: "#ddd",
+                                    width: 32,
+                                    height: 32,
+                                    borderRadius: "50%",
+                                    marginRight: 8,
                                   }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = "#242833";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = "transparent";
+                                />
+                                <span
+                                  style={{
+                                    flex: 1,
+                                    fontWeight: 500,
+                                    color: "#fff",
                                   }}
                                 >
-                                  <img
-                                    src={
-                                      bid.profile?.profileImage
-                                        ? buildImageUrl(bid.profile.profileImage, useBackupImg)
-                                        : ProfileHolder
-                                    }
-                                    onError={() => setUseBackupImg(true)}
-                                    alt={bid.profile?.username || "bidder"}
-                                    style={{
-                                      width: 32,
-                                      height: 32,
-                                      borderRadius: "50%",
-                                      marginRight: 8,
-                                    }}
-                                  />
-                                  <span
-                                    style={{
-                                      flex: 1,
-                                      fontWeight: 500,
-                                      color: "#fff",
-                                    }}
-                                  >
-                                    {bid.profile?.username || "Unknown"}
-                                  </span>
-                                  <span
-                                    style={{
-                                      minWidth: 100,
-                                      textAlign: "right",
-                                      fontWeight: 600,
-                                      color: "#4da6ff",
-                                    }}
-                                  >
-                                    {fmtVND(bid.bid_amount)}
-                                  </span>
-                                  <span
-                                    style={{
-                                      minWidth: 140,
-                                      textAlign: "right",
-                                      color: "#aaa",
-                                      fontSize: 13,
-                                    }}
-                                  >
-                                    {moment(bid.bid_time).local().format("DD/MM/YYYY HH:mm")}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-
-                  </div>
+                                  {bid.profile?.username || "Unknown"}
+                                </span>
+                                <span
+                                  style={{
+                                    minWidth: 100,
+                                    textAlign: "right",
+                                    fontWeight: 600,
+                                    color: "#4da6ff",
+                                  }}
+                                >
+                                  {fmtVND(bid.bid_amount)}
+                                </span>
+                                <span
+                                  style={{
+                                    minWidth: 140,
+                                    textAlign: "right",
+                                    color: "#aaa",
+                                    fontSize: 13,
+                                  }}
+                                >
+                                  {moment(bid.bid_time).local().format("DD/MM/YYYY HH:mm")}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
+
               </li>
             );
           })}

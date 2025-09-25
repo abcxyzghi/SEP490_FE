@@ -13,6 +13,22 @@ import MessageModal from '../../libs/MessageModal/MessageModal';
 const PAGE_SIZE = 8;
 
 export default function BoxList({ searchText, selectedSort, ascending, priceRange }) {
+  // Helper to calculate days left
+  const getDaysLeft = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const now = new Date();
+    // If not started yet, show until start
+    if (now < startDate) {
+      const diff = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
+      return `${diff} day${diff !== 1 ? 's' : ''} until start`;
+    }
+    // If ended
+    if (now > endDate) return 'Ended';
+    // Otherwise, show days left
+    const diff = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+    return `${diff} day${diff !== 1 ? 's' : ''} left`;
+  };
   const [boxes, setBoxes] = useState([]);
   const [useBackupImg, setUseBackupImg] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -179,6 +195,9 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
           const isExpanded = expandedCardIndex === index;
           const truncate = (str, n) => (str.length > n ? str.slice(0, n - 1) + '…' : str);
 
+          // Countdown tag
+          const countdownText = getDaysLeft(item.start_time, item.end_time);
+
           return (
             <div
               className={`boxList-card-item ${isExpanded ? 'boxList-card-item--expanded' : ''}`}
@@ -186,6 +205,24 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
               onMouseEnter={() => setExpandedCardIndex(index)}
               onMouseLeave={() => setExpandedCardIndex(null)}
             >
+              {/* Countdown tag */}
+              <div className="boxList-tag-countdown oxanium-regular" style={{
+                position: 'absolute',
+                top: 6,
+                left: 60,
+                zIndex: 10,
+                opacity: 0.9,
+                background: '#34495e46',
+                color: 'var(--light-1)',
+                padding: '2px 10px',
+                borderRadius: 8,
+                fontSize: '0.85rem',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                userSelect: 'none',
+                WebkitUserDrag: 'none',
+              }}>{countdownText}</div>
+              
               <div className="boxList-card-background">
                 <img src={buildImageUrl(item.urlImage, useBackupImg)} onError={() => setUseBackupImg(true)} alt={`${item.name} background`} />
               </div>
@@ -219,12 +256,15 @@ export default function BoxList({ searchText, selectedSort, ascending, priceRang
                         {/* {truncate(item.mysteryBoxName, 30)} */}
                       </div>
 
-                      <div className="boxList-card-quantity oxanium-semibold">Quantity: {item.quantity}</div>
-                      <div className="boxList-card-time oxanium-regular">
+                      {/* <div className="boxList-card-time oxanium-regular">
                         <div>Start: {new Date(item.start_time).toLocaleDateString()}</div>
                         <div>End: {new Date(item.end_time).toLocaleDateString()}</div>
+                      </div> */}
+                      <div className='boxList-sub-info'>
+                        <div className="boxList-card-price oxanium-bold">{formatShortNumber(item.mysteryBoxPrice)} VND</div>
+                        <div className="boxList-card-quantity oxanium-semibold">Qty: {item.quantity}</div>
                       </div>
-                      <div className="boxList-card-price oxanium-bold">{formatShortNumber(item.mysteryBoxPrice)} VND</div>
+
                       <div className="boxList-card-actions">
                         <button
                           className="boxList-view-button"

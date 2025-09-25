@@ -1,5 +1,5 @@
 /* Modal container */
-.hostAuctionDialog-container .MuiPaper-root.hostAuctionDialog-animated-shadow {
+/* .hostAuctionDialog-container .MuiPaper-root.hostAuctionDialog-animated-shadow {
     --white: hsl(0, 0%, 100%);
     --black: hsl(240, 15%, 9%);
     --paragraph: hsl(0, 0%, 83%);
@@ -74,7 +74,7 @@
     to {
         transform: rotate(360deg);
     }
-}
+} */
 
 /* Modal content */
 .hostAuctionDialog-box {
@@ -92,18 +92,24 @@
     /* Chrome, Safari */
 }
 
+/* not use anymore ↑ */
+
 /* Modal header */
-.hostAuctionDialog-header {
-    display: flex;
-    justify-content: space-between;
-    /* align-items: center; */
-    margin-bottom: 18px;
-}
+/* .hostAuctionDialog-header {
+    margin-bottom: 20px;
+} */
 
 .hostAuctionDialog-title {
-    font-size: 1.57rem;
-    color: var(--light-4);
-    margin-bottom: -8px;
+    font-size: 1rem;
+    text-align: center;
+    color: var(--secondary-2);
+    margin-bottom: 4px;
+}
+
+.hostAuctionDialog-subtitle {
+    font-size: 1.7rem;
+    text-align: center;
+    color: var(--light-1);
 }
 
 /* Modal inputs */
@@ -113,6 +119,13 @@
     flex-direction: column;
     width: 100%;
     margin-bottom: 16px;
+}
+
+.hostAuctionDialog-control label {
+  font-size: 12px;
+  margin-bottom: 4px;
+  /* display: block; */
+  color: var(--light-2);
 }
 
 .hostAuctionDialog-input {
@@ -135,17 +148,17 @@
     filter: invert(1) brightness(2);
 }
 
-.hostAuctionDialog-note{
+.hostAuctionDialog-note {
     text-align: center;
     font-size: 0.75rem;
     color: var(--secondary-2);
 }
 
-.hostAuctionDialog-PrdAtt{
+.hostAuctionDialog-PrdAtt {
     font-size: 0.95rem;
 }
 
-.hostAuctionDialog-PrdAtt strong{
+.hostAuctionDialog-PrdAtt strong {
     color: var(--light-2);
 }
 
