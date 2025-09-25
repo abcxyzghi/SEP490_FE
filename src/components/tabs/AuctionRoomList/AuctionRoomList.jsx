@@ -13,6 +13,7 @@ import MobileDownLink from "../../libs/MobileDownLink/MobileDownLink";
 import ProfileHolder from "../../../assets/others/mmbAvatar.png";
 import MessageIcon from "../../../assets/Icon_fill/comment_fill.svg";
 import moment from "moment";
+import { Modal } from "antd";
 
 export default function AuctionRoomList() {
   // State for auction product details (starting_price, quantity, user_product_id)
@@ -33,6 +34,7 @@ export default function AuctionRoomList() {
   const [topBids, setTopBids] = useState({});
   // State to control top bids visibility per auction
   const [showTopBids, setShowTopBids] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
 
   const showModal = (type, title, message) => {
     setModal({ open: true, type, title, message });
@@ -222,9 +224,8 @@ export default function AuctionRoomList() {
     <div className="auctionRoomList oxanium-regular">
       <div className="auctionRoomList__container">
         {/* Header */}
-        <header className="auctionRoomList__header">
-          {/* <h2 className="auctionRoomList__title">Auction Room List</h2> */}
-
+        <div className="auctionRoomList__header">
+          <button className="auctionRoomList__rules-btn oxanium-regular" onClick={() => setIsOpen(true)}>Rules</button>
           <div className="auctionRoomList__filter">
             <label className="auctionRoomList__filter-label">Filter:</label>
             <select
@@ -237,7 +238,9 @@ export default function AuctionRoomList() {
               <option value="waiting">Waiting</option>
             </select>
           </div>
-        </header>
+
+
+        </div>
 
         {/* Loading */}
         {loading && (
@@ -507,6 +510,79 @@ export default function AuctionRoomList() {
           title={modal.title}
           message={modal.message}
         />
+        <Modal
+          className="rules-modal"
+          open={isOpen}
+          onCancel={() => setIsOpen(false)}
+          footer={null}
+          centered
+          title="Auction System Regulations"
+        >
+          <div className="rules-modal__content oxanium-regular">
+            <h3>Article 1. Auction Session Creation</h3>
+            <p>
+              The organizer (Host) must create an auction session at least 4 hours
+              prior to the scheduled start time.
+            </p>
+            <p>
+              During the waiting period before the session begins, no participants
+              are allowed to place bids.
+            </p>
+            <p>Each auction session is associated with one unique product.</p>
+
+            <h3>Article 2. Starting Price and Session Duration</h3>
+            <p>The Host determines the starting price of the product.</p>
+            <p>
+              The duration of each auction session is predetermined by the system
+              and cannot be altered by users.
+            </p>
+
+            <h3>Article 3. Bidding Rules</h3>
+            <p>
+              The first valid bid placed by a participant must be equal to or
+              higher than the starting price.
+            </p>
+            <p>
+              Each subsequent bid must be at least <b>5%</b> higher than the
+              current highest bid.
+            </p>
+            <p>
+              Example: If the current highest bid is 1,000,000 VND → the next bid
+              must be ≥ 1,050,000 VND.
+            </p>
+            <p>
+              A participant cannot place consecutive bids against themselves
+              (self-overbidding is prohibited).
+            </p>
+            <p>
+              If a bid is placed within the final 1 minute of the auction session,
+              the system will automatically extend the auction time by an
+              additional 2 minutes.
+            </p>
+
+            <h3>Article 4. Auction Conclusion</h3>
+            <p>
+              At the end of the auction, the system will automatically determine
+              the winner as the participant with the highest valid bid.
+            </p>
+            <p>
+              After the auction session concludes, there will be a processing
+              period of up to 24 hours for verification and the official
+              announcement of the result.
+            </p>
+
+            <h3>Article 5. Responsibilities and Compliance</h3>
+            <p>
+              All participants must comply with these regulations; any fraudulent
+              or violating behavior will result in bid cancellation and potential
+              penalties under system policies.
+            </p>
+            <p>
+              The system reserves the right to monitor, suspend, or cancel an
+              auction session if irregularities are detected.
+            </p>
+          </div>
+        </Modal>
       </div>
     </div>
   );
