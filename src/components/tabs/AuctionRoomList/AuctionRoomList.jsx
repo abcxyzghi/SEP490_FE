@@ -554,11 +554,11 @@ export default function AuctionRoomList() {
               A participant cannot place consecutive bids against themselves
               (self-overbidding is prohibited).
             </p>
-            <p>
+            {/* <p>
               If a bid is placed within the final 1 minute of the auction session,
               the system will automatically extend the auction time by an
               additional 2 minutes.
-            </p>
+            </p> */}
 
             <h3>Article 4. Auction Conclusion</h3>
             <p>
