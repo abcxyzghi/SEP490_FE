@@ -10,21 +10,28 @@ export const getFavoriteList = async () => {
 }; 
 
 export const addFavourite = async (userProductId) => {
-  console.log(userProductId)
-  const requestConfig = {
-    method: "post",
-    url: `/api/ProductFavorite/add-product-favorite`,
-    params: { userProductId },
-    requiresAuth: true, // để interceptor tự gắn token
-  };
+  try {
+    console.log(userProductId)
+    const requestConfig = {
+      method: "post",
+      url: `/api/ProductFavorite/add-product-favorite`,
+      params: { userProductId },
+      requiresAuth: true, // để interceptor tự gắn token
+    };
 
-  console.log("📡 addFavourite request:", requestConfig);
+    console.log("📡 addFavourite request:", requestConfig);
 
-  const response = await apiWithFallback(requestConfig);
+    const response = await apiWithFallback(requestConfig);
 
-  console.log("✅ addFavourite response:", response);
+    console.log("✅ addFavourite response:", response);
 
-  return response.data;
+    return response.data;
+  } catch (error) {
+    return {
+      errorCode: error.response?.data?.errorCode,
+      message: error.response?.data?.error
+    };
+  }
 };
 export const removeFavourite = async (favoriteId) => {
   const response = await apiWithFallback({

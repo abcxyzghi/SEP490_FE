@@ -358,10 +358,20 @@ export default function UserCollectionList({ refreshOnSaleProducts, onShowFavSna
 
   const handleAddFavourite = async (userProductId, productName) => {
     try {
-      await addFavourite(userProductId);
+      const result = await addFavourite(userProductId);
+      // Check if the result contains an error (when API returns error structure)
+      if (result && result.errorCode) {
+        if (result.errorCode === 400) {
+          showModal('warning', 'Add to Favorites', result.message || result.error);
+        } else {
+          showModal('error', 'Error adding to favorites', result.message || result.error || `Failed to add "${productName}" to favorites.`);
+        }
+        return;
+      }
+      
       onShowFavSnackbar(`Added "${productName}" to your favorites.`);
     } catch (err) {
-      // console.error("Error adding to favorites:", err);
+      // Handle network errors or other exceptions
       const errorMsg = typeof err === 'string' ? err : (err?.message || `Failed to add "${productName}" to favorites.`);
       showModal('error', 'Error adding to favorites', errorMsg);
     }
