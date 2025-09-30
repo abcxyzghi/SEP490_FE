@@ -299,8 +299,17 @@ export default function UserOnSale({ products, productsLoading }) {
       </div>
     );
   }
-  const visibleProducts = productList.slice(0, visibleCount);
-  const isEnd = visibleCount >= productList.length;
+
+  // Helper: check if current user is owner of a product
+  const isOwnerOfItem = (item) => user && user.user_id === item.userId;
+
+  // For guests, filter out products that are on 'Sale Halt' (isSell === false)
+  const filteredProductList = isOwner
+    ? productList
+    : productList.filter((item) => item.isSell);
+
+  const visibleProducts = filteredProductList.slice(0, visibleCount);
+  const isEnd = visibleCount >= filteredProductList.length;
 
   const toggleDropdown = (index) => {
     setDropdownStates((prev) => ({
@@ -316,7 +325,7 @@ export default function UserOnSale({ products, productsLoading }) {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map((item, index) => {
             const isExpanded = expandedCardIndex === index;
-            const isOwnerOfItem = user && user.user_id === item.userId;
+            const owner = isOwnerOfItem(item);
             const isDropdownOpen = !!dropdownStates[index];
             // Helper to close dropdown after action
             const closeDropdown = () => setDropdownStates((prev) => ({ ...prev, [index]: false }));
@@ -330,7 +339,7 @@ export default function UserOnSale({ products, productsLoading }) {
                   setDropdownStates({});
                 }}
               >
-                {isOwnerOfItem && (
+                {owner && (
                   <>
                     {/* Quantity tag (top left, above sale status) */}
                     <div className="userOnSale-tag-quantity oxanium-regular">
@@ -400,7 +409,7 @@ export default function UserOnSale({ products, productsLoading }) {
                           <div className="userOnSale-card-price oxanium-bold">
                             {formatShortNumber(item.price)} VND
                           </div>
-                          {!isOwnerOfItem && (
+                          {!owner && (
                             <div className="userOnSale-card-quantity oxanium-bold">
                               Qty: {item.quantity}
                             </div>
@@ -431,7 +440,7 @@ export default function UserOnSale({ products, productsLoading }) {
                           </button>
 
                           {/* --- Logic hiển thị nút cho Owner hoặc Customer --- */}
-                          {isOwnerOfItem ? (
+                          {owner ? (
                             <div className="userOnSale-dropdown-container">
                               <button
                                 ref={anchorRef}
