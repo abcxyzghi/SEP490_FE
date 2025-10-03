@@ -58,7 +58,7 @@ export default function ModMysteryBox() {
   useEffect(() => {
     fetchBoxes();
   }, []);
-  
+
   const handleViewDetail = async (id) => {
     try {
       console.log('Fetching details for Box ID:', id); // Debug log
@@ -117,6 +117,9 @@ export default function ModMysteryBox() {
       formData.append('Title', title.trim());
       formData.append('Description', description.trim());
       formData.append('Price', parseFloat(price));
+      formData.append('Quantity', parseInt(newBoxData.quantity, 10) || 0);
+      formData.append('Start_time', newBoxData.start_time || '');
+      formData.append('End_time', newBoxData.end_time || '');
       formData.append('TotalProduct', parseInt(totalProduct, 10));
       formData.append('CollectionTopicId', collectionTopicId.trim());
 
@@ -146,6 +149,9 @@ export default function ModMysteryBox() {
           title: '',
           description: '',
           price: '',
+          quantity: '',
+          start_time: '',
+          end_time: '',
           totalProduct: '',
           collectionTopicId: '',
           imageUrl: null,
@@ -214,14 +220,14 @@ export default function ModMysteryBox() {
         if (productsResponse && productsResponse.status) {
           const filteredProducts = productsResponse.data.filter(
             (product) => product.collectionId === collection.id
-                        && (product.status === 0 || product.status === 1 || product.status === 2 || product.status === 4)
+              && (product.status === 0 || product.status === 1 || product.status === 2 || product.status === 4)
           );
           setProductList(filteredProducts.map((product) => ({
-          ...product,
-          selected: false,
-          chance: 0,
-          productId: product.productId || product.id, // đảm bảo có productId
-        })));
+            ...product,
+            selected: false,
+            chance: 0,
+            productId: product.productId || product.id, // đảm bảo có productId
+          })));
 
           setSelectedBoxId(box.id);
           console.log("Selected Box ID:", selectedBoxId);
@@ -231,9 +237,9 @@ export default function ModMysteryBox() {
       }
     }
   };
-    useEffect(() => {
-      console.log("📢 Modal open state (useEffect):", isAddProductModalVisible);
-    }, [isAddProductModalVisible]);
+  useEffect(() => {
+    console.log("📢 Modal open state (useEffect):", isAddProductModalVisible);
+  }, [isAddProductModalVisible]);
   return (
     <div className="mod-mysterybox-container">
       <h2 className="mod-mysterybox-title">List Mystery Box</h2>
@@ -271,7 +277,7 @@ export default function ModMysteryBox() {
                   <span className="mod-mysterybox-card-label">Price:</span> <span className="mod-mysterybox-card-value">{box.mysteryBoxPrice?.toLocaleString() || 'N/A'} VNĐ</span>
                 </div>
                 <div className="mod-mysterybox-card-info">
-                  <span className="mod-mysterybox-card-label">Quantity:</span> <span className="mod-mysterybox-card-value">{box.quantity || 'N/A'} Boxes</span>
+                  <span className="mod-mysterybox-card-label">Quantity:</span> <span className="mod-mysterybox-card-value">{box.quantity?.toLocaleString() || 'N/A'} Boxes</span>
                 </div>
                 <div className="mod-mysterybox-card-info">
                   <span className="mod-mysterybox-card-label">Created:</span> <span className="mod-mysterybox-card-value">{box.createdAt ? new Date(box.createdAt).toLocaleDateString() : 'N/A'}</span>
@@ -290,11 +296,11 @@ export default function ModMysteryBox() {
                 >
                   View Detail
                 </button>
-      
+
                 <button
                   className="mod-mysterybox-add-product"
-                  onClick={() =>{
-                    setSelectedBoxId(box.id); 
+                  onClick={() => {
+                    setSelectedBoxId(box.id);
                     handleOpenAddProductModal(box)
                   }}
                 >
@@ -453,164 +459,164 @@ export default function ModMysteryBox() {
       </Modal>
 
       <Modal
-          title="Add Products to Box"
-          className="mod-mysterybox-create-modal"
-          open={isAddProductModalVisible}
-          onCancel={() => setIsAddProductModalVisible(false)}
-          onOk={() => {
-            console.log("onOk được gọi");
-            console.log("Selected Box ID:", selectedBoxId);
-            console.log("Product List:", productList);
-            const selectedProducts = productList.filter(
-              (product) => product.selected && !isNaN(product.chance) && product.chance > 0
-            );
-            console.log("Selected Products:", selectedProducts);
-            if (selectedProducts.length === 0) {
-              toast.error('Vui lòng chọn ít nhất một sản phẩm và tỷ lệ.');
-              return;
-            }
-            const productsWithChances = selectedProducts.map((product) => ({
-              productId: product.productId,
-              chance: product.chance,
-            }));
-            console.log("Products with Chances:", productsWithChances);
-            handleAddProduct(selectedBoxId, productsWithChances);
-            setIsAddProductModalVisible(false);
-          }}
-        >
-          {/* Nhập tỷ lệ rarity */}
-          <div className="rarity-ratio-inputs">
-            <p>Chance of rarity (Total = 1.0)</p>
+        title="Add Products to Box"
+        className="mod-mysterybox-create-modal"
+        open={isAddProductModalVisible}
+        onCancel={() => setIsAddProductModalVisible(false)}
+        onOk={() => {
+          console.log("onOk được gọi");
+          console.log("Selected Box ID:", selectedBoxId);
+          console.log("Product List:", productList);
+          const selectedProducts = productList.filter(
+            (product) => product.selected && !isNaN(product.chance) && product.chance > 0
+          );
+          console.log("Selected Products:", selectedProducts);
+          if (selectedProducts.length === 0) {
+            toast.error('Vui lòng chọn ít nhất một sản phẩm và tỷ lệ.');
+            return;
+          }
+          const productsWithChances = selectedProducts.map((product) => ({
+            productId: product.productId,
+            chance: product.chance,
+          }));
+          console.log("Products with Chances:", productsWithChances);
+          handleAddProduct(selectedBoxId, productsWithChances);
+          setIsAddProductModalVisible(false);
+        }}
+      >
+        {/* Nhập tỷ lệ rarity */}
+        <div className="rarity-ratio-inputs">
+          <p>Chance of rarity (Total = 1.0)</p>
 
-            {Object.entries(rarityRatios).map(([rarity, value]) => (
-              <div key={rarity} className={`rarity-row ${rarity.toLowerCase()}`}>
-                <label>{rarity}:</label>
+          {Object.entries(rarityRatios).map(([rarity, value]) => (
+            <div key={rarity} className={`rarity-row ${rarity.toLowerCase()}`}>
+              <label>{rarity}:</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={value}
+                onChange={(e) => {
+                  const inputValue = Number(e.target.value.replace(',', '.')) || 0;
+                  const lowercaseRarity = rarity.toLowerCase();
+
+                  setRarityRatios(prev => ({
+                    ...prev,
+                    [lowercaseRarity]: inputValue,
+                  }));
+                }}
+              />
+            </div>
+          ))}
+
+          <button
+            className="apply-button"
+            onClick={() => {
+              const updatedList = [...productList];
+
+              const selectedProducts = updatedList.filter(p => p.selected);
+
+              const groupedByRarity = {};
+
+              selectedProducts.forEach(p => {
+                const rarity = p.rarityName?.toLowerCase();
+                if (!rarity) return;
+
+                if (!groupedByRarity[rarity]) groupedByRarity[rarity] = [];
+                groupedByRarity[rarity].push(p);
+              });
+
+              Object.entries(groupedByRarity).forEach(([rarity, group]) => {
+                const ratio = rarityRatios[rarity];
+                if (!ratio || group.length === 0) return;
+
+                const perItemChance = ratio;
+
+                group.forEach((p) => {
+                  const target = updatedList.find(prod => prod.productId === p.productId);
+                  if (target) target.chance = parseFloat(perItemChance.toFixed(4));
+                });
+              });
+
+              setProductList(updatedList);
+            }}
+          >
+            Apply
+          </button>
+
+        </div>
+        {/* Danh sách sản phẩm */}
+        <div className="mod-mysterybox-add-product-list">
+          {productList.map((product, index) => (
+            <div key={product.productId || index} className="add-product-item">
+              <input
+                type="checkbox"
+                checked={!!product.selected}
+                onChange={(e) => {
+                  const updatedList = [...productList];
+                  updatedList[index].selected = e.target.checked;
+
+                  // Gán chance tự động theo rarity
+                  const selectedProducts = updatedList.filter((p) => p.selected);
+                  const groupedByRarity = selectedProducts.reduce((acc, p) => {
+                    const rarity = p.rarityName?.toLowerCase();
+                    if (!rarity) return acc;
+
+                    if (!acc[rarity]) acc[rarity] = [];
+                    acc[rarity].push(p);
+                    return acc;
+                  }, {});
+
+                  Object.entries(groupedByRarity).forEach(([rarity, group]) => {
+                    const ratio = rarityRatios[rarity] || 0;
+                    const perItemChance = ratio;
+
+                    group.forEach((p) => {
+                      const target = updatedList.find(prod => prod.productId === p.productId);
+                      if (target) target.chance = parseFloat(perItemChance.toFixed(4));
+                    });
+                  });
+
+                  setProductList(updatedList);
+                }}
+
+              />
+              <img
+                src={buildImageUrl(product.urlImage, boxBackupImg)}
+                alt={product.name}
+                className="add-product-image"
+              />
+              <div className="add-product-info">
+                <p className="add-product-name">{product.name || product.productName}</p>
                 <input
                   type="number"
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  value={value}
-                  onChange={(e) => {
-                    const inputValue = Number(e.target.value.replace(',', '.')) || 0;
-                    const lowercaseRarity = rarity.toLowerCase();
-
-                    setRarityRatios(prev => ({
-                      ...prev,
-                      [lowercaseRarity]: inputValue,
-                    }));
-                  }}
-                />
-              </div>
-            ))}
-
-            <button
-              className="apply-button"
-              onClick={() => {
-                const updatedList = [...productList];
-
-                const selectedProducts = updatedList.filter(p => p.selected);
-
-                const groupedByRarity = {};
-
-                selectedProducts.forEach(p => {
-                  const rarity = p.rarityName?.toLowerCase();
-                  if (!rarity) return;
-
-                  if (!groupedByRarity[rarity]) groupedByRarity[rarity] = [];
-                  groupedByRarity[rarity].push(p);
-                });
-
-                Object.entries(groupedByRarity).forEach(([rarity, group]) => {
-                  const ratio = rarityRatios[rarity]; 
-                  if (!ratio || group.length === 0) return;
-
-                  const perItemChance = ratio;
-
-                  group.forEach((p) => {
-                    const target = updatedList.find(prod => prod.productId === p.productId);
-                    if (target) target.chance = parseFloat(perItemChance.toFixed(4));
-                  });
-                });
-
-                setProductList(updatedList);
-              }}
-            >
-              Apply
-            </button>
-
-          </div>
-          {/* Danh sách sản phẩm */}
-          <div className="mod-mysterybox-add-product-list">
-            {productList.map((product, index) => (
-              <div key={product.productId || index} className="add-product-item">
-                <input
-                  type="checkbox"
-                  checked={!!product.selected}
+                  placeholder="Chance (0 - 1)"
                   onChange={(e) => {
                     const updatedList = [...productList];
-                    updatedList[index].selected = e.target.checked;
-
-                    // Gán chance tự động theo rarity
-                    const selectedProducts = updatedList.filter((p) => p.selected);
-                    const groupedByRarity = selectedProducts.reduce((acc, p) => {
-                      const rarity = p.rarityName?.toLowerCase();
-                      if (!rarity) return acc;
-
-                      if (!acc[rarity]) acc[rarity] = [];
-                      acc[rarity].push(p);
-                      return acc;
-                    }, {});
-
-                    Object.entries(groupedByRarity).forEach(([rarity, group]) => {
-                      const ratio = rarityRatios[rarity] || 0;
-                      const perItemChance = ratio;
-
-                      group.forEach((p) => {
-                        const target = updatedList.find(prod => prod.productId === p.productId);
-                        if (target) target.chance = parseFloat(perItemChance.toFixed(4));
-                      });
-                    });
-
+                    updatedList[index].chance = parseFloat(e.target.value);
                     setProductList(updatedList);
                   }}
-
+                  disabled={!product.selected}
+                  value={product.chance ?? ''}
                 />
-                <img
-                  src={buildImageUrl(product.urlImage, boxBackupImg)}
-                  alt={product.name}
-                  className="add-product-image"
-                />
-                <div className="add-product-info">
-                  <p className="add-product-name">{product.name || product.productName}</p>
-                  <input
-                    type="number"
-                    placeholder="Chance (0 - 1)"
-                    onChange={(e) => {
-                      const updatedList = [...productList];
-                      updatedList[index].chance = parseFloat(e.target.value);
-                      setProductList(updatedList);
-                    }}
-                    disabled={!product.selected}
-                    value={product.chance ?? ''}
-                  />
-                  <p className="auto-chance">
-                    Chance: {
-                      product.selected
-                        ? (() => {
-                            const rarity = product.rarityName?.toLowerCase();
-                            const count = productList.filter(p => p.selected && p.rarityName?.toLowerCase() === rarity).length;
-                            const total = rarityRatios[rarity] ?? 0;
-                            return count ? (total * 100).toFixed(2) + '%' : '0%';
-                          })()
-                        : '—'
-                    }
-                  </p>
-                </div>
+                <p className="auto-chance">
+                  Chance: {
+                    product.selected
+                      ? (() => {
+                        const rarity = product.rarityName?.toLowerCase();
+                        const count = productList.filter(p => p.selected && p.rarityName?.toLowerCase() === rarity).length;
+                        const total = rarityRatios[rarity] ?? 0;
+                        return count ? (total * 100).toFixed(2) + '%' : '0%';
+                      })()
+                      : '—'
+                  }
+                </p>
               </div>
-            ))}
-          </div>
-        </Modal>
+            </div>
+          ))}
+        </div>
+      </Modal>
     </div>
   );
 }
