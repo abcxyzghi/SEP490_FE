@@ -12,10 +12,14 @@
 
 
 .mod-mysterybox-title {
-  font-size: 1.8rem; /* Tăng kích thước chữ */
-  font-weight: 700; /* Tăng độ đậm */
-  color: #ffffff; /* Đổi màu chữ thành trắng */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Thêm hiệu ứng bóng chữ */
+  font-size: 1.8rem;
+  /* Tăng kích thước chữ */
+  font-weight: 700;
+  /* Tăng độ đậm */
+  color: #ffffff;
+  /* Đổi màu chữ thành trắng */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  /* Thêm hiệu ứng bóng chữ */
 }
 
 .mod-mysterybox-loading,
@@ -34,13 +38,15 @@
 }
 
 .mod-mysterybox-card {
-  background: rgba(20, 20, 20, 0.789); /* Dark gray with 60% opacity */
+  background: rgba(20, 20, 20, 0.789);
+  /* Dark gray with 60% opacity */
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   width: 300px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .mod-mysterybox-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -55,18 +61,23 @@
   justify-content: center;
   overflow: hidden;
 }
+
 .mod-mysterybox-card-img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
   border-radius: 0 0 12px 12px;
-  filter: brightness(1.2); /* Tăng độ sáng */
-  transition: transform 0.3s ease, filter 0.3s ease; /* Hiệu ứng hover */
+  filter: brightness(1.2);
+  /* Tăng độ sáng */
+  transition: transform 0.3s ease, filter 0.3s ease;
+  /* Hiệu ứng hover */
 }
 
 .mod-mysterybox-card-img:hover {
-  transform: scale(1.05); /* Phóng to nhẹ khi hover */
-  filter: brightness(1.4); /* Tăng độ sáng khi hover */
+  transform: scale(1.05);
+  /* Phóng to nhẹ khi hover */
+  filter: brightness(1.4);
+  /* Tăng độ sáng khi hover */
 }
 
 .mod-mysterybox-card-content {
@@ -76,6 +87,7 @@
   flex-direction: column;
   gap: 8px;
 }
+
 .mod-mysterybox-card-name {
   font-size: 1.2rem;
   font-weight: bold;
@@ -86,13 +98,15 @@
   position: relative;
   cursor: pointer;
 }
+
 .mod-mysterybox-card-name:hover::after {
   content: attr(title);
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(44, 44, 44, 0.9); /* Dark background for tooltip */
+  background: rgba(44, 44, 44, 0.9);
+  /* Dark background for tooltip */
   color: #fff;
   padding: 8px 12px;
   border-radius: 8px;
@@ -102,6 +116,7 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
+
 .mod-mysterybox-card-desc {
   font-size: 1rem;
   color: #ccc;
@@ -109,6 +124,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .mod-mysterybox-card-info {
   font-size: 0.9rem;
   margin-bottom: 8px;
@@ -121,9 +137,11 @@
   font-weight: bold;
   color: #aaa;
 }
+
 .mod-mysterybox-card-value {
   color: #fff;
 }
+
 .mod-mysterybox-add-product {
   margin-top: 8px;
   padding: 6px 12px;
@@ -133,6 +151,7 @@
   cursor: pointer;
   border-radius: 4px;
 }
+
 .mod-mysterybox-add-product:hover {
   margin-top: 8px;
   padding: 6px 12px;
@@ -142,35 +161,42 @@
   cursor: pointer;
   border-radius: 4px;
 }
+
 .mod-mysterybox-card-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 12px;
 }
+
 /* Styling for the View Detail button */
 .mod-mysterybox-view-detail {
   margin: 12px;
-  padding: 12px 24px; /* Match Create New Box button */
+  padding: 12px 24px;
+  /* Match Create New Box button */
   background: transparent;
-  color: #38f9d7; /* Metallic green */
+  color: #38f9d7;
+  /* Metallic green */
   border: 2px solid #38f9d7;
   font-weight: 700;
   border-radius: 8px;
   box-shadow: none;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  font-size: 1rem; /* Match font size */
+  font-size: 1rem;
+  /* Match font size */
   cursor: pointer;
 }
 
 .mod-mysterybox-view-detail:hover {
-  background: rgba(56, 249, 215, 0.3); /* Green with 30% opacity */
+  background: rgba(56, 249, 215, 0.3);
+  /* Green with 30% opacity */
   color: #38f9d7;
   border-color: #38f9d7;
 }
 
 .mod-mysterybox-view-detail:active {
-  background-color: #187bcd; /* Even darker blue */
+  background-color: #187bcd;
+  /* Even darker blue */
   transform: translateY(0);
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
@@ -185,6 +211,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -198,8 +225,8 @@
   border-radius: 12px;
   color: #fff;
   justify-content: center;
-  align-items: center; 
-  
+  align-items: center;
+
 }
 
 .mod-mysterybox-detail-image {
@@ -317,21 +344,29 @@
 
 /* Styling for the Create New Mystery Box button */
 .mod-mysterybox-create-button {
-  display: block; /* Make the button a block element */
-  margin: 0 auto 24px auto; /* Center-align and add spacing below */
-  text-align: center; /* Ensure text is centered */
+  display: block;
+  /* Make the button a block element */
+  margin: 0 auto 24px auto;
+  /* Center-align and add spacing below */
+  text-align: center;
+  /* Ensure text is centered */
   background: transparent;
-  color: #38f9d7; /* Metallic green */
+  color: #38f9d7;
+  /* Metallic green */
   border: 2px solid #38f9d7;
   font-weight: 700;
   border-radius: 8px;
   box-shadow: none;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  padding: 12px 24px; /* Increase padding for a larger button */
-  font-size: 1.1rem; /* Slightly larger font size */
+  padding: 12px 24px;
+  /* Increase padding for a larger button */
+  font-size: 1.1rem;
+  /* Slightly larger font size */
 }
+
 .mod-mysterybox-create-button:hover {
-  background: rgba(56, 249, 215, 0.3); /* Green with 30% opacity */
+  background: rgba(56, 249, 215, 0.3);
+  /* Green with 30% opacity */
   color: #38f9d7;
   border-color: #38f9d7;
 }
@@ -345,6 +380,7 @@
   border-radius: 16px;
   box-shadow: 0 0 24px #38f9d744;
 }
+
 .mod-mysterybox-detail-modal .ant-modal-content {
   width: 700px;
   background: #181a20;
@@ -352,23 +388,27 @@
   border-radius: 16px;
   box-shadow: 0 0 24px #38f9d744;
 }
+
 .mod-mysterybox-create-modal .ant-modal-header {
   background: #23272f;
   border-bottom: 1px solid #38f9d7;
   border-radius: 16px 16px 0 0;
 }
+
 .mod-mysterybox-detail-modal .ant-modal-header {
   width: 650px;
   background: #23272f;
   border-bottom: 1px solid #38f9d7;
   border-radius: 16px 16px 0 0;
 }
+
 .mod-mysterybox-create-modal .ant-modal-title {
   color: #38f9d7;
   font-size: 1.35rem;
   font-weight: 700;
   text-align: center;
 }
+
 .mod-mysterybox-detail-modal .ant-modal-title {
   width: 700px;
   color: #38f9d7;
@@ -376,12 +416,13 @@
   font-weight: 700;
   text-align: center;
 }
+
 .mod-mysterybox-create-modal .ant-modal-close {
   color: #fff;
 }
 
 /* Form Fields */
-.mod-mysterybox-create-modal .ant-form-item-label > label {
+.mod-mysterybox-create-modal .ant-form-item-label>label {
   color: #38f9d7;
   font-weight: 600;
 }
@@ -452,8 +493,16 @@
 
 /* Nếu muốn text placeholder cũng có màu */
 .mod-mysterybox-create-form input::placeholder,
-.mod-mysterybox-create-form textarea::placeholder {
-  color: #fcfcfc;
+.mod-mysterybox-create-form textarea::placeholder,
+/* DatePicker's input placeholder */
+.mod-mysterybox-create-form .ant-picker input::placeholder,
+.mod-mysterybox-create-form .ant-picker .ant-input::placeholder,
+/* Select placeholder inside Ant Select */
+.mod-mysterybox-create-form .ant-select-selection-placeholder,
+.mod-mysterybox-create-form .ant-select-selector .ant-select-selection-placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  /* ensure full visibility on dark backgrounds */
 }
 
 .mod-mysterybox-create-modal input[type='checkbox'] {
@@ -465,6 +514,7 @@
 .mod-mysterybox-create-modal label {
   color: #fff !important;
 }
+
 .mod-mysterybox-create-form input[type="file"] {
   padding: 10px;
   font-size: 0.9rem;
@@ -490,11 +540,13 @@
   max-width: 150px;
   overflow: hidden;
 }
+
 .mod-mysterybox-create-form .image-preview img {
   max-width: 50%;
   max-height: 50%;
   object-fit: contain;
 }
+
 .mod-mysterybox-create-modal img {
   display: block;
   margin: 0 auto;
@@ -502,6 +554,7 @@
   padding: 4px;
   background: #23272f;
 }
+
 .mod-mysterybox-add-product-list {
   display: flex;
   flex-direction: column;
@@ -510,23 +563,27 @@
   overflow-y: auto;
   padding-right: 10px;
 }
+
 .add-product-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1a1a1a; /* optional: nền tối */
+  background-color: #1a1a1a;
+  /* optional: nền tối */
   padding: 15px;
   border-radius: 10px;
   position: relative;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
 }
+
 .add-product-image {
   max-width: 40%;
   height: auto;
   border-radius: 8px;
   margin-bottom: 10px;
-  width: 200px; /* Hoặc 80px nếu muốn nhỏ hơn */
+  width: 200px;
+  /* Hoặc 80px nếu muốn nhỏ hơn */
 }
 
 .add-product-info {
@@ -557,11 +614,13 @@
   border: 1px solid #ccc;
   text-align: center;
 }
+
 @keyframes modalFadeIn {
   0% {
     opacity: 0;
     transform: translateY(20px) scale(0.98);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -614,17 +673,52 @@
 }
 
 /* Optional – color code per rarity */
-.rarity-row:nth-child(2) label { color: #bbbbbb; }     /* Common */
-.rarity-row:nth-child(3) label { color: #4caf50; }     /* Uncommon */
-.rarity-row:nth-child(4) label { color: #2196f3; }     /* Rare */
-.rarity-row:nth-child(5) label { color: #9c27b0; }     /* Epic */
-.rarity-row:nth-child(6) label { color: #ff9800; }     /* Legendary */
+.rarity-row:nth-child(2) label {
+  color: #bbbbbb;
+}
 
-.rarity-row.common label { color: #bbbbbb; }
-.rarity-row.uncommon label { color: #4caf50; }
-.rarity-row.rare label { color: #2196f3; }
-.rarity-row.epic label { color: #9c27b0; }
-.rarity-row.legendary label { color: #ff9800; }
+/* Common */
+.rarity-row:nth-child(3) label {
+  color: #4caf50;
+}
+
+/* Uncommon */
+.rarity-row:nth-child(4) label {
+  color: #2196f3;
+}
+
+/* Rare */
+.rarity-row:nth-child(5) label {
+  color: #9c27b0;
+}
+
+/* Epic */
+.rarity-row:nth-child(6) label {
+  color: #ff9800;
+}
+
+/* Legendary */
+
+.rarity-row.common label {
+  color: #bbbbbb;
+}
+
+.rarity-row.uncommon label {
+  color: #4caf50;
+}
+
+.rarity-row.rare label {
+  color: #2196f3;
+}
+
+.rarity-row.epic label {
+  color: #9c27b0;
+}
+
+.rarity-row.legendary label {
+  color: #ff9800;
+}
+
 .apply-button {
   margin-top: 10px;
   padding: 6px 12px;
@@ -634,6 +728,7 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
 .apply-button:hover {
   background-color: #40a9ff;
 }
